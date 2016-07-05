@@ -4,6 +4,8 @@
 #include <windowsx.h>
 #include "../resource.h"
 
+#include <px/common/matrix.hpp>
+
 #define MAX_LOADSTRING 100
 
 // Global Variables:
@@ -15,7 +17,6 @@ TCHAR szWindowClass[MAX_LOADSTRING];			// the main window class name
 ATOM				MyRegisterClass(HINSTANCE hInstance);
 BOOL				InitInstance(HINSTANCE, int);
 LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
-INT_PTR CALLBACK	About(HWND, UINT, WPARAM, LPARAM);
 
 int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -42,6 +43,9 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 
 	hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_PRESSXLAT));
 
+	//px::matrix2<bool, 100, 100> m([](unsigned int i, unsigned int j){ return true; });
+	//bool z = m[{3, 3}];
+
 	// Main message loop:
 	while (GetMessage(&msg, NULL, 0, 0))
 	{
@@ -56,12 +60,8 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 }
 
 
-
-//
 //  FUNCTION: MyRegisterClass()
-//
 //  PURPOSE: Registers the window class.
-//
 ATOM MyRegisterClass(HINSTANCE hInstance)
 {
 	WNDCLASSEX wcex;
@@ -76,18 +76,15 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 	wcex.hIcon			= LoadIcon(hInstance, MAKEINTRESOURCE(IDI_PRESSXLAT));
 	wcex.hCursor		= LoadCursor(NULL, IDC_ARROW);
 	wcex.hbrBackground	= (HBRUSH)(COLOR_WINDOW+1);
-	wcex.lpszMenuName	= MAKEINTRESOURCE(IDC_PRESSXLAT);
+	wcex.lpszMenuName = NULL;// MAKEINTRESOURCE(IDC_PRESSXLAT);
 	wcex.lpszClassName	= szWindowClass;
 	wcex.hIconSm		= LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
 
 	return RegisterClassEx(&wcex);
 }
 
-//
 //   FUNCTION: InitInstance(HINSTANCE, int)
-//
 //   PURPOSE: Saves instance handle and creates main window
-//
 //   COMMENTS:
 //
 //        In this function, we save the instance handle in a global variable and
@@ -113,16 +110,12 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    return TRUE;
 }
 
-//
 //  FUNCTION: WndProc(HWND, UINT, WPARAM, LPARAM)
-//
 //  PURPOSE:  Processes messages for the main window.
 //
 //  WM_COMMAND	- process the application menu
 //  WM_PAINT	- Paint the main window
 //  WM_DESTROY	- post a quit message and return
-//
-//
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	int wmId, wmEvent;
@@ -137,9 +130,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		// Parse the menu selections:
 		switch (wmId)
 		{
-		case IDM_ABOUT:
-			DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
-			break;
 		case IDM_EXIT:
 			DestroyWindow(hWnd);
 			break;
@@ -159,24 +149,4 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
 	return 0;
-}
-
-// Message handler for about box.
-INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
-{
-	UNREFERENCED_PARAMETER(lParam);
-	switch (message)
-	{
-	case WM_INITDIALOG:
-		return (INT_PTR)TRUE;
-
-	case WM_COMMAND:
-		if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
-		{
-			EndDialog(hDlg, LOWORD(wParam));
-			return (INT_PTR)TRUE;
-		}
-		break;
-	}
-	return (INT_PTR)FALSE;
 }
