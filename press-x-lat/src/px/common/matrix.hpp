@@ -231,6 +231,10 @@ namespace px
 		{
 			return m_width * m_height;
 		}
+		bool empty()
+		{
+			return m_width == 0 || m_height == 0;
+		}
 		bool contains(coordinate<int, 2> position) const
 		{
 			return contains(position[0], position[1]);
