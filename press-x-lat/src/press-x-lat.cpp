@@ -43,17 +43,32 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 
 	hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_PRESSXLAT));
 
-	//px::matrix2<bool, 100, 100> m([](unsigned int i, unsigned int j){ return true; });
-	//bool z = m[{3, 3}];
 
-	// Main message loop:
-	while (GetMessage(&msg, NULL, 0, 0))
+	try
 	{
-		if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
+
+		// Main message loop:
+		for (bool run = true; run; run &= true)
 		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
+			//engine->frame();
+
+			// dispatch windows messages
+			while (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE) != 0)
+			{
+				run &= (GetMessage(&msg, NULL, 0, 0) == TRUE);
+				if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
+				{
+					TranslateMessage(&msg);
+					DispatchMessage(&msg);
+				}
+			}
 		}
+	}
+	catch (std::exception &exc)
+	{
+		wchar_t message[1028];
+		MultiByteToWideChar(CP_ACP, 0, exc.what(), -1, message, 1024);
+		MessageBox(NULL, message, NULL, NULL);
 	}
 
 	return (int) msg.wParam;
@@ -118,30 +133,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //  WM_DESTROY	- post a quit message and return
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	int wmId, wmEvent;
-	PAINTSTRUCT ps;
-	HDC hdc;
-
 	switch (message)
 	{
-	case WM_COMMAND:
-		wmId    = LOWORD(wParam);
-		wmEvent = HIWORD(wParam);
-		// Parse the menu selections:
-		switch (wmId)
-		{
-		case IDM_EXIT:
-			DestroyWindow(hWnd);
-			break;
-		default:
-			return DefWindowProc(hWnd, message, wParam, lParam);
-		}
-		break;
-	case WM_PAINT:
-		hdc = BeginPaint(hWnd, &ps);
-		// TODO: Add any drawing code here...
-		EndPaint(hWnd, &ps);
-		break;
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;

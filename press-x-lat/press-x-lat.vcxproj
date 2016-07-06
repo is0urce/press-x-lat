@@ -90,6 +90,7 @@
     <ClInclude Include="src\px\common\coordinate.hpp" />
     <ClInclude Include="src\px\common\matrix.hpp" />
     <ClInclude Include="src\px\common\point.hpp" />
+    <ClInclude Include="src\px\common\qtree.hpp" />
     <ClInclude Include="src\px\common\rectangle.hpp" />
     <ClInclude Include="src\px\common\string.hpp" />
     <ClInclude Include="src\px\common\timer.hpp" />

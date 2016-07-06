@@ -58,8 +58,8 @@ namespace px
 			template<typename _A, typename _F, typename _S>
 			void next_generation(_F fold, _A start, _S select)
 			{
-				m_map = std::make_unique<map>
-					([&](unsigned int i, unsigned int j)
+				// generate and swap
+				m_map = std::make_unique<map>([&](unsigned int i, unsigned int j)
 				{
 					point2 pos(i, j);
 					_A acc = start;

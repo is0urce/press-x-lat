@@ -97,6 +97,7 @@
   <ItemGroup>
     <ClCompile Include="src\automata_tests.cpp" />
     <ClCompile Include="src\matrix_test.cpp" />
+    <ClCompile Include="src\qtree_tests.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
