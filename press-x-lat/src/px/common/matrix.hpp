@@ -32,14 +32,14 @@ namespace px
 	public:
 		matrix2(const matrix2&) = delete;
 		matrix2() {}
-		matrix2(element initial)
+		matrix2(const element &initial)
 		{
-			m_data.fill(initial);
+			fill(initial);
 		}
 		template <typename _O>
 		matrix2(_O op)
 		{
-			if (!op) throw std::runtime_error("px::common::matrix2<e,w,h>::ctor(op) - op is null");
+			//if (!op) throw std::runtime_error("px::common::matrix2<e,w,h>::ctor(op) - op is null");
 			fill(op);
 		}
 
@@ -48,38 +48,26 @@ namespace px
 			std::swap(m_data, that.m_data);
 		}
 
-		template<typename _C>
-		const element& operator[](coordinate<_C, 2> key) const
+		bool contains(coordinate<int, 2> position) const
 		{
-			return m_data[key[0] * _W + key[1]];
+			return contains(position[0], position[1]);
 		}
-		template<typename _C>
-		element& operator[](coordinate<_C, 2> key)
+		bool contains(point2 position) const
 		{
-			return m_data[key[0] * _W + key[1]];
+			return contains(position.x(), position.y());
 		}
-		// specialized point acessors for easy querry with bracket-initialized points
-		const element& operator[](point2 key) const
+		bool contains(unsigned int x, unsigned int y) const
 		{
-			return m_data[key[0] * _W + key[1]];
-		}
-		element& operator[](point2 key)
-		{
-			return m_data[key[0] * _W + key[1]];
+			return x >= 0 && x < _W && y >= 0 && y < _H;
 		}
 
-		void fill(element e)
+		void fill(const element &e)
 		{
-			for (unsigned int i = 0; i < size; ++i)
-			{
-				m_data[i] = e;
-			}
+			m_data.fill(e);
 		}
 		template <typename _O>
 		void fill(_O op)
 		{
-			if (!op) throw std::runtime_error("px::common::matrix2<e,w,h>::fill(op) - op is null");
-
 			unsigned int index = 0;
 			for (unsigned int j = 0; j < _H; ++j)
 			{
@@ -93,8 +81,6 @@ namespace px
 		template <typename _O>
 		void enumerate(_O op)
 		{
-			if (!op) throw std::runtime_error("px::common::matrix2<e,w,h>::enumerate(op) - op is null");
-
 			unsigned int index = 0;
 			for (unsigned int j = 0; j < _H; ++j)
 			{
@@ -104,6 +90,87 @@ namespace px
 					++index;
 				}
 			}
+		}
+
+		// querry functions: operator[] not throws, at() throws, select returns default (outer) if out of range
+		// specialized point2 acessors for easy querry with bracket-initialized points
+		template<typename _C>
+		const element& operator[](coordinate<_C, 2> key) const
+		{
+			return m_data[key[0] * _W + key[1]];
+		}
+		template<typename _C>
+		element& operator[](coordinate<_C, 2> key)
+		{
+			return m_data[key[0] * _W + key[1]];
+		}
+		const element& operator[](point2 key) const
+		{
+			return m_data[key[0] * _W + key[1]];
+		}
+		element& operator[](point2 key)
+		{
+			return m_data[key[0] * _W + key[1]];
+		}
+
+		template<typename _C, unsigned int D>
+		const element& at(coordinate<int, 2> key) const
+		{
+			if (!contains(key)) throw std::runtime_error("px::common::matrix2<e>::at(coordinate) const - out of range");
+			return m_data[key[0] * _W + key[1]];
+		}
+		template<typename _C, unsigned int D>
+		element& at(coordinate<int, 2> key)
+		{
+			if (!contains(key)) throw std::runtime_error("px::common::matrix2<e>::at(coordinate) - out of range");
+			return m_data[key[0] * _W + key[1]];
+		}
+		const element& at(point2 key) const
+		{
+			if (!contains(key)) throw std::runtime_error("px::common::matrix2<e>::at(point) - out of range");
+			return m_data[key.x() * _W + key.y()];
+		}
+		element& at(point2 key)
+		{
+			if (!contains(key)) throw std::runtime_error("px::common::matrix2<e>::at(point) const - out of range");
+			return m_data[key.x() * _W + key.y()];
+		}
+		const element& at(unsigned int x, unsigned int y) const
+		{
+			if (!contains(x, y)) throw std::runtime_error("px::common::matrix2<e>::at(x,y) - out of range");
+			return m_data[x * _W + y];
+		}
+		element& at(unsigned int x, unsigned int y)
+		{
+			if (!contains(x, y)) throw std::runtime_error("px::common::matrix2<e>::at(x,y) const - out of range");
+			return m_data[x * _W + y];
+		}
+
+		template<typename _C, unsigned int D>
+		const element& select(coordinate<int, 2> key, const element& outer) const
+		{
+			return contains(key) ? operator[](key) : outer;
+		}
+		template<typename _C, unsigned int D>
+		element& select(coordinate<int, 2> key, element& outer)
+		{
+			return contains(key) ? operator[](key) : outer;
+		}
+		const element& select(point2 key, const element& outer) const
+		{
+			return contains(key) ? operator[](key) : outer;
+		}
+		element& select(point2 key, element& outer)
+		{
+			return contains(key) ? operator[](key) : outer;
+		}
+		const element& select(unsigned int x, unsigned int y, const element& outer) const
+		{
+			return contains(x, y) ? m_data[x * _W + y];
+		}
+		element& select(unsigned int x, unsigned int y, element& outer)
+		{
+			return contains(x, y) ? m_data[x * _W + y];
 		}
 	};
 
@@ -121,34 +188,25 @@ namespace px
 
 	public:
 		matrix2(const matrix2&) = delete;
-		matrix2(unsigned int w, unsigned int h)
+		matrix2(matrix2&& that) : m_width(0), m_height(0)
 		{
-			if (w == 0 && h == 0) throw std::runtime_error("px::common::matrix2::ctor(w, h) - size = 0");
-			m_width = w;
-			m_height = h;
+			swap(that);
+		}
+		matrix2(unsigned int w, unsigned int h) : m_width(w), m_height(h)
+		{
 			m_data.resize(w * h);
 		}
-		matrix2(unsigned int w, unsigned int h, element initial)
+		matrix2(unsigned int w, unsigned int h, const element &initial) : m_width(w), m_height(h)
 		{
-			if (w == 0 && h == 0) throw std::runtime_error("px::common::matrix2::ctor(w, h, int) - size = 0");
-			m_width = w;
-			m_height = h;
 			m_data.assign(w * h, initial);
 		}
 		template <typename _O>
-		matrix2(unsigned int w, unsigned int h, _O op)
+		matrix2(unsigned int w, unsigned int h, _O op) : matrix2(w, h)
 		{
-			if (w == 0 && h == 0) throw std::runtime_error("px::common::matrix2<e>::ctor(w, h, operator) - size = 0");
-			if (!op) throw std::runtime_error("px::common::matrix2<e>::ctor(w, h, operator) - op is null");
-
-			m_width = w;
-			m_height = h;
-			m_data.resize(w * h);
 			fill(op);
 		}
 		void resize(unsigned int w, unsigned int h)
 		{
-			if (w == 0 && h == 0) throw std::runtime_error("px::common::matrix2::resize(w, h) - size = 0");
 			m_width = w;
 			m_height = h;
 			m_data.resize(w * h);
@@ -173,27 +231,17 @@ namespace px
 		{
 			return m_width * m_height;
 		}
-
-		template<typename _C, unsigned int D>
-		const element& operator[](coordinate<int, 2> key) const
+		bool contains(coordinate<int, 2> position) const
 		{
-			return m_data[key[0] * m_width + key[1]];
+			return contains(position[0], position[1]);
 		}
-		template<typename _C, unsigned int D>
-		element& operator[](coordinate<int, 2> key)
+		bool contains(point2 position) const
 		{
-			return m_data[key[0] * m_width + key[1]];
+			return contains(position.x(), position.y());
 		}
-
-		// specialized poin2 acessors for easy querry with bracket-initialized points
-
-		const element& operator[](point2 key) const
+		bool contains(unsigned int x, unsigned int y) const
 		{
-			return m_data[key[0] * m_width + key[1]];
-		}
-		element& operator[](point2 key)
-		{
-			return m_data[key[0] * m_width + key[1]];
+			return x >= 0 && x < m_width && y >= 0 && y < m_height;
 		}
 
 		void fill(element e)
@@ -207,8 +255,6 @@ namespace px
 		template <typename _O>
 		void fill(_O op)
 		{
-			if (!op) throw std::runtime_error("px::common::matrix2<e>::fill(op) - op is null");
-
 			unsigned int index = 0;
 			for (unsigned int j = 0; j < m_height; ++j)
 			{
@@ -222,8 +268,6 @@ namespace px
 		template <typename _O>
 		void enumerate(_O op)
 		{
-			if (!op) throw std::runtime_error("px::common::matrix2<e>::enumerate(op) - op is null");
-
 			unsigned int index = 0;
 			for (unsigned int j = 0; j < m_height; ++j)
 			{
@@ -233,6 +277,88 @@ namespace px
 					++index;
 				}
 			}
+		}
+
+		// querry functions: operator[] not throws, at() throws, select returns default (outer) if out of range
+		// specialized point2 acessors for easy querry with bracket-initialized points
+
+		template<typename _C, unsigned int D>
+		const element& operator[](coordinate<int, 2> key) const
+		{
+			return m_data[key[0] * m_width + key[1]];
+		}
+		template<typename _C, unsigned int D>
+		element& operator[](coordinate<int, 2> key)
+		{
+			return m_data[key[0] * m_width + key[1]];
+		}
+		const element& operator[](point2 key) const
+		{
+			return m_data[key.x() * m_width + key.y()];
+		}
+		element& operator[](point2 key)
+		{
+			return m_data[key.x() * m_width + key.y()];
+		}
+
+		template<typename _C, unsigned int D>
+		const element& at(coordinate<int, 2> key) const
+		{
+			if (!contains(key)) throw std::runtime_error("px::common::matrix2<e>::at(coordinate) const - out of range");
+			return m_data[key[0] * m_width + key[1]];
+		}
+		template<typename _C, unsigned int D>
+		element& at(coordinate<int, 2> key)
+		{
+			if (!contains(key)) throw std::runtime_error("px::common::matrix2<e>::at(coordinate) - out of range");
+			return m_data[key[0] * m_width + key[1]];
+		}
+		const element& at(point2 key) const
+		{
+			if (!contains(key)) throw std::runtime_error("px::common::matrix2<e>::at(point) - out of range");
+			return m_data[key.x() * m_width + key.y()];
+		}
+		element& at(point2 key)
+		{
+			if (!contains(key)) throw std::runtime_error("px::common::matrix2<e>::at(point) const - out of range");
+			return m_data[key.x() * m_width + key.y()];
+		}
+		const element& at(unsigned int x, unsigned int y) const
+		{
+			if (!contains(x, y)) throw std::runtime_error("px::common::matrix2<e>::at(x,y) - out of range");
+			return m_data[x * m_width + y];
+		}
+		element& at(unsigned int x, unsigned int y)
+		{
+			if (!contains(x, y)) throw std::runtime_error("px::common::matrix2<e>::at(x,y) const - out of range");
+			return m_data[x * m_width + y];
+		}
+
+		template<typename _C, unsigned int D>
+		const element& select(coordinate<int, 2> key, const element& outer) const
+		{
+			return contains(key) ? operator[](key) : outer;
+		}
+		template<typename _C, unsigned int D>
+		element& select(coordinate<int, 2> key, element& outer)
+		{
+			return contains(key) ? operator[](key) : outer;
+		}
+		const element& select(point2 key, const element& outer) const
+		{
+			return contains(key) ? operator[](key) : outer;
+		}
+		element& select(point2 key, element& outer)
+		{
+			return contains(key) ? operator[](key) : outer;
+		}
+		const element& select(unsigned int x, unsigned int y, const element& outer) const
+		{
+			return contains(x, y) ? m_data[x * m_width + y];
+		}
+		element& select(unsigned int x, unsigned int y, element& outer)
+		{
+			return contains(x, y) ? m_data[x * m_width + y];
 		}
 	};
 }
