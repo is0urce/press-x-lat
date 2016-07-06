@@ -20,4 +20,9 @@ TEST_CASE("qtree", "[qtree]")
 	tree.remove(5, 5, 6);
 	REQUIRE_THROWS(tree.remove(5, 5, 6));
 	tree.remove(100, 100, 8);
+
+	tree.add(3, 3, 6);
+	tree.move(3, 3, 6, 8, 8);
+	REQUIRE_THROWS(tree.remove(3, 3, 6));
+	tree.remove(8, 8, 6);
 }

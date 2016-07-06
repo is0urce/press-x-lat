@@ -290,6 +290,33 @@ namespace px
 				return false;
 			}
 		}
+		qtree* move_hint(int sx, int sy, element e, int dx, int dy)
+		{
+			if (m_bucket)
+			{
+				if (!m_bucket->match(sx, sy)) throw std::runtime_error("px::qtree::move_hint - bucket coordinates not match");
+				if (!m_bucket->remove(e)) throw std::runtime_error("px::qtree::move_hint - item not found");
+
+				add(e, dx, dy);
+				return this;
+			}
+			else
+			{
+				auto &branch = select(sx, sy);
+
+				if (!branch) throw std::runtime_error("px::qtree::move_hint - no branch");
+
+				if (branch->contains(sx, sy))
+				{
+					return branch->move_hint(sx, sy, e, dx, dy);
+				}
+				else
+				{
+					erase(sx, sy, e);
+					return this;
+				}
+			}
+		}
 
 	public:
 		// this partition contains point in range (there could be no elements)
@@ -313,7 +340,6 @@ namespace px
 			}
 			insert(x, y, e);
 		}
-
 		void remove(int x, int y, element e)
 		{
 			erase(x, y, e);
@@ -367,8 +393,7 @@ namespace px
 		}
 		void move(int sx, int sy, element e, int dx, int dy)
 		{
-			remove(sx, sy, e);
-			add(dx, dy, e);
+			move_hint(sx, sy, e, dx, dy)->add(dx, dy, e);
 		}
 
 		void move(point2 from, element e, point2 destination)
