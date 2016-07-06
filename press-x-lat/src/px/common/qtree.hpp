@@ -379,6 +379,34 @@ namespace px
 				}
 			}
 		}
+		template <typename _Op>
+		void find(int x, int y, _Op fn) const
+		{
+			if (m_bucket && m_bucket.match(x, y))
+			{
+				for (auto it = m_bucket->list.begin(), last = m_bucket->list.end(); it != last; ++it)
+				{
+					if (!fn(cx, cy, *it)) return;
+				}
+			}
+			else
+			{
+				bool w = x <= m_center_x;
+				bool e = x >= m_center_x;
+				bool n = y >= m_center_y;
+				bool s = y <= m_center_y;
+				if (n)
+				{
+					if (w && nw) nw->find(x, y, radius, fn);
+					if (e && ne) ne->find(x, y, radius, fn);
+				}
+				if (s)
+				{
+					if (w && sw) sw->find(x, y, radius, fn);
+					if (e && se) se->find(x, y, radius, fn);
+				}
+			}
+		}
 		bool exists(int x, int y) const
 		{
 			if (m_bucket)

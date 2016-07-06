@@ -1,0 +1,236 @@
+// name: "font.cpp"
+// type: c++
+// desc: class implementation
+// auth: is0urce
+
+#ifdef WIN64
+	#pragma comment(lib, "lib/x64/freetype264.lib")
+#else
+	#if _DEBUG
+	#pragma comment(lib, "lib/x32/freetype264d.lib")
+	#else
+	#pragma comment(lib, "lib/x32/freetype264.lib")
+	#endif
+#endif
+
+#include "font.h"
+
+#include <algorithm>
+#include <string>
+#include <sstream>
+#include <mutex>
+
+namespace
+{
+	const unsigned int multiplier = 16; // atlas width in em
+	const unsigned int base_fill = 128; // precashe size
+	std::mutex font_mutex; // init&free mutex
+}
+
+namespace px
+{
+	namespace shell
+	{
+		FT_Library font::m_lib;
+		unsigned int font::m_count = 0;
+
+
+		font::font(const char* path, unsigned int size)
+			:
+			m_size(size),
+			m_penx(0), m_peny(0), m_next_line(0),
+			m_dirty(true), m_version(0)
+		{
+			if (!path) throw std::runtime_error("font::font(const char* path, int size) path == 0");
+			if (size == 0) throw std::runtime_error("font::font(const char* path, int size) size == 0");
+
+			std::lock_guard<std::mutex> mutex_lock(font_mutex);
+
+			// init freetype if first
+			FT_Error error;
+			if (m_count == 0)
+			{
+				error = FT_Init_FreeType(&m_lib);
+				if (error)
+				{
+					throw std::runtime_error("FT_Init_FreeType");
+				}
+				++m_count;
+			}
+
+			error = FT_New_Face(m_lib, path, 0, &m_face);
+			if (error)
+			{
+				std::string message = std::string("FT_New_Face() error path='") + path + "' + error code=" + std::to_string(error);
+				if (error == FT_Err_Unknown_File_Format)
+				{
+					throw std::runtime_error(message + " font format unknown");
+				}
+				else
+				{
+					throw std::runtime_error(message);
+				}
+			}
+			error = FT_Set_Pixel_Sizes(m_face, 0, m_size);
+			if (error)
+			{
+				throw std::runtime_error("FT_Set_Pixel_Sizes");
+			}
+
+			m_width = 1;
+			while (m_width < m_size * multiplier)
+			{
+				m_width <<= 1;
+			}
+			m_height = m_width;
+			m_atlas.reset(new char[m_width * m_height]);
+			memset(m_atlas.get(), 0, sizeof(m_atlas[0]) * m_width * m_height);
+
+			m_texture.width = m_width;
+			m_texture.height = m_height;
+			m_texture.data = m_atlas.get();
+
+			// include base
+			m_base.reset(new std::unique_ptr<glyph>[base_fill]);
+			for (unsigned int i = 0; i < base_fill; ++i)
+			{
+				m_base[i] = raster(i);
+			}
+		}
+
+		font::~font()
+		{
+			std::lock_guard<std::mutex> mutex_lock(font_mutex);
+
+			FT_Done_Face(m_face);
+			if (--m_count == 0)
+			{
+				FT_Done_FreeType(m_lib);
+			}
+		}
+
+		std::unique_ptr<glyph> font::raster(unsigned int unicode_plus)
+		{
+			FT_Error error;
+			int index = FT_Get_Char_Index(m_face, unicode_plus);
+			error = FT_Load_Glyph(m_face, index, FT_LOAD_DEFAULT);
+			if (error) throw std::runtime_error("FT_Load_Glyph");
+			error = FT_Render_Glyph(m_face->glyph, FT_RENDER_MODE_NORMAL);
+			if (error) throw std::runtime_error("FT_Render_Glyph");
+			int w = m_face->glyph->bitmap.width;
+			int h = m_face->glyph->bitmap.rows;
+
+			int xstride = w + w / 4;
+			int ystride = h + h / 4;
+			if (m_penx + xstride > m_width)
+			{
+				m_penx = 0;
+				m_peny += m_next_line;
+				m_next_line = 0;
+			}
+			if (m_peny + ystride > m_height)
+			{
+				throw std::runtime_error("atlas too small");
+			}
+
+			std::unique_ptr<glyph> g = std::make_unique<glyph>();
+			g->pixel_width = w;
+			g->pixel_height = h;
+			g->pixel_left = m_face->glyph->bitmap_left;
+			g->pixel_top = m_face->glyph->bitmap_top;
+			g->advance = (m_face->glyph->advance.x >> 6) / double(m_size);
+			g->top = double(m_peny) / m_height;
+			g->bottom = double(m_peny + h) / m_height;
+			g->left = double(m_penx) / m_width;
+			g->right = double(m_penx + w) / m_width;
+			g->width = double(w) / m_size;
+			g->height = double(h) / m_size;
+			g->vertical = (m_face->glyph->bitmap_left) / double(m_size);
+			g->horisontal = (m_face->glyph->bitmap_top) / double(m_size);
+
+			// copy bitmap
+			for (int i = 0; i < w; i++)
+			{
+				for (int j = 0; j < h; j++)
+				{
+					m_atlas[(m_peny + j) * m_width + m_penx + i] = m_face->glyph->bitmap.buffer[i + j * w];
+				}
+			}
+			m_penx += xstride;
+			m_next_line = (std::max<unsigned int>)(m_next_line, ystride);
+
+			m_dirty = true;
+			++m_version;
+			return g;
+		}
+
+		void font::include(unsigned int unicode_plus)
+		{
+			include(unicode_plus, unicode_plus);
+		}
+
+		void font::include(unsigned int uplus, unsigned int into)
+		{
+			if (into < base_fill) return;
+
+			auto &g = m_letters[into];
+			if (!g)
+			{
+				g = raster(uplus);
+			}
+		}
+
+		const glyph& font::operator[](unsigned int uplus)
+		{
+			return at(uplus);
+		}
+		const glyph& font::at(unsigned int codepoint)
+		{
+			if (codepoint == 0)
+			{
+				throw std::runtime_error("glyph& font::operator[](unsigned int uplus) uplus == 0");
+			}
+			if (codepoint < base_fill) return *m_base[codepoint];
+
+			std::unique_ptr<glyph>& glyph = m_letters[codepoint];
+			if (!glyph)
+			{
+				glyph = raster(codepoint);
+			}
+			return *glyph;
+		}
+
+
+		const font::font_texture& font::texture() const
+		{
+			return m_texture;
+		}
+
+		bool font::updated() const
+		{
+			return m_dirty;
+		}
+
+		void font::updated(bool is_updated)
+		{
+			m_dirty = is_updated;
+		}
+
+		unsigned int font::version() const
+		{
+			return m_version;
+		}
+
+		unsigned int font::size() const
+		{
+			return m_size;
+		}
+
+		double font::kerning(unsigned int l1, unsigned int l2) const
+		{
+			FT_Vector kerning;
+			FT_Get_Kerning(m_face, l1, l2, FT_KERNING_DEFAULT, &kerning);
+			return (kerning.x >> 6) / double(m_size);
+		}
+	}
+}
