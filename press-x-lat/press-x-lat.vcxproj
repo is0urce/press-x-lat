@@ -94,6 +94,7 @@
     <ClInclude Include="src\px\common\string.hpp" />
     <ClInclude Include="src\px\common\timer.hpp" />
     <ClInclude Include="src\px\common\vector.hpp" />
+    <ClInclude Include="src\px\fn\cell_automata.hpp" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>

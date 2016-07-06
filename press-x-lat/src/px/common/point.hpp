@@ -47,6 +47,16 @@ namespace px
 
 		point2& operator*=(component c) { multiply(c); return *this; };
 		point2& operator/=(component c) { divide(c); return *this; };
+
+		point2 clamped(const point2 &min, const point2 &max) const
+		{
+			point2 result;
+			for (unsigned int i = 0; i < depth; ++i)
+			{
+				result[i] = (std::min)((std::max)(min[i], m_array[i]), max[i]);
+			}
+			return result;
+		}
 	};
 
 	inline point2 operator+(point2 lhs, const point2 &rhs) { lhs += rhs; return lhs; }

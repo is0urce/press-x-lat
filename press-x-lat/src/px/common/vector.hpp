@@ -47,6 +47,7 @@ namespace px
 			{
 				result[i] = (point2::component)std::floor(m_array[i]);
 			}
+			return result;
 		}
 		point2 ceil() const
 		{
@@ -55,6 +56,7 @@ namespace px
 			{
 				result[i] = (point2::component)std::ceil(m_array[i]);
 			}
+			return result;
 		}
 		point2 round() const
 		{
@@ -63,6 +65,7 @@ namespace px
 			{
 				result[i] = (point2::component)std::round(m_array[i]);
 			}
+			return result;
 		}
 		template<typename _T, typename _O>
 		_T convert(_O fn) const
@@ -72,6 +75,7 @@ namespace px
 			{
 				result[i] = fn(m_array[i]);
 			}
+			return result;
 		}
 
 		// mutations
@@ -116,6 +120,7 @@ namespace px
 			{
 				result[i] = (std::min)((std::max)(min[i], m_array[i]), max[i]);
 			}
+			return result;
 		}
 		vector2 lerp(vector2 b, component t) const
 		{
