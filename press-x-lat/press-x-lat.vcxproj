@@ -180,7 +180,16 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\common\string.hpp" />
     <ClInclude Include="src\px\common\timer.hpp" />
     <ClInclude Include="src\px\common\vector.hpp" />
+    <ClInclude Include="src\px\core\image.hpp" />
+    <ClInclude Include="src\px\core\image_component.hpp" />
+    <ClInclude Include="src\px\es\engine.hpp" />
+    <ClInclude Include="src\px\es\i_component.hpp" />
+    <ClInclude Include="src\px\es\i_system.hpp" />
     <ClInclude Include="src\px\fn\cell_automata.hpp" />
+    <ClInclude Include="src\px\rl\bar.hpp" />
+    <ClInclude Include="src\px\rl\mass.hpp" />
+    <ClInclude Include="src\px\rl\tile.hpp" />
+    <ClInclude Include="src\px\rl\traverse.hpp" />
     <ClInclude Include="src\px\shell\canvas.hpp" />
     <ClInclude Include="src\px\shell\font.h" />
     <ClInclude Include="src\px\shell\font_texture.h" />

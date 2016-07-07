@@ -116,28 +116,34 @@ namespace px
 		template<typename _C, unsigned int D>
 		const element& at(coordinate<int, 2> key) const
 		{
-			return m_data.at(key[1] * _W + key[0]);
+			if (!contains(key)) throw std::runtime_error("px::matrix<e,w,h>::at() - out of range");
+			return operator[](key);
 		}
 		template<typename _C, unsigned int D>
 		element& at(coordinate<int, 2> key)
 		{
-			return m_data.at(key[1] * _W + key[0]);
+			if (!contains(key)) throw std::runtime_error("px::matrix<e,w,h>::at() - out of range");
+			return operator[](key);
 		}
 		const element& at(point2 key) const
 		{
-			return m_data.at(key.y() * _W + key.x());
+			if (!contains(key)) throw std::runtime_error("px::matrix<e,w,h>::at(point) - position out of range");
+			return operator[](key);
 		}
 		element& at(point2 key)
 		{
-			return m_data.at(key.y() * _W + key.x());
+			if (!contains(key)) throw std::runtime_error("px::matrix<e,w,h>::at(point) - out of range");
+			return operator[](key);
 		}
 		const element& at(unsigned int x, unsigned int y) const
 		{
-			return m_data.at(y * _W + x);
+			if (!contains(x, y)) throw std::runtime_error("px::matrix<e,w,h>::at() - out of range");
+			return m_data[y * _W + x];
 		}
 		element& at(unsigned int x, unsigned int y)
 		{
-			return m_data.at(y * _W + x);
+			if (!contains(x, y)) throw std::runtime_error("px::matrix<e,w,h>::at() - out of range");
+			return m_data[y * _W + x];
 		}
 
 		template<typename _C, unsigned int D>
@@ -298,28 +304,34 @@ namespace px
 		template<typename _C, unsigned int D>
 		const element& at(coordinate<int, 2> key) const
 		{
-			return m_data.at(key[1] * m_width + key[0]);
+			if (!contains(key)) throw std::runtime_error("px::matrix<e>::at() - out of range");
+			return operator[](key);
 		}
 		template<typename _C, unsigned int D>
 		element& at(coordinate<int, 2> key)
 		{
-			return m_data.at(key[1] * m_width + key[0]);
+			if (!contains(key)) throw std::runtime_error("px::matrix<e>::at() - out of range");
+			return operator[](key);
 		}
 		const element& at(point2 key) const
 		{
-			return m_data.at(key.y() * m_width + key.x());
+			if (!contains(key)) throw std::runtime_error("px::matrix<e>::at() - out of range");
+			return operator[](key);
 		}
 		element& at(point2 key)
 		{
-			return m_data.at(key.y() * m_width + key.x());
+			if (!contains(key)) throw std::runtime_error("px::matrix<e>::at() - out of range");
+			return operator[](key);
 		}
 		const element& at(unsigned int x, unsigned int y) const
 		{
-			return m_data.at(y * m_width + x);
+			if (!contains(x, y)) throw std::runtime_error("px::matrix<e>::at() - out of range");
+			return m_data[y * m_width + x];
 		}
 		element& at(unsigned int x, unsigned int y)
 		{
-			return m_data.at(y * m_width + x);
+			if (!contains(x, y)) throw std::runtime_error("px::matrix<e>::at() - out of range");
+			return m_data[y * m_width + x];
 		}
 
 		template<typename _C, unsigned int D>
