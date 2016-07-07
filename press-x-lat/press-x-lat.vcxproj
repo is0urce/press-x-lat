@@ -78,8 +78,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
-    <IntDir>bin\$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)bin\x32\$(Configuration)\</OutDir>
+    <IntDir>bin\x32\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -182,6 +182,9 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\common\vector.hpp" />
     <ClInclude Include="src\px\core\image.hpp" />
     <ClInclude Include="src\px\core\image_component.hpp" />
+    <ClInclude Include="src\px\core\location.hpp" />
+    <ClInclude Include="src\px\core\location_component.hpp" />
+    <ClInclude Include="src\px\core\location_system.hpp" />
     <ClInclude Include="src\px\es\engine.hpp" />
     <ClInclude Include="src\px\es\i_component.hpp" />
     <ClInclude Include="src\px\es\i_system.hpp" />
@@ -232,6 +235,7 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
   <ItemGroup>
     <None Include="config\shared\console_text.frag" />
     <None Include="config\shared\console_text.vert" />
+    <None Include="src\px\core\rendering_system.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

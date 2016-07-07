@@ -297,7 +297,7 @@ namespace px
 				if (!m_bucket->match(sx, sy)) throw std::runtime_error("px::qtree::move_hint - bucket coordinates not match");
 				if (!m_bucket->remove(e)) throw std::runtime_error("px::qtree::move_hint - item not found");
 
-				add(e, dx, dy);
+				add(dx, dy, e);
 				return this;
 			}
 			else

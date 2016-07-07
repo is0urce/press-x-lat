@@ -16,6 +16,7 @@ namespace px
 			bool m_active;
 
 		public:
+			i_component() : m_active(false) {}
 			virtual ~i_component() = 0 {}
 
 		protected:

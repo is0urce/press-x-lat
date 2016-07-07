@@ -25,6 +25,7 @@ namespace px
 		{
 		public:
 			typedef _C element;
+			typedef std::shared_ptr<element> element_ptr;
 			typedef std::array<element, _B> container_t;
 			struct batch
 			{
@@ -119,10 +120,19 @@ namespace px
 				}
 			};
 
+		private:
+			batch_t m_batches;
+			std::mutex m_mutex;
+			unsigned int m_count = 0;
+
 		public:
 			virtual ~manager() {}
 			manager() {}
 			manager(const manager&) = delete;
+
+		protected:
+			virtual void element_allocated(element* e) {}
+			virtual void element_released(element* e) {}
 
 		public:
 			// count created (including not enabled) components
@@ -130,47 +140,13 @@ namespace px
 			{
 				return m_count;
 			}
+
 			std::shared_ptr<element> make()
 			{
-				std::lock_guard<std::mutex> lock(m_mutex);
-
 				key k = select();
-
-				++m_count;
-				return std::shared_ptr<element>(&(k.batch->select(k.cursor)), [this, k](element* pointer) { destroy(k); });
-			}
-
-		private:
-			batch_t m_batches;
-			std::mutex m_mutex;
-			unsigned int m_count = 0;
-
-		private:
-			key select()
-			{
-				// select batch
-				auto it = m_batches.begin();
-				auto last = m_batches.end();
-				while (it != last && it->full())
-				{
-					++it;
-				}
-				// create new batch if no place available
-				if (it == last)
-				{
-					it = m_batches.emplace(it);
-				}
-
-				return{ it, (it->recycled() > 0) ? it->recycle() : it->increment() };
-			}
-
-			void destroy(key k)
-			{
-				std::lock_guard<std::mutex> lock(m_mutex);
-
-				k.batch->recycle(k.cursor);
-
-				--m_count;
+				element* e = &(k.batch->select(k.cursor));
+				element_allocated(e);
+				return std::shared_ptr<element>(e, [this, k](element* pointer) { destroy(k); element_released(pointer); });
 			}
 
 			template<typename _O>
@@ -181,7 +157,7 @@ namespace px
 					auto cursor = it->cursor();
 					for (unsigned int i = 0; i < cursor; ++i)
 					{
-						fn((*it)[i]);
+						fn(&(*it)[i]);
 					}
 				}
 			}
@@ -202,6 +178,38 @@ namespace px
 						++it;
 					}
 				}
+			}
+
+		private:
+			key select()
+			{
+				std::lock_guard<std::mutex> lock(m_mutex);
+
+				// select batch
+				auto it = m_batches.begin();
+				auto last = m_batches.end();
+				while (it != last && it->full())
+				{
+					++it;
+				}
+				// create new batch if no place available
+				if (it == last)
+				{
+					it = m_batches.emplace(it);
+				}
+
+				++m_count;
+
+				return{ it, (it->recycled() > 0) ? it->recycle() : it->increment() };
+			}
+
+			void destroy(key k)
+			{
+				std::lock_guard<std::mutex> lock(m_mutex);
+
+				k.batch->recycle(k.cursor);
+
+				--m_count;
 			}
 		};
 	}

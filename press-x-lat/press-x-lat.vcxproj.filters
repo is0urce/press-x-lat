@@ -123,6 +123,15 @@
     <ClInclude Include="src\px\es\manager.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\px\core\location.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\core\location_component.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\core\location_system.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -169,5 +178,6 @@
   <ItemGroup>
     <None Include="config\shared\console_text.frag" />
     <None Include="config\shared\console_text.vert" />
+    <None Include="src\px\core\rendering_system.hpp" />
   </ItemGroup>
 </Project>

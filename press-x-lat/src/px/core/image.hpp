@@ -3,8 +3,8 @@
 // desc: class declaration
 // auth: is0urce
 
-#ifndef PX_CORE_IMAGE_H
-#define PX_CORE_IMAGE_H
+#ifndef PX_CORE_IMAGE_HPP
+#define PX_CORE_IMAGE_HPP
 
 #include <px/common/color.hpp>
 

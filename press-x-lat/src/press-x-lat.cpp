@@ -8,6 +8,8 @@
 #include <px/shell/wingl.hpp>
 #include <px/shell/canvas.hpp>
 #include <px/shell/fps_counter.hpp>
+#include <px/core/rendering_system.hpp>
+#include <px/core/location_system.hpp>
 
 #define MAX_LOADSTRING 100
 
@@ -54,6 +56,8 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		px::shell::renderer renderer(&wgl);
 		px::shell::canvas canvas(10, 10);
 		px::shell::fps_counter fps;
+		px::core::rendering_system rs(&canvas);
+		auto player = rs.make_sprite('@');
 
 		// Main message loop:
 		for (bool run = true; run; run &= true)
@@ -65,6 +69,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 			canvas.resize(w, h);
 			canvas.cls();
 			canvas.write({ 0, 0 }, std::string("fps: ") + std::to_string(fps.fps()));
+			rs.update();
 			renderer.render(0, canvas);
 
 			// dispatch windows messages
