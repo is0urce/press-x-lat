@@ -14,7 +14,8 @@ namespace px
 	{
 		enum class traverse : unsigned int
 		{
-			walk,
+			lava,
+			floor = lava,
 			swim,
 			fly,
 			teleport,

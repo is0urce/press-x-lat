@@ -185,6 +185,7 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\es\engine.hpp" />
     <ClInclude Include="src\px\es\i_component.hpp" />
     <ClInclude Include="src\px\es\i_system.hpp" />
+    <ClInclude Include="src\px\es\manager.hpp" />
     <ClInclude Include="src\px\fn\cell_automata.hpp" />
     <ClInclude Include="src\px\rl\bar.hpp" />
     <ClInclude Include="src\px\rl\mass.hpp" />

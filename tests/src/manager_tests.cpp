@@ -7,7 +7,7 @@
 using namespace px;
 using namespace px::es;
 
-TEST_CASE("mass", "[mass]")
+TEST_CASE("manager", "[manager]")
 {
 	manager<int, 100> sprites;
 	auto sprite = sprites.make();
