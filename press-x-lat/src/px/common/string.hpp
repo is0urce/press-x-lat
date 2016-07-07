@@ -24,8 +24,8 @@ namespace px
 		template<typename _O>
 		static void enum_utf8(const std::string &text, _O fn)
 		{
-			unsigned int i = 0;
-			unsigned int len = text.length();
+			std::string::size_type i{};
+			auto len = text.length();
 			while (i < len)
 			{
 				unsigned char ch = text[i];

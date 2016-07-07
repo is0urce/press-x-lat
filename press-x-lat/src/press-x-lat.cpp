@@ -4,12 +4,16 @@
 #include <windowsx.h>
 #include "../resource.h"
 
-#include <px/common/matrix.hpp>
+#include <px/shell/renderer.hpp>
+#include <px/shell/wingl.hpp>
+#include <px/shell/canvas.hpp>
+#include <px/shell/fps_counter.hpp>
 
 #define MAX_LOADSTRING 100
 
 // Global Variables:
 HINSTANCE hInst;								// current instance
+HWND hWnd;
 TCHAR szTitle[MAX_LOADSTRING];					// The title bar text
 TCHAR szWindowClass[MAX_LOADSTRING];			// the main window class name
 
@@ -46,11 +50,22 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 
 	try
 	{
+		px::shell::wingl wgl(hWnd);
+		px::shell::renderer renderer(&wgl);
+		px::shell::canvas canvas(10, 10);
+		px::shell::fps_counter fps;
 
 		// Main message loop:
 		for (bool run = true; run; run &= true)
 		{
+			fps.frame_processed();
 			//engine->frame();
+			int w, h;
+			renderer.canvas_size(w, h);
+			canvas.resize(w, h);
+			canvas.cls();
+			canvas.write({ 0, 0 }, std::string("fps: ") + std::to_string(fps.fps()));
+			renderer.render(0, canvas);
 
 			// dispatch windows messages
 			while (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE) != 0)
@@ -107,10 +122,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 //
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
-   HWND hWnd;
-
    hInst = hInstance; // Store instance handle in our global variable
-
    hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
       CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, hInstance, NULL);
 

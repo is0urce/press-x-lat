@@ -97,53 +97,47 @@ namespace px
 		template<typename _C>
 		const element& operator[](coordinate<_C, 2> key) const
 		{
-			return m_data[key[0] * _W + key[1]];
+			return m_data[key[1] * _W + key[0]];
 		}
 		template<typename _C>
 		element& operator[](coordinate<_C, 2> key)
 		{
-			return m_data[key[0] * _W + key[1]];
+			return m_data[key[1] * _W + key[0]];
 		}
 		const element& operator[](point2 key) const
 		{
-			return m_data[key[0] * _W + key[1]];
+			return m_data[key.y() * _W + key.x()];
 		}
 		element& operator[](point2 key)
 		{
-			return m_data[key[0] * _W + key[1]];
+			return m_data[key.y() * _W + key.x()];
 		}
 
 		template<typename _C, unsigned int D>
 		const element& at(coordinate<int, 2> key) const
 		{
-			if (!contains(key)) throw std::runtime_error("px::common::matrix2<e>::at(coordinate) const - out of range");
-			return m_data[key[0] * _W + key[1]];
+			return m_data.at(key[1] * _W + key[0]);
 		}
 		template<typename _C, unsigned int D>
 		element& at(coordinate<int, 2> key)
 		{
-			if (!contains(key)) throw std::runtime_error("px::common::matrix2<e>::at(coordinate) - out of range");
-			return m_data[key[0] * _W + key[1]];
+			return m_data.at(key[1] * _W + key[0]);
 		}
 		const element& at(point2 key) const
 		{
-			if (!contains(key)) throw std::runtime_error("px::common::matrix2<e>::at(point) - out of range");
-			return m_data[key.x() * _W + key.y()];
+			return m_data.at(key.y() * _W + key.x());
 		}
 		element& at(point2 key)
 		{
-			if (!contains(key)) throw std::runtime_error("px::common::matrix2<e>::at(point) const - out of range");
-			return m_data[key.x() * _W + key.y()];
+			return m_data.at(key.y() * _W + key.x());
 		}
 		const element& at(unsigned int x, unsigned int y) const
 		{
-			if (!contains(x, y)) throw std::runtime_error("px::common::matrix2<e>::at(x,y) - out of range");
-			return m_data[x * _W + y];
+			return m_data.at(y * _W + x);
 		}
 		element& at(unsigned int x, unsigned int y)
 		{
-			if (!contains(x, y)) throw std::runtime_error("px::common::matrix2<e>::at(x,y) const - out of range");
-			return m_data[x * _W + y];
+			return m_data.at(y * _W + x);
 		}
 
 		template<typename _C, unsigned int D>
@@ -166,11 +160,11 @@ namespace px
 		}
 		const element& select(unsigned int x, unsigned int y, const element& outer) const
 		{
-			return contains(x, y) ? m_data[x * _W + y];
+			return contains(x, y) ? m_data[y * _W + x];
 		}
 		element& select(unsigned int x, unsigned int y, element& outer)
 		{
-			return contains(x, y) ? m_data[x * _W + y];
+			return contains(x, y) ? m_data[y * _W + x];
 		}
 	};
 
@@ -219,15 +213,15 @@ namespace px
 			std::swap(m_data, that.m_data);
 		}
 
-		unsigned int width()
+		unsigned int width() const
 		{
 			return m_width;
 		}
-		unsigned int height()
+		unsigned int height() const
 		{
 			return m_height;
 		}
-		unsigned int size()
+		unsigned int size() const
 		{
 			return m_width * m_height;
 		}
@@ -250,11 +244,7 @@ namespace px
 
 		void fill(element e)
 		{
-			unsigned int len = size();
-			for (unsigned int i = 0; i < len; ++i)
-			{
-				m_data[i] = e;
-			}
+			m_data.assign(size(), e);
 		}
 		template <typename _O>
 		void fill(_O op)
@@ -289,53 +279,47 @@ namespace px
 		template<typename _C, unsigned int D>
 		const element& operator[](coordinate<int, 2> key) const
 		{
-			return m_data[key[0] * m_width + key[1]];
+			return m_data[key[1] * m_width + key[0]];
 		}
 		template<typename _C, unsigned int D>
 		element& operator[](coordinate<int, 2> key)
 		{
-			return m_data[key[0] * m_width + key[1]];
+			return m_data[key[1] * m_width + key[0]];
 		}
 		const element& operator[](point2 key) const
 		{
-			return m_data[key.x() * m_width + key.y()];
+			return m_data[key.y() * m_width + key.x()];
 		}
 		element& operator[](point2 key)
 		{
-			return m_data[key.x() * m_width + key.y()];
+			return m_data[key.y() * m_width + key.x()];
 		}
 
 		template<typename _C, unsigned int D>
 		const element& at(coordinate<int, 2> key) const
 		{
-			if (!contains(key)) throw std::runtime_error("px::common::matrix2<e>::at(coordinate) const - out of range");
-			return m_data[key[0] * m_width + key[1]];
+			return m_data.at(key[1] * m_width + key[0]);
 		}
 		template<typename _C, unsigned int D>
 		element& at(coordinate<int, 2> key)
 		{
-			if (!contains(key)) throw std::runtime_error("px::common::matrix2<e>::at(coordinate) - out of range");
-			return m_data[key[0] * m_width + key[1]];
+			return m_data.at(key[1] * m_width + key[0]);
 		}
 		const element& at(point2 key) const
 		{
-			if (!contains(key)) throw std::runtime_error("px::common::matrix2<e>::at(point) - out of range");
-			return m_data[key.x() * m_width + key.y()];
+			return m_data.at(key.y() * m_width + key.x());
 		}
 		element& at(point2 key)
 		{
-			if (!contains(key)) throw std::runtime_error("px::common::matrix2<e>::at(point) const - out of range");
-			return m_data[key.x() * m_width + key.y()];
+			return m_data.at(key.y() * m_width + key.x());
 		}
 		const element& at(unsigned int x, unsigned int y) const
 		{
-			if (!contains(x, y)) throw std::runtime_error("px::common::matrix2<e>::at(x,y) - out of range");
-			return m_data[x * m_width + y];
+			return m_data.at(y * m_width + x);
 		}
 		element& at(unsigned int x, unsigned int y)
 		{
-			if (!contains(x, y)) throw std::runtime_error("px::common::matrix2<e>::at(x,y) const - out of range");
-			return m_data[x * m_width + y];
+			return m_data.at(y * m_width + x);
 		}
 
 		template<typename _C, unsigned int D>
@@ -358,11 +342,11 @@ namespace px
 		}
 		const element& select(unsigned int x, unsigned int y, const element& outer) const
 		{
-			return contains(x, y) ? m_data[x * m_width + y];
+			return contains(x, y) ? m_data[y * m_width + x];
 		}
 		element& select(unsigned int x, unsigned int y, element& outer)
 		{
-			return contains(x, y) ? m_data[x * m_width + y];
+			return contains(x, y) ? m_data[y * m_width + x];
 		}
 	};
 }

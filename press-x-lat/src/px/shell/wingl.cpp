@@ -10,7 +10,7 @@
 #pragma comment(lib, "lib/x32/glew32.lib")
 #endif
 
-#include "wingl.h"
+#include "wingl.hpp"
 
 #include <windows.h>
 #include <stdexcept>
@@ -44,7 +44,6 @@ namespace px
 {
 	namespace shell
 	{
-
 		wingl::wingl() : m_hwnd(0), m_hRC(0), m_binded(false)
 		{
 		}

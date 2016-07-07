@@ -3,7 +3,7 @@
 // desc: class implementation
 // auth: is0urce
 
-#include "fps_counter.h"
+#include "fps_counter.hpp"
 
 #include <px/common/timer.hpp>
 

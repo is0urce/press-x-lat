@@ -5,8 +5,8 @@
 
 // windows-specific opengl graphics
 
-#ifndef PX_SHELL_WINGL_H
-#define PX_SHELL_WINGL_H
+#ifndef PX_SHELL_WINGL_HPP
+#define PX_SHELL_WINGL_HPP
 
 #include <px/shell/opengl.h>
 

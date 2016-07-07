@@ -181,25 +181,29 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\common\timer.hpp" />
     <ClInclude Include="src\px\common\vector.hpp" />
     <ClInclude Include="src\px\fn\cell_automata.hpp" />
+    <ClInclude Include="src\px\shell\canvas.hpp" />
     <ClInclude Include="src\px\shell\font.h" />
     <ClInclude Include="src\px\shell\font_texture.h" />
-    <ClInclude Include="src\px\shell\fps_counter.h" />
+    <ClInclude Include="src\px\shell\fps_counter.hpp" />
     <ClInclude Include="src\px\shell\glsl.h" />
     <ClInclude Include="src\px\shell\opengl.h" />
     <ClInclude Include="src\px\shell\program.h" />
-    <ClInclude Include="src\px\shell\renderer.h" />
+    <ClInclude Include="src\px\shell\renderer.hpp" />
+    <ClInclude Include="src\px\shell\symbol.hpp" />
     <ClInclude Include="src\px\shell\texture.h" />
     <ClInclude Include="src\px\shell\vao.h" />
-    <ClInclude Include="src\px\shell\wingl.h" />
+    <ClInclude Include="src\px\shell\wingl.hpp" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\press-x-lat.cpp" />
+    <ClCompile Include="src\px\shell\canvas.cpp" />
     <ClCompile Include="src\px\shell\font.cpp" />
     <ClCompile Include="src\px\shell\font_texture.cpp" />
     <ClCompile Include="src\px\shell\fps_counter.cpp" />
     <ClCompile Include="src\px\shell\opengl.cpp" />
+    <ClCompile Include="src\px\shell\renderer.cpp" />
     <ClCompile Include="src\px\shell\wingl.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -214,6 +218,10 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
   <ItemGroup>
     <Image Include="press-x-lat.ico" />
     <Image Include="small.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="config\shared\console_text.frag" />
+    <None Include="config\shared\console_text.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

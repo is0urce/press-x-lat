@@ -4,8 +4,8 @@
 
 // class dedicated to count fps
 
-#ifndef PX_SHELL_FPS_COUNTER
-#define PX_SHELL_FPS_COUNTER
+#ifndef PX_SHELL_FPS_COUNTER_HPP
+#define PX_SHELL_FPS_COUNTER_HPP
 
 #include <memory>
 

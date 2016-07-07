@@ -22,7 +22,7 @@ namespace px
 		point2 m_corner;
 
 	public:
-		rectangle() : m_start{}, m_range{}, m_corner {}
+		rectangle() : m_start{}, m_range{}, m_corner{} {}
 		rectangle(point2 range) : m_start(0, 0), m_range(range), m_corner(range) {}
 		rectangle(point2 start, point2 range) : m_start(start), m_range(range), m_corner(start + range) {}
 
@@ -77,11 +77,11 @@ namespace px
 		template <typename _O>
 		void enumerate(_O fn) const
 		{
-			for (unsigned int j = m_start.y(); j < m_corner.y(); ++j)
+			for (int j = m_start.y(); j < m_corner.y(); ++j)
 			{
-				for (unsigned int i = m_start.x(); i < m_corner.x(); ++i)
+				for (int i = m_start.x(); i < m_corner.x(); ++i)
 				{
-					enum_fn(i, j);
+					fn(i, j);
 				}
 			}
 		}

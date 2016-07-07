@@ -63,9 +63,6 @@
     <ClInclude Include="src\px\shell\font_texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\px\shell\fps_counter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\px\shell\glsl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -75,16 +72,25 @@
     <ClInclude Include="src\px\shell\program.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\px\shell\renderer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\px\shell\texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\px\shell\vao.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\px\shell\wingl.h">
+    <ClInclude Include="src\px\shell\renderer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\shell\canvas.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\shell\symbol.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\shell\wingl.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\shell\fps_counter.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -110,6 +116,12 @@
     <ClCompile Include="src\px\shell\wingl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\px\shell\canvas.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\px\shell\renderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="press-x-lat.rc">
@@ -123,5 +135,9 @@
     <Image Include="press-x-lat.ico">
       <Filter>Resource Files</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="config\shared\console_text.frag" />
+    <None Include="config\shared\console_text.vert" />
   </ItemGroup>
 </Project>

@@ -13,7 +13,6 @@
 
 #include <px/shell/glsl.h>
 
-#include <vector>
 #include <memory>
 #include <functional>
 

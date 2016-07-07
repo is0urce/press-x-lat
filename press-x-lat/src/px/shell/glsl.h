@@ -11,35 +11,39 @@
 
 #include <fstream>
 #include <string>
+#include <vector>
+
+namespace
+{
+	std::string read(const std::string &path)
+	{
+		std::string result;
+		std::ifstream stream(path, std::ios::in);
+
+		if (!stream.is_open())
+		{
+			throw std::runtime_error(std::string("px:glsl - can't read file from ") + path);
+		}
+
+		std::string line = "";
+		while (!stream.eof())
+		{
+			std::getline(stream, line);
+			result.append(line + "\n");
+		}
+
+		return result;
+	}
+	bool has_suffix(const std::string &str, const std::string &suffix)
+	{
+		return str.size() >= suffix.size() && str.compare(str.size() - suffix.size(), suffix.size(), suffix) == 0;
+	}
+}
 
 namespace px
 {
 	namespace shell
 	{
-		inline std::string read(const char *path)
-		{
-			std::string result;
-			std::ifstream stream(path, std::ios::in);
-
-			if (!stream.is_open())
-			{
-				throw std::runtime_error(std::string("can't read file from") + path);
-			}
-
-			std::string line = "";
-			while (!stream.eof())
-			{
-				std::getline(stream, line);
-				result.append(line + "\n");
-			}
-
-			return result;
-		}
-		inline bool has_suffix(const std::string &str, const std::string &suffix)
-		{
-			return str.size() >= suffix.size() && str.compare(str.size() - suffix.size(), suffix.size(), suffix) == 0;
-		}
-
 		class glsl
 		{
 		public:
