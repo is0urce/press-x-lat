@@ -44,15 +44,21 @@ namespace px
 			// lame mnemonics > good names
 			void incarnate(qtree<location_component*>* space)
 			{
-				if (active())
+				if (m_space != space)
 				{
-					if (m_space)
+					if (active())
 					{
-						m_space->remove(position, this);
+						if (m_space)
+						{
+							m_space->remove(position, this);
+						}
+						if (space)
+						{
+							space->add(position, this);
+						}
 					}
-					space->add(position, this);
+					m_space = space;
 				}
-				m_space = space;
 			}
 			const point2& current() const
 			{
@@ -60,10 +66,11 @@ namespace px
 			}
 			void move(point2 destination)
 			{
-				if (active())
+				if (active() && m_space)
 				{
 					m_space->move(position, this, destination);
 				}
+				position = destination;
 			}
 		};
 	}

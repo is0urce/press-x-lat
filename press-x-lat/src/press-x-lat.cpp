@@ -57,7 +57,11 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		px::shell::canvas canvas(10, 10);
 		px::shell::fps_counter fps;
 		px::core::rendering_system rs(&canvas);
-		auto player = rs.make_sprite('@');
+		px::core::location_system ls;
+		auto sprite = rs.make_sprite('@');
+		auto l = ls.make_location({ 3, 3 });
+		sprite->link(l);
+		sprite->activate();
 
 		// Main message loop:
 		for (bool run = true; run; run &= true)

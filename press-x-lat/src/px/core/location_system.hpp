@@ -30,13 +30,13 @@ namespace px
 			virtual ~location_system() {}
 
 		protected:
-			virtual void element_allocated(location_component* l) override
+			virtual void element_allocated(location_component &l) override
 			{
-				l->incarnate(&m_space);
+				l.incarnate(&m_space);
 			}
-			virtual void element_released(location_component* l) override
+			virtual void element_released(location_component &l) override
 			{
-				l->incarnate(nullptr);
+				l.incarnate(nullptr);
 			}
 
 		public:

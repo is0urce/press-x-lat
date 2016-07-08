@@ -9,7 +9,9 @@
 #include <px/es/i_system.hpp>
 #include <px/es/manager.hpp>
 #include <px/shell/canvas.hpp>
+
 #include "image_component.hpp"
+#include "location_component.hpp"
 
 namespace px
 {
@@ -27,7 +29,17 @@ namespace px
 		protected:
 			virtual void update_system() override
 			{
-				enumerate([this](image_component* img) { draw(img); });
+				enumerate([this](image_component &img)
+				{
+					if (img.active())
+					{
+						location_component* location = (location_component*)img;
+						if (location)
+						{
+							m_canvas->write(location->current(), img.glyph, img.tint);
+						}
+					}
+				});
 			}
 
 		public:
@@ -36,12 +48,6 @@ namespace px
 				auto sprite = make();
 				sprite->glyph = glyph;
 				return sprite;
-			}
-
-		private:
-			void draw(image_component* img)
-			{
-				m_canvas->write({ 0, 0 }, img->glyph);
 			}
 		};
 	}

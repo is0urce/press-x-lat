@@ -131,8 +131,8 @@ namespace px
 			manager(const manager&) = delete;
 
 		protected:
-			virtual void element_allocated(element* e) {}
-			virtual void element_released(element* e) {}
+			virtual void element_allocated(element &e) {}
+			virtual void element_released(element &e) {}
 
 		public:
 			// count created (including not enabled) components
@@ -144,9 +144,9 @@ namespace px
 			std::shared_ptr<element> make()
 			{
 				key k = select();
-				element* e = &(k.batch->select(k.cursor));
+				element &e = k.batch->select(k.cursor);
 				element_allocated(e);
-				return std::shared_ptr<element>(e, [this, k](element* pointer) { destroy(k); element_released(pointer); });
+				return std::shared_ptr<element>(&e, [this, k](element* pointer) { destroy(k); element_released(*pointer); });
 			}
 
 			template<typename _O>
@@ -157,7 +157,7 @@ namespace px
 					auto cursor = it->cursor();
 					for (unsigned int i = 0; i < cursor; ++i)
 					{
-						fn(&(*it)[i]);
+						fn((*it)[i]);
 					}
 				}
 			}

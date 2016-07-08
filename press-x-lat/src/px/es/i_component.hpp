@@ -28,15 +28,21 @@ namespace px
 			{
 				return m_active;
 			}
-			bool activate()
+			void activate()
 			{
-				activate_component();
-				m_active = true;
+				if (!m_active)
+				{
+					activate_component();
+					m_active = true;
+				}
 			}
-			bool deactivate()
+			void deactivate()
 			{
-				deactivate_component();
-				m_active = false;
+				if (m_active)
+				{
+					deactivate_component();
+					m_active = false;
+				}
 			}
 		};
 	}
