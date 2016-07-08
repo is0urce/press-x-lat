@@ -182,6 +182,7 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\common\vector.hpp" />
     <ClInclude Include="src\px\core\image.hpp" />
     <ClInclude Include="src\px\core\image_component.hpp" />
+    <ClInclude Include="src\px\core\i_game_control.hpp" />
     <ClInclude Include="src\px\core\location.hpp" />
     <ClInclude Include="src\px\core\location_component.hpp" />
     <ClInclude Include="src\px\core\location_system.hpp" />
@@ -196,10 +197,12 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\rl\tile.hpp" />
     <ClInclude Include="src\px\rl\traverse.hpp" />
     <ClInclude Include="src\px\shell\canvas.hpp" />
+    <ClInclude Include="src\px\shell\control.hpp" />
     <ClInclude Include="src\px\shell\font.h" />
     <ClInclude Include="src\px\shell\font_texture.h" />
     <ClInclude Include="src\px\shell\fps_counter.hpp" />
     <ClInclude Include="src\px\shell\glsl.h" />
+    <ClInclude Include="src\px\shell\key.hpp" />
     <ClInclude Include="src\px\shell\opengl.h" />
     <ClInclude Include="src\px\shell\program.h" />
     <ClInclude Include="src\px\shell\renderer.hpp" />
