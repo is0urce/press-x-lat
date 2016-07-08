@@ -1,4 +1,4 @@
-// name: control.h
+// name: control.hpp
 // type: c++ header
 // desc: interface declaration
 // auth: is0urce
@@ -6,8 +6,8 @@
 // intefcace for control in main mvc pattern
 // functions return true if interaction handled
 
-#ifndef PX_CONTROL_H
-#define PX_CONTROL_H
+#ifndef PX_CONTROL_HPP
+#define PX_CONTROL_HPP
 
 #include <px/common/point.hpp>
 

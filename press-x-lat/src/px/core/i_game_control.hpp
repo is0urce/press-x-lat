@@ -24,9 +24,9 @@ namespace px
 			virtual bool player_step(point2 direction) { return false; }
 
 		public:
-			bool use(unsigned int ability_slot, point2 target) { return avatar_use(ability_slot, target); }
-			bool activate(point2 target) { return avatar_activate(target); }
-			bool step(point2 direction) { return avatar_step(direction); }
+			bool use(unsigned int ability_slot, point2 target) { return player_use(ability_slot, target); }
+			bool activate(point2 target) { return player_activate(target); }
+			bool step(point2 direction) { return player_step(direction); }
 		};
 	}
 }

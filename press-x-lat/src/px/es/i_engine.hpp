@@ -3,8 +3,8 @@
 // desc: class definition
 // auth: is0urce
 
-#ifndef PX_ES_ENGINE_HPP
-#define PX_ES_ENGINE_HPP
+#ifndef PX_ES_I_ENGINE_HPP
+#define PX_ES_I_ENGINE_HPP
 
 #include "i_system.hpp"
 
@@ -15,27 +15,31 @@ namespace px
 {
 	namespace es
 	{
-		class engine
+		class i_engine
 		{
 		private:
 			std::list<i_system*> m_systems;
 
 		public:
-			engine() {}
-			virtual ~engine() {}
+			i_engine() {}
+			virtual ~i_engine() {}
 
+			virtual void update_engine() {}
+			virtual void fixed_update_engine() {}
+
+		public:
 			void add(i_system* system)
 			{
 				m_systems.push_back(system);
 			}
 			
-		public:
 			void update()
 			{
 				for (auto &system : m_systems)
 				{
 					system->update();
 				}
+				update_engine();
 			}
 			void fixed_update()
 			{
@@ -43,6 +47,7 @@ namespace px
 				{
 					system->fixed_update();
 				}
+				fixed_update_engine();
 			}
 		};
 	}

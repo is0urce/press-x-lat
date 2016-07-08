@@ -248,9 +248,10 @@ namespace px
 			return x >= 0 && x < m_width && y >= 0 && y < m_height;
 		}
 
-		void fill(element e)
+		void fill(const element &e)
 		{
-			m_data.assign(size(), e);
+			unsigned int len = size();
+			for (unsigned int i = 0; i < len; ++i) m_data[i] = e;
 		}
 		template <typename _O>
 		void fill(_O op)

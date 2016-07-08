@@ -8,8 +8,19 @@
 #include <px/shell/wingl.hpp>
 #include <px/shell/canvas.hpp>
 #include <px/shell/fps_counter.hpp>
+
+#include <px/shell/bindings.hpp>
+#include <px/shell/key.hpp>
 #include <px/core/rendering_system.hpp>
 #include <px/core/location_system.hpp>
+#include <px/core/engine.hpp>
+
+#include <memory>
+
+using px::shell::key;
+
+std::unique_ptr<px::core::engine> engine;
+px::shell::bindings<WPARAM, key> bindings;
 
 #define MAX_LOADSTRING 100
 
@@ -23,6 +34,8 @@ TCHAR szWindowClass[MAX_LOADSTRING];			// the main window class name
 ATOM				MyRegisterClass(HINSTANCE hInstance);
 BOOL				InitInstance(HINSTANCE, int);
 LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
+
+px::shell::control ge;
 
 int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -49,6 +62,35 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 
 	hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_PRESSXLAT));
 
+	bindings.bind('W', VK_UP, VK_NUMPAD8, key::move_north);
+	bindings.bind('A', VK_LEFT, VK_NUMPAD4, key::move_west);
+	bindings.bind('S', VK_DOWN, VK_NUMPAD2, key::move_south);
+	bindings.bind('D', VK_RIGHT, VK_NUMPAD6, key::move_east);
+	bindings.bind(VK_END, VK_NUMPAD1, key::move_southwest);
+	bindings.bind(VK_NEXT, VK_NUMPAD3, key::move_southeast);
+	bindings.bind(VK_HOME, VK_NUMPAD7, key::move_northwest);
+	bindings.bind(VK_PRIOR, VK_NUMPAD9, key::move_northeast);
+	bindings.bind(VK_SPACE, VK_NUMPAD5, key::move_none);
+
+	bindings.bind('1', key::action1);
+	bindings.bind('2', key::action2);
+	bindings.bind('3', key::action3);
+	bindings.bind('4', key::action4);
+	bindings.bind('5', key::action5);
+	bindings.bind('6', key::action6);
+	bindings.bind('7', key::action7);
+	bindings.bind('8', key::action8);
+	bindings.bind('9', key::action9);
+	bindings.bind('0', key::action0);
+	bindings.bind('E', key::action_use);
+
+	bindings.bind(VK_F5, key::quick_save);
+	bindings.bind(VK_F9, key::quick_load);
+
+	bindings.bind(VK_RETURN, key::command_ok);
+	bindings.bind(VK_ESCAPE, key::command_cancel);
+
+	engine = std::make_unique<px::core::engine>();
 
 	try
 	{
@@ -56,8 +98,13 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		px::shell::renderer renderer(&wgl);
 		px::shell::canvas canvas(10, 10);
 		px::shell::fps_counter fps;
+
 		px::core::rendering_system rs(&canvas);
 		px::core::location_system ls;
+
+		engine->add(&rs);
+		engine->add(&ls);
+
 		auto sprite = rs.make_sprite('@');
 		auto l = ls.make_location({ 3, 3 });
 		sprite->link(l);
@@ -67,13 +114,15 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		for (bool run = true; run; run &= true)
 		{
 			fps.frame_processed();
-			//engine->frame();
+
 			int w, h;
 			renderer.canvas_size(w, h);
 			canvas.resize(w, h);
 			canvas.cls();
 			canvas.write({ 0, 0 }, std::string("fps: ") + std::to_string(fps.fps()));
-			rs.update();
+
+			engine->update();
+
 			renderer.render(0, canvas);
 
 			// dispatch windows messages
@@ -158,6 +207,36 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
 	case WM_DESTROY:
 		PostQuitMessage(0);
+		break;
+	case WM_KEYDOWN:
+		if (engine)
+		{
+			engine->key(bindings.select(wParam, key::not_valid));
+		}
+		break;
+	case WM_MOUSEMOVE:
+		if (engine)
+		{
+			engine->hover({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
+		}
+		break;
+	case WM_LBUTTONDOWN:
+		if (engine)
+		{
+			engine->click({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) }, 1);
+		}
+		break;
+	case WM_RBUTTONDOWN:
+		if (engine)
+		{
+			engine->click({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) }, 2);
+		}
+		break;
+	case WM_MOUSEWHEEL:
+		if (engine)
+		{
+			engine->scroll(GET_WHEEL_DELTA_WPARAM(wParam));
+		}
 		break;
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);
