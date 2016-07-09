@@ -4,11 +4,7 @@
 #include <windowsx.h>
 #include "../resource.h"
 
-#include <px/shell/renderer.hpp>
 #include <px/shell/wingl.hpp>
-#include <px/shell/canvas.hpp>
-#include <px/shell/fps_counter.hpp>
-
 #include <px/shell/bindings.hpp>
 #include <px/shell/key.hpp>
 #include <px/core/rendering_system.hpp>
@@ -38,14 +34,14 @@ LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
 px::shell::control ge;
 
 int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
-                     _In_opt_ HINSTANCE hPrevInstance,
-                     _In_ LPTSTR    lpCmdLine,
-                     _In_ int       nCmdShow)
+	_In_opt_ HINSTANCE hPrevInstance,
+	_In_ LPTSTR    lpCmdLine,
+	_In_ int       nCmdShow)
 {
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
- 	// TODO: Place code here.
+	// TODO: Place code here.
 	MSG msg;
 	HACCEL hAccelTable;
 
@@ -55,51 +51,49 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	MyRegisterClass(hInstance);
 
 	// Perform application initialization:
-	if (!InitInstance (hInstance, nCmdShow))
+	if (!InitInstance(hInstance, nCmdShow))
 	{
 		return FALSE;
 	}
 
 	hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_PRESSXLAT));
 
-	bindings.bind('W', VK_UP, VK_NUMPAD8, key::move_north);
-	bindings.bind('A', VK_LEFT, VK_NUMPAD4, key::move_west);
-	bindings.bind('S', VK_DOWN, VK_NUMPAD2, key::move_south);
-	bindings.bind('D', VK_RIGHT, VK_NUMPAD6, key::move_east);
-	bindings.bind(VK_END, VK_NUMPAD1, key::move_southwest);
-	bindings.bind(VK_NEXT, VK_NUMPAD3, key::move_southeast);
-	bindings.bind(VK_HOME, VK_NUMPAD7, key::move_northwest);
-	bindings.bind(VK_PRIOR, VK_NUMPAD9, key::move_northeast);
-	bindings.bind(VK_SPACE, VK_NUMPAD5, key::move_none);
-
-	bindings.bind('1', key::action1);
-	bindings.bind('2', key::action2);
-	bindings.bind('3', key::action3);
-	bindings.bind('4', key::action4);
-	bindings.bind('5', key::action5);
-	bindings.bind('6', key::action6);
-	bindings.bind('7', key::action7);
-	bindings.bind('8', key::action8);
-	bindings.bind('9', key::action9);
-	bindings.bind('0', key::action0);
-	bindings.bind('E', key::action_use);
-
-	bindings.bind(VK_F5, key::quick_save);
-	bindings.bind(VK_F9, key::quick_load);
-
-	bindings.bind(VK_RETURN, key::command_ok);
-	bindings.bind(VK_ESCAPE, key::command_cancel);
-
-	engine = std::make_unique<px::core::engine>();
-
 	try
 	{
-		px::shell::wingl wgl(hWnd);
-		px::shell::renderer renderer(&wgl);
-		px::shell::canvas canvas(10, 10);
-		px::shell::fps_counter fps;
 
-		px::core::rendering_system rs(&canvas);
+		bindings.bind('W', VK_UP, VK_NUMPAD8, key::move_north);
+		bindings.bind('A', VK_LEFT, VK_NUMPAD4, key::move_west);
+		bindings.bind('S', VK_DOWN, VK_NUMPAD2, key::move_south);
+		bindings.bind('D', VK_RIGHT, VK_NUMPAD6, key::move_east);
+		bindings.bind(VK_END, VK_NUMPAD1, key::move_southwest);
+		bindings.bind(VK_NEXT, VK_NUMPAD3, key::move_southeast);
+		bindings.bind(VK_HOME, VK_NUMPAD7, key::move_northwest);
+		bindings.bind(VK_PRIOR, VK_NUMPAD9, key::move_northeast);
+		bindings.bind(VK_SPACE, VK_NUMPAD5, key::move_none);
+
+		bindings.bind('1', key::action1);
+		bindings.bind('2', key::action2);
+		bindings.bind('3', key::action3);
+		bindings.bind('4', key::action4);
+		bindings.bind('5', key::action5);
+		bindings.bind('6', key::action6);
+		bindings.bind('7', key::action7);
+		bindings.bind('8', key::action8);
+		bindings.bind('9', key::action9);
+		bindings.bind('0', key::action0);
+		bindings.bind('E', key::action_use);
+
+		bindings.bind(VK_F5, key::quick_save);
+		bindings.bind(VK_F9, key::quick_load);
+
+		bindings.bind(VK_RETURN, key::command_ok);
+		bindings.bind(VK_ESCAPE, key::command_cancel);
+
+		engine = std::make_unique<px::core::engine>();
+
+		px::shell::wingl win_gl(hWnd);
+
+		px::core::rendering_system rs(&win_gl);
 		px::core::location_system ls;
 
 		engine->add(&rs);
@@ -111,19 +105,9 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		sprite->activate();
 
 		// Main message loop:
-		for (bool run = true; run; run &= true)
+		for (bool run = true; run; run &= engine->active())
 		{
-			fps.frame_processed();
-
-			int w, h;
-			renderer.canvas_size(w, h);
-			canvas.resize(w, h);
-			canvas.cls();
-			canvas.write({ 0, 0 }, std::string("fps: ") + std::to_string(fps.fps()));
-
 			engine->update();
-
-			renderer.render(0, canvas);
 
 			// dispatch windows messages
 			while (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE) != 0)
@@ -144,7 +128,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		MessageBox(NULL, message, NULL, NULL);
 	}
 
-	return (int) msg.wParam;
+	return (int)msg.wParam;
 }
 
 
@@ -156,17 +140,17 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 
 	wcex.cbSize = sizeof(WNDCLASSEX);
 
-	wcex.style			= CS_HREDRAW | CS_VREDRAW;
-	wcex.lpfnWndProc	= WndProc;
-	wcex.cbClsExtra		= 0;
-	wcex.cbWndExtra		= 0;
-	wcex.hInstance		= hInstance;
-	wcex.hIcon			= LoadIcon(hInstance, MAKEINTRESOURCE(IDI_PRESSXLAT));
-	wcex.hCursor		= LoadCursor(NULL, IDC_ARROW);
-	wcex.hbrBackground	= (HBRUSH)(COLOR_WINDOW+1);
+	wcex.style = CS_HREDRAW | CS_VREDRAW;
+	wcex.lpfnWndProc = WndProc;
+	wcex.cbClsExtra = 0;
+	wcex.cbWndExtra = 0;
+	wcex.hInstance = hInstance;
+	wcex.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_PRESSXLAT));
+	wcex.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
 	wcex.lpszMenuName = NULL;// MAKEINTRESOURCE(IDC_PRESSXLAT);
-	wcex.lpszClassName	= szWindowClass;
-	wcex.hIconSm		= LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
+	wcex.lpszClassName = szWindowClass;
+	wcex.hIconSm = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
 
 	return RegisterClassEx(&wcex);
 }
@@ -180,19 +164,19 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 //
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
-   hInst = hInstance; // Store instance handle in our global variable
-   hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-      CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, hInstance, NULL);
+	hInst = hInstance; // Store instance handle in our global variable
+	hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
+		CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, hInstance, NULL);
 
-   if (!hWnd)
-   {
-      return FALSE;
-   }
+	if (!hWnd)
+	{
+		return FALSE;
+	}
 
-   ShowWindow(hWnd, nCmdShow);
-   UpdateWindow(hWnd);
+	ShowWindow(hWnd, nCmdShow);
+	UpdateWindow(hWnd);
 
-   return TRUE;
+	return TRUE;
 }
 
 //  FUNCTION: WndProc(HWND, UINT, WPARAM, LPARAM)

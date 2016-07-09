@@ -6,6 +6,7 @@
 #ifndef PX_CORE_ENGINE_HPP
 #define PX_CORE_ENGINE_HPP
 
+#include <px/common/toggle.hpp>
 #include <px/es/i_engine.hpp>
 #include <px/shell/control.hpp>
 #include <px/shell/control_dispatcher.hpp>
@@ -19,6 +20,7 @@ namespace px
 		class engine
 			: public es::i_engine
 			, public shell::control_dispatcher
+			, public toggle<true>
 		{
 		private:
 			input_adapter m_adapter;
