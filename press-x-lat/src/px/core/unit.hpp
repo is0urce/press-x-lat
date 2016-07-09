@@ -15,6 +15,14 @@ namespace px
 	{
 		class unit : public es::component_collection
 		{
+		private:
+			bool m_destroy;
+
+		public:
+			unit() : m_destroy(false) {}
+
+			bool destroying() const { return m_destroy; }
+			void destroy() { m_destroy = true; }
 		};
 	}
 }

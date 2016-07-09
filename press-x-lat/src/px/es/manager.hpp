@@ -31,10 +31,21 @@ namespace px
 			{
 			private:
 				container_t m_elements;
+				std::array<bool, _B> m_exist;
 				std::list<unsigned int> m_recycle;
 				unsigned int m_cursor = 0;
 
 			public:
+				batch()
+				{
+					m_exist.fill(false);
+				}
+
+			public:
+				bool exists(unsigned int n) const
+				{
+					return m_exist[n];
+				}
 				unsigned int recycled() const
 				{
 					return m_recycle.size();
@@ -87,11 +98,14 @@ namespace px
 				{
 					unsigned int index = m_cursor;
 					++m_cursor;
+
+					m_exist[index] = true;
 					return index;
 				}
 				void recycle(unsigned int index)
 				{
 					m_recycle.push_back(index);
+					m_exist[index] = false;
 
 					// optimise batch
 					optimise();
@@ -102,6 +116,7 @@ namespace px
 					auto it = m_recycle.end();
 					unsigned int index = *it;
 					m_recycle.erase(it);
+					m_exist[index] = true;
 					return index;
 				}
 			};
@@ -135,7 +150,7 @@ namespace px
 			virtual void element_released(element &e) {}
 
 		public:
-			// count created (including not enabled) components
+			// count created objects
 			unsigned int count() const
 			{
 				return m_count;
@@ -146,6 +161,7 @@ namespace px
 				key k = select();
 				element &e = k.batch->select(k.cursor);
 				element_allocated(e);
+
 				return std::shared_ptr<element>(&e, [this, k](element* pointer) { destroy(k); element_released(*pointer); });
 			}
 
@@ -154,10 +170,13 @@ namespace px
 			{
 				for (auto it = m_batches.begin(), last = m_batches.end(); it != last; ++it)
 				{
-					auto cursor = it->cursor();
+					unsigned int cursor = it->cursor();
 					for (unsigned int i = 0; i < cursor; ++i)
 					{
-						fn((*it)[i]);
+						if (it->exists(i))
+						{
+							fn((*it)[i]);
+						}
 					}
 				}
 			}

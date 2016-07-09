@@ -3,6 +3,7 @@
 // desc: template
 
 // okay, stop reinventing this over and over
+// almost as bad as iheriting from bool
 
 #ifndef PX_COMMON_TOGGLE_HPP
 #define PX_COMMON_TOGGLE_HPP
