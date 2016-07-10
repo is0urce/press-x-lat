@@ -33,9 +33,17 @@ namespace px
 			int m_x;
 			int m_y;
 		public:
-			bool match(int x0, int y0) const
+			template <typename _Op>
+			void enumerate(_Op fn)
 			{
-				return m_x == x0 && m_y == y0;
+				for (auto it = list.begin(), last = list.end(); it != last; ++it)
+				{
+					if (!fn(m_x, m_y, *it)) return;
+				}
+			}
+			bool match(int x, int y) const
+			{
+				return m_x == x && m_y == y;
 			}
 			unsigned int size() const
 			{
@@ -351,14 +359,9 @@ namespace px
 		{
 			if (m_bucket)
 			{
-				int cx = m_bucket->x();
-				int cy = m_bucket->y();
-				if (std::abs(cx - x) <= (int)radius && std::abs(cy - y) <= (int)radius)
+				if (std::abs(x - m_bucket->x()) <= (int)radius && std::abs(y - m_bucket->y()) <= (int)radius)
 				{
-					for (auto it = m_bucket->list.begin(), last = m_bucket->list.end(); it != last; ++it)
-					{
-						if (!fn(cx, cy, *it)) return;
-					}
+					m_bucket->enumerate(fn);
 				}
 			}
 			else
@@ -382,29 +385,14 @@ namespace px
 		template <typename _Op>
 		void find(int x, int y, _Op fn) const
 		{
-			if (m_bucket && m_bucket.match(x, y))
+			if (m_bucket && m_bucket->match(x, y))
 			{
-				for (auto it = m_bucket->list.begin(), last = m_bucket->list.end(); it != last; ++it)
-				{
-					if (!fn(cx, cy, *it)) return;
-				}
+				m_bucket->enumerate(fn);
 			}
 			else
 			{
-				bool w = x <= m_center_x;
-				bool e = x >= m_center_x;
-				bool n = y >= m_center_y;
-				bool s = y <= m_center_y;
-				if (n)
-				{
-					if (w && nw) nw->find(x, y, radius, fn);
-					if (e && ne) ne->find(x, y, radius, fn);
-				}
-				if (s)
-				{
-					if (w && sw) sw->find(x, y, radius, fn);
-					if (e && se) se->find(x, y, radius, fn);
-				}
+				const auto& branch = select(x, y);
+				if (branch) branch->find(x, y, fn);
 			}
 		}
 		bool exists(int x, int y) const

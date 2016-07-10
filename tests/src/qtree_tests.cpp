@@ -25,4 +25,9 @@ TEST_CASE("qtree", "[qtree]")
 	tree.move(3, 3, 6, 8, 8);
 	REQUIRE_THROWS(tree.remove(3, 3, 6));
 	tree.remove(8, 8, 6);
+
+	auto fn = [](int x, int y, int e){ return true; };
+
+	tree.find(0, 0, 100, fn);
+	tree.find(0, 0, fn);
 }
