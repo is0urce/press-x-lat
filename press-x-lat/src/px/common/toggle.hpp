@@ -34,6 +34,10 @@ namespace px
 		{
 			m_switch = false;
 		}
+		void reverse_toggle()
+		{
+			m_switch = !m_switch;
+		}
 		void reset()
 		{
 			m_switch = _Initial;

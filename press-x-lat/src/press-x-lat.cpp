@@ -7,9 +7,9 @@
 #include <px/shell/wingl.hpp>
 #include <px/shell/bindings.hpp>
 #include <px/shell/key.hpp>
-#include <px/core/rendering_system.hpp>
-#include <px/core/location_system.hpp>
 #include <px/core/engine.hpp>
+
+#include <px/ui/panel.hpp>
 
 #include <memory>
 
@@ -89,20 +89,8 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		bindings.bind(VK_RETURN, key::command_ok);
 		bindings.bind(VK_ESCAPE, key::command_cancel);
 
-		engine = std::make_unique<px::core::engine>();
-
 		px::shell::wingl win_gl(hWnd);
-
-		px::core::rendering_system rs(&win_gl);
-		px::core::location_system ls;
-
-		engine->add(&rs);
-		engine->add(&ls);
-
-		auto sprite = rs.make_sprite('@');
-		auto l = ls.make_location({ 3, 3 });
-		sprite->link(l);
-		sprite->activate();
+		engine = std::make_unique<px::core::engine>(&win_gl);
 
 		// Main message loop:
 		for (bool run = true; run; run &= engine->active())
@@ -120,6 +108,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 				}
 			}
 		}
+		engine.release();
 	}
 	catch (std::exception &exc)
 	{

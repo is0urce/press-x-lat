@@ -38,27 +38,39 @@ namespace px
 				m_array[i] = -m_array[i];
 			}
 		}
-		void move(const coordinate &move)
+		template<typename _S>
+		void move(const coordinate<_S, depth> &move)
 		{
 			for (unsigned int i = 0; i < _D; ++i)
 			{
 				m_array[i] += move[i];
 			}
 		}
-		void reverse(const coordinate &move)
+		template<typename _S>
+		void reverse(const coordinate<_S, depth> &move)
 		{
 			for (unsigned int i = 0; i < _D; ++i)
 			{
 				m_array[i] -= move[i];
 			}
 		}
-		void multiply(const coordinate &multiplier)
+		template<typename _S>
+		void multiply(const coordinate<_S, depth> &multiplier)
 		{
 			for (unsigned int i = 0; i < _D; ++i)
 			{
 				m_array[i] *= multiplier[i];
 			}
 		}
+		template<typename _S>
+		void divide(const coordinate<_S, depth> &divisor)
+		{
+			for (unsigned int i = 0; i < _D; ++i)
+			{
+				m_array[i] /= divisor[i];
+			}
+		}
+
 		void multiply(component multiplier)
 		{
 			for (unsigned int i = 0; i < _D; ++i)
@@ -66,13 +78,7 @@ namespace px
 				m_array[i] *= multiplier;
 			}
 		}
-		void divide(const coordinate &divisor)
-		{
-			for (unsigned int i = 0; i < _D; ++i)
-			{
-				m_array[i] /= divisor[i];
-			}
-		}
+
 		void divide(component divisor)
 		{
 			for (unsigned int i = 0; i < _D; ++i)
@@ -160,7 +166,7 @@ namespace px
 	};
 
 	template <typename _C, unsigned int _D>
-	inline bool operator==(const coordinate<_C, _D> &a, const coordinate<_C, _D> &b)
+	bool operator==(const coordinate<_C, _D> &a, const coordinate<_C, _D> &b)
 	{
 		for (unsigned int i = 0; i < _D; ++i)
 		{
@@ -169,7 +175,7 @@ namespace px
 		return true;
 	}
 	template <typename _C, unsigned int _D>
-	inline bool operator!=(const coordinate<_C, _D> &a, const coordinate<_C, _D> &b)
+	bool operator!=(const coordinate<_C, _D> &a, const coordinate<_C, _D> &b)
 	{
 		return !operator==(a, b);
 	}

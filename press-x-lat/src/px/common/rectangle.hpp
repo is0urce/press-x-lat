@@ -43,6 +43,10 @@ namespace px
 		{
 			return m_start;
 		}
+		point2 corner() const
+		{
+			return m_start + m_range;
+		}
 		unsigned int size() const
 		{
 			return m_range.x() * m_range.y();

@@ -86,10 +86,14 @@ namespace px
 
 		vector2 operator-() const { vector2 negated = *this; negated.negate(); return negated; }
 
-		vector2& operator+=(const vector2 &rhs) { move(rhs); return *this; }
-		vector2& operator-=(const vector2 &rhs) { reverse(rhs); return *this; }
-		vector2& operator*=(const vector2 &rhs) { multiply(rhs); return *this; }
-		vector2& operator/=(const vector2 &rhs) { divide(rhs); return *this; }
+		template <typename _T>
+		vector2& operator+=(const coordinate<_T, depth> &rhs) { move(rhs); return *this; }
+		template <typename _T>
+		vector2& operator-=(const coordinate<_T, depth> &rhs) { reverse(rhs); return *this; }
+		template <typename _T>
+		vector2& operator*=(const coordinate<_T, depth> &rhs) { multiply(rhs); return *this; }
+		template <typename _T>
+		vector2& operator/=(const coordinate<_T, depth> &rhs) { divide(rhs); return *this; }
 
 		vector2& operator*=(component c) { multiply(c); return *this; };
 		vector2& operator/=(component c) { divide(c); return *this; };
@@ -130,10 +134,15 @@ namespace px
 		}
 	};
 
-	inline vector2 operator+(vector2 lhs, const vector2 &rhs) { lhs += rhs; return lhs; }
-	inline vector2 operator-(vector2 lhs, const vector2 &rhs) { lhs -= rhs; return lhs; }
-	inline vector2 operator*(vector2 lhs, const vector2 &rhs) { lhs *= rhs; return lhs; }
-	inline vector2 operator/(vector2 lhs, const vector2 &rhs) { lhs /= rhs; return lhs; }
+	template <typename _T>
+	vector2 operator+(vector2 lhs, const coordinate<_T, 2> &rhs) { lhs += rhs; return lhs; }
+	template <typename _T>
+	vector2 operator-(vector2 lhs, const coordinate<_T, 2> &rhs) { lhs -= rhs; return lhs; }
+	template <typename _T>
+	vector2 operator*(vector2 lhs, const coordinate<_T, 2> &rhs) { lhs *= rhs; return lhs; }
+	template <typename _T>
+	vector2 operator/(vector2 lhs, const coordinate<_T, 2> &rhs) { lhs /= rhs; return lhs; }
+
 	inline vector2 operator*(vector2 lhs, point2::component c) { lhs *= c; return lhs; }
 	inline vector2 operator/(vector2 lhs, point2::component c) { lhs /= c; return lhs; }
 }

@@ -8,14 +8,22 @@
 #ifndef PX_CORE_ENVIRONMENT_HPP
 #define PX_CORE_ENVIRONMENT_HPP
 
+#include <px/ui/stack_panel.hpp>
+
 namespace px
 {
 	namespace core
 	{
 		class environment
 		{
+		private:
+			ui::stack_panel m_ui;
 		public:
 			void turn();
+			const ui::panel& ui() const
+			{
+				return m_ui;
+			}
 		};
 	}
 }
