@@ -19,9 +19,8 @@ namespace px
 		private:
 			control* m_control;
 		public:
-			control_dispatcher(control* ctrl) : m_control(ctrl)
+			control_dispatcher(control& ctrl) : m_control(&ctrl)
 			{
-				if (!ctrl) throw std::runtime_error("px::shell::control_dispatcher::ctor(ctrl) - ctrl is null");
 			}
 			virtual ~control_dispatcher() {}
 

@@ -87,9 +87,6 @@
     <ClInclude Include="src\px\shell\symbol.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\px\shell\wingl.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\px\shell\fps_counter.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -183,6 +180,12 @@
     <ClInclude Include="src\px\ui\stack_panel.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\px\shell\win\wingl.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\shell\win\winkey.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -203,13 +206,13 @@
     <ClCompile Include="src\px\shell\opengl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\px\shell\wingl.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\px\shell\canvas.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\px\shell\renderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\px\shell\win\wingl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

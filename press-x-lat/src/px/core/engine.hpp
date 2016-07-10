@@ -37,7 +37,7 @@ namespace px
 
 		public:
 			engine(shell::opengl* gl)
-				: control_dispatcher(&m_adapter), m_adapter(&m_game)
+				: control_dispatcher(m_adapter), m_adapter(m_game)
 				, m_rs(gl)
 			{
 				add(&m_rs);

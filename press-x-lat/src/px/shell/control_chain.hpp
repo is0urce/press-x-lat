@@ -26,11 +26,9 @@ namespace px
 			map_fn m_map1;
 			map_fn m_map2;
 		public:
-			control_chain(control* first, control* second, map_fn map1, map_fn map2)
-				: m_first(first), m_second(second), m_map1(map1), m_map2(map2)
+			control_chain(control& first, control& second, map_fn map1, map_fn map2)
+				: m_first(&first), m_second(&second), m_map1(map1), m_map2(map2)
 			{
-				if (!first) throw std::runtime_error("px::shell::control_chain::ctor() - first is null");
-				if (!second) throw std::runtime_error("px::shell::control_chain::ctor() - second is null");
 				if (!map1) throw std::runtime_error("px::shell::control_chain::ctor() - map1 is null");
 				if (!map2) throw std::runtime_error("px::shell::control_chain::ctor() - map2 is null");
 			}
@@ -47,7 +45,7 @@ namespace px
 			}
 			virtual bool click_control(const point2 &position, unsigned int button) override
 			{
-				return m_first->click(m_map1(position)) || m_second->click(m_map2(position));
+				return m_first->click(m_map1(position), button) || m_second->click(m_map2(position), button);
 			}
 			virtual bool scroll_control(int delta) override
 			{

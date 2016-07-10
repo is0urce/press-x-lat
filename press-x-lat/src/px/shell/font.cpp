@@ -34,7 +34,6 @@ namespace px
 		FT_Library font::m_lib;
 		unsigned int font::m_count = 0;
 
-
 		font::font(const char* path, unsigned int size)
 			:
 			m_size(size),

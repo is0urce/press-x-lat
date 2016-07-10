@@ -22,7 +22,7 @@ namespace px
 			i_game_control* m_game;
 
 		public:
-			input_adapter(i_game_control* game) : m_game(game) {}
+			input_adapter(i_game_control& game) : m_game(&game) {}
 			virtual ~input_adapter() {};
 
 		public:

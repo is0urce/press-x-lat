@@ -27,11 +27,15 @@ namespace px
 			{
 				m_components.push_back(c);
 			}
-
 			// remove specified component (O=n)
 			void remove(component_ptr c)
 			{
 				m_components.remove(c);
+			}
+			// remove all components
+			void clear()
+			{
+				m_components.clear();
 			}
 
 			template <typename _Operator>
@@ -72,12 +76,6 @@ namespace px
 				}
 				if (it == end) throw std::runtime_error("px::es::component_collection::remove<c>() - component not detected");
 				return false;
-			}
-
-			// remove all components
-			void clear()
-			{
-				m_components.clear();
 			}
 
 			void activate()

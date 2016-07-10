@@ -13,14 +13,17 @@ namespace px
 	namespace shell
 	{
 		template <typename _SK, typename _VK>
-		class bindings final
+		class bindings
 		{
+		public:
+			typedef _SK sys_key;
+			typedef _VK v_key;
 		private:
 			std::map<_SK, _VK> m_bindings;
 
 		public:
 			bindings() {}
-			~bindings() {}
+			virtual ~bindings() {}
 
 		public:
 
