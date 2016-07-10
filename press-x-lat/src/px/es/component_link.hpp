@@ -4,7 +4,7 @@
 // auth: is0urce
 
 // component-to-component link
-// smart pointer for auto desptruction
+// smart pointer for auto destruction
 // expose to pointer for easy casting for multiple inherited links
 
 #ifndef PX_ES_COMPONENT_LINK_HPP

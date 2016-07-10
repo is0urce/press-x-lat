@@ -5,6 +5,7 @@
 #include <px/fn/perlin.hpp>
 
 using namespace px;
+using namespace px::fn;
 
 TEST_CASE("perlin", "[perlin]")
 {

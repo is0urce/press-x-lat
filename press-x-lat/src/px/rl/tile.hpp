@@ -13,15 +13,16 @@ namespace px
 {
 	namespace rl
 	{
+		template <typename _Img>
 		class tile : public mass<(unsigned int)traverse::max_value>
 		{
 		public:
 			typedef unsigned int img;
 		private:
-			img m_image;
+			_Img m_image;
 
 		public:
-			img appearance() const
+			const _Img& appearance() const
 			{
 				return m_image;
 			}

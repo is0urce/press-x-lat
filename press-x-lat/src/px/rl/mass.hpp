@@ -75,7 +75,6 @@ namespace px
 			template <typename _E>
 			void make_blocking(_E enum_layer) { m_traversable.reset((unsigned int)enum_layer); }
 
-
 			// utility
 			void make_wall() { traversable(false); transparent(false); }
 			void make_ground() { traversable(true); transparent(true); }
