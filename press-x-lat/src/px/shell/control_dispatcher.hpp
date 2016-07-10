@@ -1,6 +1,6 @@
 // name: control_dispatcher.hpp
 // type: c++ header
-// desc: interface declaration
+// desc: class declaration
 // auth: is0urce
 
 // send input 1:1 to other control

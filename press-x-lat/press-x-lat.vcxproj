@@ -206,6 +206,7 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\shell\bindings.hpp" />
     <ClInclude Include="src\px\shell\canvas.hpp" />
     <ClInclude Include="src\px\shell\control.hpp" />
+    <ClInclude Include="src\px\shell\control_chain.hpp" />
     <ClInclude Include="src\px\shell\control_dispatcher.hpp" />
     <ClInclude Include="src\px\shell\font.h" />
     <ClInclude Include="src\px\shell\font_texture.h" />
