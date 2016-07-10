@@ -12,7 +12,7 @@
 #include <px/shell/control_dispatcher.hpp>
 #include <px/shell/opengl.h>
 
-#include <px/es/component_collection.hpp>
+#include "unit.hpp"
 #include "rendering_system.hpp"
 #include "location_system.hpp"
 #include "input_adapter.hpp"
@@ -33,7 +33,7 @@ namespace px
 			input_adapter m_adapter;
 			game m_game;
 
-			es::component_collection m_obj;
+			unit m_unit;
 
 		public:
 			engine(shell::opengl* gl)
@@ -47,9 +47,9 @@ namespace px
 				auto l = m_ls.make_location({ 3, 3 });
 				sprite->link(l);
 
-				m_obj.add(l);
-				m_obj.add(sprite);
-				m_obj.activate();
+				m_unit.add(l);
+				m_unit.add(sprite);
+				m_unit.activate();
 			}
 			virtual ~engine() {}
 		};
