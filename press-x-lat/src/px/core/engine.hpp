@@ -22,6 +22,11 @@
 
 namespace px
 {
+	namespace
+	{
+		// should be power of 2, size not matters while it grows
+		const unsigned int space_start_width = 64;
+	}
 	namespace core
 	{
 		class engine
@@ -34,6 +39,7 @@ namespace px
 			location_system m_ls;
 			input_adapter m_adapter;
 			game m_game;
+			qtree<location_component*> m_space;
 
 			data::factory m_factory;
 
@@ -42,24 +48,22 @@ namespace px
 		public:
 			engine(shell::opengl* gl)
 				: control_dispatcher(m_adapter), m_adapter(m_game)
+				, m_space(space_start_width)
+				, m_ls(m_space)
 				, m_rs(gl)
 				, m_factory(m_rs, m_ls)
 			{
 				add(&m_rs);
 				add(&m_ls);
 
-				auto sprite = m_rs.make_sprite('@');
-				auto l = m_ls.make_location({ 3, 3 });
-				sprite->link(l);
+				auto task = m_factory.produce();
+				task->add_appearance('@');
+				auto l = task->add_location({ 5, 5 });
+				m_unit = task->assemble();
 
-				m_unit = std::make_unique<unit>();
-
-				m_unit->make_permanent(); // player should persist
-				m_unit->add(l);
-				m_unit->add(sprite);
 				m_unit->activate();
 
-				m_game.make_player(l);
+				m_game.impersonate(l);
 			}
 			virtual ~engine() {}
 		};

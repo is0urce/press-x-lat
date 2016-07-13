@@ -11,11 +11,6 @@
 
 #include "location_component.hpp"
 
-namespace
-{
-	unsigned int space_width = 64; // should be power of 2, actual size not matters, as it resises
-}
-
 namespace px
 {
 	namespace core
@@ -25,16 +20,16 @@ namespace px
 			, public es::manager<location_component, 10000>
 		{
 		private:
-			qtree<location_component*> m_space;
+			qtree<location_component*>* m_space;
 
 		public:
-			location_system() : m_space(space_width) {}
+			location_system(qtree<location_component*> &space) : m_space(&space) {}
 			virtual ~location_system() {}
 
 		protected:
 			virtual void element_allocated(location_component &l) override
 			{
-				l.incarnate(&m_space);
+				l.incarnate(m_space);
 			}
 			virtual void element_released(location_component &l) override
 			{

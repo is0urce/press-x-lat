@@ -257,6 +257,7 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
   <ItemGroup>
     <None Include="config\shared\console_text.frag" />
     <None Include="config\shared\console_text.vert" />
+    <None Include="doc\ores.json" />
     <None Include="src\px\core\rendering_system.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -245,5 +245,6 @@
     <None Include="config\shared\console_text.frag" />
     <None Include="config\shared\console_text.vert" />
     <None Include="src\px\core\rendering_system.hpp" />
+    <None Include="doc\ores.json" />
   </ItemGroup>
 </Project>

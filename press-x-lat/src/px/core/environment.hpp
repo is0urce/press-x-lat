@@ -10,6 +10,7 @@
 
 #include <px/ui/stack_panel.hpp>
 #include <px/core/location_component.hpp>
+#include "scene.hpp"
 
 #include <memory>
 
@@ -19,11 +20,11 @@ namespace px
 	{
 		class environment
 		{
-		public:
-			typedef std::shared_ptr<unit> unit_ptr;
 		private:
 			ui::stack_panel m_ui;
+
 			std::shared_ptr<location_component> m_player;
+			std::unique_ptr<scene> m_scene;
 		public:
 			void turn();
 			const ui::panel& ui() const
@@ -35,7 +36,7 @@ namespace px
 			{
 				return m_player;
 			}
-			void make_player(std::shared_ptr<location_component> unit)
+			void impersonate(std::shared_ptr<location_component> unit)
 			{
 				if (!unit) throw std::runtime_error("px::core::environment::make_player(unit) unit is null");
 
@@ -45,6 +46,15 @@ namespace px
 			{
 				location.move(target);
 				return true;
+			}
+
+			void start()
+			{
+				//m_scene = std::make_unique<scene>();
+			}
+			void end()
+			{
+				m_scene.reset();
 			}
 		};
 	}

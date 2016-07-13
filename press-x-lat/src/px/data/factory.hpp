@@ -24,9 +24,11 @@ namespace px
 		private:
 			core::rendering_system* m_rs;
 			core::location_system* m_ls;
+
 		public:
 			factory(core::rendering_system& rs, core::location_system &ls) : m_rs(&rs), m_ls(&ls) {}
 			~factory() {}
+
 		public:
 			std::unique_ptr<task> produce()
 			{
@@ -52,7 +54,7 @@ namespace px
 			bool m_done;
 		public:
 			task(factory& f) : m_factory(&f), m_unit(std::make_shared<core::unit>()), m_done(false) {}
-			~task();
+			~task() {}
 
 		public:
 			std::shared_ptr<core::location_component> add_location(point2 position)
@@ -76,6 +78,13 @@ namespace px
 			std::shared_ptr<core::unit> assemble()
 			{
 				if (m_done) throw std::runtime_error("px::core::factory::task::assemble - unit already created");
+				m_done = true;
+
+				// add components
+				m_unit->add(m_location);
+				m_unit->add(m_appearance);
+
+				// setup links
 				if (m_appearance)
 				{
 					if (m_location)
@@ -83,9 +92,6 @@ namespace px
 						m_appearance->link(m_location);
 					}
 				}
-
-				m_unit->add(m_location);
-				m_unit->add(m_appearance);
 
 				return m_unit;
 			}

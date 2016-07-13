@@ -32,15 +32,16 @@ namespace px
 			typedef matrix2<tile, cell_width, cell_height> map;
 
 		private:
-			qtree<location_component*> m_space;
+			qtree<location_component*>* m_space;
 
 			// loading
 			point2 m_focus;
 			tile m_default;
+			std::list<unit_ptr> m_units; // storage container
 
 		public:
-			scene();
-			virtual ~scene();
+			scene(qtree<location_component*> &space) : m_space(&space) {}
+			virtual ~scene() {}
 
 		private:
 			point2 cell(const point2 &absolute) const;
@@ -51,6 +52,11 @@ namespace px
 			const tile& select(const point2 &position) const;
 			bool transparent(const point2 &point) const;
 			bool traversable(const point2 &point, rl::traverse layer) const;
+
+			void add(unit_ptr unit)
+			{
+				m_units.push_back(unit);
+			}
 
 			void clear();
 		};
