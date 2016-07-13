@@ -305,7 +305,6 @@ namespace px
 				if (!m_bucket->match(sx, sy)) throw std::runtime_error("px::qtree::move_hint - bucket coordinates not match");
 				if (!m_bucket->remove(e)) throw std::runtime_error("px::qtree::move_hint - item not found");
 
-				add(dx, dy, e);
 				return this;
 			}
 			else
@@ -410,6 +409,10 @@ namespace px
 		void move(int sx, int sy, element e, int dx, int dy)
 		{
 			move_hint(sx, sy, e, dx, dy)->add(dx, dy, e);
+
+			// rollback to this if something go wrong
+			//remove(sx, sy, e);
+			//add(dx, dy, e);
 		}
 
 		void move(point2 from, element e, point2 destination)

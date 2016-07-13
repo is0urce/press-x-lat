@@ -20,7 +20,9 @@ namespace px
 {
 	namespace core
 	{
-		class location_system : public es::i_system, protected es::manager<location_component, 10000>
+		class location_system
+			: public es::i_system
+			, public es::manager<location_component, 10000>
 		{
 		private:
 			qtree<location_component*> m_space;

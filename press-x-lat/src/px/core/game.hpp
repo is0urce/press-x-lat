@@ -24,8 +24,16 @@ namespace px
 			{
 				return false;
 			}
-			virtual bool player_activate(point2 target) override { return false; }
-			virtual bool player_step(point2 direction) override { return false; }
+			virtual bool player_activate(point2 target) override
+			{
+				return false;
+			}
+			virtual bool player_step(point2 direction) override
+			{
+				auto pawn = player();
+				maneuver(*pawn, pawn->current() + direction);
+				return false;
+			}
 		};
 	}
 }

@@ -21,7 +21,7 @@ namespace px
 	{
 		class rendering_system
 			: public es::i_system
-			, protected es::manager<image_component, 10000>
+			, public es::manager<image_component, 10000>
 			, public shell::renderer
 		{
 		private:

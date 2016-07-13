@@ -26,6 +26,10 @@ namespace px
 			{
 				return m_image;
 			}
+			_Img& appearance()
+			{
+				return m_image;
+			}
 		};
 	}
 }

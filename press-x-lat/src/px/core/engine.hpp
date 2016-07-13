@@ -18,6 +18,8 @@
 #include "input_adapter.hpp"
 #include "game.hpp"
 
+#include <px/data/factory.hpp>
+
 namespace px
 {
 	namespace core
@@ -33,12 +35,15 @@ namespace px
 			input_adapter m_adapter;
 			game m_game;
 
-			unit m_unit;
+			data::factory m_factory;
+
+			std::shared_ptr<unit> m_unit;
 
 		public:
 			engine(shell::opengl* gl)
 				: control_dispatcher(m_adapter), m_adapter(m_game)
 				, m_rs(gl)
+				, m_factory(m_rs, m_ls)
 			{
 				add(&m_rs);
 				add(&m_ls);
@@ -47,9 +52,14 @@ namespace px
 				auto l = m_ls.make_location({ 3, 3 });
 				sprite->link(l);
 
-				m_unit.add(l);
-				m_unit.add(sprite);
-				m_unit.activate();
+				m_unit = std::make_unique<unit>();
+
+				m_unit->make_permanent(); // player should persist
+				m_unit->add(l);
+				m_unit->add(sprite);
+				m_unit->activate();
+
+				m_game.make_player(l);
 			}
 			virtual ~engine() {}
 		};
