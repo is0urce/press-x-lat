@@ -287,7 +287,7 @@ namespace px
 			}
 			else
 			{
-				auto &branch = select(x, y);
+				ptr &branch = select(x, y);
 
 				if (!branch) throw std::runtime_error("px::qtree::remove - no branch");
 
@@ -309,11 +309,14 @@ namespace px
 			}
 			else
 			{
-				auto &branch = select(sx, sy);
+				ptr &branch = select(sx, sy);
 
-				if (!branch) throw std::runtime_error("px::qtree::move_hint - no branch");
+				if (!branch)
+				{
+					throw std::runtime_error("px::qtree::move_hint - no branch");
+				}
 
-				if (branch->contains(sx, sy))
+				if (branch->contains(dx, dy))
 				{
 					return branch->move_hint(sx, sy, e, dx, dy);
 				}
@@ -329,10 +332,10 @@ namespace px
 		// this partition contains point in range (there could be no elements)
 		bool contains(int x, int y) const
 		{
-			return x >= m_center_x - (int)m_range
-				&& x < m_center_x + (int)m_range
-				&& y >= m_center_y - (int)m_range
-				&& y < m_center_y + (int)m_range;
+			return x >= m_center_x - static_cast<int>(m_range)
+				&& x < m_center_x + static_cast<int>(m_range)
+				&& y >= m_center_y - static_cast<int>(m_range)
+				&& y < m_center_y + static_cast<int>(m_range);
 		}
 		bool leaf() const
 		{

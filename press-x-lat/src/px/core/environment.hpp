@@ -10,7 +10,8 @@
 
 #include <px/ui/stack_panel.hpp>
 #include <px/core/location_component.hpp>
-#include "scene.hpp"
+#include <px/rl/traverse.hpp>
+#include "terrain.hpp"
 
 #include <memory>
 
@@ -25,10 +26,14 @@ namespace px
 			ui::stack_panel m_ui;
 
 			std::shared_ptr<location_component> m_player;
-			std::unique_ptr<scene> m_scene;
+			terrain* m_terrain;
+			qtree<location_component*>* m_space;
 
 		public:
-			environment() : m_time(0)
+			environment(terrain& terra, qtree<location_component*> &space)
+				: m_terrain(&terra)
+				, m_space(&space)
+				, m_time(0)
 			{
 			}
 			virtual ~environment()
@@ -61,20 +66,41 @@ namespace px
 			}
 			bool maneuver(location_component& location, point2 target)
 			{
-				location.move(target);
-				turn();
-				return true;
+				bool result = false;
+				auto layers = rl::traverse::floor;
+				if (m_terrain->traversable(target, layers))
+				{
+					location_component* vs = nullptr;
+					m_space->find(target.x(), target.y(), 0, [&](int x, int y, location_component* lc)
+					{
+						bool cont = true;
+						if (!lc->traversable(layers))
+						{
+							vs = lc;
+							cont = false;
+						}
+						return cont;
+					});
+					if (vs)
+					{
+					}
+					else
+					{
+						location.move(target);
+						turn();
+						result = true;
+					}
+				}
+				return result;
 			}
 
 			void start()
 			{
 				m_time = 0;
-				m_scene = std::make_unique<scene>();
 			}
 			void end()
 			{
 				m_time = 0;
-				m_scene.reset();
 			}
 		};
 	}

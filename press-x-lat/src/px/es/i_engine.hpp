@@ -44,7 +44,7 @@ namespace px
 			
 			void update()
 			{
-				if (fixed())
+				while (fixed())
 				{
 					fixed_update();
 				}

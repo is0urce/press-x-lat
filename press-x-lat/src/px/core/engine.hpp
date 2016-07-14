@@ -20,7 +20,7 @@
 
 #include "unit.hpp"
 #include "game.hpp"
-#include "scene.hpp"
+#include "terrain.hpp"
 
 #include "input_adapter.hpp"
 
@@ -52,7 +52,8 @@ namespace px
 			rendering_system m_rs;
 			terrain_system m_ts;
 
-			scene m_scene;
+			terrain m_terrain;
+			environment m_environment;
 			game m_game;
 			unsigned int m_turn;
 
@@ -66,8 +67,10 @@ namespace px
 				, m_canvas(1, 1)
 				, m_ls(m_space)
 				, m_rs(m_canvas)
-				, m_ts(m_canvas, m_scene)
+				, m_ts(m_canvas, m_terrain)
 				, m_factory(m_rs, m_ls)
+				, m_environment(m_terrain, m_space)
+				, m_game(m_environment)
 				, m_turn(0)
 			{
 				add(&m_ls);
@@ -77,13 +80,20 @@ namespace px
 				auto task = m_factory.produce();
 				auto a = task->add_appearance('@');
 				auto l = task->add_location({ 25, 25 });
-				a->tint = { 0, 1, 0 };
+				a->tint = { 1, 1, 1 };
 
-				m_scene.add(task->assemble());
+				m_terrain.add(task->assemble());
 
-				m_game.impersonate(l);
+				m_environment.impersonate(l);
 				m_rs.focus_camera(l);
 				m_ts.focus_camera(l);
+
+				task = m_factory.produce();
+				a = task->add_appearance('g');
+				l = task->add_location({ 28, 28 });
+				a->tint = { 1, 0, 0 };
+
+				m_terrain.add(task->assemble());
 			}
 			virtual ~engine()
 			{
@@ -107,7 +117,7 @@ namespace px
 			virtual bool fixed() override
 			{
 				bool result = false;
-				auto turn = m_game.time();
+				auto turn = m_environment.time();
 				if (m_turn != turn)
 				{
 					m_turn = turn;

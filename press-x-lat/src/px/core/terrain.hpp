@@ -1,10 +1,10 @@
-// name: scene.hpp
+// name: terrain.hpp
 // type: c++ header
-// desc: 'scene' class definition
+// desc: class definition
 // auth: is0urce
 
-#ifndef PX_CORE_SCENE_H
-#define PX_CORE_SCENE_H
+#ifndef PX_CORE_TERRAIN_HPP
+#define PX_CORE_TERRAIN_HPP
 
 #include "location_component.hpp"
 #include "unit.hpp"
@@ -21,7 +21,7 @@ namespace px
 {
 	namespace core
 	{
-		class scene
+		class terrain
 		{
 		public:
 			static const unsigned int cell_width = 50;
@@ -41,17 +41,17 @@ namespace px
 			world m_world;
 
 		public:
-			scene()
+			terrain()
 				: m_world(0)
 			{
 				m_world.arrange(point2(0, 0), m_terrain, m_units);
 				m_default.appearance() = { '.', { 0, 0, 0, 0 } };
 				m_default.make_wall();
 			}
-			virtual ~scene()
+			virtual ~terrain()
 			{
 			}
-			scene(const scene&) = delete;
+			terrain(const terrain&) = delete;
 
 		private:
 			point2 cell(const point2 &absolute) const;

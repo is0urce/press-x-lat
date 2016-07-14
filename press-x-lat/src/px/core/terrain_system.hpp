@@ -8,7 +8,7 @@
 
 #include <px/es/i_system.hpp>
 #include <px/shell/canvas.hpp>
-#include "scene.hpp"
+#include "terrain.hpp"
 
 
 namespace px
@@ -20,12 +20,12 @@ namespace px
 		{
 		private:
 			shell::canvas* m_canvas;
-			scene* m_scene;
+			terrain* m_terrain;
 			std::shared_ptr<location_component> m_camera;
 
 		public:
-			terrain_system(shell::canvas& cnv, scene& s)
-				: m_canvas(&cnv), m_scene(&s)
+			terrain_system(shell::canvas& cnv, terrain& terra)
+				: m_canvas(&cnv), m_terrain(&terra)
 			{
 			}
 			virtual ~terrain_system()
@@ -46,7 +46,7 @@ namespace px
 				{
 					for (int i = 0; i < w; ++i)
 					{
-						auto img = m_scene->select(start.moved(i, j)).appearance();
+						auto img = m_terrain->select(start.moved(i, j)).appearance();
 						m_canvas->write(point2(i, h - j - 1), img.glyph, img.tint);
 					}
 				}

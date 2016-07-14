@@ -13,11 +13,18 @@ namespace px
 {
 	namespace core
 	{
-		class game : public environment, public i_game_control
+		class game : public i_game_control
 		{
+		private:
+			environment* m_environment;
 		public:
-			game() {}
-			virtual ~game() {}
+			game(environment& e) : m_environment(&e)
+			{
+			}
+			virtual ~game()
+			{
+			}
+			game(const game&) = delete;
 
 		protected:
 			virtual bool player_use(unsigned int ability_slot, point2 target) override
@@ -30,8 +37,8 @@ namespace px
 			}
 			virtual bool player_step(point2 direction) override
 			{
-				auto pawn = player();
-				maneuver(*pawn, pawn->current() + direction);
+				auto pawn = m_environment->player();
+				m_environment->maneuver(*pawn, pawn->current() + direction);
 				return false;
 			}
 		};

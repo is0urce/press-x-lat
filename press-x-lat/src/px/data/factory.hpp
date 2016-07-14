@@ -63,6 +63,7 @@ namespace px
 				m_location = m_factory->make_location();
 
 				m_location->move(position);
+				m_location->make_blocking();
 
 				return m_location;
 			}
