@@ -54,7 +54,7 @@ namespace px
 				return m_ui;
 			}
 
-			std::shared_ptr<location_component> player()
+			auto player() -> decltype(m_player)
 			{
 				return m_player;
 			}
@@ -64,34 +64,41 @@ namespace px
 
 				m_player = unit;
 			}
+			location_component* blocking(point2 position, rl::traverse layer) const
+			{
+				location_component* blocking = nullptr;
+				m_space->find(position.x(), position.y(), [&](int x, int y, location_component* component)
+				{
+					bool search = true;
+					if (!component->traversable(layer))
+					{
+						blocking = component;
+						search = false;
+					}
+					return search;
+				});
+				return blocking;
+			}
 			bool maneuver(location_component& location, point2 target)
 			{
-				bool result = false;
+				bool action = false;
 				auto layers = rl::traverse::floor;
 				if (m_terrain->traversable(target, layers))
 				{
-					location_component* vs = nullptr;
-					m_space->find(target.x(), target.y(), 0, [&](int x, int y, location_component* lc)
+					// find blocking unit
+					location_component* versus = blocking(target, rl::traverse::floor);
+
+					if (versus)
 					{
-						bool cont = true;
-						if (!lc->traversable(layers))
-						{
-							vs = lc;
-							cont = false;
-						}
-						return cont;
-					});
-					if (vs)
-					{
+						action = true;
 					}
 					else
 					{
 						location.move(target);
-						turn();
-						result = true;
+						action = true;
 					}
 				}
-				return result;
+				return action;
 			}
 
 			void start()
