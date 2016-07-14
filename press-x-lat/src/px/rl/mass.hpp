@@ -14,16 +14,16 @@ namespace px
 {
 	namespace rl
 	{
-		template <unsigned int layers = 1>
+		template <size_t _Layers = 1>
 		class mass
 		{
 		public:
-			typedef std::bitset<layers> bitset;
+			typedef std::bitset<_Layers> bitset;
 
 			// attributes
 		private:
 			bool m_transparent;
-			std::bitset<layers> m_traversable;
+			std::bitset<_Layers> m_traversable;
 
 			// ctor & dtor
 		public:
@@ -45,18 +45,18 @@ namespace px
 			// traversability accessors
 
 			bool traversable() const { return m_traversable.test(0); }
-			bool traversable(unsigned int layer) const { return m_traversable.test(layer); }
+			bool traversable(size_t layer) const { return m_traversable.test(layer); }
 			bool traversable(bitset l) const { return (m_traversable & l).any(); }
 			template <typename _E>
-			bool traversable(_E enum_layer) const { return traversable((unsigned int)enum_layer); }
+			bool traversable(_E enum_layer) const { return traversable(static_cast<size_t>(enum_layer)); }
 
-			void make_traversable(unsigned int layer, bool val)	{ m_traversable.set(layer, val); }
-			void make_traversable(unsigned int layer) { m_traversable.set(layer); }
+			void make_traversable(size_t layer, bool val)	{ m_traversable.set(layer, val); }
+			void make_traversable(size_t layer) { m_traversable.set(layer); }
 			void make_traversable(bool val)	{ m_traversable.set(0, val); }
 			void make_traversable() { m_traversable.set(0); }
 			void make_traversable(bitset layers) { m_traversable |= layers; }
 			void make_blocking() { m_traversable.reset(0); }
-			void make_blocking(unsigned int layer) { m_traversable.reset(layer); }
+			void make_blocking(size_t layer) { m_traversable.reset(layer); }
 			void make_blocking(bitset layers) { m_traversable &= layers; }
 			void make_traversable(bitset l, bool val)
 			{
@@ -70,15 +70,15 @@ namespace px
 				}
 			}
 			template <typename _E>
-			void make_traversable(_E enum_layer) { m_traversable.set((unsigned int)enum_layer); }
+			void make_traversable(_E enum_layer) { m_traversable.set(static_cast<size_t>(enum_layer)); }
 			template <typename _E>
-			void make_traversable(_E enum_layer, bool val) { traversable((unsigned int)enum_layer, val); }
+			void make_traversable(_E enum_layer, bool val) { traversable(static_cast<size_t>(enum_layer), val); }
 			template <typename _E>
-			void make_blocking(_E enum_layer) { m_traversable.reset((unsigned int)enum_layer); }
+			void make_blocking(_E enum_layer) { m_traversable.reset(static_cast<size_t>(enum_layer)); }
 
 			// utility
-			void make_wall() { traversable(false); transparent(false); }
-			void make_ground() { traversable(true); transparent(true); }
+			void make_wall() { make_blocking(); make_opaque(); }
+			void make_ground() { make_traversable(); make_transparent(); }
 		};
 	}
 }

@@ -80,21 +80,21 @@ namespace px
 				if (m_num == 0) throw std::logic_error("vao::init - count == 0");
 
 				m_depth = depths;
-				for (unsigned int i = 0; i < m_num; ++i)
+				for (size_t i = 0; i < m_num; ++i)
 				{
 					if (depths[i] == 0) throw std::runtime_error("vao::init - depth == 0");
 				}
 				m_buffers.resize(m_num, 0);
 
 				glGenBuffers(1, &m_indices);
-				glGenBuffers((GLsizei)m_num, &m_buffers[0]);
+				glGenBuffers(static_cast<GLsizei>(m_num), &m_buffers[0]);
 				glGenVertexArrays(1, &m_vao);
 				glBindVertexArray(m_vao);
-				for (unsigned int i = 0; i < m_num; ++i)
+				for (size_t i = 0; i < m_num; ++i)
 				{
 					glEnableVertexAttribArray(i);
 				}
-				for (unsigned int i = 0; i < m_num; ++i)
+				for (size_t i = 0; i < m_num; ++i)
 				{
 					glBindBuffer(GL_ARRAY_BUFFER, m_buffers[i]);
 					glVertexAttribPointer(i, depths[i], GL_FLOAT, GL_FALSE, 0, 0);
@@ -179,7 +179,7 @@ namespace px
 				if (m_length > 0)
 				{
 					glBindVertexArray(m_vao);
-					glDrawElements(element_type, (GLsizei)m_length, GL_UNSIGNED_INT, 0);
+					glDrawElements(element_type, static_cast<GLsizei>(m_length), GL_UNSIGNED_INT, 0);
 				}
 			}
 			void draw() const

@@ -14,11 +14,15 @@
 #include <px/shell/renderer.hpp>
 #include <px/shell/fps_counter.hpp>
 
-#include "unit.hpp"
 #include "rendering_system.hpp"
 #include "location_system.hpp"
-#include "input_adapter.hpp"
+#include "terrain_system.hpp"
+
+#include "unit.hpp"
 #include "game.hpp"
+#include "scene.hpp"
+
+#include "input_adapter.hpp"
 
 #include <px/data/factory.hpp>
 
@@ -44,14 +48,15 @@ namespace px
 			shell::canvas m_canvas;
 			shell::fps_counter m_fps;
 
-			rendering_system m_rs;
 			location_system m_ls;
+			rendering_system m_rs;
+			terrain_system m_ts;
 
+			scene m_scene;
 			game m_game;
 			unsigned int m_turn;
 
 			data::factory m_factory;
-			std::shared_ptr<unit> m_unit;
 
 		public:
 			engine(shell::opengl* gl)
@@ -61,21 +66,24 @@ namespace px
 				, m_canvas(1, 1)
 				, m_ls(m_space)
 				, m_rs(m_canvas)
+				, m_ts(m_canvas, m_scene)
 				, m_factory(m_rs, m_ls)
 				, m_turn(0)
 			{
-				add(&m_rs);
 				add(&m_ls);
+				add(&m_ts);
+				add(&m_rs);
 
 				auto task = m_factory.produce();
 				auto a = task->add_appearance('@');
-				auto l = task->add_location({ 0, 0 });
+				auto l = task->add_location({ 25, 25 });
 				a->tint = { 0, 1, 0 };
-				m_unit = task->assemble();
 
-				m_unit->activate();
+				m_scene.add(task->assemble());
 
 				m_game.impersonate(l);
+				m_rs.focus_camera(l);
+				m_ts.focus_camera(l);
 			}
 			virtual ~engine()
 			{

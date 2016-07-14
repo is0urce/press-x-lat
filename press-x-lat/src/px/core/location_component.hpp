@@ -16,10 +16,9 @@ namespace px
 	{
 		class location_component : public es::i_component, protected location
 		{
-		//public:
-		//	typedef qtree<location_component*> space_t;
 		private:
 			qtree<location_component*>* m_space;
+
 		public:
 			location_component() : m_space(nullptr) {}
 			virtual ~location_component() {}

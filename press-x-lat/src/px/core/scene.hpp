@@ -24,8 +24,8 @@ namespace px
 		class scene
 		{
 		public:
-			static const unsigned int cell_width = 10;
-			static const unsigned int cell_height = 10;
+			static const unsigned int cell_width = 50;
+			static const unsigned int cell_height = cell_width;
 
 		public:
 			typedef std::shared_ptr<unit> unit_ptr;
@@ -45,6 +45,8 @@ namespace px
 				: m_world(0)
 			{
 				m_world.arrange(point2(0, 0), m_terrain, m_units);
+				m_default.appearance() = { '.', { 0, 0, 0, 0 } };
+				m_default.make_wall();
 			}
 			virtual ~scene()
 			{
@@ -57,7 +59,7 @@ namespace px
 		public:
 			const tile& select(const point2 &position) const
 			{
-				m_terrain.select(position, m_default);
+				return m_terrain.select(position, m_default);
 			}
 			bool transparent(const point2 &point) const
 			{
@@ -71,11 +73,7 @@ namespace px
 			void add(unit_ptr unit)
 			{
 				m_units.push_back(unit);
-			}
-
-			void clear()
-			{
-				m_units.clear();
+				unit->activate();
 			}
 		};
 	}

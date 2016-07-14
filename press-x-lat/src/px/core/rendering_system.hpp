@@ -56,11 +56,9 @@ namespace px
 			}
 
 		public:
-			auto make_sprite(unsigned int glyph)-> decltype(make())
+			void focus_camera(std::shared_ptr<location_component> camera)
 			{
-				auto sprite = make();
-				sprite->glyph = glyph;
-				return sprite;
+				m_camera = camera;
 			}
 		};
 	}

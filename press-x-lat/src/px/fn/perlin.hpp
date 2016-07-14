@@ -49,7 +49,7 @@ namespace px
 			{
 				m_matrix.fill([&rng](unsigned int i, unsigned int j) -> gradient
 				{
-					auto num = pi * 2 * rng();
+					auto num = pi * 2.0 * rng();
 					return{ std::cos(num), std::sin(num) };
 				});
 			}
@@ -58,23 +58,24 @@ namespace px
 			double sample(double x, double y) const
 			{
 				// get remainder for 'repeat tiling' effect
+				// tiling also used in fractal sublevel sampling
 				x = modulo(x, _W);
-				y = modulo(x, _H);
+				y = modulo(y, _H);
 
 				// grid cell square coordinates
-				int x0 = (int)std::floor(x);
-				int y0 = (int)std::floor(y);
+				int x0 = static_cast<int>(std::floor(x));
+				int y0 = static_cast<int>(std::floor(y));
 				int x1 = x0 + 1;
 				int y1 = y0 + 1;
-
-				// interpolation weights
-				auto sx = x - (double)x0;
-				auto sy = y - (double)y0;
 
 				auto g00 = vertice_gradient(x0, y0, x, y);
 				auto g10 = vertice_gradient(x1, y0, x, y);
 				auto g01 = vertice_gradient(x0, y1, x, y);
 				auto g11 = vertice_gradient(x1, y1, x, y);
+
+				// interpolation weights
+				auto sx = x - static_cast<double>(x0);
+				auto sy = y - static_cast<double>(y0);
 
 				auto d = lerp(g00, g10, sx);
 				auto u = lerp(g01, g11, sx);
@@ -103,8 +104,8 @@ namespace px
 			double vertice_gradient(int vx, int vy, double x, double y) const
 			{
 				// distance
-				auto dx = x - (double)vx;
-				auto dy = y - (double)vy;
+				auto dx = x - static_cast<double>(vx);
+				auto dy = y - static_cast<double>(vy);
 
 				vx = vx >= _W ? 0 : vx;
 				vy = vy >= _H ? 0 : vy;
