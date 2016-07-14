@@ -21,12 +21,29 @@ namespace px
 		class environment
 		{
 		private:
+			unsigned int m_time;
 			ui::stack_panel m_ui;
 
 			std::shared_ptr<location_component> m_player;
 			std::unique_ptr<scene> m_scene;
+
 		public:
-			void turn();
+			environment() : m_time(0)
+			{
+			}
+			virtual ~environment()
+			{
+			}
+
+		public:
+			void turn()
+			{
+				++m_time;
+			}
+			auto time() -> decltype(m_time)
+			{
+				return m_time;
+			}
 			const ui::panel& ui() const
 			{
 				return m_ui;
@@ -45,15 +62,18 @@ namespace px
 			bool maneuver(location_component& location, point2 target)
 			{
 				location.move(target);
+				turn();
 				return true;
 			}
 
 			void start()
 			{
-				//m_scene = std::make_unique<scene>();
+				m_time = 0;
+				m_scene = std::make_unique<scene>();
 			}
 			void end()
 			{
+				m_time = 0;
 				m_scene.reset();
 			}
 		};

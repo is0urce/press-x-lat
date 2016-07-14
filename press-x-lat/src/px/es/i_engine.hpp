@@ -24,22 +24,45 @@ namespace px
 			i_engine() {}
 			virtual ~i_engine() {}
 
-			virtual void update_engine() {}
-			virtual void fixed_update_engine() {}
+			virtual void pre_update_engine() {}
+			virtual void post_update_engine() {}
+			virtual bool fixed() { return false; }
 
 		public:
 			void add(i_system* system)
 			{
 				m_systems.push_back(system);
 			}
+			void remove(i_system* system)
+			{
+				m_systems.remove(system);
+			}
+			void clear()
+			{
+				m_systems.clear();
+			}
 			
 			void update()
 			{
+				if (fixed())
+				{
+					fixed_update();
+				}
+
+				pre_update_engine();
+				for (auto &system : m_systems)
+				{
+					system->pre_update();
+				}
 				for (auto &system : m_systems)
 				{
 					system->update();
 				}
-				update_engine();
+				for (auto &system : m_systems)
+				{
+					system->post_update();
+				}
+				post_update_engine();
 			}
 			void fixed_update()
 			{
@@ -47,7 +70,6 @@ namespace px
 				{
 					system->fixed_update();
 				}
-				fixed_update_engine();
 			}
 		};
 	}

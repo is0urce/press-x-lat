@@ -55,8 +55,9 @@ namespace px
 			void make_traversable(bool val)	{ m_traversable.set(0, val); }
 			void make_traversable() { m_traversable.set(0); }
 			void make_traversable(bitset layers) { m_traversable |= layers; }
+			void make_blocking() { m_traversable.reset(0); }
 			void make_blocking(unsigned int layer) { m_traversable.reset(layer); }
-			void make_blockingb(bitset layers) { m_traversable &= layers; }
+			void make_blocking(bitset layers) { m_traversable &= layers; }
 			void make_traversable(bitset l, bool val)
 			{
 				if (val)
