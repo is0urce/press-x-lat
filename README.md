@@ -26,3 +26,7 @@ px::rl - game mechanics
 
 px::ui - user interface
 
+px::core - engine
+
+px::data - data drive
+
