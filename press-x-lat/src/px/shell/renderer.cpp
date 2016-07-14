@@ -219,11 +219,6 @@ namespace px
 					int y = (h - j - 1) * ui_cell_height - g.pixel_height + g.pixel_top;
 					int yd = y + g.pixel_height;
 
-					//x = i;
-					//y = j;
-					//xd = x + 1;
-					//yd = y + 1;
-
 					m_ui.text.vertices[vertex_offset + 0] = (GLfloat)x;
 					m_ui.text.vertices[vertex_offset + 1] = (GLfloat)y;
 					m_ui.text.vertices[vertex_offset + 2] = (GLfloat)x;
@@ -234,11 +229,10 @@ namespace px
 					m_ui.text.vertices[vertex_offset + 7] = (GLfloat)y;
 
 					// colors
-					fill_color(color(1, 1, 0, 1), &m_ui.text.colors[color_offset]);
+					fill_color(symbol.front, &m_ui.text.colors[color_offset]);
 
 					// textures
 					fill_texture((GLfloat)g.left, (GLfloat)g.bottom, (GLfloat)g.right, (GLfloat)g.top, &m_ui.text.texture[texture_offset]);
-					//fill_texture(0, 0, 1, 1, &m_ui.text.texture[texture_offset]);
 
 					vertex_offset += 2 * quad;
 					color_offset += color_depth * quad;

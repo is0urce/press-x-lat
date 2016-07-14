@@ -68,8 +68,9 @@ namespace px
 				add(&m_ls);
 
 				auto task = m_factory.produce();
-				task->add_appearance('@');
-				auto l = task->add_location({ 5, -5 });
+				auto a = task->add_appearance('@');
+				auto l = task->add_location({ 0, 0 });
+				a->tint = { 0, 1, 0 };
 				m_unit = task->assemble();
 
 				m_unit->activate();

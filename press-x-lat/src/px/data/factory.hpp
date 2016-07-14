@@ -57,7 +57,7 @@ namespace px
 			~task() {}
 
 		public:
-			std::shared_ptr<core::location_component> add_location(point2 position)
+			auto add_location(point2 position) -> decltype(m_location)
 			{
 				if (m_location) throw std::runtime_error("px::core::factory::task - location component already exists");
 				m_location = m_factory->make_location();
@@ -66,14 +66,14 @@ namespace px
 
 				return m_location;
 			}
-			std::shared_ptr<core::location_component> add_appearance(unsigned int glyph)
+			auto add_appearance(unsigned int glyph) -> decltype(m_appearance)
 			{
 				if (m_appearance) throw std::runtime_error("px::core::factory::task - image component already exists");
 				m_appearance = m_factory->make_appearance();
 
 				m_appearance->glyph = glyph;
 
-				return m_location;
+				return m_appearance;
 			}
 			std::shared_ptr<core::unit> assemble()
 			{

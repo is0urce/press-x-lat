@@ -42,7 +42,9 @@ namespace px
 			{
 				generate(seed);
 			}
-			virtual ~world() {}
+			virtual ~world()
+			{
+			}
 			world(const world&) = delete;
 
 		public:

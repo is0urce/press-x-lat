@@ -20,7 +20,7 @@ namespace px
 {
 	namespace es
 	{
-		template<typename _C, unsigned int _B>
+		template<typename _C, size_t _B>
 		class manager
 		{
 		public:
@@ -32,8 +32,8 @@ namespace px
 			private:
 				container_t m_elements;
 				std::array<bool, _B> m_exist;
-				std::list<unsigned int> m_recycle;
-				unsigned int m_cursor = 0;
+				std::list<size_t> m_recycle;
+				size_t m_cursor = 0;
 
 			public:
 				batch()
@@ -42,19 +42,19 @@ namespace px
 				}
 
 			public:
-				bool exists(unsigned int n) const
+				bool exists(size_t n) const
 				{
 					return m_exist[n];
 				}
-				unsigned int recycled() const
+				size_t recycled() const
 				{
 					return m_recycle.size();
 				}
-				unsigned int count() const
+				size_t count() const
 				{
 					return m_cursor - recycled();
 				}
-				unsigned int cursor() const
+				size_t cursor() const
 				{
 					return m_cursor;
 				}
@@ -78,31 +78,31 @@ namespace px
 						clear();
 					}
 				}
-				const _C& operator[](unsigned int index) const
+				const _C& operator[](size_t index) const
 				{
 					return m_elements[index];
 				}
-				_C& operator[](unsigned int index)
+				_C& operator[](size_t index)
 				{
 					return m_elements[index];
 				}
-				const _C& select(unsigned int index) const
+				const _C& select(size_t index) const
 				{
 					return m_elements[index];
 				}
-				_C& select(unsigned int index)
+				_C& select(size_t index)
 				{
 					return m_elements[index];
 				}
-				unsigned int increment()
+				size_t increment()
 				{
-					unsigned int index = m_cursor;
+					auto index = m_cursor;
 					++m_cursor;
 
 					m_exist[index] = true;
 					return index;
 				}
-				void recycle(unsigned int index)
+				void recycle(size_t index)
 				{
 					m_recycle.push_back(index);
 					m_exist[index] = false;
@@ -110,11 +110,11 @@ namespace px
 					// optimise batch
 					optimise();
 				}
-				unsigned int recycle()
+				size_t recycle()
 				{
 					// use position of recycled component
 					auto it = m_recycle.end();
-					unsigned int index = *it;
+					auto index = *it;
 					m_recycle.erase(it);
 					m_exist[index] = true;
 					return index;
@@ -126,11 +126,11 @@ namespace px
 			{
 			public:
 				batch_it batch;
-				unsigned int cursor;
+				size_t cursor;
 				key()
 				{
 				}
-				key(batch_it batch_iterator, unsigned int index) : batch(batch_iterator), cursor(index)
+				key(batch_it batch_iterator, size_t index) : batch(batch_iterator), cursor(index)
 				{
 				}
 			};
@@ -138,7 +138,7 @@ namespace px
 		private:
 			batch_t m_batches;
 			std::mutex m_mutex;
-			unsigned int m_count = 0;
+			size_t m_count = 0;
 
 		public:
 			virtual ~manager() {}
@@ -151,7 +151,7 @@ namespace px
 
 		public:
 			// count created objects
-			unsigned int count() const
+			size_t count() const
 			{
 				return m_count;
 			}
@@ -170,8 +170,8 @@ namespace px
 			{
 				for (auto it = m_batches.begin(), last = m_batches.end(); it != last; ++it)
 				{
-					unsigned int cursor = it->cursor();
-					for (unsigned int i = 0; i < cursor; ++i)
+					size_t cursor = it->cursor();
+					for (size_t i = 0; i < cursor; ++i)
 					{
 						if (it->exists(i))
 						{

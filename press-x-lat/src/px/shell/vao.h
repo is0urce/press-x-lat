@@ -24,12 +24,12 @@ namespace px
 		private:
 			bool m_init;
 			GLuint m_vao;
-			unsigned int m_num; // number of attributes
+			size_t m_num; // number of attributes
 			std::vector<unsigned int> m_depth; // attribute depth
 			std::vector<GLuint> m_buffers;
 
 			GLuint m_indices;
-			unsigned int m_length; // size of index array
+			size_t m_length; // size of index array
 
 		public:
 			vao() : m_init(false), m_num(0), m_length(0)
@@ -87,7 +87,7 @@ namespace px
 				m_buffers.resize(m_num, 0);
 
 				glGenBuffers(1, &m_indices);
-				glGenBuffers(m_num, &m_buffers[0]);
+				glGenBuffers((GLsizei)m_num, &m_buffers[0]);
 				glGenVertexArrays(1, &m_vao);
 				glBindVertexArray(m_vao);
 				for (unsigned int i = 0; i < m_num; ++i)
@@ -108,11 +108,11 @@ namespace px
 			{
 				return m_depth.at(attribute);
 			}
-			inline unsigned int length() const
+			size_t length() const
 			{
 				return m_length;
 			}
-			inline unsigned int attributes() const
+			size_t attributes() const
 			{
 				return m_num;
 			}
@@ -123,7 +123,7 @@ namespace px
 				{
 					glDeleteVertexArrays(1, &m_vao);
 					glDeleteBuffers(1, &m_indices);
-					glDeleteBuffers(m_num, &m_buffers[0]);
+					glDeleteBuffers((GLsizei)m_num, &m_buffers[0]);
 				}
 				m_init = false;
 				m_num = 0;
@@ -142,7 +142,7 @@ namespace px
 			}
 			void fill_attributes(unsigned int attribute_index, const std::vector<GLfloat> &attribute_values)
 			{
-				unsigned int points = attribute_values.size();
+				auto points = attribute_values.size();
 				if (points == 0) return;
 				glBindBuffer(GL_ARRAY_BUFFER, m_buffers[attribute_index]);
 				glBufferData(GL_ARRAY_BUFFER, sizeof(attribute_values[0]) * points * m_depth[attribute_index], &attribute_values[0], GL_STATIC_DRAW);
@@ -179,7 +179,7 @@ namespace px
 				if (m_length > 0)
 				{
 					glBindVertexArray(m_vao);
-					glDrawElements(element_type, m_length, GL_UNSIGNED_INT, 0);
+					glDrawElements(element_type, (GLsizei)m_length, GL_UNSIGNED_INT, 0);
 				}
 			}
 			void draw() const

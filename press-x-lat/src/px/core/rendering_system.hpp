@@ -23,6 +23,7 @@ namespace px
 		{
 		private:
 			shell::canvas* m_canvas;
+			std::shared_ptr<location_component> m_camera;
 
 		public:
 			rendering_system(shell::canvas& cnv)
@@ -36,16 +37,19 @@ namespace px
 		protected:
 			virtual void update_system() override
 			{
-				enumerate([this](const image_component &img)
+				int w = m_canvas->width() / 2;
+				int h = m_canvas->height() / 2;
+				point2 camera = m_camera ? m_camera->current(): point2(0, 0);
+				enumerate([this,camera,w,h](const image_component &img)
 				{
 					if (img.active())
 					{
 						location_component* location = (location_component*)img;
 						if (location)
 						{
-							auto current = location->current();
+							auto relative = location->current() - camera;
 
-							m_canvas->write({ current.x(), -current.y() }, img.glyph, img.tint);
+							m_canvas->write({ w + relative.x(), h - relative.y() }, img.glyph, img.tint);
 						}
 					}
 				});

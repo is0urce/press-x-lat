@@ -46,8 +46,10 @@ namespace px
 			{
 				m_world.arrange(point2(0, 0), m_terrain, m_units);
 			}
+			virtual ~scene()
+			{
+			}
 			scene(const scene&) = delete;
-			virtual ~scene() {}
 
 		private:
 			point2 cell(const point2 &absolute) const;
