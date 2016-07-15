@@ -8,6 +8,7 @@
 
 #include <px/rl/tile.hpp>
 #include <px/rl/traverse.hpp>
+#include <px/rl/map_stream.hpp>
 #include <px/common/matrix.hpp>
 #include <px/fn/perlin.hpp>
 
@@ -27,7 +28,7 @@ namespace px
 		class world
 		{
 		public:
-			static const unsigned int cell_width = 50;
+			static const unsigned int cell_width = 10;
 			static const unsigned int cell_height = cell_width;
 			static const unsigned int perlin_width = 5;
 			static const unsigned int perlin_height = perlin_width;
@@ -66,6 +67,8 @@ namespace px
 			// management
 			void arrange(const point2 &cell, map& terrain, std::list<unit_ptr>& units)
 			{
+				std::this_thread::sleep_for(std::chrono::seconds(5));
+
 				rng generator(m_seed + cell.x() + cell.y() * cell_width * cell_height);
 				std::uniform_real_distribution<double> distribution;
 				fn::perlin<perlin_width, perlin_height> noise([&](){return distribution(generator); });
@@ -77,7 +80,7 @@ namespace px
 				{
 					auto magnitude = noise.sample(mx * i, my * j, perlin_samples);
 					auto &img = t.appearance();
-					if (magnitude > 0.0)
+					if (magnitude > -0.25)
 					{
 						img.glyph = '.';
 						img.tint = { 0, 1, 0 };

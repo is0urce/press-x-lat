@@ -43,6 +43,10 @@ namespace px
 		public:
 			void turn()
 			{
+				if (m_player)
+				{
+					m_terrain->focus(m_player->current());
+				}
 				++m_time;
 			}
 			auto time() -> decltype(m_time)
@@ -60,8 +64,6 @@ namespace px
 			}
 			void impersonate(std::shared_ptr<location_component> unit)
 			{
-				if (!unit) throw std::runtime_error("px::core::environment::make_player(unit) unit is null");
-
 				m_player = unit;
 			}
 			location_component* blocking(point2 position, rl::traverse layer) const
@@ -85,7 +87,6 @@ namespace px
 				auto layers = rl::traverse::floor;
 				if (m_terrain->traversable(target, layers))
 				{
-					// find blocking unit
 					location_component* versus = blocking(target, rl::traverse::floor);
 
 					if (versus)
@@ -98,6 +99,7 @@ namespace px
 						action = true;
 					}
 				}
+
 				return action;
 			}
 

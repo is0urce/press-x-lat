@@ -37,8 +37,8 @@ namespace px
 			}
 			virtual bool player_step(point2 direction) override
 			{
-				auto pawn = m_environment->player();
-				bool action = m_environment->maneuver(*pawn, pawn->current() + direction);
+				auto player = m_environment->player();
+				bool action = player && m_environment->maneuver(*player, player->current() + direction);
 				if (action)
 				{
 					m_environment->turn();

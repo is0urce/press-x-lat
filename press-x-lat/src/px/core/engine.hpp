@@ -79,7 +79,7 @@ namespace px
 
 				auto task = m_factory.produce();
 				auto a = task->add_appearance('@');
-				auto l = task->add_location({ 25, 25 });
+				auto l = task->add_location({ 0, 0 });
 				a->tint = { 1, 1, 1 };
 
 				m_terrain.add(task->assemble());
@@ -90,7 +90,7 @@ namespace px
 
 				task = m_factory.produce();
 				a = task->add_appearance('g');
-				l = task->add_location({ 28, 28 });
+				l = task->add_location({ 5, 5 });
 				a->tint = { 1, 0, 0 };
 
 				m_terrain.add(task->assemble());

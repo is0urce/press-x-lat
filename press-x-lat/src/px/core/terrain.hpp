@@ -13,6 +13,7 @@
 
 #include <px/rl/tile.hpp>
 #include <px/rl/traverse.hpp>
+#include <px/rl/map_stream.hpp>
 #include <px/common/matrix.hpp>
 
 #include <memory>
@@ -24,27 +25,34 @@ namespace px
 		class terrain
 		{
 		public:
-			static const unsigned int cell_width = 50;
-			static const unsigned int cell_height = cell_width;
+			static const unsigned int cell_width = world::cell_width;
+			static const unsigned int cell_height = world::cell_height;
+			static const unsigned int sight_reach = 1;
+			static const unsigned int sight_width = 1 + sight_reach * 2;
 
 		public:
 			typedef std::shared_ptr<unit> unit_ptr;
-			typedef rl::tile<image> tile;
-			typedef matrix2<tile, cell_width, cell_height> map;
+			typedef rl::map_stream<image, unit_ptr, cell_width, cell_height> stream_map;
+			typedef stream_map::map map;
+			typedef stream_map::tile tile;
+			typedef stream_map::unit_list units;
+			typedef std::unique_ptr<map> stream_ptr;
 
 		private:
 			// loading
 			point2 m_focus;
 			tile m_default;
 			std::list<unit_ptr> m_units; // storage container
-			map m_terrain;
+			stream_map m_terrain;
+			matrix2<stream_ptr, sight_width, sight_width> m_maps;
 			world m_world;
 
 		public:
 			terrain()
 				: m_world(0)
 			{
-				m_world.arrange(point2(0, 0), m_terrain, m_units);
+				m_terrain.load_stream([&](map &m, units &u) { m_world.arrange(point2(0, 0), m, u); });
+
 				m_default.appearance() = { '.', { 0, 0, 0, 0 } };
 				m_default.make_wall();
 			}
@@ -57,9 +65,20 @@ namespace px
 			point2 cell(const point2 &absolute) const;
 
 		public:
+			void focus(point2 position)
+			{
+				m_focus = position;
+			}
 			const tile& select(const point2 &position) const
 			{
-				return m_terrain.select(position, m_default);
+				if (m_terrain.loaded())
+				{
+					return m_terrain->select(position, m_default);
+				}
+				else
+				{
+					return m_default;
+				}
 			}
 			bool transparent(const point2 &point) const
 			{

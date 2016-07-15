@@ -16,8 +16,6 @@ namespace px
 		template <typename _Img>
 		class tile : public mass<(unsigned int)traverse::max_value>
 		{
-		public:
-			typedef unsigned int img;
 		private:
 			_Img m_image;
 
