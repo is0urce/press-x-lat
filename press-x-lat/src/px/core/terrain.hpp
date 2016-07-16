@@ -22,28 +22,31 @@ namespace px
 {
 	namespace core
 	{
-		class terrain
+		namespace
 		{
-		public:
 			static const unsigned int cell_width = world::cell_width;
 			static const unsigned int cell_height = world::cell_height;
 			static const unsigned int sight_reach = 1;
 			static const unsigned int sight_width = 1 + sight_reach * 2;
+			point2 cell_range = point2(cell_width, cell_height);
+			point2 sight_center = point2(sight_reach, sight_reach);
+		}
 
+		class terrain
+		{
 		public:
 			typedef std::shared_ptr<unit> unit_ptr;
-			typedef rl::map_stream<image, unit_ptr, cell_width, cell_height> stream_map;
-			typedef stream_map::map map;
-			typedef stream_map::tile tile;
-			typedef stream_map::unit_list units;
-			typedef std::unique_ptr<map> stream_ptr;
+			typedef rl::map_stream<image, unit_ptr, cell_width, cell_height> stream;
+			typedef stream::map map;
+			typedef stream::tile tile;
+			typedef stream::unit_list units;
+			typedef std::unique_ptr<stream> stream_ptr;
 
 		private:
 			// loading
 			point2 m_focus;
 			tile m_default;
-			std::list<unit_ptr> m_units; // storage container
-			stream_map m_terrain;
+			units m_units; // storage container
 			matrix2<stream_ptr, sight_width, sight_width> m_maps;
 			world m_world;
 
@@ -51,7 +54,11 @@ namespace px
 			terrain()
 				: m_world(0)
 			{
-				m_terrain.load_stream([&](map &m, units &u) { m_world.arrange(point2(0, 0), m, u); });
+				m_maps.enumerate([&](unsigned int x, unsigned int y, stream_ptr &map) 
+				{
+					map = std::make_unique<stream>();
+					start_loading(point2(x, y) - sight_center, *map);
+				});
 
 				m_default.appearance() = { '.', { 0, 0, 0, 0 } };
 				m_default.make_wall();
@@ -62,23 +69,42 @@ namespace px
 			terrain(const terrain&) = delete;
 
 		private:
-			point2 cell(const point2 &absolute) const;
+			static point2 divide(point2 a, point2& remainder)
+			{
+				point2 div = (vector2(a) / cell_range).floor();
+				remainder = a - div * cell_range;
+				return div;
+			}
+			void start_loading(point2 cell, stream& area)
+			{
+				area.load_stream([&](stream::map &m, units &u) { m_world.arrange(cell, m, u); });
+			}
 
 		public:
 			void focus(point2 position)
 			{
-				m_focus = position;
+				point2 remainder;
+				point2 div = divide(position, remainder);
+				if (m_focus != div)
+				{
+					m_focus = div;
+				}
 			}
 			const tile& select(const point2 &position) const
 			{
-				if (m_terrain.loaded())
+				point2 relative;
+				point2 div = divide(position, relative);
+				div.move(sight_center);
+
+				if (m_maps.contains(div))
 				{
-					return m_terrain->select(position, m_default);
+					const stream &map = *m_maps[div];
+					if (map.loaded() && !map.pending())
+					{
+						return map->at(relative);
+					}
 				}
-				else
-				{
-					return m_default;
-				}
+				return m_default;
 			}
 			bool transparent(const point2 &point) const
 			{

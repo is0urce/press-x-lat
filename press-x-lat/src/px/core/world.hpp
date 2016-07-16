@@ -28,9 +28,9 @@ namespace px
 		class world
 		{
 		public:
-			static const unsigned int cell_width = 10;
+			static const unsigned int cell_width = 5;
 			static const unsigned int cell_height = cell_width;
-			static const unsigned int perlin_width = 5;
+			static const unsigned int perlin_width = 3;
 			static const unsigned int perlin_height = perlin_width;
 			static const unsigned int perlin_samples = 9;
 
@@ -67,7 +67,7 @@ namespace px
 			// management
 			void arrange(const point2 &cell, map& terrain, std::list<unit_ptr>& units)
 			{
-				std::this_thread::sleep_for(std::chrono::seconds(5));
+				std::this_thread::sleep_for(std::chrono::milliseconds((cell.x() + cell.y() * 91) % 1000 + 50));
 
 				rng generator(m_seed + cell.x() + cell.y() * cell_width * cell_height);
 				std::uniform_real_distribution<double> distribution;

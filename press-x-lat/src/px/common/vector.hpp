@@ -31,6 +31,12 @@ namespace px
 			m_array[0] = x;
 			m_array[1] = y;
 		}
+		template <typename _C>
+		vector2(const coordinate<_C, 2> cast)
+		{
+			m_array[0] = cast[0];
+			m_array[1] = cast[1];
+		}
 		component x() const
 		{
 			return m_array[0];

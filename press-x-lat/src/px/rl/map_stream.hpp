@@ -30,11 +30,13 @@ namespace px
 			map m_map;
 			unit_list m_units;
 			bool m_loaded;
+			bool m_pending;
 
 		public:
 			map_stream()
 			{
 				m_loaded = true;
+				m_pending = false;
 			}
 			virtual ~map_stream()
 			{
@@ -53,12 +55,19 @@ namespace px
 				return m_loaded;
 			}
 
+			// is there units for merge
+			bool pending() const
+			{
+				return m_pending;
+			}
+
 			template <typename _Op>
 			void load(_Op fn)
 			{
 				wait();
 				m_loaded = false;
 				fn(m_map, m_units);
+				m_pending = true;
 				m_loaded = true;
 			}
 			template <typename _Op>
@@ -74,7 +83,11 @@ namespace px
 			void merge(unit_list &grand)
 			{
 				wait();
+				if (!m_pending) throw std::runtime_error("px::rl::map_stream::merge() - no pending");
+
+				m_pending = false;
 				grand.merge(m_units);
+
 			}
 
 			const map* operator->() const

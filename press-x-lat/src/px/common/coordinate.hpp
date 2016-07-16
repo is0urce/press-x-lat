@@ -14,8 +14,9 @@ namespace px
 	struct coordinate
 	{
 	public:
-		typedef _C component;
 		static const unsigned int depth = _D;
+		typedef _C component;
+
 	protected:
 		std::array<component, _D> m_array;
 
