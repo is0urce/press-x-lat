@@ -38,7 +38,19 @@ namespace px
 			virtual bool player_step(point2 direction) override
 			{
 				auto player = m_environment->player();
-				bool action = player && m_environment->maneuver(*player, player->current() + direction);
+				bool action = false;
+				if (player)
+				{
+					if (direction.x() == 0 && direction.y() == 0)
+					{
+						m_environment->turn();
+						action = true;
+					}
+					else
+					{
+						action = m_environment->maneuver(*player, player->current() + direction);
+					}
+				}
 				if (action)
 				{
 					m_environment->turn();

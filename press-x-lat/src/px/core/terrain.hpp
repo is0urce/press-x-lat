@@ -111,7 +111,7 @@ namespace px
 						{
 							std::swap(map, origin[index]);
 						}
-						else
+						if (!map)
 						{
 							map = std::make_unique<stream>();
 							load_stream(cell, *map);
@@ -121,8 +121,9 @@ namespace px
 					// should clear not swapped destroying maps at they can have not treminated threads
 					origin.enumerate([&](unsigned int x, unsigned int y, stream_ptr &map)
 					{
-						if (map && map->pending())
+						if (map)
 						{
+							if (!map->loaded() || map->pending())
 							merge(*map);
 						}
 					});
