@@ -17,6 +17,7 @@
 #include <px/common/matrix.hpp>
 
 #include <memory>
+#include <mutex>
 
 namespace px
 {
@@ -41,25 +42,20 @@ namespace px
 			typedef stream::tile tile;
 			typedef stream::unit_list units;
 			typedef std::unique_ptr<stream> stream_ptr;
+			typedef matrix2<stream_ptr, sight_width, sight_width> maps;
 
 		private:
 			// loading
 			point2 m_focus;
 			tile m_default;
 			units m_units; // storage container
-			matrix2<stream_ptr, sight_width, sight_width> m_maps;
+			maps m_maps;
 			world m_world;
 
 		public:
 			terrain()
 				: m_world(0)
 			{
-				m_maps.enumerate([&](unsigned int x, unsigned int y, stream_ptr &map) 
-				{
-					map = std::make_unique<stream>();
-					start_loading(point2(x, y) - sight_center, *map);
-				});
-
 				m_default.appearance() = { '.', { 0, 0, 0, 0 } };
 				m_default.make_wall();
 			}
@@ -75,33 +71,104 @@ namespace px
 				remainder = a - div * cell_range;
 				return div;
 			}
-			void start_loading(point2 cell, stream& area)
+			void load_stream(point2 cell, stream& area)
 			{
 				area.load_stream([&](stream::map &m, units &u) { m_world.arrange(cell, m, u); });
+			}
+			void load(point2 cell, stream& area)
+			{
+				area.load([&](stream::map &m, units &u) { m_world.arrange(cell, m, u); });
+			}
+			void merge(stream& map)
+			{
+				units list;
+				map.merge(list);
+				for (auto u : list)
+				{
+					add(u);
+				}
 			}
 
 		public:
 			void focus(point2 position)
 			{
-				point2 remainder;
-				point2 div = divide(position, remainder);
-				if (m_focus != div)
+				// calculate new coordinates
+				point2 relative;
+				point2 cell = divide(position, relative);
+
+				// shift maps
+				if (m_focus != cell)
 				{
-					m_focus = div;
+					auto shift = cell - m_focus;
+					maps origin;
+					origin.swap(m_maps);
+
+					// copy old or create new
+					m_maps.enumerate([&](unsigned int x, unsigned int y, stream_ptr &map)
+					{
+						auto index = point2(x, y) + shift;
+						if (origin.contains(index))
+						{
+							std::swap(map, origin[index]);
+						}
+						else
+						{
+							map = std::make_unique<stream>();
+							load_stream(cell, *map);
+						}
+					});
+
+					// should clear not swapped destroying maps at they can have not treminated threads
+					origin.enumerate([&](unsigned int x, unsigned int y, stream_ptr &map)
+					{
+						if (map && map->pending())
+						{
+							merge(*map);
+						}
+					});
+
+					m_focus = cell;
 				}
+
+				// post update maps
+				m_maps.enumerate([&](unsigned int x, unsigned int y, stream_ptr &map)
+				{
+					auto cell = point2(x, y) - sight_center;
+
+					// create maps at startup
+					if (!map)
+					{
+						map = std::make_unique<stream>();
+						if (cell == m_focus)
+						{
+							load_stream(cell, *map);
+						}
+					}
+
+					// need central cell loaded
+					if (cell == m_focus)
+					{
+						map->wait();
+					}
+
+					// join loaded maps
+					if (map->loaded() && map->pending())
+					{
+						merge(*map);
+					}
+				});
 			}
 			const tile& select(const point2 &position) const
 			{
 				point2 relative;
-				point2 div = divide(position, relative);
-				div.move(sight_center);
+				point2 cell = divide(position, relative) + sight_center - m_focus;
 
-				if (m_maps.contains(div))
+				if (m_maps.contains(cell))
 				{
-					const stream &map = *m_maps[div];
-					if (map.loaded() && !map.pending())
+					const stream_ptr &map = m_maps[cell];
+					if (map && map->loaded() && !map->pending())
 					{
-						return map->at(relative);
+						return (*map)->at(relative);
 					}
 				}
 				return m_default;
@@ -117,8 +184,8 @@ namespace px
 
 			void add(unit_ptr unit)
 			{
-				m_units.push_back(unit);
 				unit->activate();
+				m_units.push_back(unit);
 			}
 		};
 	}

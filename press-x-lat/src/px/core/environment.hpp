@@ -39,14 +39,18 @@ namespace px
 			virtual ~environment()
 			{
 			}
-
-		public:
-			void turn()
+		private:
+			void focus_on_player()
 			{
 				if (m_player)
 				{
 					m_terrain->focus(m_player->current());
 				}
+			}
+		public:
+			void turn()
+			{
+				focus_on_player();
 				++m_time;
 			}
 			auto time() -> decltype(m_time)
@@ -65,6 +69,7 @@ namespace px
 			void impersonate(std::shared_ptr<location_component> unit)
 			{
 				m_player = unit;
+				focus_on_player();
 			}
 			location_component* blocking(point2 position, rl::traverse layer) const
 			{

@@ -47,6 +47,14 @@ namespace px
 		{
 			std::swap(m_data, that.m_data);
 		}
+		void copy(const matrix2 &that)
+		{
+			size_t len = _W * _H;
+			for (size_t i = 0; i < len; ++i)
+			{
+				m_data[i] = that.m_data[i];
+			}
+		}
 
 		bool contains(coordinate<int, 2> position) const
 		{
@@ -207,6 +215,8 @@ namespace px
 		}
 		void resize(unsigned int w, unsigned int h)
 		{
+			if (w < 0) throw std::runtime_error("px::matrix<c>::resize - w < 0");
+			if (h < 0) throw std::runtime_error("px::matrix<c>::resize - w < 0");
 			m_width = w;
 			m_height = h;
 			m_data.resize(w * h);

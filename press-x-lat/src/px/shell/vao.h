@@ -92,12 +92,12 @@ namespace px
 				glBindVertexArray(m_vao);
 				for (size_t i = 0; i < m_num; ++i)
 				{
-					glEnableVertexAttribArray(i);
+					glEnableVertexAttribArray(static_cast<GLuint>(i));
 				}
 				for (size_t i = 0; i < m_num; ++i)
 				{
 					glBindBuffer(GL_ARRAY_BUFFER, m_buffers[i]);
-					glVertexAttribPointer(i, depths[i], GL_FLOAT, GL_FALSE, 0, 0);
+					glVertexAttribPointer(static_cast<GLuint>(i), depths[i], GL_FLOAT, GL_FALSE, 0, 0);
 				}
 				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indices);
 

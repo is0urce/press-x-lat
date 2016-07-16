@@ -63,6 +63,10 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 			while (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE) != 0)
 			{
 				run &= (GetMessage(&msg, NULL, 0, 0) == TRUE);
+				if (!run)
+				{
+					g_control = nullptr;
+				}
 				if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
 				{
 					TranslateMessage(&msg);

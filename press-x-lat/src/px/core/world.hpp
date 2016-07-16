@@ -67,7 +67,7 @@ namespace px
 			// management
 			void arrange(const point2 &cell, map& terrain, std::list<unit_ptr>& units)
 			{
-				std::this_thread::sleep_for(std::chrono::milliseconds((cell.x() + cell.y() * 91) % 1000 + 50));
+				//std::this_thread::sleep_for(std::chrono::milliseconds((cell.x() + cell.y() * 91) % 50 + 50));
 
 				rng generator(m_seed + cell.x() + cell.y() * cell_width * cell_height);
 				std::uniform_real_distribution<double> distribution;

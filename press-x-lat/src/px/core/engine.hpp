@@ -105,7 +105,10 @@ namespace px
 			{
 				int w, h;
 				m_renderer.canvas_size(w, h);
-				m_canvas.resize(w, h);
+				if (w > 0 && h > 0)
+				{
+					m_canvas.resize(w, h);
+				}
 				m_canvas.cls();
 			}
 			virtual void post_update_engine() override
