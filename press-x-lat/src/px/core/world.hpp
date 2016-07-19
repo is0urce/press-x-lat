@@ -20,6 +20,7 @@
 #include <list>
 #include <random>
 #include <cstdint>
+#include <algorithm>
 
 namespace px
 {
@@ -90,9 +91,17 @@ namespace px
 					{
 						img.glyph = '#';
 						img.tint = { 0.5, 0.5, 0.5 };
-						t.make_blocking();
+						t.make_traversable();
 					}
 				});
+
+//#ifdef _DEBUG
+				const char* digits = "0123456789ABCDEF";
+				terrain[{1, 1}].appearance().glyph = digits[cell.x() - 10 * size_t((std::floor)(cell.x() / 10.0))];
+				terrain[{2, 1}].appearance().glyph = ':';
+				terrain[{3, 1}].appearance().glyph = digits[cell.y() - 10 * size_t((std::floor)(cell.y() / 10.0))];
+//#endif
+
 			}
 			void store(unit_ptr unit)
 			{

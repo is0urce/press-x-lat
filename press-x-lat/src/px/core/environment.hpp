@@ -40,7 +40,7 @@ namespace px
 			{
 			}
 		private:
-			void focus_on_player()
+			void focus()
 			{
 				if (m_player)
 				{
@@ -50,7 +50,7 @@ namespace px
 		public:
 			void turn()
 			{
-				focus_on_player();
+				focus();
 				++m_time;
 			}
 			auto time() -> decltype(m_time)
@@ -69,7 +69,7 @@ namespace px
 			void impersonate(std::shared_ptr<location_component> unit)
 			{
 				m_player = unit;
-				focus_on_player();
+				focus();
 			}
 			location_component* blocking(point2 position, rl::traverse layer) const
 			{

@@ -79,7 +79,7 @@ namespace px
 
 				auto task = m_factory.produce();
 				auto a = task->add_appearance('@');
-				auto l = task->add_location({ 0, 0 });
+				auto l = task->add_location({ 1, 1 });
 				a->tint = { 1, 1, 1 };
 
 				m_terrain.add(task->assemble());
@@ -88,12 +88,12 @@ namespace px
 				m_rs.focus_camera(l);
 				m_ts.focus_camera(l);
 
-				task = m_factory.produce();
-				a = task->add_appearance('g');
-				l = task->add_location({ 5, 5 });
-				a->tint = { 1, 0, 0 };
+				//task = m_factory.produce();
+				//a = task->add_appearance('g');
+				//l = task->add_location({ 5, 5 });
+				//a->tint = { 1, 0, 0 };
 
-				m_terrain.add(task->assemble());
+				//m_terrain.add(task->assemble());
 			}
 			virtual ~engine()
 			{

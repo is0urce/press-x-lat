@@ -46,10 +46,10 @@ namespace px
 
 		private:
 			// loading
-			point2 m_focus;
 			tile m_default;
-			units m_units; // storage container
 			maps m_maps;
+			point2 m_focus; // absolute world cell coordinate
+			units m_units; // storage container
 			world m_world;
 
 		public:
@@ -71,13 +71,11 @@ namespace px
 				remainder = a - div * cell_range;
 				return div;
 			}
-			void load_stream(point2 cell, stream& area)
+			void load_stream(point2 world_cell, stream_ptr& area)
 			{
-				area.load_stream([&](stream::map &m, units &u) { m_world.arrange(cell, m, u); });
-			}
-			void load(point2 cell, stream& area)
-			{
-				area.load([&](stream::map &m, units &u) { m_world.arrange(cell, m, u); });
+				if (area) throw std::runtime_error("px::terrain::load - not null");
+				area = std::make_unique<stream>();
+				area->load_stream([world_cell, this](stream::map &m, units &u) { m_world.arrange(world_cell, m, u); });
 			}
 			void merge(stream& map)
 			{
@@ -94,66 +92,56 @@ namespace px
 			{
 				// calculate new coordinates
 				point2 relative;
-				point2 cell = divide(position, relative);
+				point2 focus = divide(position, relative);
 
 				// shift maps
-				if (m_focus != cell)
+				if (m_focus != focus)
 				{
-					auto shift = cell - m_focus;
 					maps origin;
 					origin.swap(m_maps);
 
-					// copy old or create new
-					m_maps.enumerate([&](unsigned int x, unsigned int y, stream_ptr &map)
+					// copy old
+					point2 shift = focus - m_focus;
+					m_maps.enumerate([&](unsigned int cell_x, unsigned int cell_y, stream_ptr &map)
 					{
-						auto index = point2(x, y) + shift;
+						auto index = shift + point2(cell_x, cell_y);
 						if (origin.contains(index))
 						{
 							std::swap(map, origin[index]);
 						}
-						if (!map)
-						{
-							map = std::make_unique<stream>();
-							load_stream(cell, *map);
-						}
 					});
 
-					// should clear not swapped destroying maps at they can have not treminated threads
+					// should clear not swapped destroying maps as they can have not treminated threads
 					origin.enumerate([&](unsigned int x, unsigned int y, stream_ptr &map)
 					{
-						if (map)
+						if (map && map->pending())
 						{
-							if (!map->loaded() || map->pending())
 							merge(*map);
 						}
 					});
 
-					m_focus = cell;
+					m_focus = focus;
 				}
 
 				// post update maps
 				m_maps.enumerate([&](unsigned int x, unsigned int y, stream_ptr &map)
 				{
-					auto cell = point2(x, y) - sight_center;
+					point2 world_cell = m_focus - sight_center + point2(x, y);
 
-					// create maps at startup
+					// create maps if required
 					if (!map)
 					{
-						map = std::make_unique<stream>();
-						if (cell == m_focus)
-						{
-							load_stream(cell, *map);
-						}
+						load_stream(world_cell, map);
 					}
 
 					// need central cell loaded
-					if (cell == m_focus)
+					if (world_cell == m_focus)
 					{
 						map->wait();
 					}
 
 					// join loaded maps
-					if (map->loaded() && map->pending())
+					if (map->pending() && map->loaded())
 					{
 						merge(*map);
 					}
@@ -162,12 +150,12 @@ namespace px
 			const tile& select(const point2 &position) const
 			{
 				point2 relative;
-				point2 cell = divide(position, relative) + sight_center - m_focus;
+				point2 cell = divide(position, relative) - m_focus + sight_center;
 
 				if (m_maps.contains(cell))
 				{
 					const stream_ptr &map = m_maps[cell];
-					if (map && map->loaded() && !map->pending())
+					if (map && !map->pending())
 					{
 						return (*map)->at(relative);
 					}

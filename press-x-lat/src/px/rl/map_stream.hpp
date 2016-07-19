@@ -29,14 +29,12 @@ namespace px
 		private:
 			map m_map;
 			unit_list m_units;
-			bool m_loaded;
+			volatile bool m_loaded;
 			bool m_pending;
 
 		public:
-			map_stream()
+			map_stream() : m_loaded(true), m_pending(false)
 			{
-				m_loaded = true;
-				m_pending = false;
 			}
 			virtual ~map_stream()
 			{
@@ -66,8 +64,8 @@ namespace px
 			{
 				wait();
 				m_loaded = false;
-				fn(m_map, m_units);
 				m_pending = true;
+				fn(m_map, m_units);
 				m_loaded = true;
 			}
 			template <typename _Op>
@@ -87,7 +85,6 @@ namespace px
 
 				m_pending = false;
 				grand.merge(m_units);
-
 			}
 
 			const map* operator->() const
