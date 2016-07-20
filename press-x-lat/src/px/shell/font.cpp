@@ -4,12 +4,16 @@
 // auth: is0urce
 
 #ifdef WIN64
-	#pragma comment(lib, "lib/x64/freetype264.lib")
+	#if _DEBUG
+	#pragma comment(lib, "lib/x64/freetype265d.lib")
+	#else
+	#pragma comment(lib, "lib/x64/freetype265.lib")
+	#endif
 #else
 	#if _DEBUG
-	#pragma comment(lib, "lib/x32/freetype264d.lib")
+	#pragma comment(lib, "lib/x32/freetype265d.lib")
 	#else
-	#pragma comment(lib, "lib/x32/freetype264.lib")
+	#pragma comment(lib, "lib/x32/freetype265.lib")
 	#endif
 #endif
 

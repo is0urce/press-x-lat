@@ -46,7 +46,10 @@ namespace px
 		public:
 			void wait() const
 			{
-				while (!m_loaded);
+				while (!m_loaded)
+				{
+					std::this_thread::yield();
+				}
 			}
 			bool loaded() const
 			{
