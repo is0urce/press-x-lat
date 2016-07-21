@@ -192,6 +192,7 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\core\location.hpp" />
     <ClInclude Include="src\px\core\location_component.hpp" />
     <ClInclude Include="src\px\core\location_system.hpp" />
+    <ClInclude Include="src\px\rl\enhancement.hpp" />
     <ClInclude Include="src\px\rl\map_stream.hpp" />
     <ClInclude Include="src\px\core\persistency.hpp" />
     <ClInclude Include="src\px\core\terrain_system.hpp" />

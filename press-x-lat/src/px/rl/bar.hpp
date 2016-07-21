@@ -1,4 +1,4 @@
-// name: bar.h
+// name: bar.hpp
 // type: c++ header
 // desc: template class declaration & implementation
 // auth: is0urce

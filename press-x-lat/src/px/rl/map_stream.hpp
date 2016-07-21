@@ -31,6 +31,7 @@ namespace px
 			unit_list m_units;
 			volatile bool m_loaded;
 			bool m_pending;
+			std::thread m_thread;
 
 		public:
 			map_stream() : m_loaded(true), m_pending(false)
@@ -44,11 +45,11 @@ namespace px
 
 
 		public:
-			void wait() const
+			void wait()
 			{
-				while (!m_loaded)
+				if (m_thread.joinable())
 				{
-					std::this_thread::yield();
+					m_thread.join();
 				}
 			}
 			bool loaded() const
@@ -65,26 +66,29 @@ namespace px
 			template <typename _Op>
 			void load(_Op fn)
 			{
-				wait();
-				m_loaded = false;
+				if (m_pending) throw std::runtime_error("px::rl::map_stream::load() - pending");
+
 				m_pending = true;
 				fn(m_map, m_units);
-				m_loaded = true;
 			}
 			template <typename _Op>
 			void load_stream(_Op fn)
 			{
-				wait();
-				std::thread stream([fn, this]()
+				if (m_pending) throw std::runtime_error("px::rl::map_stream::load_stream() - pending");
+
+				m_loaded = false;
+				m_pending = true;
+				m_thread = std::thread([fn, this]()
 				{
-					load(fn);
+					fn(m_map, m_units);
+					m_loaded = true;
 				});
-				stream.detach();
 			}
 			void merge(unit_list &grand)
 			{
-				wait();
 				if (!m_pending) throw std::runtime_error("px::rl::map_stream::merge() - no pending");
+
+				wait();
 
 				m_pending = false;
 				grand.merge(m_units);
