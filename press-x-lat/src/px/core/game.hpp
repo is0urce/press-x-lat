@@ -27,9 +27,15 @@ namespace px
 			game(const game&) = delete;
 
 		protected:
-			virtual bool player_use(unsigned int ability_slot, point2 target) override
+			virtual bool player_use(unsigned int slot, point2 target) override
 			{
-				return false;
+				auto player = m_environment->player();
+				bool action = false;
+				if (player)
+				{
+					action = m_environment->cast(*player, slot, target);
+				}
+				return action;
 			}
 			virtual bool player_activate(point2 target) override
 			{

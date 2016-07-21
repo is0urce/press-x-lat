@@ -9,6 +9,7 @@
 #include <px/core/unit.hpp>
 #include <px/core/rendering_system.hpp>
 #include <px/core/location_system.hpp>
+#include <px/core/body_system.hpp>
 
 #include <memory>
 
@@ -24,9 +25,10 @@ namespace px
 		private:
 			core::rendering_system* m_rs;
 			core::location_system* m_ls;
+			core::body_system* m_bs;
 
 		public:
-			factory(core::rendering_system& rs, core::location_system &ls) : m_rs(&rs), m_ls(&ls) {}
+			factory(core::rendering_system& rs, core::location_system &ls, core::body_system &bs) : m_rs(&rs), m_ls(&ls), m_bs(&bs) {}
 			~factory() {}
 
 		public:
@@ -42,6 +44,10 @@ namespace px
 			{
 				return m_ls->make();
 			}
+			auto make_body()
+			{
+				return m_bs->make();
+			}
 		};
 
 		class task
@@ -50,6 +56,7 @@ namespace px
 			factory* m_factory;
 			std::shared_ptr<core::location_component> m_location;
 			std::shared_ptr<core::image_component> m_appearance;
+			std::shared_ptr<core::body_component> m_body;
 			std::shared_ptr<core::unit> m_unit;
 			bool m_done;
 		public:
@@ -76,22 +83,37 @@ namespace px
 
 				return m_appearance;
 			}
+			auto add_body(unsigned int hp) -> decltype(m_body)
+			{
+				if (m_body) throw std::runtime_error("px::core::factory::task::add_body(..) - body component already exists");
+				m_body = m_factory->make_body();
+
+				m_body->set_health(hp);
+
+				return m_body;
+			}
 			std::shared_ptr<core::unit> assemble()
 			{
 				if (m_done) throw std::runtime_error("px::core::factory::task::assemble - unit already created");
 				m_done = true;
 
 				// add components
-				m_unit->add(m_location);
-				m_unit->add(m_appearance);
+				if (m_body)
+				{
+					m_unit->add(m_body);
+				}
 
-				// setup links
 				if (m_appearance)
 				{
-					if (m_location)
-					{
-						m_appearance->link(m_location);
-					}
+					m_appearance->link(m_location);
+
+					m_unit->add(m_appearance);
+				}
+				if (m_location)
+				{
+					m_location->link(m_body);
+
+					m_unit->add(m_location);
 				}
 
 				return m_unit;

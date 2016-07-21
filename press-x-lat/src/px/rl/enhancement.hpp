@@ -10,12 +10,18 @@ namespace px
 {
 	namespace rl
 	{
+		template<typename _E>
 		struct enhancement
 		{
-			int magnitude;
-			unsigned int type;
+			_E type;
+			unsigned int subtype;
+
+			int value;
+			int bonus;
+			double magnitude;
 			double multiplier;
 			double chance;
+			float flag;
 		};
 	}
 }

@@ -11,6 +11,8 @@
 #include <px/ui/stack_panel.hpp>
 #include <px/core/location_component.hpp>
 #include <px/rl/traverse.hpp>
+
+#include <px/core/body_component.hpp>
 #include "terrain.hpp"
 
 #include <memory>
@@ -39,6 +41,7 @@ namespace px
 			virtual ~environment()
 			{
 			}
+
 		private:
 			void focus()
 			{
@@ -47,6 +50,7 @@ namespace px
 					m_terrain->focus(m_player->current());
 				}
 			}
+
 		public:
 			void turn()
 			{
@@ -106,6 +110,21 @@ namespace px
 				}
 
 				return action;
+			}
+			bool cast(location_component& source, unsigned int slot, point2 target)
+			{
+				bool action = false;
+				auto body = (body_component*)source;
+				if (body)
+				{
+					auto s = body->get_skill(slot);
+					if (s && s->targeted())
+					{
+						s->use(*body, *body);
+						action = true;
+					}
+				}
+				return false;
 			}
 
 			void start()

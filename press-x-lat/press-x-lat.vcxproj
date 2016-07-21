@@ -182,6 +182,8 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\common\timer.hpp" />
     <ClInclude Include="src\px\common\toggle.hpp" />
     <ClInclude Include="src\px\common\vector.hpp" />
+    <ClInclude Include="src\px\core\body_component.hpp" />
+    <ClInclude Include="src\px\core\body_system.hpp" />
     <ClInclude Include="src\px\core\engine.hpp" />
     <ClInclude Include="src\px\core\environment.hpp" />
     <ClInclude Include="src\px\core\game.hpp" />
@@ -192,6 +194,9 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\core\location.hpp" />
     <ClInclude Include="src\px\core\location_component.hpp" />
     <ClInclude Include="src\px\core\location_system.hpp" />
+    <ClInclude Include="src\px\rl\ability.hpp" />
+    <ClInclude Include="src\px\rl\body.hpp" />
+    <ClInclude Include="src\px\rl\character.hpp" />
     <ClInclude Include="src\px\rl\enhancement.hpp" />
     <ClInclude Include="src\px\rl\map_stream.hpp" />
     <ClInclude Include="src\px\core\persistency.hpp" />

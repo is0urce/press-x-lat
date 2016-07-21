@@ -17,6 +17,7 @@
 #include "rendering_system.hpp"
 #include "location_system.hpp"
 #include "terrain_system.hpp"
+#include <px/core/body_system.hpp>
 
 #include "unit.hpp"
 #include "game.hpp"
@@ -25,6 +26,7 @@
 #include "input_adapter.hpp"
 
 #include <px/data/factory.hpp>
+#include <px/rl/ability.hpp>
 
 namespace px
 {
@@ -51,6 +53,7 @@ namespace px
 			location_system m_ls;
 			rendering_system m_rs;
 			terrain_system m_ts;
+			body_system m_bs;
 
 			terrain m_terrain;
 			environment m_environment;
@@ -68,7 +71,7 @@ namespace px
 				, m_ls(m_space)
 				, m_rs(m_canvas)
 				, m_ts(m_canvas, m_terrain)
-				, m_factory(m_rs, m_ls)
+				, m_factory(m_rs, m_ls, m_bs)
 				, m_environment(m_terrain, m_space)
 				, m_game(m_environment)
 				, m_turn(0)
@@ -76,24 +79,23 @@ namespace px
 				add(&m_ls);
 				add(&m_ts);
 				add(&m_rs);
+				add(&m_bs);
 
 				auto task = m_factory.produce();
 				auto a = task->add_appearance('@');
 				auto l = task->add_location({ 1, 1 });
+				auto b = task->add_body(100);
 				a->tint = { 1, 1, 1 };
+
+				b->add_skill(body_component::skill::create_target([&](rl::character<body_component&>, body_component&) {
+					MessageBox(0, L"x", L"x", 0);
+				}, [&](rl::character<body_component&>, body_component&) {return true; }));
 
 				m_terrain.add(task->assemble());
 
 				m_environment.impersonate(l);
 				m_rs.focus_camera(l);
 				m_ts.focus_camera(l);
-
-				//task = m_factory.produce();
-				//a = task->add_appearance('g');
-				//l = task->add_location({ 5, 5 });
-				//a->tint = { 1, 0, 0 };
-
-				//m_terrain.add(task->assemble());
 			}
 			virtual ~engine()
 			{

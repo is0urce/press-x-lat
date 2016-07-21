@@ -7,6 +7,7 @@
 #define PX_CORE_LOCATION_COMPONENT_HPP
 
 #include <px/es/i_component.hpp>
+#include <px/es/component_link.hpp>
 #include <px/common/qtree.hpp>
 #include <px/rl/mass.hpp>
 #include <px/rl/traverse.hpp>
@@ -16,8 +17,10 @@ namespace px
 {
 	namespace core
 	{
+		class body_component;
 		class location_component
 			: public es::i_component
+			, public es::component_link<body_component>
 			, protected location
 			, public rl::mass<static_cast<size_t>(rl::traverse::max_value)>
 		{
