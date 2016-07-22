@@ -96,9 +96,6 @@
     <ClInclude Include="src\px\es\i_component.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\px\core\image_component.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\px\rl\bar.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -111,19 +108,10 @@
     <ClInclude Include="src\px\rl\tile.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\px\core\image.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\px\es\manager.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\px\core\location.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\px\core\location_component.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\px\core\location_system.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\px\es\component_link.hpp">
@@ -198,9 +186,6 @@
     <ClInclude Include="src\px\core\world.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\px\core\terrain_system.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\px\core\terrain.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -210,19 +195,40 @@
     <ClInclude Include="src\px\rl\enhancement.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\px\core\body_component.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\px\rl\ability.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\px\core\body_system.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\px\rl\body.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\px\rl\character.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\core\image.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\core\body_component.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\core\body_system.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\core\character_component.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\core\image_component.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\core\location_component.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\core\location_system.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\core\terrain_system.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\core\character_system.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -271,7 +277,7 @@
   <ItemGroup>
     <None Include="config\shared\console_text.frag" />
     <None Include="config\shared\console_text.vert" />
-    <None Include="src\px\core\rendering_system.hpp" />
     <None Include="doc\ores.json" />
+    <None Include="src\px\core\rendering_system.hpp" />
   </ItemGroup>
 </Project>

@@ -184,6 +184,8 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\common\vector.hpp" />
     <ClInclude Include="src\px\core\body_component.hpp" />
     <ClInclude Include="src\px\core\body_system.hpp" />
+    <ClInclude Include="src\px\core\character_component.hpp" />
+    <ClInclude Include="src\px\core\character_system.hpp" />
     <ClInclude Include="src\px\core\engine.hpp" />
     <ClInclude Include="src\px\core\environment.hpp" />
     <ClInclude Include="src\px\core\game.hpp" />

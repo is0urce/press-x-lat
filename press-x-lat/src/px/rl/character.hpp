@@ -55,7 +55,7 @@ namespace px
 		{
 		public:
 			typedef _T target;
-			typedef skill<character, target> skill;
+			typedef skill<character&, target> skill;
 		public:
 			std::vector<skill> m_skills;
 

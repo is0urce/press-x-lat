@@ -10,6 +10,7 @@
 #include <px/core/rendering_system.hpp>
 #include <px/core/location_system.hpp>
 #include <px/core/body_system.hpp>
+#include <px/core/character_system.hpp>
 
 #include <memory>
 
@@ -26,10 +27,14 @@ namespace px
 			core::rendering_system* m_rs;
 			core::location_system* m_ls;
 			core::body_system* m_bs;
+			core::character_system* m_cs;
 
 		public:
-			factory(core::rendering_system& rs, core::location_system &ls, core::body_system &bs) : m_rs(&rs), m_ls(&ls), m_bs(&bs) {}
-			~factory() {}
+			factory(core::rendering_system& rs, core::location_system &ls, core::body_system &bs, core::character_system &cs)
+				: m_rs(&rs), m_ls(&ls), m_bs(&bs), m_cs(&cs)
+			{
+			}
+			virtual ~factory() {}
 
 		public:
 			std::unique_ptr<task> produce()
@@ -48,16 +53,22 @@ namespace px
 			{
 				return m_bs->make();
 			}
+			auto make_character()
+			{
+				return m_cs->make();
+			}
 		};
 
 		class task
 		{
 		private:
-			factory* m_factory;
-			std::shared_ptr<core::location_component> m_location;
-			std::shared_ptr<core::image_component> m_appearance;
-			std::shared_ptr<core::body_component> m_body;
 			std::shared_ptr<core::unit> m_unit;
+			factory* m_factory;
+			core::location_system::element_ptr m_location;
+			core::rendering_system::element_ptr m_appearance;
+			core::body_system::element_ptr m_body;
+			core::character_system::element_ptr m_character;
+			
 			bool m_done;
 		public:
 			task(factory& f) : m_factory(&f), m_unit(std::make_shared<core::unit>()), m_done(false) {}
@@ -70,7 +81,6 @@ namespace px
 				m_location = m_factory->make_location();
 
 				m_location->move(position);
-				m_location->make_blocking();
 
 				return m_location;
 			}
@@ -88,9 +98,14 @@ namespace px
 				if (m_body) throw std::runtime_error("px::core::factory::task::add_body(..) - body component already exists");
 				m_body = m_factory->make_body();
 
+				m_body->make_blocking();
 				m_body->set_health(hp);
 
 				return m_body;
+			}
+			auto add_character()
+			{
+				return m_character = m_factory->make_character();
 			}
 			std::shared_ptr<core::unit> assemble()
 			{
@@ -101,19 +116,21 @@ namespace px
 				if (m_body)
 				{
 					m_unit->add(m_body);
+					m_body->link(m_character);
 				}
-
 				if (m_appearance)
 				{
-					m_appearance->link(m_location);
-
 					m_unit->add(m_appearance);
+					m_appearance->link(m_location);
 				}
 				if (m_location)
 				{
-					m_location->link(m_body);
-
 					m_unit->add(m_location);
+					m_location->link(m_body);
+				}
+				if (m_character)
+				{
+					m_unit->add(m_character);
 				}
 
 				return m_unit;

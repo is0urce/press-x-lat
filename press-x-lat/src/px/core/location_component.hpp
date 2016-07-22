@@ -9,8 +9,6 @@
 #include <px/es/i_component.hpp>
 #include <px/es/component_link.hpp>
 #include <px/common/qtree.hpp>
-#include <px/rl/mass.hpp>
-#include <px/rl/traverse.hpp>
 #include "location.hpp"
 
 namespace px
@@ -22,7 +20,6 @@ namespace px
 			: public es::i_component
 			, public es::component_link<body_component>
 			, protected location
-			, public rl::mass<static_cast<size_t>(rl::traverse::max_value)>
 		{
 		private:
 			qtree<location_component*>* m_space;

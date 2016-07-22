@@ -81,7 +81,8 @@ namespace px
 				m_space->find(position.x(), position.y(), [&](int x, int y, location_component* component)
 				{
 					bool search = true;
-					if (!component->traversable(layer))
+					body_component* body = *component;
+					if (body && !body->traversable(layer))
 					{
 						blocking = component;
 						search = false;
@@ -114,14 +115,16 @@ namespace px
 			bool cast(location_component& source, unsigned int slot, point2 target)
 			{
 				bool action = false;
-				auto body = (body_component*)source;
-				if (body)
+				if (body_component* body = source)
 				{
-					auto s = body->get_skill(slot);
-					if (s && s->targeted())
+					if (character_component* character = *body)
 					{
-						s->use(*body, *body);
-						action = true;
+						auto spell = character->get_skill(slot);
+						if (spell && spell->targeted())
+						{
+							spell->use(*character, *body);
+							action = true;
+						}
 					}
 				}
 				return false;

@@ -17,7 +17,8 @@
 #include "rendering_system.hpp"
 #include "location_system.hpp"
 #include "terrain_system.hpp"
-#include <px/core/body_system.hpp>
+#include "body_system.hpp"
+#include "character_system.hpp"
 
 #include "unit.hpp"
 #include "game.hpp"
@@ -51,9 +52,10 @@ namespace px
 			shell::fps_counter m_fps;
 
 			location_system m_ls;
-			rendering_system m_rs;
-			terrain_system m_ts;
-			body_system m_bs;
+			rendering_system m_sprite_system;
+			terrain_system m_terrain_system;
+			body_system m_body_system;
+			character_system m_char_system;
 
 			terrain m_terrain;
 			environment m_environment;
@@ -69,33 +71,35 @@ namespace px
 				, m_space(space_start_width)
 				, m_canvas(1, 1)
 				, m_ls(m_space)
-				, m_rs(m_canvas)
-				, m_ts(m_canvas, m_terrain)
-				, m_factory(m_rs, m_ls, m_bs)
+				, m_sprite_system(m_canvas)
+				, m_terrain_system(m_canvas, m_terrain)
+				, m_factory(m_sprite_system, m_ls, m_body_system, m_char_system)
 				, m_environment(m_terrain, m_space)
 				, m_game(m_environment)
 				, m_last_turn(0)
 			{
+				add(&m_body_system);
+				add(&m_char_system);
 				add(&m_ls);
-				add(&m_ts);
-				add(&m_rs);
-				add(&m_bs);
+				add(&m_terrain_system);
+				add(&m_sprite_system);
 
 				auto task = m_factory.produce();
 				auto a = task->add_appearance('@');
 				auto l = task->add_location({ 1, 1 });
 				auto b = task->add_body(100);
+				auto c = task->add_character();
 				a->tint = { 1, 1, 1 };
 
-				b->add_skill(body_component::skill::create_target([&](rl::character<body_component&>, body_component&) {
+				c->add_skill(character_component::skill::create_target([&](rl::character<body_component&>, body_component&) {
 					MessageBox(0, L"x", L"x", 0);
 				}, [&](rl::character<body_component&>, body_component&) { return true; }));
 
 				m_terrain.add(task->assemble());
 
 				m_environment.impersonate(l);
-				m_rs.focus_camera(l);
-				m_ts.focus_camera(l);
+				m_sprite_system.focus_camera(l);
+				m_terrain_system.focus_camera(l);
 			}
 			virtual ~engine()
 			{
