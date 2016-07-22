@@ -39,8 +39,57 @@ namespace px
 			void use(_U u, const point2 &t) { use_ability(u, t); }
 		};
 
+		class skill_base
+		{
+		public:
+			typedef unsigned int timespan;
+			typedef unsigned int range_component;
+			typedef std::pair<range_component, range_component> range;
+		private:
+			timespan m_cooldown;
+			timespan m_timer;
+
+		public:
+			skill_base() : m_cooldown(0), m_timer(0) {}
+			virtual ~skill_base() {}
+
+		public:
+			void set_cooldown_time(timespan time)
+			{
+				m_cooldown = time;
+			}
+			void set_cooldown_remaining(timespan time)
+			{
+				m_timer = time;
+			}
+			timespan cooldown_time() const
+			{
+				return m_cooldown;
+			}
+			timespan cooldown_remaining() const
+			{
+				return m_timer;
+			}
+			bool is_cooldown() const
+			{
+				return m_timer > 0;
+			}
+			void cooldown(timespan time)
+			{
+				m_timer = (m_timer < time) ? 0 : m_timer - time;
+			}
+			void reset_cooldown()
+			{
+				m_timer = 0;
+			}
+			void start_cooldown()
+			{
+				m_timer = m_cooldown;
+			}
+		};
+
 		template <typename _U, typename _T>
-		class delegate_ability : public ability<_U, _T>
+		class skill : public ability<_U, _T>, public skill_base
 		{
 		public:
 			typedef std::function<void(_U, target)> target_fn;
@@ -56,30 +105,40 @@ namespace px
 			ground_check_fn m_ground_check;
 
 		public:
-			delegate_ability(target_fn tf, target_check_fn tfc) :
+			skill(target_fn tf, target_check_fn tfc) :
 				m_targeted(true),
 				m_target(tf), m_target_check(tfc)
 			{
 				if (!tf) throw std::logic_error("px::targeted_ability::targeted_ability() - tf is null");
-				if (!tfc) throw std::logic_error("px::targeted_ability::targeted_ability() - tfc is null");
 			}
-			delegate_ability(ground_fn gf, ground_check_fn gfc) :
+			skill(target_fn tf) :
+				m_targeted(true),
+				m_target(tf)
+			{
+				if (!tf) throw std::logic_error("px::targeted_ability::targeted_ability() - tf is null");
+			}
+			skill(ground_fn gf, ground_check_fn gfc) :
 				m_targeted(false),
 				m_ground(gf), m_ground_check(gfc)
 			{
 				if (!gf) throw std::logic_error("px::targeted_ability::targeted_ability() - gf is null");
-				if (!gfc) throw std::logic_error("px::targeted_ability::targeted_ability() - gfc is null");
 			}
-			virtual ~delegate_ability() {}
+			skill(ground_fn gf) :
+				m_targeted(false),
+				m_ground(gf)
+			{
+				if (!gf) throw std::logic_error("px::targeted_ability::targeted_ability() - gf is null");
+			}
+			virtual ~skill() {}
 
 		public:
-			static delegate_ability create_ground(ground_fn gf, ground_check_fn gfc)
+			static skill create_ground(ground_fn gf, ground_check_fn gfc)
 			{
-				return delegate_ability(gf, gfc);
+				return skill(gf, gfc);
 			}
-			static delegate_ability create_target(target_fn tf, target_check_fn tfc)
+			static skill create_target(target_fn tf, target_check_fn tfc)
 			{
-				return delegate_ability(tf, tfc);
+				return skill(tf, tfc);
 			}
 
 		protected:
@@ -89,27 +148,23 @@ namespace px
 			}
 			virtual void use_ability(_U u, _T t) override
 			{
-				if (!m_target) throw std::logic_error("px::targeted_ability::use_abitity(..) - m_target is null");
+				if (!m_target) throw std::logic_error("px::targeted_ability::use_abitity(..) - m_target function is null");
 
 				m_target(u, t);
 			}
 			virtual void use_ability(_U u, const point2 &t) override
 			{
-				if (!m_ground) throw std::logic_error("px::targeted_ability::use_abitity(..) - m_ground is null");
+				if (!m_ground) throw std::logic_error("px::targeted_ability::use_abitity(..) - m_ground function is null");
 
 				m_ground(u, t);
 			}
 			virtual bool useable_ability(_U u, _T t) const override
 			{
-				if (!m_target_check) throw std::logic_error("px::targeted_ability::useable_ability(..) - m_target_check is null");
-
-				return m_target_check(u, t);
+				return !(is_cooldown() || (m_target_check && !m_target_check(u, t)));
 			}
 			virtual bool useable_ability(_U u, const point2 &t) const override
 			{
-				if (!m_ground_check) throw std::logic_error("px::targeted_ability::useable_ability(..) - m_ground_check is null");
-
-				return m_ground_check(u, t);
+				return !(is_cooldown() || (m_ground_check && !m_ground_check(u, t)));
 			}
 		};
 	}

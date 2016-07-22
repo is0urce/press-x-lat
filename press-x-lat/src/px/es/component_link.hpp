@@ -26,7 +26,7 @@ namespace px
 			link_t m_link;
 		public:
 			component_link() {}
-			expose_t link() const
+			expose_t linked() const
 			{
 				auto shared = m_link.lock();
 				return shared ? shared.get() : nullptr;
@@ -35,9 +35,9 @@ namespace px
 			{
 				m_link = link;
 			}
-			explicit operator expose_t() const
+			operator expose_t() const
 			{
-				return link();
+				return linked();
 			}
 		};
 	}

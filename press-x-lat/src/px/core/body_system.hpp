@@ -19,6 +19,8 @@ namespace px
 			: public es::i_system
 			, public es::manager<body_component, 10000>
 		{
+		private:
+
 		public:
 			body_system() {}
 			virtual ~body_system() {}

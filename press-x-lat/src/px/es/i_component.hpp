@@ -6,6 +6,8 @@
 #ifndef PX_ES_I_COMPONENT_HPP
 #define PX_ES_I_COMPONENT_HPP
 
+#include <px/es/component_link.hpp>
+
 namespace px
 {
 	namespace es

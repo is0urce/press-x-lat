@@ -44,8 +44,7 @@ namespace px
 				{
 					if (img.active())
 					{
-						location_component* location = (location_component*)img;
-						if (location)
+						if (location_component* location = img)
 						{
 							auto relative = location->current() - camera;
 

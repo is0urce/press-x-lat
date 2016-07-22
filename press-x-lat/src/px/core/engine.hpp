@@ -58,7 +58,7 @@ namespace px
 			terrain m_terrain;
 			environment m_environment;
 			game m_game;
-			unsigned int m_turn;
+			unsigned int m_last_turn;
 
 			data::factory m_factory;
 
@@ -74,7 +74,7 @@ namespace px
 				, m_factory(m_rs, m_ls, m_bs)
 				, m_environment(m_terrain, m_space)
 				, m_game(m_environment)
-				, m_turn(0)
+				, m_last_turn(0)
 			{
 				add(&m_ls);
 				add(&m_ts);
@@ -89,7 +89,7 @@ namespace px
 
 				b->add_skill(body_component::skill::create_target([&](rl::character<body_component&>, body_component&) {
 					MessageBox(0, L"x", L"x", 0);
-				}, [&](rl::character<body_component&>, body_component&) {return true; }));
+				}, [&](rl::character<body_component&>, body_component&) { return true; }));
 
 				m_terrain.add(task->assemble());
 
@@ -123,9 +123,9 @@ namespace px
 			{
 				bool result = false;
 				auto turn = m_environment.time();
-				if (m_turn != turn)
+				if (m_last_turn != turn)
 				{
-					m_turn = turn;
+					m_last_turn = turn;
 					result = true;
 				}
 				return result;
