@@ -15,6 +15,10 @@
 #include <px/core/body_component.hpp>
 #include "terrain.hpp"
 
+#include <px/shell/fps_counter.hpp>
+#include <px/ui/stack_panel.hpp>
+#include <px/ui/performance_panel.hpp>
+
 #include <memory>
 
 namespace px
@@ -26,6 +30,7 @@ namespace px
 		private:
 			unsigned int m_time;
 			ui::stack_panel m_ui;
+			shell::fps_counter m_fps;
 
 			std::shared_ptr<location_component> m_player;
 			terrain* m_terrain;
@@ -37,6 +42,7 @@ namespace px
 				, m_space(&space)
 				, m_time(0)
 			{
+				m_ui.add("performance", std::make_shared<ui::performance_panel>(m_fps), ui::alignment({0.0, 0.0}, {1,0}, {-2, 1}, {1, 0}));
 			}
 			virtual ~environment()
 			{
@@ -61,7 +67,7 @@ namespace px
 			{
 				return m_time;
 			}
-			const ui::panel& ui() const
+			ui::stack_panel& ui()
 			{
 				return m_ui;
 			}

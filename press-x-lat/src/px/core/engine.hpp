@@ -114,14 +114,13 @@ namespace px
 				if (w > 0 && h > 0)
 				{
 					m_canvas.resize(w, h);
+					m_environment.ui().layout(m_canvas.range());
 				}
 				m_canvas.cls();
 			}
 			virtual void post_update_engine() override
 			{
-				m_fps.frame_processed();
-				m_canvas.rectangle({ { 0, 0}, {12, 1} }, 0x0000ff);
-				m_canvas.write({ 0, 0 }, std::string("fps: ") + std::to_string(m_fps.fps()));
+				m_environment.ui().draw(m_canvas);
 				m_renderer.render(0, m_canvas);
 			}
 			virtual bool fixed() override

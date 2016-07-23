@@ -236,6 +236,10 @@ namespace px
 		{
 			return m_height;
 		}
+		point2 range() const
+		{
+			return point2(m_width, m_height);
+		}
 		unsigned int size() const
 		{
 			return m_width * m_height;

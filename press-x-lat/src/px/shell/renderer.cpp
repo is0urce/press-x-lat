@@ -183,13 +183,13 @@ namespace px
 
 		void renderer::draw_canvas(const canvas& cnv)
 		{
-			//// ui
+			// ui
 			int w = cnv.width();
 			int h = cnv.height();
 			if (w <= 0 || h <= 0) return;
 			int size = w * h;
 
-			//// update cashed buffers if sizes have been changed
+			// update cashed buffers if sizes have been changed
 			if (w != m_ui.width || h != m_ui.height)
 			{
 				m_ui.width = w;

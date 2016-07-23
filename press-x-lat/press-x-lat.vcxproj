@@ -239,6 +239,7 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\shell\win\winkey.hpp" />
     <ClInclude Include="src\px\ui\alignment.hpp" />
     <ClInclude Include="src\px\ui\panel.hpp" />
+    <ClInclude Include="src\px\ui\performance_panel.hpp" />
     <ClInclude Include="src\px\ui\stack_panel.hpp" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -252,6 +253,7 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClCompile Include="src\px\shell\opengl.cpp" />
     <ClCompile Include="src\px\shell\renderer.cpp" />
     <ClCompile Include="src\px\shell\win\wingl.cpp" />
+    <ClCompile Include="src\px\ui\stack_panel.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

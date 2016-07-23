@@ -21,10 +21,10 @@ namespace px
 			virtual ~panel() = 0 {}
 
 		protected:
-			virtual void draw_panel(shell::canvas& cnv) = 0;
+			virtual void draw_panel(shell::canvas& cnv) const = 0;
 
 		public:
-			void draw(shell::canvas& cnv) { draw_panel(cnv); }
+			void draw(shell::canvas& cnv) const { draw_panel(cnv); }
 		};
 	}
 }
