@@ -1,12 +1,12 @@
-// name: "font.h"
+// name: "font.hpp"
 // type: c++
 // desc: class header
 // auth: is0urce
 
 // fonts management using freetype
 
-#ifndef PX_SHELL_FONT_H
-#define PX_SHELL_FONT_H
+#ifndef PX_SHELL_FONT_HPP
+#define PX_SHELL_FONT_HPP
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
@@ -62,9 +62,9 @@ namespace px
 
 		public:
 			font(const char* name, unsigned int size);
-			~font();
+			virtual ~font();
 		private:
-			font(const font&); // disable copy
+			font(const font&) = delete; // disable copy
 
 		private:
 			std::unique_ptr<glyph> raster(unsigned int uplus);

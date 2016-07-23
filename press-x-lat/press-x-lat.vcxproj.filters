@@ -57,9 +57,6 @@
     <ClInclude Include="src\px\common\qtree.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\px\shell\font.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\px\shell\font_texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -231,6 +228,9 @@
     <ClInclude Include="src\px\core\character_system.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\px\shell\font.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -279,5 +279,7 @@
     <None Include="config\shared\console_text.vert" />
     <None Include="doc\ores.json" />
     <None Include="src\px\core\rendering_system.hpp" />
+    <None Include="config\shared\console_bg.vert" />
+    <None Include="config\shared\console_bg.frag" />
   </ItemGroup>
 </Project>

@@ -224,7 +224,7 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\shell\control.hpp" />
     <ClInclude Include="src\px\shell\control_chain.hpp" />
     <ClInclude Include="src\px\shell\control_dispatcher.hpp" />
-    <ClInclude Include="src\px\shell\font.h" />
+    <ClInclude Include="src\px\shell\font.hpp" />
     <ClInclude Include="src\px\shell\font_texture.h" />
     <ClInclude Include="src\px\shell\fps_counter.hpp" />
     <ClInclude Include="src\px\shell\glsl.h" />
@@ -267,6 +267,8 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <Image Include="small.ico" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="config\shared\console_bg.frag" />
+    <None Include="config\shared\console_bg.vert" />
     <None Include="config\shared\console_text.frag" />
     <None Include="config\shared\console_text.vert" />
     <None Include="doc\ores.json" />

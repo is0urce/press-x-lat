@@ -91,9 +91,9 @@ namespace px
 				auto c = task->add_character();
 				a->tint = { 1, 1, 1 };
 
-				c->add_skill(character_component::skill::create_target([&](rl::character<body_component&>, body_component&) {
+				c->add_skill(character_component::skill::create_target([](auto ch, auto& bd) {
 					MessageBox(0, L"x", L"x", 0);
-				}, [&](rl::character<body_component&>, body_component&) { return true; }));
+				}, nullptr));
 
 				m_terrain.add(task->assemble());
 
@@ -120,6 +120,7 @@ namespace px
 			virtual void post_update_engine() override
 			{
 				m_fps.frame_processed();
+				m_canvas.rectangle({ { 0, 0}, {12, 1} }, 0x0000ff);
 				m_canvas.write({ 0, 0 }, std::string("fps: ") + std::to_string(m_fps.fps()));
 				m_renderer.render(0, m_canvas);
 			}

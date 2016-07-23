@@ -11,6 +11,7 @@
 #include <px/shell/vao.h>
 #include <px/shell/program.h>
 #include <px/shell/texture.h>
+#include <px/shell/font.hpp>
 #include <px/shell/font_texture.h>
 #include <px/shell/canvas.hpp>
 
@@ -46,6 +47,7 @@ namespace px
 			struct ui_draw
 			{
 			public:
+				font_texture font_texture;
 				// buffers cashed due in general constant canvas size
 				int width = 0;
 				int height = 0;
@@ -63,9 +65,6 @@ namespace px
 					std::vector<GLfloat> vertices;
 					std::vector<GLfloat> colors;
 					std::vector<GLfloat> texture;
-					font_texture font;
-					GLint u_scale;
-					GLint u_offset;
 				} text;
 				std::vector<GLuint> indices; // indices are shared
 				float scale_x, scale_y, offset_x, offset_y; // uniform values

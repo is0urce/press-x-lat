@@ -6,7 +6,7 @@
 #include "renderer.hpp"
 
 #include <px/shell/opengl.h>
-#include <px/shell/font.h>
+#include <px/shell/font.hpp>
 
 #include <px/common/color.hpp>
 
@@ -125,18 +125,24 @@ namespace px
 			glClampColor(GL_CLAMP_READ_COLOR, GL_FALSE);
 			glClampColor(GL_CLAMP_FRAGMENT_COLOR, GL_FALSE);
 
+			m_ui.font_texture = std::make_unique<font>(font_name, font_size);
 			m_ui.text.vao = vao({ 2, 4, 2 });
 			m_ui.text.shader = program("console_text");
-			m_ui.text.font = std::make_unique<font>(font_name, font_size);
 			m_ui.text.shader.activate();
 			m_ui.text.shader.uniform("font", 0);
-			m_ui.text.u_scale = m_ui.text.shader.uniform("scale");
-			m_ui.text.u_offset = m_ui.text.shader.uniform("offset");
-			m_ui.text.shader.prepare([this]()
+			m_ui.text.shader.prepare([this, u_scale = m_ui.text.shader.uniform("scale"), u_offset = m_ui.text.shader.uniform("offset")]()
 			{
-				program::uniform(m_ui.text.u_scale, (GLfloat)m_ui.scale_x, (GLfloat)m_ui.scale_y);
-				program::uniform(m_ui.text.u_offset, (GLfloat)m_ui.offset_x, (GLfloat)m_ui.offset_y);
-				m_ui.text.font.bind(0);
+				program::uniform(u_scale, static_cast<GLfloat>(m_ui.scale_x), static_cast<GLfloat>(m_ui.scale_y));
+				program::uniform(u_offset, static_cast<GLfloat>(m_ui.offset_x), static_cast<GLfloat>(m_ui.offset_y));
+				m_ui.font_texture.bind(0);
+			});
+
+			m_ui.bg.vao = vao({ 2, 4 });
+			m_ui.bg.shader = program("console_bg");
+			m_ui.bg.shader.prepare([this, u_scale = m_ui.bg.shader.uniform("scale"), u_offset = m_ui.bg.shader.uniform("offset")]()
+			{
+				program::uniform(u_scale, static_cast<GLfloat>(m_ui.scale_x), static_cast<GLfloat>(m_ui.scale_y));
+				program::uniform(u_offset, static_cast<GLfloat>(m_ui.offset_x), static_cast<GLfloat>(m_ui.offset_y));
 			});
 
 #if _DEBUG
@@ -174,7 +180,7 @@ namespace px
 			}
 #endif
 		}
-		
+
 		void renderer::draw_canvas(const canvas& cnv)
 		{
 			//// ui
@@ -192,33 +198,36 @@ namespace px
 				// update buffer sizes
 				m_ui.indices.resize(size * strip);
 
-				m_ui.text.vertices.resize(size * 2 * quad);
-				m_ui.text.colors.resize(size * 4 * quad);
-				m_ui.text.texture.resize(size * 2 * quad);
+				m_ui.text.vertices.resize(size * 2 * quad); // 2-component coordinates for flat console
+				m_ui.text.colors.resize(size * color_depth * quad);
+				m_ui.text.texture.resize(size * texture_depth * quad);
+
+				m_ui.bg.vertices.resize(size * 2 * quad); // 2-component coordinates for flat console
+				m_ui.bg.colors.resize(size * color_depth * quad);
 
 				fill_index(size, &m_ui.indices[0]);
 
 				// fill cashed parts
 				m_ui.text.vao.fill_indices(m_ui.indices);
+				m_ui.bg.vao.fill_indices(m_ui.indices);
 			}
 
 			// fill buffers
-			unsigned int color_offset = 0;
 			unsigned int vertex_offset = 0;
+			unsigned int color_offset = 0;
 			unsigned int texture_offset = 0;
 			for (int j = 0; j < h; ++j)
 			{
 				for (int i = 0; i < w; ++i)
 				{
 					auto &symbol = cnv[{i, j}];
-					auto &g = m_ui.text.font->at(symbol.code == 0 ? '?' : symbol.code);
+					auto &g = m_ui.font_texture->at(symbol.code == 0 ? '?' : symbol.code);
 
-					// vertices
+					// vertices of glyphs
 					int x = i * ui_cell_width + ui_cell_width / 2 - g.pixel_width / 2;
 					int xd = x + g.pixel_width;
 					int y = (h - j - 1) * ui_cell_height - g.pixel_height + g.pixel_top;
 					int yd = y + g.pixel_height;
-
 					m_ui.text.vertices[vertex_offset + 0] = (GLfloat)x;
 					m_ui.text.vertices[vertex_offset + 1] = (GLfloat)y;
 					m_ui.text.vertices[vertex_offset + 2] = (GLfloat)x;
@@ -228,8 +237,23 @@ namespace px
 					m_ui.text.vertices[vertex_offset + 6] = (GLfloat)xd;
 					m_ui.text.vertices[vertex_offset + 7] = (GLfloat)y;
 
+					// vertices of background cells
+					x = i * ui_cell_width;
+					xd = (i + 1) * ui_cell_width;
+					y = (h - j - 1) * ui_cell_height;
+					yd = (h - j) * ui_cell_height;
+					m_ui.bg.vertices[vertex_offset + 0] = (GLfloat)x;
+					m_ui.bg.vertices[vertex_offset + 1] = (GLfloat)y;
+					m_ui.bg.vertices[vertex_offset + 2] = (GLfloat)x;
+					m_ui.bg.vertices[vertex_offset + 3] = (GLfloat)yd;
+					m_ui.bg.vertices[vertex_offset + 4] = (GLfloat)xd;
+					m_ui.bg.vertices[vertex_offset + 5] = (GLfloat)yd;
+					m_ui.bg.vertices[vertex_offset + 6] = (GLfloat)xd;
+					m_ui.bg.vertices[vertex_offset + 7] = (GLfloat)y;
+
 					// colors
 					fill_color(symbol.front, &m_ui.text.colors[color_offset]);
+					fill_color(symbol.back, &m_ui.bg.colors[color_offset]);
 
 					// textures
 					fill_texture((GLfloat)g.left, (GLfloat)g.bottom, (GLfloat)g.right, (GLfloat)g.top, &m_ui.text.texture[texture_offset]);
@@ -245,17 +269,24 @@ namespace px
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			// uniforms source preparation 
-			m_ui.scale_x = 2.0f / m_width;
-			m_ui.scale_y = 2.0f / m_height;
-			m_ui.offset_x = (float)(m_width % ui_cell_width / 2);
-			m_ui.offset_y = (float)(m_height % ui_cell_height / 2);
+			m_ui.scale_x = 2;
+			m_ui.scale_x /= m_width;
+			m_ui.scale_y = 2;
+			m_ui.scale_y /= m_height;
+			m_ui.offset_x = static_cast<float>(m_width % ui_cell_width / 2);
+			m_ui.offset_y = static_cast<float>(m_height % ui_cell_height / 2);
+
+			// background
+			m_ui.bg.shader.use();
+			m_ui.bg.vao.fill_attributes(0, size * quad, &m_ui.bg.vertices[0]);
+			m_ui.bg.vao.fill_attributes(1, size * quad, &m_ui.bg.colors[0]);
+			m_ui.bg.vao.draw();
 
 			// text
 			m_ui.text.shader.use();
 			m_ui.text.vao.fill_attributes(0, size * quad, &m_ui.text.vertices[0]);
 			m_ui.text.vao.fill_attributes(1, size * quad, &m_ui.text.colors[0]);
 			m_ui.text.vao.fill_attributes(2, size * quad, &m_ui.text.texture[0]);
-			m_ui.text.vao.fill_indices(m_ui.indices);
 			m_ui.text.vao.draw();
 		}
 

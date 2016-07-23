@@ -39,7 +39,6 @@ namespace px
 		template <typename _O>
 		matrix2(_O op)
 		{
-			//if (!op) throw std::runtime_error("px::common::matrix2<e,w,h>::ctor(op) - op is null");
 			fill(op);
 		}
 

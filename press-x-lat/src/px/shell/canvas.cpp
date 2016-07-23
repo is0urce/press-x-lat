@@ -54,6 +54,15 @@ namespace px
 				s.code = ' ';
 				s.back = back;
 			});
+			//bounds.enumerate([&](unsigned int i, unsigned int j)
+			//{
+			//	if (contains(i, j))
+			//	{
+			//	symbol &s = at(i, j);
+			//	s.code = ' ';
+			//	s.back = back;
+			//}
+			//});
 		}
 
 		void canvas::pset(const point2& pos)

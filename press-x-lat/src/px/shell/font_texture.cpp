@@ -5,7 +5,7 @@
 
 #include "font_texture.h"
 
-#include <px/shell/font.h>
+#include <px/shell/font.hpp>
 
 #include <stdexcept>
 

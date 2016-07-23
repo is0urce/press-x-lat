@@ -17,7 +17,7 @@
 	#endif
 #endif
 
-#include "font.h"
+#include "font.hpp"
 
 #include <algorithm>
 #include <string>

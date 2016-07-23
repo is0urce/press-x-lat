@@ -29,7 +29,7 @@ namespace px
 	public:
 		point2::component width() const
 		{
-			return m_range.x();;
+			return m_range.x();
 		}
 		point2::component height() const
 		{
@@ -45,7 +45,7 @@ namespace px
 		}
 		point2 corner() const
 		{
-			return m_start + m_range;
+			return m_corner;
 		}
 		unsigned int size() const
 		{
@@ -73,7 +73,7 @@ namespace px
 			auto start_x = (std::max)(m_start.x(), with.m_start.x());
 			auto start_y = (std::max)(m_start.y(), with.m_start.y());
 			auto corner_x = (std::min)(m_corner.x(), with.m_corner.x());
-			auto corner_y = (std::min)(m_corner.x(), with.m_corner.x());
+			auto corner_y = (std::min)(m_corner.y(), with.m_corner.y());
 			return rectangle({ start_x, start_y }, { corner_x - start_x, corner_y - start_y });
 		}
 
