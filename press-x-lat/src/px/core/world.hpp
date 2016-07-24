@@ -6,14 +6,12 @@
 #ifndef PX_CORE_WORLD_H
 #define PX_CORE_WORLD_H
 
+#include <px/common/matrix.hpp>
 #include <px/rl/tile.hpp>
 #include <px/rl/traverse.hpp>
 #include <px/rl/map_stream.hpp>
-#include <px/common/matrix.hpp>
 #include <px/fn/perlin.hpp>
 
-#include "location_component.hpp"
-#include "unit.hpp"
 #include "image.hpp"
 
 #include <memory>
@@ -29,7 +27,7 @@ namespace px
 		class world
 		{
 		public:
-			static const unsigned int cell_width = 5;
+			static const unsigned int cell_width = 10;
 			static const unsigned int cell_height = cell_width;
 			static const unsigned int perlin_width = 3;
 			static const unsigned int perlin_height = perlin_width;
@@ -65,14 +63,11 @@ namespace px
 				m_created.fill(false);
 			}
 
-			// management
 			void arrange(const point2 &cell, map& terrain, std::list<unit_ptr>& units)
 			{
-				//std::this_thread::sleep_for(std::chrono::milliseconds((cell.x() + cell.y() * 91) % 50 + 50));
-
 				rng generator(m_seed + cell.x() + cell.y() * cell_width * cell_height);
 				std::uniform_real_distribution<double> distribution;
-				fn::perlin<perlin_width, perlin_height> noise([&](){return distribution(generator); });
+				fn::perlin<perlin_width, perlin_height> noise([&]() {return distribution(generator); });
 
 				double mx = static_cast<double>(perlin_width) / cell_width;
 				double my = static_cast<double>(perlin_height) / cell_height;
@@ -93,15 +88,26 @@ namespace px
 						img.tint = { 0.5, 0.5, 0.5 };
 						t.make_traversable();
 					}
+#ifdef _DEBUG
+					if (i == 0) terrain[{i, j}].appearance().glyph = '|';
+					if (j == 0) terrain[{i, j}].appearance().glyph = '-';
+					if (i == 0 && j == 0) terrain[{i, j}].appearance().glyph = '+';
+#endif
 				});
-
-//#ifdef _DEBUG
+#ifdef _DEBUG
 				const char* digits = "0123456789ABCDEF";
 				terrain[{1, 1}].appearance().glyph = digits[cell.x() - 10 * size_t((std::floor)(cell.x() / 10.0))];
 				terrain[{2, 1}].appearance().glyph = ':';
 				terrain[{3, 1}].appearance().glyph = digits[cell.y() - 10 * size_t((std::floor)(cell.y() / 10.0))];
-//#endif
+#endif
+				throw std::runtime_error("asdf");
 
+				bool outer = true;
+				bool &created = m_created.select(cell, outer);
+				if (!created)
+				{
+					created = true;
+				}
 			}
 			void store(unit_ptr unit)
 			{

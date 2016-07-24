@@ -21,11 +21,11 @@ namespace px
 		std::array<component, _D> m_array;
 
 	public:
-		const component& operator[](unsigned int i) const
+		const component& operator[](size_t i) const
 		{
 			return m_array[i];
 		}
-		component& operator[](unsigned int i)
+		component& operator[](size_t i)
 		{
 			return m_array[i];
 		}

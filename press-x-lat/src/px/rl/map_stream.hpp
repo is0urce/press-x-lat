@@ -13,6 +13,7 @@
 #include <thread>
 #include <list>
 #include <chrono>
+#include <string>
 
 namespace px
 {
@@ -32,6 +33,7 @@ namespace px
 			volatile bool m_loaded;
 			bool m_pending;
 			std::thread m_thread;
+			std::exception_ptr exc_ptr;
 
 		public:
 			map_stream() : m_loaded(true), m_pending(false)
@@ -39,17 +41,37 @@ namespace px
 			}
 			virtual ~map_stream()
 			{
-				wait();
+				finish_loading();
 			}
 			map_stream(const map_stream&) = delete;
 
-
-		public:
-			void wait()
+		private:
+			void finish_loading()
 			{
 				if (m_thread.joinable())
 				{
 					m_thread.join();
+				}
+			}
+
+		public:
+			void wait()
+			{
+				finish_loading();
+				exception_check();
+			}
+			void exception_check()
+			{
+				if (exc_ptr)
+				{
+					try
+					{
+						std::rethrow_exception(exc_ptr);
+					}
+					catch (const std::exception &e)
+					{
+						throw std::runtime_error(std::string("px::map_stream - exception in loading map thread; what = ") + e.what());
+					}
 				}
 			}
 			bool loaded() const
@@ -80,8 +102,15 @@ namespace px
 				m_pending = true;
 				m_thread = std::thread([fn, this]()
 				{
-					fn(m_map, m_units);
-					m_loaded = true;
+					try
+					{
+						fn(m_map, m_units);
+						m_loaded = true;
+					}
+					catch (...)
+					{
+						exc_ptr = std::current_exception();
+					}
 				});
 			}
 			void merge(unit_list &grand)

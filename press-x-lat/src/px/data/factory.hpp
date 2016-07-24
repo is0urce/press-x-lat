@@ -12,6 +12,8 @@
 #include <px/core/body_system.hpp>
 #include <px/core/character_system.hpp>
 
+#include "unit_composer.hpp"
+
 #include <memory>
 
 namespace px
@@ -41,11 +43,11 @@ namespace px
 			{
 				return std::make_unique<task>(*this);
 			}
-			auto make_appearance() -> decltype(m_rs->make())
+			auto make_appearance()
 			{
 				return m_rs->make();
 			}
-			auto make_location() -> decltype(m_ls->make())
+			auto make_location()
 			{
 				return m_ls->make();
 			}
@@ -59,81 +61,54 @@ namespace px
 			}
 		};
 
-		class task
+		class task : public unit_composer
 		{
 		private:
-			std::shared_ptr<core::unit> m_unit;
 			factory* m_factory;
-			core::location_system::element_ptr m_location;
-			core::rendering_system::element_ptr m_appearance;
-			core::body_system::element_ptr m_body;
-			core::character_system::element_ptr m_character;
-			
-			bool m_done;
+
 		public:
-			task(factory& f) : m_factory(&f), m_unit(std::make_shared<core::unit>()), m_done(false) {}
+			task(factory &builder) : m_factory(&builder)
+			{
+			}
 			~task() {}
 
 		public:
-			auto add_location(point2 position) -> decltype(m_location)
+			auto add_location(point2 position)
 			{
-				if (m_location) throw std::runtime_error("px::core::factory::task - location component already exists");
-				m_location = m_factory->make_location();
+				// create
+				auto location = m_factory->make_location();
 
-				m_location->move(position);
+				// setup
+				location->move(position);
 
-				return m_location;
+				// register & return
+				add(location);
+				return location;
 			}
-			auto add_appearance(unsigned int glyph) -> decltype(m_appearance)
+			auto add_appearance(unsigned int glyph)
 			{
-				if (m_appearance) throw std::runtime_error("px::core::factory::task - image component already exists");
-				m_appearance = m_factory->make_appearance();
+				auto appearance = m_factory->make_appearance();
 
-				m_appearance->glyph = glyph;
+				appearance->glyph = glyph;
 
-				return m_appearance;
+				add(appearance);
+				return appearance;
 			}
-			auto add_body(unsigned int hp) -> decltype(m_body)
+			auto add_body()
 			{
-				if (m_body) throw std::runtime_error("px::core::factory::task::add_body(..) - body component already exists");
-				m_body = m_factory->make_body();
+				auto body = m_factory->make_body();
 
-				m_body->make_blocking();
-				m_body->set_health(hp);
+				body->make_blocking();
 
-				return m_body;
+				add(body);
+				return body;
 			}
 			auto add_character()
 			{
-				return m_character = m_factory->make_character();
-			}
-			std::shared_ptr<core::unit> assemble()
-			{
-				if (m_done) throw std::runtime_error("px::core::factory::task::assemble - unit already created");
-				m_done = true;
+				auto character = m_factory->make_character();
 
-				// add components
-				if (m_body)
-				{
-					m_unit->add(m_body);
-					m_body->link(m_character);
-				}
-				if (m_appearance)
-				{
-					m_unit->add(m_appearance);
-					m_appearance->link(m_location);
-				}
-				if (m_location)
-				{
-					m_unit->add(m_location);
-					m_location->link(m_body);
-				}
-				if (m_character)
-				{
-					m_unit->add(m_character);
-				}
-
-				return m_unit;
+				add(character);
+				return character;
 			}
 		};
 	}

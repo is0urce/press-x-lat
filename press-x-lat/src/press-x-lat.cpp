@@ -81,6 +81,10 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		MultiByteToWideChar(CP_ACP, 0, exc.what(), -1, message, 1024);
 		MessageBox(NULL, message, NULL, NULL);
 	}
+	catch (...)
+	{
+		MessageBox(NULL, L"unknown exception", NULL, NULL);
+	}
 
 	return (int)msg.wParam;
 }

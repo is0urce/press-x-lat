@@ -82,24 +82,25 @@ namespace px
 				add(&m_terrain_system);
 				add(&m_sprite_system);
 
-				auto weapon = std::make_shared<rl::item<rl::effect>>();
+				auto weapon = std::make_shared<body_component::item_type>();
 				weapon->emplace(rl::effect::weapon_damage, 10);
 
 				auto task = m_factory.produce();
+
 				auto sprite = task->add_appearance('@');
-				auto l = task->add_location({ 1, 1 });
-				auto body = task->add_body(100);
+				auto pawn = task->add_location({ 1, 1 });
+				auto body = task->add_body();
 				auto character = task->add_character();
 
 				body->equip_weapon(weapon);
 				sprite->tint = { 0, 1, 1 };
-				character->add_skill(character_component::skill::create_target([this](auto ch, auto& bd) { m_environment.ui().toggle("performance"); }, nullptr));
+				character->add_skill(character_component::skill::create_target([this](auto user_body, auto& target_body) { m_environment.ui().toggle("performance"); }, nullptr));
 
 				m_terrain.add(task->assemble());
 
-				m_environment.impersonate(l);
-				m_sprite_system.focus_camera(l);
-				m_terrain_system.focus_camera(l);
+				m_environment.impersonate(pawn);
+				m_sprite_system.focus_camera(pawn);
+				m_terrain_system.focus_camera(pawn);
 			}
 			virtual ~engine()
 			{
