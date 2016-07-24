@@ -12,7 +12,6 @@
 #include <px/shell/control_dispatcher.hpp>
 #include <px/shell/opengl.h>
 #include <px/shell/renderer.hpp>
-#include <px/shell/fps_counter.hpp>
 
 #include "rendering_system.hpp"
 #include "location_system.hpp"
@@ -49,7 +48,6 @@ namespace px
 			qtree<location_component*> m_space;
 			shell::renderer m_renderer;
 			shell::canvas m_canvas;
-			shell::fps_counter m_fps;
 
 			location_system m_ls;
 			rendering_system m_sprite_system;
@@ -84,16 +82,18 @@ namespace px
 				add(&m_terrain_system);
 				add(&m_sprite_system);
 
-				auto task = m_factory.produce();
-				auto a = task->add_appearance('@');
-				auto l = task->add_location({ 1, 1 });
-				auto b = task->add_body(100);
-				auto c = task->add_character();
-				a->tint = { 1, 1, 1 };
+				auto weapon = std::make_shared<rl::item<rl::effect>>();
+				weapon->emplace(rl::effect::weapon_damage, 10);
 
-				c->add_skill(character_component::skill::create_target([](auto ch, auto& bd) {
-					MessageBox(0, L"x", L"x", 0);
-				}, nullptr));
+				auto task = m_factory.produce();
+				auto sprite = task->add_appearance('@');
+				auto l = task->add_location({ 1, 1 });
+				auto body = task->add_body(100);
+				auto character = task->add_character();
+
+				body->equip_weapon(weapon);
+				sprite->tint = { 0, 1, 1 };
+				character->add_skill(character_component::skill::create_target([this](auto ch, auto& bd) { m_environment.ui().toggle("performance"); }, nullptr));
 
 				m_terrain.add(task->assemble());
 

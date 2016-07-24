@@ -12,6 +12,10 @@
 #include <px/rl/character.hpp>
 #include <px/rl/mass.hpp>
 #include <px/rl/traverse.hpp>
+#include <px/rl/item.hpp>
+#include <px/rl/effect.hpp>
+
+#include <memory>
 
 namespace px
 {
@@ -25,7 +29,26 @@ namespace px
 			, public es::component_link<character_component>
 		{
 		public:
+			typedef rl::item<rl::effect> item_type;
+			typedef std::shared_ptr<item_type> item_ptr;
+
+		private:
+			item_ptr m_hands;
+
+		public:
 			virtual ~body_component() {}
+
+		public:
+			const item_type* weapon()
+			{
+				return m_hands.get();
+			}
+			void equip_weapon(item_ptr i)
+			{
+				if (m_hands) throw std::runtime_error("px::core::body_component::equip_weapon(..) weapon already presents");
+
+				m_hands = i;
+			}
 		};
 	}
 }

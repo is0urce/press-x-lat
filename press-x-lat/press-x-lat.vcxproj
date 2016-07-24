@@ -199,7 +199,11 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\rl\ability.hpp" />
     <ClInclude Include="src\px\rl\body.hpp" />
     <ClInclude Include="src\px\rl\character.hpp" />
+    <ClInclude Include="src\px\rl\effect.hpp" />
+    <ClInclude Include="src\px\rl\enhancement_collection.hpp" />
     <ClInclude Include="src\px\rl\enhancement.hpp" />
+    <ClInclude Include="src\px\rl\inventory.hpp" />
+    <ClInclude Include="src\px\rl\item.hpp" />
     <ClInclude Include="src\px\rl\map_stream.hpp" />
     <ClInclude Include="src\px\core\persistency.hpp" />
     <ClInclude Include="src\px\core\terrain_system.hpp" />
@@ -226,7 +230,7 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\shell\control_dispatcher.hpp" />
     <ClInclude Include="src\px\shell\font.hpp" />
     <ClInclude Include="src\px\shell\font_texture.h" />
-    <ClInclude Include="src\px\shell\fps_counter.hpp" />
+    <ClInclude Include="src\px\common\fps_counter.hpp" />
     <ClInclude Include="src\px\shell\glsl.h" />
     <ClInclude Include="src\px\shell\key.hpp" />
     <ClInclude Include="src\px\shell\opengl.h" />
@@ -249,7 +253,6 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClCompile Include="src\px\shell\canvas.cpp" />
     <ClCompile Include="src\px\shell\font.cpp" />
     <ClCompile Include="src\px\shell\font_texture.cpp" />
-    <ClCompile Include="src\px\shell\fps_counter.cpp" />
     <ClCompile Include="src\px\shell\opengl.cpp" />
     <ClCompile Include="src\px\shell\renderer.cpp" />
     <ClCompile Include="src\px\shell\win\wingl.cpp" />

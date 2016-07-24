@@ -57,7 +57,7 @@ namespace px
 
 		bool contains(coordinate<int, 2> position) const
 		{
-			return contains(position[0], position[1]);
+			return contains(position.get<0>(), position.get<1>());
 		}
 		bool contains(point2 position) const
 		{
@@ -75,7 +75,7 @@ namespace px
 		template <typename _O>
 		void fill(_O op)
 		{
-			unsigned int index = 0;
+			size_t index = 0;
 			for (unsigned int j = 0; j < _H; ++j)
 			{
 				for (unsigned int i = 0; i < _W; ++i)
@@ -88,7 +88,7 @@ namespace px
 		template <typename _O>
 		void enumerate(_O op)
 		{
-			unsigned int index = 0;
+			size_t index = 0;
 			for (unsigned int j = 0; j < _H; ++j)
 			{
 				for (unsigned int i = 0; i < _W; ++i)
@@ -104,12 +104,12 @@ namespace px
 		template<typename _C>
 		const element& operator[](coordinate<_C, 2> key) const
 		{
-			return m_data[key[1] * _W + key[0]];
+			return m_data[key.get<1>() * _W + key.get<0>()];
 		}
 		template<typename _C>
 		element& operator[](coordinate<_C, 2> key)
 		{
-			return m_data[key[1] * _W + key[0]];
+			return m_data[key.get<1>() * _W + key.get<0>()];
 		}
 		const element& operator[](point2 key) const
 		{
@@ -269,7 +269,7 @@ namespace px
 		template <typename _O>
 		void fill(_O op)
 		{
-			unsigned int index = 0;
+			size_t index = 0;
 			for (unsigned int j = 0; j < m_height; ++j)
 			{
 				for (unsigned int i = 0; i < m_width; ++i)
@@ -282,7 +282,7 @@ namespace px
 		template <typename _O>
 		void enumerate(_O op)
 		{
-			unsigned int index = 0;
+			size_t index = 0;
 			for (unsigned int j = 0; j < m_height; ++j)
 			{
 				for (unsigned int i = 0; i < m_width; ++i)
@@ -299,12 +299,12 @@ namespace px
 		template<typename _C, unsigned int D>
 		const element& operator[](coordinate<int, 2> key) const
 		{
-			return m_data[key[1] * m_width + key[0]];
+			return m_data[key.get<1>() * m_width + key.get<0>()];
 		}
 		template<typename _C, unsigned int D>
 		element& operator[](coordinate<int, 2> key)
 		{
-			return m_data[key[1] * m_width + key[0]];
+			return m_data[key.get<1>() * m_width + key.get<0>()];
 		}
 		const element& operator[](point2 key) const
 		{

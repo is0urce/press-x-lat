@@ -9,7 +9,7 @@
 
 #include "stack_panel.hpp"
 
-#include <px/shell/fps_counter.hpp>
+#include <px/common/fps_counter.hpp>
 #include <px/ui/stack_panel.hpp>
 
 #include <string>
@@ -21,9 +21,9 @@ namespace px
 		class performance_panel : public stack_panel
 		{
 		private:
-			shell::fps_counter* m_fps;
+			fps_counter* m_fps;
 		public:
-			performance_panel(shell::fps_counter& fps) : m_fps(&fps) {}
+			performance_panel(fps_counter& fps) : m_fps(&fps) {}
 			virtual ~performance_panel() {}
 
 		protected:
@@ -34,7 +34,7 @@ namespace px
 				std::string str("fps:");
 				str += std::to_string(m_fps->fps());
 				auto win = bounds();
-				cnv.rectangle(win, color(0x0000ff));
+				//cnv.rectangle(win, color(0x0000ff));
 				cnv.write(win.start(), str);
 			}
 		};

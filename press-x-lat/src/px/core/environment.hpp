@@ -8,14 +8,14 @@
 #ifndef PX_CORE_ENVIRONMENT_HPP
 #define PX_CORE_ENVIRONMENT_HPP
 
-#include <px/ui/stack_panel.hpp>
-#include <px/core/location_component.hpp>
+#include <px/common/fps_counter.hpp>
+
 #include <px/rl/traverse.hpp>
 
+#include <px/core/location_component.hpp>
 #include <px/core/body_component.hpp>
-#include "terrain.hpp"
+#include <px/core/terrain.hpp>
 
-#include <px/shell/fps_counter.hpp>
 #include <px/ui/stack_panel.hpp>
 #include <px/ui/performance_panel.hpp>
 
@@ -30,7 +30,7 @@ namespace px
 		private:
 			unsigned int m_time;
 			ui::stack_panel m_ui;
-			shell::fps_counter m_fps;
+			fps_counter m_fps;
 
 			std::shared_ptr<location_component> m_player;
 			terrain* m_terrain;
