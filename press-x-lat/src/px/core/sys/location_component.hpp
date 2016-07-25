@@ -9,7 +9,7 @@
 #include <px/es/i_component.hpp>
 #include <px/es/component_link.hpp>
 #include <px/common/qtree.hpp>
-#include "location.hpp"
+#include <px/core/location.hpp>
 
 namespace px
 {

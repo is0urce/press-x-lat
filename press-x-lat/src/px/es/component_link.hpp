@@ -19,23 +19,21 @@ namespace px
 		template<typename _L>
 		class component_link
 		{
-		public:
-			typedef std::weak_ptr<_L> link_t;
-			typedef _L* expose_t;
 		private:
-			link_t m_link;
+			std::weak_ptr<_L> m_link;
+
 		public:
 			component_link() {}
-			expose_t linked() const
+			_L* linked() const
 			{
 				auto shared = m_link.lock();
 				return shared ? shared.get() : nullptr;
 			}
-			void link(link_t link)
+			void link(std::weak_ptr<_L> weak)
 			{
-				m_link = link;
+				m_link = weak;
 			}
-			operator expose_t() const
+			explicit operator _L*() const
 			{
 				return linked();
 			}

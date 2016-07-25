@@ -6,6 +6,8 @@
 #ifndef PX_CORE_TERRAIN_HPP
 #define PX_CORE_TERRAIN_HPP
 
+#include <px/common/vector.hpp>
+
 #include "location_component.hpp"
 #include "unit.hpp"
 #include "image.hpp"
@@ -50,11 +52,10 @@ namespace px
 			maps m_maps;
 			point2 m_focus; // absolute world cell coordinate
 			units m_units; // storage container
-			world m_world;
+			world* m_world;
 
 		public:
-			terrain()
-				: m_world(0)
+			terrain(world &w) : m_world(&w)
 			{
 				m_default.appearance() = { '.', { 0, 0, 0, 0 } };
 				m_default.make_wall();
@@ -75,7 +76,7 @@ namespace px
 			{
 				if (area) throw std::runtime_error("px::terrain::load - not null");
 				area = std::make_unique<stream>();
-				area->load_stream([world_cell, this](stream::map &m, units &u) { m_world.arrange(world_cell, m, u); });
+				area->load_stream([world_cell, this](stream::map &m, units &u) { m_world->arrange(world_cell, m, u); });
 			}
 			void merge(stream& map)
 			{

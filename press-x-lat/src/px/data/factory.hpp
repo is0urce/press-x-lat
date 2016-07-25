@@ -7,10 +7,12 @@
 #define PX_DATA_FACTORY_HPP
 
 #include <px/core/unit.hpp>
-#include <px/core/rendering_system.hpp>
-#include <px/core/location_system.hpp>
-#include <px/core/body_system.hpp>
-#include <px/core/character_system.hpp>
+
+#include <px/core/sys/rendering_system.hpp>
+#include <px/core/sys/location_system.hpp>
+#include <px/core/sys/body_system.hpp>
+#include <px/core/sys/character_system.hpp>
+#include <px/core/sys/behavior_system.hpp>
 
 #include "unit_composer.hpp"
 
@@ -30,10 +32,11 @@ namespace px
 			core::location_system* m_ls;
 			core::body_system* m_bs;
 			core::character_system* m_cs;
+			core::behavior_system* m_behavior_sys;
 
 		public:
-			factory(core::rendering_system& rs, core::location_system &ls, core::body_system &bs, core::character_system &cs)
-				: m_rs(&rs), m_ls(&ls), m_bs(&bs), m_cs(&cs)
+			factory(core::rendering_system& rs, core::location_system &ls, core::body_system &bs, core::character_system &cs, core::behavior_system &ai_sys)
+				: m_rs(&rs), m_ls(&ls), m_bs(&bs), m_cs(&cs), m_behavior_sys(&ai_sys)
 			{
 			}
 			virtual ~factory() {}
@@ -59,6 +62,10 @@ namespace px
 			{
 				return m_cs->make();
 			}
+			auto make_npc()
+			{
+				return m_behavior_sys->make();
+			}
 		};
 
 		class task : public unit_composer
@@ -69,6 +76,7 @@ namespace px
 		public:
 			task(factory &builder) : m_factory(&builder)
 			{
+				begin<core::persistency::serialized>();
 			}
 			~task() {}
 
@@ -94,11 +102,32 @@ namespace px
 				add(appearance);
 				return appearance;
 			}
+			auto add_appearance(unsigned int glyph, color tint)
+			{
+				auto appearance = m_factory->make_appearance();
+
+				appearance->glyph = glyph;
+				appearance->tint = tint;
+
+				add(appearance);
+				return appearance;
+			}
 			auto add_body()
 			{
 				auto body = m_factory->make_body();
 
 				body->make_blocking();
+
+				add(body);
+				return body;
+			}
+			auto add_body(unsigned int hp, unsigned int mp)
+			{
+				auto body = m_factory->make_body();
+
+				body->make_blocking();
+				body->set_health(hp);
+				body->set_energy(mp);
 
 				add(body);
 				return body;
@@ -109,6 +138,13 @@ namespace px
 
 				add(character);
 				return character;
+			}
+			auto add_npc_behavior()
+			{
+				auto npc = m_factory->make_npc();
+
+				add(npc);
+				return npc;
 			}
 		};
 	}

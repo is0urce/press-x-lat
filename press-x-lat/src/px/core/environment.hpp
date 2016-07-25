@@ -11,9 +11,6 @@
 #include <px/common/fps_counter.hpp>
 
 #include <px/rl/traverse.hpp>
-
-#include <px/core/location_component.hpp>
-#include <px/core/body_component.hpp>
 #include <px/core/terrain.hpp>
 
 #include <px/ui/stack_panel.hpp>
@@ -87,7 +84,7 @@ namespace px
 				m_space->find(position.x(), position.y(), [&](int x, int y, location_component* component)
 				{
 					bool search = true;
-					body_component* body = *component;
+					body_component* body = static_cast<body_component*>(*component);
 					if (body && !body->traversable(layer))
 					{
 						blocking = component;
@@ -121,9 +118,9 @@ namespace px
 			bool cast(location_component& source, unsigned int slot, point2 target)
 			{
 				bool action = false;
-				if (body_component* body = source)
+				if (body_component* body = static_cast<body_component*>(source))
 				{
-					if (character_component* character = *body)
+					if (character_component* character = static_cast<character_component*>(*body))
 					{
 						auto spell = character->get_skill(slot);
 						if (spell && spell->targeted())

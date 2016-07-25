@@ -8,7 +8,7 @@
 
 #include <px/es/i_component.hpp>
 #include <px/es/component_link.hpp>
-#include "image.hpp"
+#include <px/core/image.hpp>
 
 namespace px
 {

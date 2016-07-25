@@ -14,6 +14,8 @@
 
 #include "image.hpp"
 
+#include <px/data/factory.hpp>
+
 #include <memory>
 #include <list>
 #include <random>
@@ -46,11 +48,12 @@ namespace px
 		private:
 			unsigned int m_seed;
 			matrix2<bool, cell_width, cell_height> m_created;
+			data::factory* m_factory;
 
 		public:
-			world(unsigned int seed) : m_seed(seed)
+			world(data::factory &factory) : m_factory(&factory), m_seed(0)
 			{
-				generate(seed);
+				generate(m_seed);
 			}
 			virtual ~world()
 			{
@@ -86,7 +89,7 @@ namespace px
 					{
 						img.glyph = '#';
 						img.tint = { 0.5, 0.5, 0.5 };
-						t.make_traversable();
+						t.make_blocking();
 					}
 #ifdef _DEBUG
 					if (i == 0) terrain[{i, j}].appearance().glyph = '|';
@@ -100,13 +103,26 @@ namespace px
 				terrain[{2, 1}].appearance().glyph = ':';
 				terrain[{3, 1}].appearance().glyph = digits[cell.y() - 10 * size_t((std::floor)(cell.y() / 10.0))];
 #endif
-				throw std::runtime_error("asdf");
 
 				bool outer = true;
 				bool &created = m_created.select(cell, outer);
 				if (!created)
 				{
 					created = true;
+
+					auto task = m_factory->produce();
+
+					auto sprite = task->add_appearance('g', { 1, 0, 0 });
+					auto pawn = task->add_location(cell * point2(cell_width, cell_height) + point2(3, 3));
+					auto body = task->add_body(100, 100);
+					auto character = task->add_character();
+					auto ai = task->add_npc_behavior();
+
+					auto weapon = std::make_shared<body_component::item_type>();
+					weapon->emplace(rl::effect::weapon_damage, 4);
+					body->equip_weapon(weapon);
+
+					units.push_back(task->assemble());
 				}
 			}
 			void store(unit_ptr unit)

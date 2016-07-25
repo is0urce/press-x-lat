@@ -1,0 +1,34 @@
+// name: npc_component.cpp
+// type: c++
+// desc: class
+// auth: is0urce
+
+#include "npc_component.hpp"
+
+#include <px/core/environment.hpp>
+#include <px/core/sys/location_component.hpp>
+#include <px/core/sys/body_component.hpp>
+
+namespace px
+{
+	namespace core
+	{
+		npc_component::npc_component() : m_alert(false) {}
+		npc_component::~npc_component() {}
+
+		void npc_component::resolve_action(environment &e)
+		{
+			if (auto* location = static_cast<location_component*>(*this))
+			{
+				if (auto* body = static_cast<body_component*>(*location))
+				{
+					auto hp = body->health();
+					if (hp && !hp->empty())
+					{
+						e.maneuver(*location, location->current() + point2(0, 1));
+					}
+				}
+			}
+		}
+	}
+}

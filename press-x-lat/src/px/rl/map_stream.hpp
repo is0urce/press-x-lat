@@ -70,7 +70,7 @@ namespace px
 					}
 					catch (const std::exception &e)
 					{
-						throw std::runtime_error(std::string("px::map_stream - exception in loading map thread; what = ") + e.what());
+						throw std::runtime_error(std::string("px::map_stream - std::exception in loading map thread; what = ") + e.what());
 					}
 				}
 			}
