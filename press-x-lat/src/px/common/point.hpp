@@ -7,6 +7,8 @@
 
 #include "coordinate.hpp"
 
+#include <string>
+
 namespace px
 {
 	struct point2 : public coordinate<int, 2>
@@ -66,6 +68,11 @@ namespace px
 	inline point2 operator/(point2 lhs, const point2 &rhs) { lhs /= rhs; return lhs; }
 	inline point2 operator*(point2 lhs, point2::component c) { lhs *= c; return lhs; }
 	inline point2 operator/(point2 lhs, point2::component c) { lhs /= c; return lhs; }
+
+	inline std::string to_string(const point2 &p)
+	{
+		return "[" + std::to_string(p.get<0>()) + ":" + std::to_string(p.get<1>()) + "]";
+	}
 }
 
 #endif

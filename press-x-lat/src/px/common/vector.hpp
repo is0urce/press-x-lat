@@ -8,6 +8,8 @@
 #include "coordinate.hpp"
 #include "point.hpp"
 
+#include <string>
+
 namespace px
 {
 	struct vector2;
@@ -151,6 +153,11 @@ namespace px
 
 	inline vector2 operator*(vector2 lhs, point2::component c) { lhs *= c; return lhs; }
 	inline vector2 operator/(vector2 lhs, point2::component c) { lhs /= c; return lhs; }
+
+	inline std::string to_string(const vector2 &p)
+	{
+		return "[" + std::to_string(p.get<0>()) + ":" + std::to_string(p.get<1>()) + "]";
+	}
 }
 
 #endif

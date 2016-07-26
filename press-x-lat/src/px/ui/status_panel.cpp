@@ -20,9 +20,7 @@ namespace px
 
 
 
-			std::string msg = "[" + std::to_string(m_hover.x()) + ":" + std::to_string(m_hover.y()) + "]";
-
-			msg += b ? std::string(" - free - ") : std::string(" - BLOCKING");
+			std::string msg = to_string(m_hover) + (b ? std::string(" - free - ") : std::string(" - BLOCKING"));
 
 			//cnv.rectangle(win, color(0x0000ff));
 			cnv.write(bounds().start(), msg);

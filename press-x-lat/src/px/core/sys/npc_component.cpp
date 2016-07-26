@@ -29,7 +29,7 @@ namespace px
 					{
 						if (auto target = e.player())
 						{
-							auto path = astar::find<200>(location->current(), target->current(), [&e](const point2 &p) { return e.traversable(p, rl::traverse::floor); });
+							auto path = astar::find(location->current(), target->current(), [&e](const point2 &p) { return e.traversable(p, rl::traverse::floor); }, 500);
 							if (!path.empty())
 							{
 								e.maneuver(*location, path.front());
