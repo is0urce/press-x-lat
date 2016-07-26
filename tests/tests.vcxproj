@@ -171,6 +171,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\automata_tests.cpp" />
+    <ClCompile Include="src\coordinate_test.cpp" />
     <ClCompile Include="src\manager_tests.cpp" />
     <ClCompile Include="src\mass_test.cpp" />
     <ClCompile Include="src\matrix_test.cpp" />

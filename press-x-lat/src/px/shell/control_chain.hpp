@@ -35,7 +35,7 @@ namespace px
 			virtual ~control_chain() {}
 
 		protected:
-			virtual bool key_control(key_t code) override
+			virtual bool key_control(key_type code) override
 			{
 				return m_first->key(code) || m_second->key(code);
 			}

@@ -26,7 +26,7 @@ namespace px
 			virtual ~input_adapter() {};
 
 		public:
-			virtual bool key_control(key_t code) override
+			virtual bool key_control(key_type code) override
 			{
 				bool result = false;
 				if (m_game)
@@ -94,16 +94,16 @@ namespace px
 			virtual bool hover_control(const point2 &position) override
 			{
 				m_hover = position;
-				return true;
+				return false;
 			}
 			virtual bool click_control(const point2 &position, unsigned int button) override
 			{
 				m_hover = position;
-				return m_game && m_game->activate(m_hover);
+				return m_game->activate(m_hover);
 			}
 			virtual bool scroll_control(int delta) override
 			{
-				return true;
+				return false;
 			}
 		};
 	}

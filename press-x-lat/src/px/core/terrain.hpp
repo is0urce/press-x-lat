@@ -8,7 +8,7 @@
 
 #include <px/common/vector.hpp>
 
-#include "location_component.hpp"
+#include <px/core/sys/location_component.hpp>
 #include "unit.hpp"
 #include "image.hpp"
 #include "world.hpp"

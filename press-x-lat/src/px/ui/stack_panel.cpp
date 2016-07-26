@@ -15,10 +15,11 @@ namespace px
 	{
 		using namespace shell;
 
-		bool stack_panel::key_control(key_t code)
+		bool stack_panel::key_control(shell::key code)
 		{
 			return panel_action([&](stacked_panel& p) { return p.panel->key(code); });
 		}
+
 		bool stack_panel::hover_control(const point2 &position)
 		{
 			return panel_action([&](stacked_panel& p) { return p.panel->hover(position); });

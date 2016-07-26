@@ -211,7 +211,7 @@ namespace px
 				{
 					++it;
 				}
-				// create new batch if no place available
+				// create next batch if no place available
 				if (it == last)
 				{
 					it = m_batches.emplace(it);

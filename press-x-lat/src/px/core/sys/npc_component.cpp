@@ -5,6 +5,8 @@
 
 #include "npc_component.hpp"
 
+#include <px/rl/astar.hpp>
+
 #include <px/core/environment.hpp>
 #include <px/core/sys/location_component.hpp>
 #include <px/core/sys/body_component.hpp>
@@ -25,7 +27,14 @@ namespace px
 					auto hp = body->health();
 					if (hp && !hp->empty())
 					{
-						e.maneuver(*location, location->current() + point2(0, 1));
+						if (auto target = e.player())
+						{
+							auto path = astar::find<200>(location->current(), target->current(), [&e](const point2 &p) { return e.traversable(p, rl::traverse::floor); });
+							if (!path.empty())
+							{
+								e.maneuver(*location, path.front());
+							}
+						}
 					}
 				}
 			}

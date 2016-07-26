@@ -7,11 +7,8 @@
 #define PX_CORE_ENGINE_HPP
 
 #include <px/common/toggle.hpp>
+#include <px/common/fps_counter.hpp>
 #include <px/es/i_engine.hpp>
-#include <px/shell/control.hpp>
-#include <px/shell/control_dispatcher.hpp>
-#include <px/shell/opengl.h>
-#include <px/shell/renderer.hpp>
 
 #include <px/core/sys/rendering_system.hpp>
 #include <px/core/sys/location_system.hpp>
@@ -28,6 +25,14 @@
 
 #include <px/data/factory.hpp>
 #include <px/rl/ability.hpp>
+#include <px/ui/stack_panel.hpp>
+#include <px/ui/performance_panel.hpp>
+#include <px/ui/status_panel.hpp>
+
+#include <px/shell/control.hpp>
+#include <px/shell/control_chain.hpp>
+#include <px/shell/opengl.h>
+#include <px/shell/renderer.hpp>
 
 namespace px
 {
@@ -40,7 +45,7 @@ namespace px
 	{
 		class engine
 			: public es::i_engine
-			, public shell::control_dispatcher
+			, public shell::control_chain
 			, public toggle<true>
 		{
 		private:
@@ -60,14 +65,18 @@ namespace px
 			terrain m_terrain;
 			environment m_environment;
 			game m_game;
+			ui::stack_panel m_ui;
 			unsigned int m_last_turn;
 
 			data::factory m_factory;
 			world m_world;
 
+			fps_counter m_fps;
+
 		public:
 			engine(shell::opengl* gl)
-				: control_dispatcher(m_adapter), m_adapter(m_game)
+				: control_chain(m_adapter, m_ui, [this](point2 pixel) { return translate_world(pixel); }, [this](point2 pixel) { return translate_world(pixel); })
+				, m_adapter(m_game)
 				, m_renderer(gl)
 				, m_space(space_start_width)
 				, m_canvas(1, 1)
@@ -78,10 +87,13 @@ namespace px
 				, m_factory(m_sprite_system, m_location_system, m_body_system, m_character_system, m_behavior_system)
 				, m_world(m_factory)
 				, m_terrain(m_world)
-				, m_environment(m_terrain, m_space)
+				, m_environment(m_ui, m_terrain, m_space)
 				, m_game(m_environment)
 				, m_last_turn(0)
 			{
+				m_ui.add("performance", std::make_shared<ui::performance_panel>(m_fps), ui::alignment({ 0.0, 0.0 }, { 1,0 }, { -2, 1 }, { 1, 0 }));
+				m_ui.add("status", std::make_shared<ui::status_panel>(m_environment), ui::alignment({ 0.0, 0.0 }, { 1,2 }, { -2, 1 }, { 1, 0 }));
+
 				add(&m_body_system);
 				add(&m_character_system);
 				add(&m_location_system);
@@ -100,7 +112,7 @@ namespace px
 				auto character = task->add_character();
 
 				body->equip_weapon(weapon);
-				character->add_skill(character_component::skill::create_target([this](auto user_body, auto& target_body) { m_environment.ui().toggle("performance"); }, nullptr));
+				character->add_skill(character_component::skill::create_target([this](auto user_body, auto& target_body) { m_ui.toggle("performance"); }, nullptr));
 
 				m_terrain.add(task->assemble());
 
@@ -111,6 +123,22 @@ namespace px
 			}
 			engine(const engine&) = delete;
 
+		private:
+			point2 translate(point2 pixel) const
+			{
+				return m_renderer.translate_canvas(pixel);
+			}
+			point2 translate_world(point2 pixel) const
+			{
+				auto pos = translate(pixel) - (m_canvas.range() / 2);
+				pos.mirror<1>(); // flip horisontally
+				if (auto camera = m_environment.player())
+				{
+					pos += camera->current();
+				}
+				return pos;
+			}
+
 		protected:
 			virtual void pre_update_engine() override
 			{
@@ -119,7 +147,7 @@ namespace px
 				if (w > 0 && h > 0)
 				{
 					m_canvas.resize(w, h);
-					m_environment.ui().layout(m_canvas.range());
+					m_ui.layout(m_canvas.range());
 				}
 				m_canvas.cls();
 
@@ -130,7 +158,7 @@ namespace px
 			}
 			virtual void post_update_engine() override
 			{
-				m_environment.ui().draw(m_canvas);
+				m_ui.draw(m_canvas);
 				m_renderer.render(0, m_canvas);
 			}
 			virtual bool fixed() override

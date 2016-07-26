@@ -8,15 +8,10 @@
 #ifndef PX_CORE_ENVIRONMENT_HPP
 #define PX_CORE_ENVIRONMENT_HPP
 
-#include <px/common/fps_counter.hpp>
-
 #include <px/rl/traverse.hpp>
 #include <px/core/terrain.hpp>
 
 #include <px/ui/stack_panel.hpp>
-#include <px/ui/performance_panel.hpp>
-
-#include <memory>
 
 namespace px
 {
@@ -26,20 +21,20 @@ namespace px
 		{
 		private:
 			unsigned int m_time;
-			ui::stack_panel m_ui;
-			fps_counter m_fps;
+			ui::stack_panel* m_ui;
+
 
 			std::shared_ptr<location_component> m_player;
 			terrain* m_terrain;
 			qtree<location_component*>* m_space;
 
 		public:
-			environment(terrain& terra, qtree<location_component*> &space)
-				: m_terrain(&terra)
+			environment(ui::stack_panel &ui, terrain &terra, qtree<location_component*> &space)
+				: m_ui(&ui)
+				, m_terrain(&terra)
 				, m_space(&space)
 				, m_time(0)
 			{
-				m_ui.add("performance", std::make_shared<ui::performance_panel>(m_fps), ui::alignment({0.0, 0.0}, {1,0}, {-2, 1}, {1, 0}));
 			}
 			virtual ~environment()
 			{
@@ -64,12 +59,11 @@ namespace px
 			{
 				return m_time;
 			}
-			ui::stack_panel& ui()
+			auto player()
 			{
-				return m_ui;
+				return m_player;
 			}
-
-			auto player() -> decltype(m_player)
+			const auto player() const
 			{
 				return m_player;
 			}
@@ -78,6 +72,12 @@ namespace px
 				m_player = unit;
 				focus();
 			}
+
+			bool traversable(point2 position, rl::traverse layer) const
+			{
+				return m_terrain->traversable(position, layer) && !blocking(position, layer);
+			}
+
 			location_component* blocking(point2 position, rl::traverse layer) const
 			{
 				location_component* blocking = nullptr;

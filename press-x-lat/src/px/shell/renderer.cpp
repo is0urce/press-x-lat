@@ -310,5 +310,10 @@ namespace px
 			w = (std::max<int>)(1, w / ui_cell_width);
 			h = (std::max<int>)(1, h / ui_cell_height);
 		}
+
+		point2 renderer::translate_canvas(const point2 &screen) const
+		{
+			return point2((screen.x() - m_width % ui_cell_width / 2) / ui_cell_width, (screen.y() - m_height % ui_cell_height / 2) / ui_cell_height);
+		}
 	}
 }

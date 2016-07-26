@@ -7,8 +7,6 @@
 #ifndef PX_UI_PERFORMANCE_PANEL_HPP
 #define PX_UI_PERFORMANCE_PANEL_HPP
 
-#include "stack_panel.hpp"
-
 #include <px/common/fps_counter.hpp>
 #include <px/ui/stack_panel.hpp>
 

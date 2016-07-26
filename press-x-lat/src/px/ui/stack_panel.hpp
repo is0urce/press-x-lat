@@ -40,6 +40,21 @@ namespace px
 			stack_panel() {}
 			virtual ~stack_panel() {}
 
+		private:
+			template<typename _O>
+			bool panel_action(_O act)
+			{
+				for (auto &p : m_stack)
+				{
+					if (p.second.panel && p.second.panel->active() && act(p.second)) return true;
+				}
+				for (auto &p : m_unnamed)
+				{
+					if (p.panel && p.panel->active() && act(p)) return true;
+				}
+				return false;
+			}
+
 		protected:
 			virtual void draw_panel(shell::canvas& cnv) const override
 			{
@@ -58,25 +73,10 @@ namespace px
 					}
 				}
 			}
-			virtual bool key_control(shell::key code) override;// { return false; }
-			virtual bool hover_control(const point2 &position) override;// { return false; }
-			virtual bool click_control(const point2 &position, unsigned int button) override;// { return false; }
-			virtual bool scroll_control(int delta) override;// { return false; }
-
-		private:
-			template<typename _O>
-			bool panel_action(_O act)
-			{
-				for (auto &p : m_stack)
-				{
-					if (p.second.panel && p.second.panel->active() && act(p.second)) return true;
-				}
-				for (auto &p : m_unnamed)
-				{
-					if (p.panel && p.panel->active() && act(p)) return true;
-				}
-				return false;
-			}
+			virtual bool key_control(shell::key code) override;
+			virtual bool hover_control(const point2 &position) override;
+			virtual bool click_control(const point2 &position, unsigned int button) override;
+			virtual bool scroll_control(int delta) override;
 
 		protected:
 			rectangle bounds() const;

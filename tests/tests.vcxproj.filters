@@ -50,5 +50,8 @@
     <ClCompile Include="src\perlin.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\coordinate_test.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

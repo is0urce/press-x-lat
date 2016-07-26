@@ -79,6 +79,7 @@ namespace px
 			void scale(double delta);
 			void pixel_clip(unsigned int ppu, unsigned int multiptier);
 			void canvas_size(int& w, int &h);
+			point2 renderer::translate_canvas(const point2 &screen) const;
 
 		private:
 			void draw_canvas(const canvas& cnv);

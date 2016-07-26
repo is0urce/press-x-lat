@@ -57,6 +57,15 @@ namespace px
 				m_array[i] = -m_array[i];
 			}
 		}
+		template <size_t _Axis>
+		void mirror()
+		{
+			m_array[_Axis] = -m_array[_Axis];
+		}
+		void mirror(size_t axis)
+		{
+			m_array[axis] = -m_array[axis];
+		}
 
 		// vector transforms
 
@@ -140,7 +149,7 @@ namespace px
 			component distance{};
 			for (size_t i = 0; i < _D; ++i)
 			{
-				component delta = m_array[i] - target.m_array[i]
+				component delta = m_array[i] - target.m_array[i];
 				distance += delta * delta;
 			}
 			return distance;
@@ -157,13 +166,13 @@ namespace px
 		}
 
 		// distance to to specified coordinate
-		auto distance(const coordinate &target) const -> decltype(std::sqrt(distance2(target)))
+		auto distance(const coordinate &target) const
 		{
 			return std::sqrt(distance2(target));
 		}
 
 		// size of vector
-		auto magnitude() -> decltype(std::sqrt(magnitude2())) const
+		auto magnitude() const
 		{
 			return std::sqrt(magnitude2());
 		}

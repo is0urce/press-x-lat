@@ -19,18 +19,18 @@ namespace px
 		class control
 		{
 		public:
-			typedef key key_t;
+			typedef key key_type;
 		public:
 			virtual ~control() {}
 
 		protected:
-			virtual bool key_control(key_t code) { return false; }
+			virtual bool key_control(key_type code) { return false; }
 			virtual bool hover_control(const point2 &position) { return false; }
 			virtual bool click_control(const point2 &position, unsigned int button) { return false; }
 			virtual bool scroll_control(int delta) { return false; }
 
 		public:
-			bool key(key_t code) { return key_control(code); }
+			bool key(key_type code) { return key_control(code); }
 			bool hover(const point2 &position) { return hover_control(position); }
 			bool click(const point2 &position, unsigned int button) { return click_control(position, button); }
 			bool scroll(int delta) { return scroll_control(delta); }
