@@ -102,18 +102,19 @@ namespace px
 					if (closed.find(&neighbor) != closed.end()) continue; // already in closed list
 
 					auto it = open.cbegin(), last = open.cend();
-					for (; it != last; ++it) if (**it == neighbor) break;
+					while (it != last && **it != neighbor) ++it; // check is point io open list
 
 					auto score = current->g_score + distance(*current, neighbor);
-					if (it == last)
+					if (it == last) // not in open list
 					{
 						open.insert(std::make_shared<coord>(neighbor, score, heuristic(neighbor, finish), current));
 					}
-					else if (score < (*it)->g_score)
+					else if (score < (*it)->g_score) // better option
 					{
 						open.insert(open.erase(it), std::make_shared<coord>(neighbor, score, heuristic(neighbor, finish), current));
 					}
 				}
+				--steps;
 			}
 			return path;
 		}
