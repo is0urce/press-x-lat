@@ -3,6 +3,8 @@
 // desc: pathfinding
 // auth: is0urce
 
+// Implementation of A* pathfinding
+
 #ifndef PX_A_STAR_HPP
 #define PX_A_STAR_HPP
 
@@ -17,9 +19,9 @@ namespace px
 	class astar
 	{
 	private:
-		class coord;
+		struct coord;
 		typedef std::shared_ptr<coord> coord_ptr;
-		class coord : public point2
+		struct coord : public point2
 		{
 		public:
 			double g_score;
@@ -59,8 +61,9 @@ namespace px
 			return a.king_distance(b);
 		}
 
-		static void neighbours(const point2 &c, std::list<point2> &list)
+		static std::list<point2> neighbours(const point2 &c)
 		{
+			std::list<point2> list;
 			list.emplace_back(c.x() + 1, c.y());
 			list.emplace_back(c.x(), c.y() + 1);
 			list.emplace_back(c.x() - 1, c.y());
@@ -70,8 +73,22 @@ namespace px
 			list.emplace_back(c.x() + 1, c.y() - 1);
 			list.emplace_back(c.x() - 1, c.y() + 1);
 			list.emplace_back(c.x() - 1, c.y() - 1);
+			return list;
 		}
+
+		// reconstruct path from target to start
+		static void construct_path(coord_ptr step, std::list<point2> &path)
+		{
+			while (step)
+			{
+				if (!step->came_from) break; // stop there and not include starting point as part of path, so first step is list::front()
+				path.emplace_front(step->x(), step->y());
+				step = step->came_from;
+			}
+		}
+
 	public:
+		// _TPr - traversable predicate bool(point)
 		template <typename _TPr>
 		static auto find(point2 start, point2 finish, _TPr traversable, unsigned int steps)
 		{
@@ -94,15 +111,14 @@ namespace px
 				open.erase(top);
 				closed.insert(current);
 
-				std::list<point2> next;
-				neighbours(*current, next);
-				for (point2 &neighbor : next)
+				// expand
+				for (point2 &neighbor : neighbours(*current))
 				{
 					if (!traversable(neighbor) && neighbor != finish) continue; // traversable callback
 					if (closed.find(&neighbor) != closed.end()) continue; // already in closed list
 
 					auto it = open.cbegin(), last = open.cend();
-					while (it != last && **it != neighbor) ++it; // check is point io open list
+					while (it != last && **it != neighbor) ++it; // check is point in open list
 
 					auto score = current->g_score + distance(*current, neighbor);
 					if (it == last) // not in open list
@@ -117,17 +133,6 @@ namespace px
 				--steps;
 			}
 			return path;
-		}
-
-		// reconstruct path from target to start
-		static void construct_path(coord_ptr step, std::list<point2> &path)
-		{
-			while (step)
-			{
-				if (!step->came_from) break; // stop there and not include starting point as part of path, so first step is list::front()
-				path.emplace_front(step->x(), step->y());
-				step = step->came_from;
-			}
 		}
 	};
 }

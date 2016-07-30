@@ -6,6 +6,7 @@
 #include "status_panel.hpp"
 
 #include <px/core/environment.hpp>
+#include <px/core/sys/body_component.hpp>
 
 #include <string>
 
@@ -15,15 +16,35 @@ namespace px
 	{
 		void status_panel::draw_panel(shell::canvas& cnv) const
 		{
+			auto pen = bounds().start();
+			auto target = m_environment->targeted();
+
+			cnv.write(pen, to_string(target));
+			pen.move_axis<1>(1);
 			
-			auto b = m_environment->traversable(m_hover, rl::traverse::floor);
+			if (!m_environment->traversable(target, rl::traverse::floor))
+			{
+				cnv.write(pen, "[BLOCKING]");
+				pen.move_axis<1>(1);
+			}
 
-
-
-			std::string msg = to_string(m_hover) + (b ? std::string(" - free - ") : std::string(" - BLOCKING"));
-
-			//cnv.rectangle(win, color(0x0000ff));
-			cnv.write(bounds().start(), msg);
+			auto blocking = m_environment->blocking(target, rl::traverse::floor);
+			if (blocking)
+			{
+				if (auto body = static_cast<core::body_component*>(*blocking))
+				{
+					if (auto hp = body->health())
+					{
+						cnv.write(pen, std::string("HP ") + std::to_string(hp->current()) + "/" + std::to_string(hp->maximum()));
+						pen.move_axis<1>(1);
+					}
+					if (auto mp = body->energy())
+					{
+						cnv.write(pen, std::string("MP ") + std::to_string(mp->current()) + "/" + std::to_string(mp->maximum()));
+						pen.move_axis<1>(1);
+					}
+				}
+			}
 		}
 	}
 }

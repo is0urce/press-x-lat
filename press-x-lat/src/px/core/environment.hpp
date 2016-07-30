@@ -21,8 +21,8 @@ namespace px
 		{
 		private:
 			unsigned int m_time;
+			point2 m_target;
 			ui::stack_panel* m_ui;
-
 
 			std::shared_ptr<location_component> m_player;
 			terrain* m_terrain;
@@ -50,6 +50,14 @@ namespace px
 			}
 
 		public:
+			void target(point2 location)
+			{
+				m_target = location;
+			}
+			point2 targeted() const
+			{
+				return m_target;
+			}
 			void turn()
 			{
 				focus();

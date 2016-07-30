@@ -48,6 +48,16 @@ namespace px
 			return m_array.at(_I);
 		}
 
+		bool empty()
+		{
+			bool result = true;
+			for (size_t i = 0; i < _D; ++i)
+			{
+				result &= m_array[i] == 0;
+			}
+			return result;
+		}
+
 		// transforms
 
 		void negate()
@@ -65,6 +75,15 @@ namespace px
 		void mirror(size_t axis)
 		{
 			m_array[axis] = -m_array[axis];
+		}
+		template <size_t _Axis>
+		void move_axis(component distance)
+		{
+			m_array[_Axis] += distance;
+		}
+		void move_axis(size_t axis, component distance)
+		{
+			m_array[axis] += distance;
 		}
 
 		// vector transforms

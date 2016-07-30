@@ -94,7 +94,7 @@ namespace px
 			virtual bool hover_control(const point2 &position) override
 			{
 				m_hover = position;
-				return false;
+				return m_game->hover(position);
 			}
 			virtual bool click_control(const point2 &position, unsigned int button) override
 			{

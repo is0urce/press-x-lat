@@ -18,7 +18,7 @@ namespace px
 		npc_component::npc_component() : m_alert(false) {}
 		npc_component::~npc_component() {}
 
-		void npc_component::resolve_action(environment &e)
+		void npc_component::resolve_action(environment &env)
 		{
 			if (auto* location = static_cast<location_component*>(*this))
 			{
@@ -27,12 +27,15 @@ namespace px
 					auto hp = body->health();
 					if (hp && !hp->empty())
 					{
-						if (auto target = e.player())
+						if (auto target = env.player())
 						{
-							auto path = astar::find(location->current(), target->current(), [&e](const point2 &p) { return e.traversable(p, rl::traverse::floor); }, 500);
-							if (!path.empty())
+							if (target)
 							{
-								e.maneuver(*location, path.front());
+								auto path = astar::find(location->current(), target->current(), [&env](const point2 &p) { return env.traversable(p, rl::traverse::floor); }, 500);
+								if (!path.empty())
+								{
+									env.maneuver(*location, path.front());
+								}
 							}
 						}
 					}

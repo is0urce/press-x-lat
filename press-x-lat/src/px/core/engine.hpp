@@ -75,7 +75,7 @@ namespace px
 
 		public:
 			engine(shell::opengl* gl)
-				: control_chain(m_adapter, m_ui, [this](point2 pixel) { return translate_world(pixel); }, [this](point2 pixel) { return translate_world(pixel); })
+				: control_chain(m_adapter, m_ui, [this](point2 pixel) { return translate_world(pixel); }, [this](point2 pixel) { return translate_canvas(pixel); })
 				, m_adapter(m_game)
 				, m_renderer(gl)
 				, m_space(space_start_width)
@@ -124,13 +124,13 @@ namespace px
 			engine(const engine&) = delete;
 
 		private:
-			point2 translate(point2 pixel) const
+			point2 translate_canvas(point2 pixel) const
 			{
 				return m_renderer.translate_canvas(pixel);
 			}
 			point2 translate_world(point2 pixel) const
 			{
-				auto pos = translate(pixel) - (m_canvas.range() / 2);
+				auto pos = translate_canvas(pixel) - (m_canvas.range() / 2);
 				pos.mirror<1>(); // flip horisontally
 				if (auto camera = m_environment.player())
 				{

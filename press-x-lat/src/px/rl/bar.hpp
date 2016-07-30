@@ -27,9 +27,8 @@ namespace px
 			bar() : m_current{}, m_max{}
 			{
 			}
-			bar(_T max)
+			bar(_T max) : m_current(max), m_max(max)
 			{
-				init(max, max);
 			}
 			bar(_T current, _T max)
 			{

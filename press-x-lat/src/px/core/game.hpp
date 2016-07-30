@@ -63,6 +63,11 @@ namespace px
 				}
 				return action;
 			}
+			virtual bool player_hover(point2 target_pos) override
+			{
+				m_environment->target(target_pos);
+				return false;
+			}
 		};
 	}
 }

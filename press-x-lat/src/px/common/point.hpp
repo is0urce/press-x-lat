@@ -32,11 +32,6 @@ namespace px
 			return m_array[1];
 		}
 
-		bool is_zero() const
-		{
-			return m_array[0] == 0 || m_array[1] == 0;
-		}
-
 		point2 moved(point2 move) const { move.move(*this); return move; }
 		point2 moved(component x, component y) const { point2 result(x, y); result.move(*this); return result; }
 		point2 multiplied(point2 stretch) const { stretch.multiply(*this); return stretch; }
