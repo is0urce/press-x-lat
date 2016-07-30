@@ -199,7 +199,7 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\core\sys\location_system.hpp" />
     <ClInclude Include="src\px\core\sys\npc_component.hpp" />
     <ClInclude Include="src\px\data\unit_composer.hpp" />
-    <ClInclude Include="src\px\rl\ability.hpp" />
+    <ClInclude Include="src\px\rl\i_ability.hpp" />
     <ClInclude Include="src\px\rl\astar.hpp" />
     <ClInclude Include="src\px\rl\body.hpp" />
     <ClInclude Include="src\px\rl\character.hpp" />
@@ -207,6 +207,7 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\rl\enhancement_collection.hpp" />
     <ClInclude Include="src\px\rl\enhancement.hpp" />
     <ClInclude Include="src\px\rl\entity.hpp" />
+    <ClInclude Include="src\px\rl\faction_relation.hpp" />
     <ClInclude Include="src\px\rl\inventory.hpp" />
     <ClInclude Include="src\px\rl\item.hpp" />
     <ClInclude Include="src\px\rl\map_stream.hpp" />
@@ -251,6 +252,7 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\ui\performance_panel.hpp" />
     <ClInclude Include="src\px\ui\stack_panel.hpp" />
     <ClInclude Include="src\px\ui\status_panel.hpp" />
+    <ClInclude Include="src\px\ui\target_panel.hpp" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -265,7 +267,6 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClCompile Include="src\px\shell\renderer.cpp" />
     <ClCompile Include="src\px\shell\win\wingl.cpp" />
     <ClCompile Include="src\px\ui\stack_panel.cpp" />
-    <ClCompile Include="src\px\ui\status_panel.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

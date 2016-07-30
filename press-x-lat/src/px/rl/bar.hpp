@@ -65,12 +65,10 @@ namespace px
 			}
 			void restore(_T magnitude)
 			{
-				if (magnitude < 0) throw std::logical_error("bar<t>::restore(_t magnitude) magnitude < 0");
 				m_current = std::min<_T>(_current + magnitude, m_max);
 			}
 			void damage(_T magnitude)
 			{
-				if (magnitude < 0) throw std::logical_error("bar<t>::damage(_t magnitude) magnitude < 0");
 				m_current -= magnitude;
 			}
 			void current(_T current)

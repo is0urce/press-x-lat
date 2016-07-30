@@ -8,6 +8,7 @@
 #ifndef PX_CORE_ENVIRONMENT_HPP
 #define PX_CORE_ENVIRONMENT_HPP
 
+#include <px/rl/faction_relation.hpp>
 #include <px/rl/traverse.hpp>
 #include <px/core/terrain.hpp>
 
@@ -27,6 +28,7 @@ namespace px
 			std::shared_ptr<location_component> m_player;
 			terrain* m_terrain;
 			qtree<location_component*>* m_space;
+			faction_relation m_factions;
 
 		public:
 			environment(ui::stack_panel &ui, terrain &terra, qtree<location_component*> &space)
@@ -50,42 +52,18 @@ namespace px
 			}
 
 		public:
-			void target(point2 location)
+			auto distance(point2 a, point2 b) const
 			{
-				m_target = location;
+				return a.king_distance(b);
 			}
-			point2 targeted() const
+			auto reputation(body_component& a, body_component& b)
 			{
-				return m_target;
+				return m_factions.reputation(a.faction(), b.faction());
 			}
-			void turn()
-			{
-				focus();
-				++m_time;
-			}
-			auto time() -> decltype(m_time)
-			{
-				return m_time;
-			}
-			auto player()
-			{
-				return m_player;
-			}
-			const auto player() const
-			{
-				return m_player;
-			}
-			void impersonate(std::shared_ptr<location_component> unit)
-			{
-				m_player = unit;
-				focus();
-			}
-
 			bool traversable(point2 position, rl::traverse layer) const
 			{
 				return m_terrain->traversable(position, layer) && !blocking(position, layer);
 			}
-
 			location_component* blocking(point2 position, rl::traverse layer) const
 			{
 				location_component* blocking = nullptr;
@@ -101,6 +79,16 @@ namespace px
 					return search;
 				});
 				return blocking;
+			}
+			template <typename _Op>
+			void nearest(point2 postion, unsigned int radius, _Op& predicate)
+			{
+				std::list<location_component*> list;
+				m_space->find(postion.x(), postion.y(), radius, [&](int x, int y, location_component* component)
+				{
+					predicate(x, y, component);
+					return true;
+				});
 			}
 			bool maneuver(location_component& location, point2 target)
 			{
@@ -133,7 +121,7 @@ namespace px
 						auto spell = character->get_skill(slot);
 						if (spell && spell->targeted())
 						{
-							spell->use(*character, *body);
+							spell->use(body, body);
 							action = true;
 						}
 					}
@@ -141,13 +129,50 @@ namespace px
 				return false;
 			}
 
+			// game flow
+
 			void start()
 			{
 				m_time = 0;
 			}
 			void end()
 			{
-				m_time = 0;
+			}
+			auto time()
+			{
+				return m_time;
+			}
+			void turn()
+			{
+				focus();
+				++m_time;
+			}
+
+			// player
+
+			auto player()
+			{
+				return m_player;
+			}
+			const auto player() const
+			{
+				return m_player;
+			}
+			void impersonate(std::shared_ptr<location_component> unit)
+			{
+				m_player = unit;
+				focus();
+			}
+
+			// interface relation
+
+			void target(point2 location)
+			{
+				m_target = location;
+			}
+			point2 targeted() const
+			{
+				return m_target;
 			}
 		};
 	}

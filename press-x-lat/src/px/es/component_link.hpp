@@ -11,6 +11,7 @@
 #define PX_ES_COMPONENT_LINK_HPP
 
 #include <memory>
+#include <type_traits>
 
 namespace px
 {
@@ -24,18 +25,21 @@ namespace px
 
 		public:
 			component_link() {}
-			_L* linked() const
-			{
-				auto shared = m_link.lock();
-				return shared ? shared.get() : nullptr;
-			}
 			void link(std::weak_ptr<_L> weak)
 			{
 				m_link = weak;
 			}
-			explicit operator _L*() const
+			// sfinae resolution in case of multiple inheritance
+			template <typename _C, typename = std::enable_if<std::is_same<_C, _L>::value>::type>
+			_C* linked() const
 			{
-				return linked();
+				std::shared_ptr<_L> shared = m_link.lock();
+				return shared ? shared.get() : nullptr;
+			}
+			template <typename _C, typename = std::enable_if<std::is_same<_C, _L>::value>::type>
+			operator _C*() const
+			{
+				return linked<_C>();
 			}
 		};
 	}

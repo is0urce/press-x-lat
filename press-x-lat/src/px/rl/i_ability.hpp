@@ -1,4 +1,4 @@
-// name: ability.hpp
+// name: i_ability.hpp
 // type: c++ header
 // desc: interface template class declaration
 // auth: is0urce
@@ -15,14 +15,14 @@ namespace px
 	namespace rl
 	{
 		template <typename _U, typename _T>
-		class ability
+		class i_ability
 		{
 		public:
 			typedef _U user;
 			typedef _T target;
 
 		public:
-			virtual ~ability() = 0 {}
+			virtual ~i_ability() = 0 {}
 
 		protected:
 			virtual void use_ability(_U u, _T t) = 0;
@@ -89,7 +89,7 @@ namespace px
 		};
 
 		template <typename _U, typename _T>
-		class skill : public ability<_U, _T>, public skill_base
+		class skill : public i_ability<_U, _T>, public skill_base
 		{
 		public:
 			typedef std::function<void(_U, target)> target_fn;

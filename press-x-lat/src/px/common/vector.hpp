@@ -12,15 +12,6 @@
 
 namespace px
 {
-	struct vector2;
-
-	//inline vector2 operator+(vector2 lhs, const vector2 &rhs);
-	//inline vector2 operator-(vector2 lhs, const vector2 &rhs);
-	//inline vector2 operator*(vector2 lhs, const vector2 &rhs);
-	//inline vector2 operator/(vector2 lhs, const vector2 &rhs);
-	//inline vector2 operator*(vector2 lhs, point2::component c);
-	//inline vector2 operator/(vector2 lhs, point2::component c);
-
 	struct vector2 : public coordinate<double, 2>
 	{
 	public:

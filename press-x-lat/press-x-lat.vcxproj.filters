@@ -189,9 +189,6 @@
     <ClInclude Include="src\px\rl\enhancement.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\px\rl\ability.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\px\rl\body.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -264,6 +261,15 @@
     <ClInclude Include="src\px\ui\status_panel.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\px\ui\target_panel.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\rl\faction_relation.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\rl\i_ability.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -297,9 +303,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\px\core\sys\npc_component.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\px\ui\status_panel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

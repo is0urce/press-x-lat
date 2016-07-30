@@ -121,6 +121,7 @@ namespace px
 					auto weapon = std::make_shared<body_component::item_type>();
 					weapon->emplace(rl::effect::weapon_damage, 4);
 					body->equip_weapon(weapon);
+					body->join_faction(0);
 
 					units.push_back(task->assemble());
 				}

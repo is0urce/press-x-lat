@@ -17,7 +17,7 @@ namespace px
 	{
 		class character_component
 			: public es::i_component
-			, public rl::character<body_component&>
+			, public rl::character<body_component*>
 		{
 		public:
 			virtual ~character_component() {}

@@ -48,7 +48,7 @@ namespace px
 			return m_array.at(_I);
 		}
 
-		bool empty()
+		bool empty() const
 		{
 			bool result = true;
 			for (size_t i = 0; i < _D; ++i)

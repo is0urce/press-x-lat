@@ -34,11 +34,11 @@ namespace px
 			int m_y;
 		public:
 			template <typename _Op>
-			void enumerate(_Op fn)
+			void enumerate(_Op&& fn)
 			{
 				for (auto it = list.begin(), last = list.end(); it != last; ++it)
 				{
-					if (!fn(m_x, m_y, *it)) return;
+					if (!std::forward<_Op>(fn)(m_x, m_y, *it)) return;
 				}
 			}
 			bool match(int x, int y) const
@@ -357,7 +357,7 @@ namespace px
 
 		// _Op fn sould match bool(int, int, _C)
 		template <typename _Op>
-		void find(int x, int y, unsigned int radius, _Op fn) const
+		void find(int x, int y, unsigned int radius, _Op &fn) const
 		{
 			if (m_bucket)
 			{
@@ -385,7 +385,7 @@ namespace px
 			}
 		}
 		template <typename _Op>
-		void find(int x, int y, _Op fn) const
+		void find(int x, int y, _Op &fn) const
 		{
 			if (m_bucket && m_bucket->match(x, y))
 			{

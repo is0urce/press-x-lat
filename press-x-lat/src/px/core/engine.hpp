@@ -28,6 +28,7 @@
 #include <px/ui/stack_panel.hpp>
 #include <px/ui/performance_panel.hpp>
 #include <px/ui/status_panel.hpp>
+#include <px/ui/target_panel.hpp>
 
 #include <px/shell/control.hpp>
 #include <px/shell/control_chain.hpp>
@@ -92,7 +93,8 @@ namespace px
 				, m_last_turn(0)
 			{
 				m_ui.add("performance", std::make_shared<ui::performance_panel>(m_fps), ui::alignment({ 0.0, 0.0 }, { 1,0 }, { -2, 1 }, { 1, 0 }));
-				m_ui.add("status", std::make_shared<ui::status_panel>(m_environment), ui::alignment({ 0.0, 0.0 }, { 1,2 }, { -2, 1 }, { 1, 0 }));
+				m_ui.add("status", std::make_shared<ui::status_panel>(m_environment), ui::alignment({ 0.0, 1.0 }, { 1, -12 }, { -2, 1 }, { 1, 0 }));
+				m_ui.add("target", std::make_shared<ui::target_panel>(m_environment), ui::alignment({ 1.0, 1.0 }, { -12, -12 }, { -2, 1 }, { 1, 0 }));
 
 				add(&m_body_system);
 				add(&m_character_system);
@@ -111,8 +113,9 @@ namespace px
 				auto body = task->add_body(100, 100);
 				auto character = task->add_character();
 
+				body->join_faction(1);
 				body->equip_weapon(weapon);
-				character->add_skill(character_component::skill::create_target([this](auto user_body, auto& target_body) { m_ui.toggle("performance"); }, nullptr));
+				character->add_skill(character_component::skill::create_target([this](body_component* u, body_component* t) { if (t && t->health()) t->health()->damage(6); }, nullptr));
 
 				m_terrain.add(task->assemble());
 

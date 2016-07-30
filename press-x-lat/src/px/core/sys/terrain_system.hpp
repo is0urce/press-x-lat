@@ -8,8 +8,7 @@
 
 #include <px/es/i_system.hpp>
 #include <px/shell/canvas.hpp>
-#include "terrain.hpp"
-
+#include <px/core/terrain.hpp>
 
 namespace px
 {
