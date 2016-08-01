@@ -22,6 +22,16 @@ namespace px
 		public:
 			body_system() {}
 			virtual ~body_system() {}
+
+		protected:
+			virtual void element_allocated(body_component &l) override
+			{
+				l.clear_faction();
+			}
+			virtual void element_released(body_component &l) override
+			{
+				l.clear_faction();
+			}
 		};
 	}
 }

@@ -118,7 +118,7 @@ namespace px
 				{
 					if (character_component* character = static_cast<character_component*>(*body))
 					{
-						auto spell = character->get_skill(slot);
+						auto spell = character->skill(slot);
 						if (spell && spell->targeted())
 						{
 							spell->use(body, body);

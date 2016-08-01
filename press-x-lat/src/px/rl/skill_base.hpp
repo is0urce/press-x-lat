@@ -1,0 +1,68 @@
+// name: skill_base.hpp
+// type: c++ header
+// desc: class
+// auth: is0urce
+
+// skill base attributes
+
+#ifndef PX_RL_SKILL_BASE_HPP
+#define PX_RL_SKILL_BASE_HPP
+
+#include <tuple>
+
+namespace px
+{
+	namespace rl
+	{
+		class skill_base
+		{
+		public:
+			typedef unsigned int time_type;
+			typedef unsigned int range_component;
+			typedef std::pair<range_component, range_component> range;
+		private:
+			time_type m_cooldown;
+			time_type m_timer;
+
+		public:
+			skill_base() : m_cooldown(0), m_timer(0) {}
+			virtual ~skill_base() {}
+
+		public:
+			void set_cooldown_time(time_type time)
+			{
+				m_cooldown = time;
+			}
+			void set_cooldown_remaining(time_type time)
+			{
+				m_timer = time;
+			}
+			time_type cooldown_time() const
+			{
+				return m_cooldown;
+			}
+			time_type cooldown_remaining() const
+			{
+				return m_timer;
+			}
+			bool is_cooldown() const
+			{
+				return m_timer > 0;
+			}
+			void cooldown(time_type time)
+			{
+				m_timer = (m_timer < time) ? 0 : m_timer - time;
+			}
+			void reset_cooldown()
+			{
+				m_timer = 0;
+			}
+			void start_cooldown()
+			{
+				m_timer = m_cooldown;
+			}
+		};
+	}
+}
+
+#endif

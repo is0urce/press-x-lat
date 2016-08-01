@@ -8,13 +8,15 @@
 
 #include <px/es/i_component.hpp>
 #include <px/es/component_link.hpp>
-#include <px/rl/body.hpp>
+
 #include <px/rl/character.hpp>
+
 
 namespace px
 {
 	namespace core
 	{
+		class body_component;
 		class character_component
 			: public es::i_component
 			, public rl::character<body_component*>

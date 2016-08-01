@@ -24,7 +24,7 @@
 #include "input_adapter.hpp"
 
 #include <px/data/factory.hpp>
-#include <px/rl/ability.hpp>
+#include <px/rl/skill.hpp>
 #include <px/ui/stack_panel.hpp>
 #include <px/ui/performance_panel.hpp>
 #include <px/ui/status_panel.hpp>
@@ -96,6 +96,8 @@ namespace px
 				m_ui.add("status", std::make_shared<ui::status_panel>(m_environment), ui::alignment({ 0.0, 1.0 }, { 1, -12 }, { -2, 1 }, { 1, 0 }));
 				m_ui.add("target", std::make_shared<ui::target_panel>(m_environment), ui::alignment({ 1.0, 1.0 }, { -12, -12 }, { -2, 1 }, { 1, 0 }));
 
+				m_character_system.skill_book().add_target("meelee", [](auto u, auto t) { if (t && t->health()) t->health()->damage(6); }, nullptr);
+
 				add(&m_body_system);
 				add(&m_character_system);
 				add(&m_location_system);
@@ -115,7 +117,7 @@ namespace px
 
 				body->join_faction(1);
 				body->equip_weapon(weapon);
-				character->add_skill(character_component::skill::create_target([this](body_component* u, body_component* t) { if (t && t->health()) t->health()->damage(6); }, nullptr));
+				character->add("meelee");
 
 				m_terrain.add(task->assemble());
 

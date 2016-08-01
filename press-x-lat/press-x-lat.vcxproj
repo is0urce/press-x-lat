@@ -227,6 +227,10 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\fn\perlin.hpp" />
     <ClInclude Include="src\px\rl\bar.hpp" />
     <ClInclude Include="src\px\rl\mass.hpp" />
+    <ClInclude Include="src\px\rl\skill.hpp" />
+    <ClInclude Include="src\px\rl\skill_base.hpp" />
+    <ClInclude Include="src\px\rl\skill_book.hpp" />
+    <ClInclude Include="src\px\rl\skill_set.hpp" />
     <ClInclude Include="src\px\rl\tile.hpp" />
     <ClInclude Include="src\px\rl\traverse.hpp" />
     <ClInclude Include="src\px\shell\bindings.hpp" />
