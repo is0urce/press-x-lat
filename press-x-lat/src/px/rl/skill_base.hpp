@@ -23,6 +23,7 @@ namespace px
 		private:
 			time_type m_cooldown;
 			time_type m_timer;
+			bool m_hostile;
 
 		public:
 			skill_base() : m_cooldown(0), m_timer(0) {}
@@ -60,6 +61,15 @@ namespace px
 			void start_cooldown()
 			{
 				m_timer = m_cooldown;
+			}
+
+			bool hostile() const
+			{
+				return m_hostile;
+			}
+			void set_hostile(bool flag)
+			{
+				m_hostile = flag;
 			}
 		};
 	}

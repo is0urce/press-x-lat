@@ -6,10 +6,7 @@
 #ifndef PX_RL_CHARACTER_HPP
 #define PX_RL_CHARACTER_HPP
 
-#include <px/rl/skill.hpp>
 #include <px/rl/skill_set.hpp>
-
-#include <vector>
 
 namespace px
 {

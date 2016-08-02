@@ -16,11 +16,12 @@ namespace px
 {
 	namespace core
 	{
-		class body_component;
+		class location_component;
 		class character_component
 			: public es::i_component
-			, public rl::character<body_component*>
+			, public rl::character<location_component*>
 		{
+		public:
 		public:
 			virtual ~character_component() {}
 		};

@@ -122,6 +122,7 @@ namespace px
 					weapon->emplace(rl::effect::weapon_damage, 4);
 					body->equip_weapon(weapon);
 					body->join_faction(0);
+					character->add_skill("meelee");
 
 					units.push_back(task->assemble());
 				}

@@ -27,37 +27,75 @@ namespace px
 		{
 			if (location_component* location = *this)
 			{
-				if (body_component* self_body = *location)
+				if (body_component* body = *location)
 				{
-					auto hp = self_body->health();
+					auto hp = body->health();
 					if (hp && !hp->empty())
 					{
-						// select nearest enemy in sight radius
-						location_component* target = nullptr;
-						int distance = sight_radius + 1; // start with something out of range
-						env.nearest(location->current(), sight_radius, [&](int x, int y, location_component* enum_location)
+						character_component* character = *body;
+						auto nearest = env.nearest(location->current(), sight_radius);
+
+						bool done = false;
+						// check skills usage
+						if (character)
 						{
-							if (enum_location && enum_location != location) // don't count self
+							for (size_t slot = 0, len = character->skils_total(); slot < len && !done; ++slot)
 							{
-								body_component* target_body = *enum_location;
-								if (target_body && env.reputation(*self_body, *target_body) < 0) // an enemy
+								auto skill = character->skill(slot);
+								if (skill->targeted())
 								{
-									auto range = env.distance(location->current(), { x, y });
-									if (distance > range)
+									for (auto neighbour_location : nearest)
 									{
-										distance = range;
-										target = enum_location;
+										if (skill->useable(location, neighbour_location))
+										{
+											skill->use(location, neighbour_location);
+											done = true;
+											break;
+										}
+									}
+								}
+								else
+								{
+									if (skill->useable(location, location->current()))
+									{
+										skill->use(location, location->current());
+									}
+									done = true;
+								}
+							}
+						}
+
+						if (!done) // approach enemy if no skills ready
+						{
+							// select nearest enemy in sight radius
+							location_component* target_location = nullptr;
+							int distance = sight_radius + 1; // start with something out of range
+							for (auto neighbour_location : nearest)
+							{
+								body_component* target_body = *neighbour_location;
+								if (target_body)
+								{
+									character_component* target_character = *target_body;
+									if (target_character && env.reputation(*body, *target_body) < 0) // an enemy character
+									{
+										auto range = env.distance(location->current(), neighbour_location->current());
+										if (distance > range)
+										{
+											distance = range;
+											target_location = neighbour_location;
+										}
 									}
 								}
 							}
-						});
 
-						if (target)
-						{
-							auto path = astar::find(location->current(), target->current(), [&env](const point2 &check_pos) { return env.traversable(check_pos, rl::traverse::floor); }, max_steps);
-							if (!path.empty())
+							// target found
+							if (target_location)
 							{
-								env.maneuver(*location, path.front());
+								auto path = astar::find(location->current(), target_location->current(), [&env](const point2 &check_pos) { return env.traversable(check_pos, rl::traverse::floor); }, max_steps);
+								if (!path.empty())
+								{
+									env.maneuver(*location, path.front());
+								}
 							}
 						}
 					}

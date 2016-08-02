@@ -96,7 +96,25 @@ namespace px
 				m_ui.add("status", std::make_shared<ui::status_panel>(m_environment), ui::alignment({ 0.0, 1.0 }, { 1, -12 }, { -2, 1 }, { 1, 0 }));
 				m_ui.add("target", std::make_shared<ui::target_panel>(m_environment), ui::alignment({ 1.0, 1.0 }, { -12, -12 }, { -2, 1 }, { 1, 0 }));
 
-				m_character_system.skill_book().add_target("meelee", [](auto u, auto t) { if (t && t->health()) t->health()->damage(6); }, nullptr);
+				auto &meelee = m_character_system.skill_book().add_target("meelee", [](location_component* user, location_component* target)
+				{
+					if (target)
+					{
+						if (body_component* body = *target)
+						{
+							if (body->health()) body->health()->damage(1);
+						}
+					}
+				}, [this](location_component* user, location_component* target)
+				{
+					if (!user || !target || user == target) return false;
+
+					body_component* body = *user;
+					body_component* target_body = *target;
+
+					return body && target_body && m_environment.reputation(*body, *target_body) < 0 && m_environment.distance(user->current(), target->current()) == 1;
+				});
+				//meelee.set_hostile(true);
 
 				add(&m_body_system);
 				add(&m_character_system);
@@ -117,7 +135,7 @@ namespace px
 
 				body->join_faction(1);
 				body->equip_weapon(weapon);
-				character->add("meelee");
+				character->add_skill("meelee");
 
 				m_terrain.add(task->assemble());
 

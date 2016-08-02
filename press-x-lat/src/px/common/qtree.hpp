@@ -19,26 +19,26 @@
 
 namespace px
 {
-	template<typename _E>
+	template<typename Element>
 	class qtree
 	{
 	public:
-		typedef _E element;
+		typedef Element element_type;
 		typedef std::unique_ptr<qtree> ptr;
 
 		struct bucket
 		{
 		private:
-			std::list<element> list;
+			std::list<element_type> list;
 			int m_x;
 			int m_y;
 		public:
-			template <typename _Op>
-			void enumerate(_Op&& fn)
+			template <typename CallbackOperator>
+			void enumerate(CallbackOperator&& fn)
 			{
 				for (auto it = list.begin(), last = list.end(); it != last; ++it)
 				{
-					if (!std::forward<_Op>(fn)(m_x, m_y, *it)) return;
+					if (!std::forward<CallbackOperator>(fn)(m_x, m_y, *it)) return;
 				}
 			}
 			bool match(int x, int y) const
@@ -53,13 +53,13 @@ namespace px
 			{
 				return list.empty();
 			}
-			void add(element e, int x, int y)
+			void add(element_type e, int x, int y)
 			{
 				list.push_back(e);
 				m_x = x;
 				m_y = y;
 			}
-			bool remove(element e)
+			bool remove(element_type e)
 			{
 				for (auto it = list.begin(), last = list.end(); it != last;)
 				{
@@ -255,7 +255,7 @@ namespace px
 		}
 
 		// adding element, internal guarantee x and y in range
-		void insert(int x, int y, element e)
+		void insert(int x, int y, element_type e)
 		{
 			if (m_bucket) // it is a leaf
 			{
@@ -276,7 +276,7 @@ namespace px
 				branch->insert(x, y, e);
 			}
 		}
-		bool erase(int x, int y, element e)
+		bool erase(int x, int y, element_type e)
 		{
 			if (m_bucket)
 			{
@@ -298,7 +298,7 @@ namespace px
 				return false;
 			}
 		}
-		qtree* move_hint(int sx, int sy, element e, int dx, int dy)
+		qtree* move_hint(int sx, int sy, element_type e, int dx, int dy)
 		{
 			if (m_bucket)
 			{
@@ -342,7 +342,7 @@ namespace px
 			return m_bucket;
 		}
 
-		void add(int x, int y, element e)
+		void add(int x, int y, element_type e)
 		{
 			while (!contains(x, y))
 			{
@@ -350,14 +350,14 @@ namespace px
 			}
 			insert(x, y, e);
 		}
-		void remove(int x, int y, element e)
+		void remove(int x, int y, element_type e)
 		{
 			erase(x, y, e);
 		}
 
-		// _Op fn sould match bool(int, int, _C)
-		template <typename _Op>
-		void find(int x, int y, unsigned int radius, _Op &fn) const
+		// CallbackOperator sould support bool operator()(int, int, Element)
+		template <typename CallbackOperator>
+		void find(int x, int y, unsigned int radius, CallbackOperator &fn) const
 		{
 			if (m_bucket)
 			{
@@ -384,8 +384,8 @@ namespace px
 				}
 			}
 		}
-		template <typename _Op>
-		void find(int x, int y, _Op &fn) const
+		template <typename CallbackOperator>
+		void find(int x, int y, CallbackOperator &fn) const
 		{
 			if (m_bucket && m_bucket->match(x, y))
 			{
@@ -409,20 +409,20 @@ namespace px
 				return branch ? branch->exists(x, y) : false;
 			}
 		}
-		void move(int sx, int sy, element e, int dx, int dy)
+		void move(int sx, int sy, element_type e, int dx, int dy)
 		{
 			move_hint(sx, sy, e, dx, dy)->add(dx, dy, e);
 		}
 
-		void move(point2 from, element e, point2 destination)
+		void move(point2 from, element_type e, point2 destination)
 		{
 			move(from.x(), from.y(), e, destination.x(), destination.y());
 		}
-		void add(point2 position, element e)
+		void add(point2 position, element_type e)
 		{
 			add(position.x(), position.y(), e);
 		}
-		void remove(point2 position, element e)
+		void remove(point2 position, element_type e)
 		{
 			remove(position.x(), position.y(), e);
 		}

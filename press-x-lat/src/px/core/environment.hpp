@@ -52,14 +52,6 @@ namespace px
 			}
 
 		public:
-			auto distance(point2 a, point2 b) const
-			{
-				return a.king_distance(b);
-			}
-			auto reputation(body_component& a, body_component& b)
-			{
-				return m_factions.reputation(a.faction(), b.faction());
-			}
 			bool traversable(point2 position, rl::traverse layer) const
 			{
 				return m_terrain->traversable(position, layer) && !blocking(position, layer);
@@ -80,16 +72,27 @@ namespace px
 				});
 				return blocking;
 			}
-			template <typename _Op>
-			void nearest(point2 postion, unsigned int radius, _Op& predicate)
+			template<typename CallbackOperator>
+			void nearest(point2 postion, unsigned int radius, CallbackOperator& predicate)
 			{
-				std::list<location_component*> list;
+				//std::list<location_component*> list;
 				m_space->find(postion.x(), postion.y(), radius, [&](int x, int y, location_component* component)
 				{
 					predicate(x, y, component);
 					return true;
 				});
 			}
+			auto nearest(point2 postion, unsigned int radius)
+			{
+				std::list<location_component*> list;
+				m_space->find(postion.x(), postion.y(), radius, [&](int x, int y, location_component* component)
+				{
+					list.push_back(component);
+					return true;
+				});
+				return list;
+			}
+
 			bool maneuver(location_component& location, point2 target)
 			{
 				bool action = false;
@@ -114,19 +117,46 @@ namespace px
 			bool cast(location_component& source, unsigned int slot, point2 target)
 			{
 				bool action = false;
-				if (body_component* body = static_cast<body_component*>(source))
+				if (body_component* user_body = source)
 				{
-					if (character_component* character = static_cast<character_component*>(*body))
+					if (character_component* character = *user_body)
 					{
 						auto spell = character->skill(slot);
 						if (spell && spell->targeted())
 						{
-							spell->use(body, body);
-							action = true;
+							// select target from location
+							location_component* target_location = nullptr;
+							m_space->find(target.x(), target.y(), [&](int x, int y, auto* component)
+							{
+								bool search = true;
+								if (body_component* b = *component) // should have body
+								{
+									target_location = component;
+									search = false;
+								}
+								return search;
+							});
+							
+							if (spell->useable(&source, target_location))
+							{
+								spell->use(&source, target_location);
+								action = true;
+							}
 						}
 					}
 				}
-				return false;
+				return action;
+			}
+
+			// attribute querry
+
+			auto distance(point2 a, point2 b) const
+			{
+				return a.king_distance(b);
+			}
+			auto reputation(body_component& a, body_component& b)
+			{
+				return m_factions.reputation(a.faction(), b.faction());
 			}
 
 			// game flow

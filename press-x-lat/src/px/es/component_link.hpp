@@ -7,6 +7,8 @@
 // smart pointer for auto destruction
 // expose to pointer for easy casting for multiple inherited links
 
+// sfinae resolution in case of multiple inheritance
+
 #ifndef PX_ES_COMPONENT_LINK_HPP
 #define PX_ES_COMPONENT_LINK_HPP
 
@@ -25,11 +27,17 @@ namespace px
 
 		public:
 			component_link() {}
-			void link(std::weak_ptr<_L> weak)
+
+			template <typename _C, typename = std::enable_if<std::is_same<_C, _L>::value>::type>
+			void link(std::weak_ptr<_C> weak)
 			{
 				m_link = weak;
 			}
-			// sfinae resolution in case of multiple inheritance
+			template <typename _C, typename = std::enable_if<std::is_same<_C, _L>::value>::type>
+			void link(std::shared_ptr<_C> weak)
+			{
+				m_link = weak;
+			}
 			template <typename _C, typename = std::enable_if<std::is_same<_C, _L>::value>::type>
 			_C* linked() const
 			{

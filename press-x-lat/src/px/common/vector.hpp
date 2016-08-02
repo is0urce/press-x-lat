@@ -24,8 +24,8 @@ namespace px
 			m_array[0] = x;
 			m_array[1] = y;
 		}
-		template <typename _C>
-		vector2(const coordinate<_C, 2> cast)
+		template <typename Component>
+		vector2(const coordinate<Component, 2> cast)
 		{
 			m_array[0] = cast[0];
 			m_array[1] = cast[1];
@@ -66,13 +66,13 @@ namespace px
 			}
 			return result;
 		}
-		template<typename _T, typename _O>
-		_T convert(_O fn) const
+		template<typename TargetType, typename Converter>
+		TargetType convert(Converter convert_fn) const
 		{
-			_T result;
+			TargetType result;
 			for (unsigned int i = 0; i < depth; ++i)
 			{
-				result[i] = fn(m_array[i]);
+				result[i] = convert_fn(m_array[i]);
 			}
 			return result;
 		}

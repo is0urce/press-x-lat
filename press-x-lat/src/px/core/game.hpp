@@ -35,6 +35,10 @@ namespace px
 				{
 					action = m_environment->cast(*player, slot, target);
 				}
+				if (action)
+				{
+					m_environment->turn();
+				}
 				return action;
 			}
 			virtual bool player_activate(point2 target) override

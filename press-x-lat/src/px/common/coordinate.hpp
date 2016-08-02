@@ -10,15 +10,15 @@
 
 namespace px
 {
-	template <typename _C, size_t _D>
+	template <typename Component, size_t _D>
 	struct coordinate
 	{
 	public:
 		static const size_t depth = _D;
-		typedef _C component;
+		typedef Component component;
 
 	protected:
-		std::array<component, _D> m_array;
+		std::array<component, depth> m_array;
 
 	public:
 		const component& operator[](size_t i) const
@@ -37,15 +37,15 @@ namespace px
 		{
 			return m_array.at(i);
 		}
-		template <size_t _I>
+		template <size_t Index>
 		const component get() const
 		{
-			return m_array[_I];
+			return m_array[Index];
 		}
-		template <size_t _I>
+		template <size_t Index>
 		const component at() const
 		{
-			return m_array.at(_I);
+			return m_array.at(Index);
 		}
 
 		bool empty() const
@@ -67,19 +67,19 @@ namespace px
 				m_array[i] = -m_array[i];
 			}
 		}
-		template <size_t _Axis>
+		template <size_t Axis>
 		void mirror()
 		{
-			m_array[_Axis] = -m_array[_Axis];
+			m_array[Axis] = -m_array[Axis];
 		}
 		void mirror(size_t axis)
 		{
 			m_array[axis] = -m_array[axis];
 		}
-		template <size_t _Axis>
+		template <size_t Axis>
 		void move_axis(component distance)
 		{
-			m_array[_Axis] += distance;
+			m_array[Axis] += distance;
 		}
 		void move_axis(size_t axis, component distance)
 		{
@@ -88,32 +88,32 @@ namespace px
 
 		// vector transforms
 
-		template<typename _S>
-		void move(const coordinate<_S, depth> &move)
+		template<typename ConvertElement>
+		void move(const coordinate<ConvertElement, depth> &move)
 		{
 			for (size_t i = 0; i < _D; ++i)
 			{
 				m_array[i] += move[i];
 			}
 		}
-		template<typename _S>
-		void reverse(const coordinate<_S, depth> &move)
+		template<typename ConvertElement>
+		void reverse(const coordinate<ConvertElement, depth> &move)
 		{
 			for (size_t i = 0; i < _D; ++i)
 			{
 				m_array[i] -= move[i];
 			}
 		}
-		template<typename _S>
-		void multiply(const coordinate<_S, depth> &multiplier)
+		template<typename ConvertElement>
+		void multiply(const coordinate<ConvertElement, depth> &multiplier)
 		{
 			for (size_t i = 0; i < _D; ++i)
 			{
 				m_array[i] *= multiplier[i];
 			}
 		}
-		template<typename _S>
-		void divide(const coordinate<_S, depth> &divisor)
+		template<typename ConvertElement>
+		void divide(const coordinate<ConvertElement, depth> &divisor)
 		{
 			for (size_t i = 0; i < _D; ++i)
 			{
@@ -198,35 +198,35 @@ namespace px
 
 		// i/o
 
-		template <typename _M>
-		void read(_M *memory)
+		template <typename Memory>
+		void read(Memory *memory)
 		{
 			for (size_t i = 0; i < _D; ++i)
 			{
-				m_array[i] = static_cast<_M>(memory[i]);
+				m_array[i] = static_cast<Memory>(memory[i]);
 			}
 		}
-		template <typename _M>
-		void write(_M *memory) const
+		template <typename Memory>
+		void write(Memory *memory) const
 		{
 			for (size_t i = 0; i < _D; ++i)
 			{
-				memory[i] = static_cast<_M>(m_array[i]);
+				memory[i] = static_cast<Memory>(m_array[i]);
 			}
 		}
 	};
 
-	template <typename _C, unsigned int _D>
-	bool operator==(const coordinate<_C, _D> &a, const coordinate<_C, _D> &b)
+	template <typename Component, unsigned int Dim>
+	bool operator==(const coordinate<Component, Dim> &a, const coordinate<Component, Dim> &b)
 	{
-		for (size_t i = 0; i < _D; ++i)
+		for (size_t i = 0; i < Dim; ++i)
 		{
 			if (a[i] != b[i]) return false;
 		}
 		return true;
 	}
-	template <typename _C, unsigned int _D>
-	bool operator!=(const coordinate<_C, _D> &a, const coordinate<_C, _D> &b)
+	template <typename Component, unsigned int Dim>
+	bool operator!=(const coordinate<Component, Dim> &a, const coordinate<Component, Dim> &b)
 	{
 		return !operator==(a, b);
 	}

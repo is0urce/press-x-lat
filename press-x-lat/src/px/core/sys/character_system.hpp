@@ -18,17 +18,17 @@ namespace px
 {
 	namespace core
 	{
-		class body_component;
+		class location_component;
 
 		class character_system
 			: public es::i_system
 			, public es::manager<character_component, 10000>
 		{
 		public:
-			typedef rl::skill_book<std::string, body_component*, body_component*> spellbook_type;
-			typedef rl::skill<body_component*, body_component*> skill_type;
+			typedef typename character_component::skillbook_type skillbook_type;
+
 		private:
-			spellbook_type m_spellbook;
+			skillbook_type m_spellbook;
 
 		public:
 			character_system() {}
@@ -41,7 +41,7 @@ namespace px
 			}
 
 		public:
-			spellbook_type& skill_book()
+			skillbook_type& skill_book()
 			{
 				return m_spellbook;
 			}

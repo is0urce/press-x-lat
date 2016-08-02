@@ -21,8 +21,8 @@ namespace px
 	{
 	public:
 		// _O operator should support type void(unsigned int)
-		template<typename _O>
-		static void enum_utf8(const std::string &text, _O fn)
+		template<typename CallbackOperator>
+		static void enum_utf8(const std::string &text, CallbackOperator fn)
 		{
 			std::string::size_type i{};
 			auto len = text.length();

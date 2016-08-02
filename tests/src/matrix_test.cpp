@@ -22,9 +22,9 @@ TEST_CASE("matrix", "[matrix]")
 	px::matrix2<int, W, H> m3(generator);
 
 	// attributes
-	REQUIRE(m1.width == W);
-	REQUIRE(m1.height == H);
-	REQUIRE(m1.size == W * H);
+	REQUIRE(m1.width() == W);
+	REQUIRE(m1.height() == H);
+	REQUIRE(m1.size() == W * H);
 
 	// access
 	REQUIRE((m3[{ 5, 5 }]) == g);

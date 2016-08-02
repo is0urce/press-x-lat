@@ -13,21 +13,18 @@
 
 namespace px
 {
-	template <typename _E, unsigned int...> class matrix2;
+	template <typename Element , unsigned int...> class matrix2;
 
 	// matrix with fixed sizes
 
-	template <typename _E, unsigned int _W, unsigned int _H>
-	class matrix2<_E, _W, _H>
+	template <typename Element, unsigned int _W, unsigned int _H>
+	class matrix2<Element, _W, _H>
 	{
 	public:
-		typedef _E element;
-		const static unsigned int width = _W;
-		const static unsigned int height = _H;
+		typedef Element element;
 
-		const static unsigned int size = _W * _H;
 	private:
-		std::array<element, size> m_data;
+		std::array<element, _W * _H> m_data;
 
 	public:
 		matrix2(const matrix2&) = delete;
@@ -42,6 +39,18 @@ namespace px
 			fill(op);
 		}
 
+		unsigned int width() const
+		{
+			return _W;
+		}
+		unsigned int height() const
+		{
+			return _H;
+		}
+		unsigned int size() const
+		{
+			return _W * _H;
+		}
 		void swap(matrix2 &that)
 		{
 			std::swap(m_data, that.m_data);
@@ -72,8 +81,8 @@ namespace px
 		{
 			m_data.fill(e);
 		}
-		template <typename _O>
-		void fill(_O op)
+		template <typename Generator>
+		void fill(Generator op)
 		{
 			size_t index = 0;
 			for (unsigned int j = 0; j < _H; ++j)
@@ -85,8 +94,8 @@ namespace px
 				}
 			}
 		}
-		template <typename _O>
-		void enumerate(_O op)
+		template <typename CallbackOperator>
+		void enumerate(CallbackOperator op)
 		{
 			size_t index = 0;
 			for (unsigned int j = 0; j < _H; ++j)
@@ -101,13 +110,13 @@ namespace px
 
 		// querry functions: operator[] not throws, at() throws, select returns default (outer) if out of range
 		// specialized point2 acessors for easy querry with bracket-initialized points
-		template<typename _C>
-		const element& operator[](coordinate<_C, 2> key) const
+		template<typename Component>
+		const element& operator[](coordinate<Component, 2> key) const
 		{
 			return m_data[key.get<1>() * _W + key.get<0>()];
 		}
-		template<typename _C>
-		element& operator[](coordinate<_C, 2> key)
+		template<typename Component>
+		element& operator[](coordinate<Component, 2> key)
 		{
 			return m_data[key.get<1>() * _W + key.get<0>()];
 		}
@@ -120,14 +129,14 @@ namespace px
 			return m_data[key.y() * _W + key.x()];
 		}
 
-		template<typename _C, unsigned int D>
-		const element& at(coordinate<int, 2> key) const
+		template<typename Component>
+		const element& at(coordinate<Component, 2> key) const
 		{
 			if (!contains(key)) throw std::runtime_error("px::matrix<e,w,h>::at() - out of range");
 			return operator[](key);
 		}
-		template<typename _C, unsigned int D>
-		element& at(coordinate<int, 2> key)
+		template<typename Component>
+		element& at(coordinate<Component, 2> key)
 		{
 			if (!contains(key)) throw std::runtime_error("px::matrix<e,w,h>::at() - out of range");
 			return operator[](key);
@@ -153,13 +162,13 @@ namespace px
 			return m_data[y * _W + x];
 		}
 
-		template<typename _C, unsigned int D>
-		const element& select(coordinate<int, 2> key, const element& outer) const
+		template<typename Component>
+		const element& select(coordinate<Component, 2> key, const element& outer) const
 		{
 			return contains(key) ? operator[](key) : outer;
 		}
-		template<typename _C, unsigned int D>
-		element& select(coordinate<int, 2> key, element& outer)
+		template<typename Component>
+		element& select(coordinate<Component, 2> key, element& outer)
 		{
 			return contains(key) ? operator[](key) : outer;
 		}
@@ -183,11 +192,11 @@ namespace px
 
 	// matrix with varying size
 
-	template <typename _E>
-	class matrix2<_E>
+	template <typename Element>
+	class matrix2<Element>
 	{
 	public:
-		typedef _E element;
+		typedef Element element;
 	private:
 		std::vector<element> m_data;
 		unsigned int m_width;
@@ -207,8 +216,8 @@ namespace px
 		{
 			m_data.assign(w * h, initial);
 		}
-		template <typename _O>
-		matrix2(unsigned int w, unsigned int h, _O op) : matrix2(w, h)
+		template <typename Generator>
+		matrix2(unsigned int w, unsigned int h, Generator op) : matrix2(w, h)
 		{
 			fill(op);
 		}
@@ -266,8 +275,8 @@ namespace px
 			unsigned int len = size();
 			for (unsigned int i = 0; i < len; ++i) m_data[i] = e;
 		}
-		template <typename _O>
-		void fill(_O op)
+		template <typename Generator>
+		void fill(Generator op)
 		{
 			size_t index = 0;
 			for (unsigned int j = 0; j < m_height; ++j)
@@ -279,8 +288,8 @@ namespace px
 				}
 			}
 		}
-		template <typename _O>
-		void enumerate(_O op)
+		template <typename CallbackOperator>
+		void enumerate(CallbackOperator op)
 		{
 			size_t index = 0;
 			for (unsigned int j = 0; j < m_height; ++j)
@@ -296,13 +305,13 @@ namespace px
 		// querry functions: operator[] not throws, at() throws, select returns default (outer) if out of range
 		// specialized point2 acessors for easy querry with bracket-initialized points
 
-		template<typename _C, unsigned int D>
-		const element& operator[](coordinate<int, 2> key) const
+		template<typename Component>
+		const element& operator[](coordinate<Component, 2> key) const
 		{
 			return m_data[key.get<1>() * m_width + key.get<0>()];
 		}
-		template<typename _C, unsigned int D>
-		element& operator[](coordinate<int, 2> key)
+		template<typename Component>
+		element& operator[](coordinate<Component, 2> key)
 		{
 			return m_data[key.get<1>() * m_width + key.get<0>()];
 		}
@@ -315,14 +324,14 @@ namespace px
 			return m_data[key.y() * m_width + key.x()];
 		}
 
-		template<typename _C, unsigned int D>
-		const element& at(coordinate<int, 2> key) const
+		template<typename Component>
+		const element& at(coordinate<Component, 2> key) const
 		{
 			if (!contains(key)) throw std::runtime_error("px::matrix<e>::at() - out of range");
 			return operator[](key);
 		}
-		template<typename _C, unsigned int D>
-		element& at(coordinate<int, 2> key)
+		template<typename Component>
+		element& at(coordinate<Component, 2> key)
 		{
 			if (!contains(key)) throw std::runtime_error("px::matrix<e>::at() - out of range");
 			return operator[](key);
@@ -348,13 +357,13 @@ namespace px
 			return m_data[y * m_width + x];
 		}
 
-		template<typename _C, unsigned int D>
-		const element& select(coordinate<int, 2> key, const element& outer) const
+		template<typename Component>
+		const element& select(coordinate<Component, 2> key, const element& outer) const
 		{
 			return contains(key) ? operator[](key) : outer;
 		}
-		template<typename _C, unsigned int D>
-		element& select(coordinate<int, 2> key, element& outer)
+		template<typename Component>
+		element& select(coordinate<Component, 2> key, element& outer)
 		{
 			return contains(key) ? operator[](key) : outer;
 		}

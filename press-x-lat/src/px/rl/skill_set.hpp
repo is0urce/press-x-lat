@@ -38,21 +38,26 @@ namespace px
 			{
 				m_provider = book;
 			}
-			void add(tag_type tag, size_t slot)
+			auto add_skill(tag_type tag, size_t slot)
 			{
 				if (!m_provider) throw std::runtime_error("px::rl::skill_set::add(name, slot) - book provider is null");
 
 				auto it = m_provider->find(tag);
-				//skill_type &s = (*m_provider)[tag];
 
 				if (it == m_provider->end()) throw std::runtime_error("px::rl::skill_set::add(name, slot) - book has no skill with name " + tag);
 
 				m_skills.reserve(slot + 1);
 				m_skills.emplace(m_skills.begin() + slot, tag, it->second);
+
+				return skill(slot);
 			}
-			void add(tag_type tag)
+			auto add_skill(tag_type tag)
 			{
-				add(tag, m_skills.size());
+				return add_skill(tag, m_skills.size());
+			}
+			size_t skils_total() const
+			{
+				return m_skills.size();
 			}
 
 			skill_type* skill(size_t slot)

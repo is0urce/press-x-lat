@@ -114,10 +114,16 @@ namespace px
 		}
 
 		// io
-		template <typename _M>
-		void write(_M *memory) const { memory[0] = (_M)R; memory[1] = (_M)G; memory[2] = (_M)B; memory[3] = (_M)A; };
-		template <typename _M>
-		void write(_M *memory, unsigned int repeat) const { for (unsigned int i = 0; i < repeat; ++i) { write(memory); memory += depth; } };
+		template <typename Memory>
+		void write(Memory *memory) const
+		{
+			memory[0] = static_cast<Memory>(R);
+			memory[1] = static_cast<Memory>(G);
+			memory[2] = static_cast<Memory>(B);
+			memory[3] = static_cast<Memory>(A);
+		};
+		template <typename Memory>
+		void write(Memory *memory, unsigned int repeat) const { for (unsigned int i = 0; i < repeat; ++i) { write(memory); memory += depth; } };
 		void write(component *memory) const { memory[0] = R; memory[1] = G; memory[2] = B; memory[3] = A; };
 		void write(component *memory, unsigned int repeat) const { for (unsigned int i = 0; i < repeat; ++i) { write(memory); memory += depth; } };
 
