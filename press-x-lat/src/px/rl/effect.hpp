@@ -12,10 +12,15 @@ namespace px
 	{
 		enum class effect : unsigned int
 		{
+			no_effect,
+
 			weapon_damage,
+			armor_resist,
+
+			weight_increase,
+			value_increase,
 
 			not_valid,
-
 			max_value = not_valid
 		};
 	}

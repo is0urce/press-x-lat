@@ -73,12 +73,11 @@ namespace px
 				return blocking;
 			}
 			template<typename CallbackOperator>
-			void nearest(point2 postion, unsigned int radius, CallbackOperator& predicate)
+			void nearest(point2 postion, unsigned int radius, CallbackOperator& fn)
 			{
-				//std::list<location_component*> list;
 				m_space->find(postion.x(), postion.y(), radius, [&](int x, int y, location_component* component)
 				{
-					predicate(x, y, component);
+					fn(x, y, component);
 					return true;
 				});
 			}
@@ -148,7 +147,7 @@ namespace px
 				return action;
 			}
 
-			// attribute querry
+			// props querry
 
 			auto distance(point2 a, point2 b) const
 			{

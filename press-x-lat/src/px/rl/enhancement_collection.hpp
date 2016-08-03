@@ -1,32 +1,40 @@
-// name: enhancement.hpp
+// name: enhancement_collection.hpp
 // type: c++ header
 // desc: struct
 // auth: is0urce
+
+// collection of enhancements - single item or buff
 
 #ifndef PX_RL_ENHANCEMENT_COLLECTION_HPP
 #define PX_RL_ENHANCEMENT_COLLECTION_HPP
 
 #include <px/rl/enhancement.hpp>
 
+#include <vector>
+
 namespace px
 {
 	namespace rl
 	{
-		template <typename _E>
+		template <typename Effect>
 		class enhancement_collection
 		{
 		public:
-			typedef _E effect_type;
-			typedef enhancement<effect_type> enhancement;
+			typedef Effect effect_type;
+			typedef enhancement<effect_type> enhancement_type;
 
 		private:
-			std::vector<enhancement> m_effects;
+			std::vector<enhancement_type> m_effects;
 
 		public:
 
 			// manage
 
-			void add(enhancement e)
+			void clear()
+			{
+				m_effects.clear();
+			}
+			void add(enhancement_type e)
 			{
 				m_effects.push_back(e);
 			}
@@ -34,7 +42,7 @@ namespace px
 			{
 				m_effects.emplace_back(std::forward<Args>(args)...);
 			}
-			bool remove(effect_type e)
+			bool remove_first(effect_type e)
 			{
 				bool done = false;
 				for (auto it = m_effects.begin(), last = m_effects.end(); it != last; ++it)
@@ -48,35 +56,31 @@ namespace px
 				}
 				return done;
 			}
-			template <typename _Op> bool remove(_Op predicate)
+			template <typename Predicate>
+			bool remove_first(Predicate&& predicate)
 			{
-				for (auto it = m_effects.begin(), last = m_effects.end(); it != last; )
+				bool done = false;
+				for (auto it = m_effects.begin(), last = m_effects.end(); it != last; ++it)
 				{
-					if (predicate(*it))
+					if (std::forward<Predicate>(predicate)(*it))
 					{
 						it = m_effects.erase(it);
 						done = true;
-					}
-					else
-					{
-						++it;
+						break;
 					}
 				}
 				return done;
 			}
-			void clear()
-			{
-				m_effects.clear();
-			}
 
 			// access
 
-			template <typename _Op> bool enumerate(_Op fn) const
+			template <typename CallbackOperator>
+			bool enumerate(CallbackOperator&& fn) const
 			{
 				bool cont = true;
 				for (auto it = m_effects.cbegin(), last = m_effects.cend(); cont && it != last; ++it)
 				{
-					cont = fn(*it);
+					cont = std::forward<CallbackOperator>(fn)(*it);
 				}
 				return cont;
 			}

@@ -10,11 +10,11 @@
 
 namespace px
 {
-	template <typename Component, size_t _D>
+	template <typename Component, size_t Dim>
 	struct coordinate
 	{
 	public:
-		static const size_t depth = _D;
+		static const size_t depth = Dim;
 		typedef Component component;
 
 	protected:
@@ -51,7 +51,7 @@ namespace px
 		bool empty() const
 		{
 			bool result = true;
-			for (size_t i = 0; i < _D; ++i)
+			for (size_t i = 0; i < Dim; ++i)
 			{
 				result &= m_array[i] == 0;
 			}
@@ -62,7 +62,7 @@ namespace px
 
 		void negate()
 		{
-			for (size_t i = 0; i < _D; ++i)
+			for (size_t i = 0; i < Dim; ++i)
 			{
 				m_array[i] = -m_array[i];
 			}
@@ -91,7 +91,7 @@ namespace px
 		template<typename ConvertElement>
 		void move(const coordinate<ConvertElement, depth> &move)
 		{
-			for (size_t i = 0; i < _D; ++i)
+			for (size_t i = 0; i < Dim; ++i)
 			{
 				m_array[i] += move[i];
 			}
@@ -99,7 +99,7 @@ namespace px
 		template<typename ConvertElement>
 		void reverse(const coordinate<ConvertElement, depth> &move)
 		{
-			for (size_t i = 0; i < _D; ++i)
+			for (size_t i = 0; i < Dim; ++i)
 			{
 				m_array[i] -= move[i];
 			}
@@ -107,7 +107,7 @@ namespace px
 		template<typename ConvertElement>
 		void multiply(const coordinate<ConvertElement, depth> &multiplier)
 		{
-			for (size_t i = 0; i < _D; ++i)
+			for (size_t i = 0; i < Dim; ++i)
 			{
 				m_array[i] *= multiplier[i];
 			}
@@ -115,7 +115,7 @@ namespace px
 		template<typename ConvertElement>
 		void divide(const coordinate<ConvertElement, depth> &divisor)
 		{
-			for (size_t i = 0; i < _D; ++i)
+			for (size_t i = 0; i < Dim; ++i)
 			{
 				m_array[i] /= divisor[i];
 			}
@@ -125,14 +125,14 @@ namespace px
 
 		void multiply(component multiplier)
 		{
-			for (size_t i = 0; i < _D; ++i)
+			for (size_t i = 0; i < Dim; ++i)
 			{
 				m_array[i] *= multiplier;
 			}
 		}
 		void divide(component divisor)
 		{
-			for (size_t i = 0; i < _D; ++i)
+			for (size_t i = 0; i < Dim; ++i)
 			{
 				m_array[i] /= divisor;
 			}
@@ -144,7 +144,7 @@ namespace px
 		component king_distance(const coordinate &target) const
 		{
 			component distance{};
-			for (size_t i = 0; i < _D; ++i)
+			for (size_t i = 0; i < Dim; ++i)
 			{
 				distance = (std::max)(distance, (std::abs)(m_array[i] - target.m_array[i]));
 			}
@@ -155,7 +155,7 @@ namespace px
 		component block_distance(const coordinate &target) const
 		{
 			component distance{};
-			for (size_t i = 0; i < _D; ++i)
+			for (size_t i = 0; i < Dim; ++i)
 			{
 				distance += (std::abs)(m_array[i] - target.m_array[i]);
 			}
@@ -166,7 +166,7 @@ namespace px
 		component distance2(const coordinate &target) const
 		{
 			component distance{};
-			for (size_t i = 0; i < _D; ++i)
+			for (size_t i = 0; i < Dim; ++i)
 			{
 				component delta = m_array[i] - target.m_array[i];
 				distance += delta * delta;
@@ -177,7 +177,7 @@ namespace px
 		component magnitude2() const
 		{
 			component distance{};
-			for (size_t i = 0; i < _D; ++i)
+			for (size_t i = 0; i < Dim; ++i)
 			{
 				distance += m_array[i] * m_array[i];
 			}
@@ -201,7 +201,7 @@ namespace px
 		template <typename Memory>
 		void read(Memory *memory)
 		{
-			for (size_t i = 0; i < _D; ++i)
+			for (size_t i = 0; i < Dim; ++i)
 			{
 				m_array[i] = static_cast<Memory>(memory[i]);
 			}
@@ -209,7 +209,7 @@ namespace px
 		template <typename Memory>
 		void write(Memory *memory) const
 		{
-			for (size_t i = 0; i < _D; ++i)
+			for (size_t i = 0; i < Dim; ++i)
 			{
 				memory[i] = static_cast<Memory>(m_array[i]);
 			}

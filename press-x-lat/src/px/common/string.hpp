@@ -11,8 +11,8 @@
 
 namespace
 {
-	const unsigned int replacement_character = 0xFFFD;
-	const unsigned int byte_order_mark = 0xfeff;
+	const unsigned int replacement_character = 0xFFFD; // '<?>' glyph
+	const unsigned int byte_order_mark = 0xfeff; // we should skip that
 }
 
 namespace px
@@ -20,7 +20,7 @@ namespace px
 	class string
 	{
 	public:
-		// _O operator should support type void(unsigned int)
+		// CallbackOperator should provide void operator()(unsigned int)
 		template<typename CallbackOperator>
 		static void enum_utf8(const std::string &text, CallbackOperator fn)
 		{
@@ -80,11 +80,7 @@ namespace px
 					return;
 				}
 
-				if (letter == byte_order_mark)
-				{
-					// skip byte-order-mark
-				}
-				else
+				if (letter != byte_order_mark) // skip byte-order-mark
 				{
 					fn(letter);
 				}

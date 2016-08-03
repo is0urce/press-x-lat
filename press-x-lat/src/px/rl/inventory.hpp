@@ -15,10 +15,14 @@ namespace px
 {
 	namespace rl
 	{
+		template <typename Effect>
 		class inventory
 		{
 		public:
-			typedef std::shared_ptr<item> item_ptr;
+			typedef Effect effect_type;
+			typedef item<effect_type> item_type;
+			typedef std::shared_ptr<item_type> item_ptr;
+
 		private:
 			std::list<item_ptr> m_items;
 

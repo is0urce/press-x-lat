@@ -96,7 +96,7 @@ namespace px
 				m_ui.add("status", std::make_shared<ui::status_panel>(m_environment), ui::alignment({ 0.0, 1.0 }, { 1, -12 }, { -2, 1 }, { 1, 0 }));
 				m_ui.add("target", std::make_shared<ui::target_panel>(m_environment), ui::alignment({ 1.0, 1.0 }, { -12, -12 }, { -2, 1 }, { 1, 0 }));
 
-				auto &meelee = m_character_system.skill_book().add_target("meelee", [](location_component* user, location_component* target)
+				m_character_system.skill_book().add_target("meelee", [](location_component* user, location_component* target)
 				{
 					if (target)
 					{
@@ -114,7 +114,6 @@ namespace px
 
 					return body && target_body && m_environment.reputation(*body, *target_body) < 0 && m_environment.distance(user->current(), target->current()) == 1;
 				});
-				//meelee.set_hostile(true);
 
 				add(&m_body_system);
 				add(&m_character_system);

@@ -35,8 +35,8 @@ namespace px
 						character_component* character = *body;
 						auto nearest = env.nearest(location->current(), sight_radius);
 
+						// select best skill for use
 						bool done = false;
-						// check skills usage
 						if (character)
 						{
 							for (size_t slot = 0, len = character->skils_total(); slot < len && !done; ++slot)
@@ -65,15 +65,15 @@ namespace px
 							}
 						}
 
-						if (!done) // approach enemy if no skills ready
+						// approach enemy if no skills ready
+						if (!done)
 						{
 							// select nearest enemy in sight radius
 							location_component* target_location = nullptr;
 							int distance = sight_radius + 1; // start with something out of range
 							for (auto neighbour_location : nearest)
 							{
-								body_component* target_body = *neighbour_location;
-								if (target_body)
+								if (body_component* target_body = *neighbour_location)
 								{
 									character_component* target_character = *target_body;
 									if (target_character && env.reputation(*body, *target_body) < 0) // an enemy character

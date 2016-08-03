@@ -8,11 +8,14 @@
 
 #include <px/es/i_component.hpp>
 #include <px/es/component_link.hpp>
+
+// meat
 #include <px/rl/body.hpp>
-#include <px/rl/character.hpp>
 #include <px/rl/mass.hpp>
+#include <px/rl/inventory.hpp>
+
+// enums
 #include <px/rl/traverse.hpp>
-#include <px/rl/item.hpp>
 #include <px/rl/effect.hpp>
 
 #include <memory>
@@ -39,10 +42,10 @@ namespace px
 			virtual ~body_component() {}
 
 		public:
-			const item_type* weapon()
-			{
-				return m_hands.get();
-			}
+			//const item_type* weapon()
+			//{
+			//	return m_hands.get();
+			//}
 			void equip_weapon(item_ptr i)
 			{
 				if (m_hands) throw std::runtime_error("px::core::body_component::equip_weapon(..) weapon already presents");

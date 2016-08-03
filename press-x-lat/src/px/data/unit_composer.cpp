@@ -12,7 +12,6 @@
 #include <px/core/sys/character_component.hpp>
 #include <px/core/sys/npc_component.hpp>
 
-#include <memory>
 #include <stdexcept>
 
 namespace px
