@@ -20,6 +20,10 @@ namespace px
 			weight_increase,
 			value_increase,
 
+			str_bonus,
+			dex_bonus,
+			int_bonus,
+
 			not_valid,
 			max_value = not_valid
 		};

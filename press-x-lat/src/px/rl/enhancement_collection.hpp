@@ -38,10 +38,12 @@ namespace px
 			{
 				m_effects.push_back(e);
 			}
-			template <typename ...Args> void emplace(Args &&... args)
-			{
-				m_effects.emplace_back(std::forward<Args>(args)...);
-			}
+			//template <typename ...Args> void emplace(Args&& ...args)
+			//{
+			//	m_effects.emplace_back(std::forward<Args>(args)...);
+			//}
+
+			// returns true if element removed
 			bool remove_first(effect_type e)
 			{
 				bool done = false;
@@ -56,6 +58,8 @@ namespace px
 				}
 				return done;
 			}
+
+			// returns true if element removed
 			template <typename Predicate>
 			bool remove_first(Predicate&& predicate)
 			{
@@ -75,14 +79,36 @@ namespace px
 			// access
 
 			template <typename CallbackOperator>
-			bool enumerate(CallbackOperator&& fn) const
+			void enumerate(CallbackOperator&& fn) const
 			{
-				bool cont = true;
-				for (auto it = m_effects.cbegin(), last = m_effects.cend(); cont && it != last; ++it)
+				for (auto it = m_effects.cbegin(), last = m_effects.cend(); it != last; ++it)
 				{
-					cont = std::forward<CallbackOperator>(fn)(*it);
+					std::forward<CallbackOperator>(fn)(*it);
 				}
-				return cont;
+			}
+
+			template <typename T, typename BinaryOperation>
+			T accumulate(T start, BinaryOperation fold) const
+			{
+				for (auto it = m_effects.cbegin(), last = m_effects.cend(); it != last; ++it)
+				{
+					start = std::forward<BinaryOperation>(fold)(start, *it);
+				}
+				return start;
+			}
+
+			template <effect_type TValue>
+			enhancement_type accumulate() const
+			{
+				enhancement_type start{};
+				for (auto it = m_effects.cbegin(), last = m_effects.cend(); it != last; ++it)
+				{
+					if (it->main_type == TValue)
+					{
+						start += *it;
+					}
+				}
+				return start;
 			}
 		};
 	}

@@ -119,7 +119,8 @@ namespace px
 					auto ai = task->add_npc_behavior();
 
 					auto weapon = std::make_shared<body_component::item_type>();
-					weapon->emplace(rl::effect::weapon_damage, 4);
+					weapon->add({ rl::effect::weapon_damage, 0, 1 });
+
 					body->equip_weapon(weapon);
 					body->join_faction(0);
 					character->add_skill("meelee");

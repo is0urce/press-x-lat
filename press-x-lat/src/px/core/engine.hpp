@@ -96,17 +96,21 @@ namespace px
 				m_ui.add("status", std::make_shared<ui::status_panel>(m_environment), ui::alignment({ 0.0, 1.0 }, { 1, -12 }, { -2, 1 }, { 1, 0 }));
 				m_ui.add("target", std::make_shared<ui::target_panel>(m_environment), ui::alignment({ 1.0, 1.0 }, { -12, -12 }, { -2, 1 }, { 1, 0 }));
 
-				m_character_system.skill_book().add_target("meelee", [](location_component* user, location_component* target)
-				{
-					if (target)
+				m_character_system.skill_book().add_target("meelee", [](location_component* user, location_component* target) {
+					if (target && user)
 					{
-						if (body_component* body = *target)
+						body_component* target_body = *target;
+						body_component* user_body = *user;
+						if (target_body && user_body)
 						{
-							if (body->health()) body->health()->damage(1);
+							if (auto hp = target_body->health())
+							{
+								auto dmg = user_body->weapon()->accumulate<rl::effect::weapon_damage>();
+								hp->damage(dmg.value0);
+							}
 						}
 					}
-				}, [this](location_component* user, location_component* target)
-				{
+				}, [this](location_component* user, location_component* target) {
 					if (!user || !target || user == target) return false;
 
 					body_component* body = *user;
@@ -123,7 +127,7 @@ namespace px
 				add(&m_behavior_system);
 
 				auto weapon = std::make_shared<body_component::item_type>();
-				weapon->emplace(rl::effect::weapon_damage, 10);
+				weapon->add({ rl::effect::weapon_damage, 0, 1 });
 
 				auto task = m_factory.produce();
 

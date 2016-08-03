@@ -42,10 +42,10 @@ namespace px
 			virtual ~body_component() {}
 
 		public:
-			//const item_type* weapon()
-			//{
-			//	return m_hands.get();
-			//}
+			item_ptr weapon()
+			{
+				return m_hands;
+			}
 			void equip_weapon(item_ptr i)
 			{
 				if (m_hands) throw std::runtime_error("px::core::body_component::equip_weapon(..) weapon already presents");
