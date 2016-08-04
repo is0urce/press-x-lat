@@ -38,6 +38,14 @@ namespace px
 			{
 				for (auto it = list.begin(), last = list.end(); it != last; ++it)
 				{
+					std::forward<CallbackOperator>(fn)(m_x, m_y, *it);
+				}
+			}
+			template <typename CallbackOperator>
+			void enumerate_while(CallbackOperator&& fn)
+			{
+				for (auto it = list.begin(), last = list.end(); it != last; ++it)
+				{
 					if (!std::forward<CallbackOperator>(fn)(m_x, m_y, *it)) return;
 				}
 			}

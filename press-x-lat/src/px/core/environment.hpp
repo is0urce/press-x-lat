@@ -52,45 +52,8 @@ namespace px
 			}
 
 		public:
-			bool traversable(point2 position, rl::traverse layer) const
-			{
-				return m_terrain->traversable(position, layer) && !blocking(position, layer);
-			}
-			location_component* blocking(point2 position, rl::traverse layer) const
-			{
-				location_component* blocking = nullptr;
-				m_space->find(position.x(), position.y(), [&](int x, int y, location_component* component)
-				{
-					bool search = true;
-					body_component* body = static_cast<body_component*>(*component);
-					if (body && !body->traversable(layer))
-					{
-						blocking = component;
-						search = false;
-					}
-					return search;
-				});
-				return blocking;
-			}
-			template<typename CallbackOperator>
-			void nearest(point2 postion, unsigned int radius, CallbackOperator& fn)
-			{
-				m_space->find(postion.x(), postion.y(), radius, [&](int x, int y, location_component* component)
-				{
-					fn(x, y, component);
-					return true;
-				});
-			}
-			auto nearest(point2 postion, unsigned int radius)
-			{
-				std::list<location_component*> list;
-				m_space->find(postion.x(), postion.y(), radius, [&](int x, int y, location_component* component)
-				{
-					list.push_back(component);
-					return true;
-				});
-				return list;
-			}
+
+			// actions
 
 			bool maneuver(location_component& location, point2 target)
 			{
@@ -102,7 +65,7 @@ namespace px
 
 					if (versus)
 					{
-						action = true;
+						action = cast(location, 0, *versus);
 					}
 					else
 					{
@@ -113,6 +76,27 @@ namespace px
 
 				return action;
 			}
+			bool cast(location_component& source, unsigned int slot, location_component& target_location)
+			{
+				bool action = false;
+				if (body_component* user_body = source)
+				{
+					if (character_component* character = *user_body)
+					{
+						if (auto spell = character->skill(slot))
+						{
+							if (spell->targeted())
+							{
+								if (target_location)
+								{
+									action = spell->try_use(&source, &target_location);
+								}
+							}
+						}
+					}
+				}
+				return action;
+			}
 			bool cast(location_component& source, unsigned int slot, point2 target)
 			{
 				bool action = false;
@@ -120,26 +104,28 @@ namespace px
 				{
 					if (character_component* character = *user_body)
 					{
-						auto spell = character->skill(slot);
-						if (spell && spell->targeted())
+						if (auto spell = character->skill(slot))
 						{
-							// select target from location
-							location_component* target_location = nullptr;
-							m_space->find(target.x(), target.y(), [&](int x, int y, auto* component)
+							if (spell->targeted())
 							{
-								bool search = true;
-								if (body_component* b = *component) // should have body
+								// select target from location
+								location_component* target_pawn = nullptr;
+								m_space->find(target.x(), target.y(), [&](int x, int y, location_component* component)
 								{
-									target_location = component;
-									search = false;
+									if (body_component* b = *component) // should have body
+									{
+										target_pawn = component;
+									}
+								});
+
+								if (target_pawn)
+								{
+									action = spell->try_use(&source, target_pawn);
 								}
-								return search;
-							});
-							
-							if (spell->useable(&source, target_location))
+							}
+							else
 							{
-								spell->use(&source, target_location);
-								action = true;
+								action = spell->try_use(&source, target);
 							}
 						}
 					}
@@ -174,6 +160,40 @@ namespace px
 			auto reputation(body_component& a, body_component& b)
 			{
 				return m_factions.reputation(a.faction(), b.faction());
+			}
+
+			// space and actors querry
+
+			bool traversable(point2 position, rl::traverse layer) const
+			{
+				return m_terrain->traversable(position, layer) && !blocking(position, layer);
+			}
+			location_component* blocking(point2 position, rl::traverse layer) const
+			{
+				location_component* blocking = nullptr;
+				m_space->find(position.x(), position.y(), [&](int x, int y, location_component* component)
+				{
+					body_component* body = *component;
+					if (body && !body->traversable(layer))
+					{
+						blocking = component;
+					}
+				});
+				return blocking;
+			}
+			template<typename CallbackOperator>
+			void nearest(point2 postion, unsigned int radius, CallbackOperator&& enum_fn)
+			{
+				m_space->find(postion.x(), postion.y(), radius, enum_fn);
+			}
+			auto nearest(point2 postion, unsigned int radius)
+			{
+				std::list<location_component*> list;
+				m_space->find(postion.x(), postion.y(), radius, [&](int x, int y, location_component* component)
+				{
+					list.push_back(component);
+				});
+				return list;
 			}
 
 			// game flow
