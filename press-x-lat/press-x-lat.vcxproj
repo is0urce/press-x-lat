@@ -198,6 +198,7 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\core\sys\location_component.hpp" />
     <ClInclude Include="src\px\core\sys\location_system.hpp" />
     <ClInclude Include="src\px\core\sys\npc_component.hpp" />
+    <ClInclude Include="src\px\core\sys\resource_component.hpp" />
     <ClInclude Include="src\px\data\unit_composer.hpp" />
     <ClInclude Include="src\px\rl\i_ability.hpp" />
     <ClInclude Include="src\px\rl\astar.hpp" />
@@ -210,6 +211,7 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\rl\faction_relation.hpp" />
     <ClInclude Include="src\px\rl\inventory.hpp" />
     <ClInclude Include="src\px\rl\item.hpp" />
+    <ClInclude Include="src\px\core\sys\i_useable_component.hpp" />
     <ClInclude Include="src\px\rl\map_stream.hpp" />
     <ClInclude Include="src\px\core\persistency.hpp" />
     <ClInclude Include="src\px\core\sys\terrain_system.hpp" />

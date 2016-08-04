@@ -43,7 +43,17 @@ namespace px
 			}
 			virtual bool player_activate(point2 target) override
 			{
-				return false;
+				auto player = m_environment->player();
+				bool action = false;
+				if (player)
+				{
+					action = m_environment->activate(*player, target);
+				}
+				if (action)
+				{
+					m_environment->turn();
+				}
+				return action;
 			}
 			virtual bool player_step(point2 direction) override
 			{

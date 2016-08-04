@@ -12,6 +12,7 @@
 #include <px/core/sys/body_component.hpp>
 #include <px/core/sys/character_component.hpp>
 #include <px/core/sys/npc_component.hpp>
+#include <px/core/sys/resource_component.hpp>
 
 #include <memory>
 
@@ -27,6 +28,7 @@ namespace px
 			typedef std::shared_ptr<core::body_component> body_ptr;
 			typedef std::shared_ptr<core::character_component> char_ptr;
 			typedef std::shared_ptr<core::npc_component> npc_ptr;
+			typedef std::shared_ptr<core::resource_component> resource_ptr;
 
 		private:
 			std::shared_ptr<core::unit> m_unit;
@@ -36,6 +38,7 @@ namespace px
 			body_ptr m_body;
 			char_ptr m_character;
 			npc_ptr m_npc;
+			resource_ptr m_resource;
 
 			bool m_done;
 
@@ -65,6 +68,7 @@ namespace px
 			void add(body_ptr b);
 			void add(char_ptr c);
 			void add(npc_ptr npc);
+			void add(resource_ptr resource);
 			std::shared_ptr<core::unit> assemble();
 		};
 	}

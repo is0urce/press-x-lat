@@ -7,8 +7,6 @@
 // smart pointer for auto destruction
 // expose to pointer for easy casting for multiple inherited links
 
-// sfinae resolution in case of multiple inheritance
-
 #ifndef PX_ES_COMPONENT_LINK_HPP
 #define PX_ES_COMPONENT_LINK_HPP
 
@@ -19,35 +17,27 @@ namespace px
 {
 	namespace es
 	{
-		template<typename _L>
+		template<typename L>
 		class component_link
 		{
 		private:
-			std::weak_ptr<_L> m_link;
+			std::weak_ptr<L> m_link;
 
 		public:
 			component_link() {}
 
-			template <typename _C, typename = std::enable_if<std::is_same<_C, _L>::value>::type>
-			void link(std::weak_ptr<_C> weak)
+			void link(std::shared_ptr<L> smart_ptr)
 			{
-				m_link = weak;
+				m_link = smart_ptr;
 			}
-			template <typename _C, typename = std::enable_if<std::is_same<_C, _L>::value>::type>
-			void link(std::shared_ptr<_C> weak)
+			L* linked() const
 			{
-				m_link = weak;
-			}
-			template <typename _C, typename = std::enable_if<std::is_same<_C, _L>::value>::type>
-			_C* linked() const
-			{
-				std::shared_ptr<_L> shared = m_link.lock();
+				std::shared_ptr<L> shared = m_link.lock();
 				return shared ? shared.get() : nullptr;
 			}
-			template <typename _C, typename = std::enable_if<std::is_same<_C, _L>::value>::type>
-			operator _C*() const
+			operator L*() const
 			{
-				return linked<_C>();
+				return linked();
 			}
 		};
 	}

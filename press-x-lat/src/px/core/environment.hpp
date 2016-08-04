@@ -146,6 +146,24 @@ namespace px
 				}
 				return action;
 			}
+			bool activate(location_component& source, point2 position)
+			{
+				bool done = false;
+				m_space->find(position.x(), position.y(), [&](int x, int y, location_component* component)
+				{
+					if (done) return false;
+
+					if (body_component* body = *component)
+					{
+						if (i_useable_component* useable = *body)
+						{
+							done = useable->try_use(&source, *this);
+						}
+					}
+					return !done;
+				});
+				return done;
+			}
 
 			// props querry
 

@@ -24,14 +24,20 @@ namespace px
 {
 	namespace core
 	{
+		class i_useable_component;
 		class character_component;
 		class body_component
 			: public es::i_component
 			, public es::component_link<character_component>
+			, public es::component_link<i_useable_component>
 			, public rl::body
 			, public rl::mass<static_cast<size_t>(rl::traverse::max_value)>
 			, public rl::inventory<rl::effect>
 		{
+		public:
+			using es::component_link<character_component>::link;
+			using es::component_link<i_useable_component>::link;
+
 		private:
 			item_ptr m_hands;
 

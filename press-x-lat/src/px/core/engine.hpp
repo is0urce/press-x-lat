@@ -143,6 +143,8 @@ namespace px
 				ore->set_name("Ore");
 				ore->set_tag("common_ore");
 				ore->set_description("This is a lump of ore, can be mined from ore vein deposits or bought from merchants.");
+				auto deposit = std::make_shared<core::resource_component>();
+				deposit->bind(ore);
 
 				auto task = m_factory.produce();
 
@@ -150,9 +152,9 @@ namespace px
 				auto pawn = task->add_location({ 1, 1 });
 				auto body = task->add_body(100, 100);
 				auto character = task->add_character();
+				task->add(deposit);
 
 				body->join_faction(1);
-				body->add(ore);
 				body->equip_weapon(weapon);
 				character->add_skill("meelee");
 
