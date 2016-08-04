@@ -41,8 +41,8 @@ namespace px
 			virtual ~stack_panel() {}
 
 		private:
-			template<typename _O>
-			bool panel_action(_O act)
+			template<typename Op>
+			bool panel_action(Op act)
 			{
 				for (auto &p : m_stack)
 				{

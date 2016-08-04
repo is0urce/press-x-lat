@@ -22,7 +22,6 @@ namespace px
 			, public rl::character<location_component*>
 		{
 		public:
-		public:
 			virtual ~character_component() {}
 		};
 	}

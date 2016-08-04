@@ -46,6 +46,8 @@ namespace px
 			navigate_next,
 			navigate_previous,
 
+			panel_inventory,
+
 			command_ok,
 			command_cancel,
 

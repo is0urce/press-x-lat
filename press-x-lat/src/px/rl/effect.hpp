@@ -14,15 +14,19 @@ namespace px
 		{
 			no_effect,
 
+			str_bonus,
+			dex_bonus,
+			int_bonus,
+
+			// item specific props
+
 			weapon_damage,
 			armor_resist,
 
 			weight_increase,
 			value_increase,
 
-			str_bonus,
-			dex_bonus,
-			int_bonus,
+			ore_power,
 
 			not_valid,
 			max_value = not_valid

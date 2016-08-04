@@ -27,14 +27,11 @@ namespace px
 		class character_component;
 		class body_component
 			: public es::i_component
+			, public es::component_link<character_component>
 			, public rl::body
 			, public rl::mass<static_cast<size_t>(rl::traverse::max_value)>
-			, public es::component_link<character_component>
+			, public rl::inventory<rl::effect>
 		{
-		public:
-			typedef rl::item<rl::effect> item_type;
-			typedef std::shared_ptr<item_type> item_ptr;
-
 		private:
 			item_ptr m_hands;
 

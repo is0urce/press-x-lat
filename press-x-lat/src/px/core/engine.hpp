@@ -25,10 +25,12 @@
 
 #include <px/data/factory.hpp>
 #include <px/rl/skill.hpp>
-#include <px/ui/stack_panel.hpp>
+
+#include <px/ui/main_panel.hpp>
 #include <px/ui/performance_panel.hpp>
 #include <px/ui/status_panel.hpp>
 #include <px/ui/target_panel.hpp>
+#include <px/ui/inventory_panel.hpp>
 
 #include <px/shell/control.hpp>
 #include <px/shell/control_chain.hpp>
@@ -66,7 +68,7 @@ namespace px
 			terrain m_terrain;
 			environment m_environment;
 			game m_game;
-			ui::stack_panel m_ui;
+			ui::main_panel m_ui;
 			unsigned int m_last_turn;
 
 			data::factory m_factory;
@@ -92,9 +94,13 @@ namespace px
 				, m_game(m_environment)
 				, m_last_turn(0)
 			{
+				auto inventory = std::make_shared<ui::inventory_panel>();
 				m_ui.add("performance", std::make_shared<ui::performance_panel>(m_fps), ui::alignment({ 0.0, 0.0 }, { 1,0 }, { -2, 1 }, { 1, 0 }));
 				m_ui.add("status", std::make_shared<ui::status_panel>(m_environment), ui::alignment({ 0.0, 1.0 }, { 1, -12 }, { -2, 1 }, { 1, 0 }));
 				m_ui.add("target", std::make_shared<ui::target_panel>(m_environment), ui::alignment({ 1.0, 1.0 }, { -12, -12 }, { -2, 1 }, { 1, 0 }));
+				m_ui.add("inventory", inventory, ui::alignment({ 0.25, 0.25 }, { 0, 0 }, { 0, 0 }, { 0.25, 0.25 }));
+
+				m_ui.disable("inventory");
 
 				m_character_system.skill_book().add_target("meelee", [](location_component* user, location_component* target) {
 					if (target && user)
@@ -127,21 +133,29 @@ namespace px
 				add(&m_behavior_system);
 
 				auto weapon = std::make_shared<body_component::item_type>();
-				weapon->add({ rl::effect::weapon_damage, 0, 1 });
+				weapon->add({ rl::effect::weapon_damage, 0x00, 1 });
+
+				auto ore = std::make_shared<body_component::item_type>();
+				ore->add({ rl::effect::ore_power, 0x00, 10 });
+				ore->set_name("Ore");
+				ore->set_tag("common_ore");
+				ore->set_description("This is a lump of ore, can be mined from ore vein deposits or bought from merchants.");
 
 				auto task = m_factory.produce();
 
-				auto sprite = task->add_appearance('@', { 0, 1, 1 });
+				auto sprite = task->add_appearance('@', { 1, 1, 1 });
 				auto pawn = task->add_location({ 1, 1 });
 				auto body = task->add_body(100, 100);
 				auto character = task->add_character();
 
 				body->join_faction(1);
+				body->add(ore);
 				body->equip_weapon(weapon);
 				character->add_skill("meelee");
 
 				m_terrain.add(task->assemble());
 
+				inventory->bind(body);
 				m_environment.impersonate(pawn);
 			}
 			virtual ~engine()

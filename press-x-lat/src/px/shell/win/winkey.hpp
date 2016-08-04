@@ -49,6 +49,8 @@ namespace px
 
 				bind(VK_RETURN, key::command_ok);
 				bind(VK_ESCAPE, key::command_cancel);
+
+				bind('I', key::panel_inventory);
 			}
 			virtual ~winkey()
 			{
