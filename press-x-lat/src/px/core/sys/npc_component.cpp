@@ -19,6 +19,17 @@ namespace px
 		{
 			unsigned int sight_radius = 10;
 			unsigned int max_steps = 200; // max steps in pathfinding
+
+			bool is_enemy(body_component &source_body, location_component &target_location, environment &env)
+			{
+				if (body_component* target_body = target_location)
+				{
+					auto hp = target_body->health();
+					character_component* target_character = *target_body;
+					return target_character && !hp->empty() && env.reputation(source_body, *target_body) < 0; // an living enemy character
+				}
+				return false;
+			}
 		}
 		npc_component::npc_component() : m_alert(false) {}
 		npc_component::~npc_component() {}
@@ -46,9 +57,8 @@ namespace px
 								{
 									for (auto neighbour_location : nearest)
 									{
-										if (skill->useable(location, neighbour_location))
+										if (skill->try_use(location, neighbour_location))
 										{
-											skill->use(location, neighbour_location);
 											done = true;
 											break;
 										}
@@ -56,11 +66,7 @@ namespace px
 								}
 								else
 								{
-									if (skill->useable(location, location->current()))
-									{
-										skill->use(location, location->current());
-									}
-									done = true;
+									done = skill->try_use(location, location->current());;
 								}
 							}
 						}
@@ -73,17 +79,13 @@ namespace px
 							int distance = sight_radius + 1; // start with something out of range
 							for (auto neighbour_location : nearest)
 							{
-								if (body_component* target_body = *neighbour_location)
+								if (neighbour_location && is_enemy(*body, *neighbour_location, env))
 								{
-									character_component* target_character = *target_body;
-									if (target_character && env.reputation(*body, *target_body) < 0) // an enemy character
+									auto range = env.distance(location->current(), neighbour_location->current());
+									if (distance > range)
 									{
-										auto range = env.distance(location->current(), neighbour_location->current());
-										if (distance > range)
-										{
-											distance = range;
-											target_location = neighbour_location;
-										}
+										distance = range;
+										target_location = neighbour_location;
 									}
 								}
 							}

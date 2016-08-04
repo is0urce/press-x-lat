@@ -117,12 +117,15 @@ namespace px
 						}
 					}
 				}, [this](location_component* user, location_component* target) {
-					if (!user || !target || user == target) return false;
+					if (!user || !target) return false;
 
 					body_component* body = *user;
 					body_component* target_body = *target;
 
-					return body && target_body && m_environment.reputation(*body, *target_body) < 0 && m_environment.distance(user->current(), target->current()) == 1;
+					return body && target_body && body != target_body
+						&& target_body->health() && !target_body->health()->empty() // should have positive hit points
+						&& m_environment.reputation(*body, *target_body) < 0 // friend-or-foe
+						&& m_environment.distance(user->current(), target->current()) == 1; // 1 tile melee distance
 				});
 
 				add(&m_body_system);

@@ -37,6 +37,25 @@ namespace px
 			bool useable(_U u, const point2 &t) const { return useable_ability(u, t); }
 			void use(_U u, _T t) { use_ability(u, t); }
 			void use(_U u, const point2 &t) { use_ability(u, t); }
+
+			bool try_use(_U u, _T t)
+			{
+				if (useable_ability(u, t))
+				{
+					use_ability(u, t);
+					return true;
+				}
+				return false;
+			}
+			bool try_use(_U u, const point2 &t)
+			{
+				if (useable_ability(u, t))
+				{
+					use_ability(u, t);
+					return true;
+				}
+				return false;
+			}
 		};
 	}
 }

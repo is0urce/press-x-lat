@@ -37,8 +37,6 @@ namespace px
 				auto inventory = m_inventory.lock();
 				if (inventory)
 				{
-					//cnv.write(pen, to_string(player->current()));
-					//pen.move_axis<1>(1);
 					cnv.write(pen, "[INVENTORY]");
 					pen.move_axis<1>(1);
 

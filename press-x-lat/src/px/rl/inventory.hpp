@@ -42,7 +42,6 @@ namespace px
 			template <typename UnaryOperation>
 			void enumerate(UnaryOperation&& enum_fn) const
 			{
-				//for (auto it = m_items.cbegin(), last = m_items.cend(); it != last; ++it)
 				for (const auto &item : m_items)
 				{
 					std::forward<UnaryOperation>(enum_fn)(item);
