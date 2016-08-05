@@ -31,6 +31,7 @@
 #include <px/ui/status_panel.hpp>
 #include <px/ui/target_panel.hpp>
 #include <px/ui/inventory_panel.hpp>
+#include <px/ui/anvil_panel.hpp>
 
 #include <px/shell/control.hpp>
 #include <px/shell/control_chain.hpp>
@@ -95,12 +96,15 @@ namespace px
 				, m_last_turn(0)
 			{
 				auto inventory = std::make_shared<ui::inventory_panel>();
+				auto craft = std::make_shared<ui::anvil_panel>();
 				m_ui.add("performance", std::make_shared<ui::performance_panel>(m_fps), ui::alignment({ 0.0, 0.0 }, { 1,0 }, { -2, 1 }, { 1, 0 }));
 				m_ui.add("status", std::make_shared<ui::status_panel>(m_environment), ui::alignment({ 0.0, 1.0 }, { 1, -12 }, { -2, 1 }, { 1, 0 }));
 				m_ui.add("target", std::make_shared<ui::target_panel>(m_environment), ui::alignment({ 1.0, 1.0 }, { -12, -12 }, { -2, 1 }, { 1, 0 }));
 				m_ui.add("inventory", inventory, ui::alignment({ 0.25, 0.25 }, { 0, 0 }, { 0, 0 }, { 0.25, 0.25 }));
+				m_ui.add("craft", craft, { { 0.25, 0.25 }, { 0, 0 }, { 0, 0 }, { 0.25, 0.25 } });
 
 				m_ui.disable("inventory");
+				m_ui.disable("craft");
 
 				m_character_system.skill_book().add_target("meelee", [](location_component* user, location_component* target) {
 					if (target && user)
@@ -160,7 +164,7 @@ namespace px
 
 				m_terrain.add(task->assemble());
 
-				inventory->bind(body);
+				inventory->show(body);
 				m_environment.impersonate(pawn);
 			}
 			virtual ~engine()

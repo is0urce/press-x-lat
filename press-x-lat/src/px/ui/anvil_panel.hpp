@@ -7,6 +7,10 @@
 #define PX_UI_ANVIL_PANEL_HPP
 
 #include <px/ui/stack_panel.hpp>
+
+#include <px/ui/board_panel.hpp>
+#include <px/ui/static_text_panel.hpp>
+
 #include <px/rl/inventory.hpp>
 #include <px/rl/effect.hpp>
 
@@ -26,7 +30,12 @@ namespace px
 		private:
 			inventory_ptr m_inventory;
 		public:
-			anvil_panel() {}
+			anvil_panel()
+			{
+				emplace<board_panel>({ { 0, 0 },{ 0, 0 },{ 0, 1 },{ 1, 0 } }, color(0, 0, 1));
+				emplace<board_panel>({ { 0, 0 },{ 0, 1 },{ 0, -1 },{ 1, 1 } }, color(0, 0, 0.5));
+				emplace<static_text_panel>({ { 0, 0 },{ 0, 0 },{ 0, 0 },{ 0, 0 } }, "[K IS FOR KRAFT]", color(1, 1, 1));
+			}
 			virtual ~anvil_panel() {}
 
 		protected:
@@ -39,7 +48,6 @@ namespace px
 				auto inventory = m_inventory.lock();
 				if (inventory)
 				{
-					cnv.write(pen, "[CRAFTING]");
 					pen.move_axis<1>(1);
 
 					cnv.write(pen, "Sword");

@@ -263,6 +263,7 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\ui\stack_panel.hpp" />
     <ClInclude Include="src\px\ui\status_panel.hpp" />
     <ClInclude Include="src\px\ui\target_panel.hpp" />
+    <ClInclude Include="src\px\ui\static_text_panel.hpp" />
     <ClInclude Include="src\px\ui\text_panel.hpp" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />

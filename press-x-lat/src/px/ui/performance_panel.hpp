@@ -31,11 +31,7 @@ namespace px
 
 				m_fps->frame_processed();
 
-				std::string str("fps:");
-				str += std::to_string(m_fps->fps());
-				auto win = bounds();
-				//cnv.rectangle(win, color(0x0000ff));
-				cnv.write(win.start(), str);
+				cnv.write(bounds().start(), std::string("fps:") + std::to_string(m_fps->fps()));
 			}
 		};
 	}

@@ -8,26 +8,34 @@
 
 #include <px/ui/stack_panel.hpp>
 
+#include <px/common/color.hpp>
+
 #include <string>
 
 namespace px
 {
 	namespace ui
 	{
+		struct WhiteColorProvider
+		{
+			color operator()() const { return color(1, 1, 1); }
+		};
+		template <typename TextProvider = TP, typename ColorProvider = WhiteColorProvider>
 		class text_panel : public stack_panel
 		{
 		private:
-			std::string m_text;
+			TextProvider m_text;
+			ColorProvider m_color;
 
 		public:
-			text_panel(std::string text) : m_text(text) {}
+			text_panel(const TextProvider &text = TP(), const ColorProvider &c = WhiteColorProvider()) : m_text(text), m_color(c) {}
 			virtual ~text_panel() {}
 
 		protected:
 			virtual void draw_panel(shell::canvas& cnv) const override
 			{
 				stack_panel::draw_panel(cnv);
-				cnv.write(bounds().start(), m_text);
+				cnv.write(bounds().start(), m_text(), m_color());
 			}
 		};
 	}

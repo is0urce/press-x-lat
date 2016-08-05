@@ -297,10 +297,13 @@
     <ClInclude Include="src\px\ui\anvil_panel.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\px\ui\text_panel.hpp">
+    <ClInclude Include="src\px\ui\board_panel.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\px\ui\board_panel.hpp">
+    <ClInclude Include="src\px\ui\static_text_panel.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\ui\text_panel.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

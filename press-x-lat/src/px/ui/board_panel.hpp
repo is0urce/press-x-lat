@@ -4,7 +4,7 @@
 // auth: is0urce
 
 #ifndef PX_UI_BOARD_PANEL_HPP
-#define PX_UI_DOARD_PANEL_HPP
+#define PX_UI_BOARD_PANEL_HPP
 
 #include <px/ui/stack_panel.hpp>
 
