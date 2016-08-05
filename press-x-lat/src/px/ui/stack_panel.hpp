@@ -57,23 +57,7 @@ namespace px
 			}
 
 		protected:
-			virtual void draw_panel(shell::canvas& cnv) const override
-			{
-				for (auto &p : m_stack)
-				{
-					if (p.second.panel && p.second.panel->active())
-					{
-						p.second.panel->draw(cnv);
-					}
-				}
-				for (auto &p : m_unnamed)
-				{
-					if (p.panel && p.panel->active())
-					{
-						p.panel->draw(cnv);
-					}
-				}
-			}
+			virtual void draw_panel(shell::canvas& cnv) const override;
 			virtual bool key_control(shell::key code) override;
 			virtual bool hover_control(const point2 &position) override;
 			virtual bool click_control(const point2 &position, unsigned int button) override;
@@ -87,17 +71,29 @@ namespace px
 			void layout(rectangle bounds);
 			void output(shell::canvas& cnv); // layout to canvas size and draw
 
-			void add(tag name, panel_ptr panel, alignment align);
-			void add(panel_ptr panel, alignment align);
-			void remove(const tag &name);
-			void clear();
-
 			panel_ptr at(const tag &name);
 			void disable(const tag &name);
 			void enable(const tag &name);
 			void toggle(const tag &name);
 			bool enabled(const tag &name) const;
 			std::string info() const;
+
+			void add(tag name, panel_ptr panel, alignment align);
+			void add(panel_ptr panel, alignment align);
+			void remove(const tag &name);
+			void clear();
+			template <typename SubPanel, typename ...Args>
+			void emplace(alignment align, Args &&...args)
+			{
+				add(std::make_shared<SubPanel>(std::forward<Args>(args)...), align);
+			}
+			template <typename SubPanel, typename ...Args>
+			void emplace(tag name, alignment align, Args &&...args)
+			{
+				add(name, std::make_shared<SubPanel>(std::forward<Args>(args)...), align);
+			}
+
+			panel_ptr operator[](const tag &name); // alias for this->at(..)
 		};
 	}
 }

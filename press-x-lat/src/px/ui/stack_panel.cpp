@@ -13,13 +13,28 @@ namespace px
 {
 	namespace ui
 	{
-		using namespace shell;
+		void stack_panel::draw_panel(shell::canvas& cnv) const
+		{
+			for (auto &p : m_stack)
+			{
+				if (p.second.panel && p.second.panel->active())
+				{
+					p.second.panel->draw(cnv);
+				}
+			}
+			for (auto &p : m_unnamed)
+			{
+				if (p.panel && p.panel->active())
+				{
+					p.panel->draw(cnv);
+				}
+			}
+		}
 
 		bool stack_panel::key_control(shell::key code)
 		{
 			return panel_action([&](stacked_panel& p) { return p.panel->key(code); });
 		}
-
 		bool stack_panel::hover_control(const point2 &position)
 		{
 			return panel_action([&](stacked_panel& p) { return p.panel->hover(position); });
@@ -63,6 +78,10 @@ namespace px
 			auto find = m_stack.find(name_tag);
 			if (find == m_stack.end()) throw std::logic_error("px::ui::stack_panel::at(panel_id) panel not found");
 			return find->second.panel;
+		}
+		stack_panel::panel_ptr stack_panel::operator[](const tag &name)
+		{
+			return at(name);
 		}
 
 		void stack_panel::disable(const tag &name_tag)
@@ -112,7 +131,7 @@ namespace px
 			return m_bounds;
 		}
 
-		void stack_panel::output(canvas&c)
+		void stack_panel::output(shell::canvas&c)
 		{
 			layout({ { 0, 0 }, c.range() });
 			draw(c);

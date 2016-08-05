@@ -32,6 +32,8 @@ namespace px
 		protected:
 			virtual void draw_panel(shell::canvas& cnv) const override
 			{
+				stack_panel::draw_panel(cnv);
+
 				auto pen = bounds().start();
 
 				auto inventory = m_inventory.lock();
