@@ -26,7 +26,8 @@ namespace px
 
 			virtual void pre_update_engine() {}
 			virtual void post_update_engine() {}
-			virtual bool fixed() { return false; }
+			virtual void fixed_update_engine() {}
+			virtual bool require_fixed() { return false; }
 
 		public:
 			void add(i_system* system)
@@ -44,7 +45,7 @@ namespace px
 			
 			void update()
 			{
-				while (fixed())
+				while (require_fixed())
 				{
 					fixed_update();
 				}
@@ -66,6 +67,7 @@ namespace px
 			}
 			void fixed_update()
 			{
+				fixed_update_engine();
 				for (auto &system : m_systems)
 				{
 					system->fixed_update();

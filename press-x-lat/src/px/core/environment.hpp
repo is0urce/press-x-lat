@@ -8,11 +8,21 @@
 #ifndef PX_CORE_ENVIRONMENT_HPP
 #define PX_CORE_ENVIRONMENT_HPP
 
+#include <px/common/fps_counter.hpp>
+
 #include <px/rl/faction_relation.hpp>
 #include <px/rl/traverse.hpp>
 #include <px/core/terrain.hpp>
 
+#include <px/common/fps_counter.hpp>
 #include <px/ui/stack_panel.hpp>
+
+#include <px/core/ui/status_panel.hpp>
+#include <px/core/ui/target_panel.hpp>
+#include <px/core/ui/inventory_panel.hpp>
+#include <px/core/ui/anvil_panel.hpp>
+
+#include <px/ui/performance_panel.hpp>
 
 namespace px
 {
@@ -22,13 +32,19 @@ namespace px
 		{
 		private:
 			unsigned int m_time;
-			point2 m_target;
-			ui::stack_panel* m_ui;
 
 			std::shared_ptr<location_component> m_player;
 			terrain* m_terrain;
 			qtree<location_component*>* m_space;
 			faction_relation m_factions;
+
+			// user interface
+
+			fps_counter m_fps;
+			point2 m_target;
+			ui::stack_panel* m_ui;
+			std::shared_ptr<inventory_panel> m_inventory;
+			std::shared_ptr<anvil_panel> m_craft;
 
 		public:
 			environment(ui::stack_panel &ui, terrain &terra, qtree<location_component*> &space)
@@ -37,12 +53,28 @@ namespace px
 				, m_space(&space)
 				, m_time(0)
 			{
+				setup_ui();
 			}
 			virtual ~environment()
 			{
 			}
 
 		private:
+			void setup_ui()
+			{
+				m_inventory = std::make_shared<inventory_panel>();
+				m_craft = std::make_shared<anvil_panel>();
+
+				m_ui->emplace<ui::performance_panel>("performance", { { 0.0, 0.0 },{ 1,0 },{ -2, 1 },{ 1.0, 0.0 } }, m_fps);
+				m_ui->emplace<status_panel>("status", { { 0.0, 1.0 },{ 1, -12 },{ -2, 1 },{ 1.0, 0.0 } }, *this);
+				m_ui->emplace<target_panel>("target", { { 1.0, 1.0 },{ -12, -12 },{ -2, 1 },{ 1.0, 0.0 } }, *this);
+
+				m_ui->add("inventory", m_inventory, { { 0.25, 0.25 },{ 0, 0 },{ 0, 0 },{ 0.25, 0.25 } });
+				m_ui->add("craft", m_craft, { { 0.25, 0.25 },{ 0, 0 },{ 0, 0 },{ 0.25, 0.25 } });
+
+				m_inventory->deactivate();
+				m_craft->deactivate();
+			}
 			void focus()
 			{
 				if (m_player)
@@ -229,6 +261,10 @@ namespace px
 			{
 				m_player = unit;
 				focus();
+				if (unit)
+				{
+					m_inventory->show(unit->linked());
+				}
 			}
 
 			// interface relation
@@ -240,6 +276,11 @@ namespace px
 			point2 targeted() const
 			{
 				return m_target;
+			}
+
+			void inspect(std::weak_ptr<body_component> inventory)
+			{
+				m_inventory->show(inventory);
 			}
 		};
 	}

@@ -22,7 +22,6 @@ namespace px
 		public:
 			typedef body_component::item_ptr item_ptr;
 		private:
-			bool m_alert;
 			body_component::item_ptr m_item;
 
 		public:

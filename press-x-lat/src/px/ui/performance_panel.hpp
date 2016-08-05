@@ -31,7 +31,7 @@ namespace px
 
 				m_fps->frame_processed();
 
-				cnv.write(bounds().start(), std::string("fps:") + std::to_string(m_fps->fps()));
+				cnv.write(start(), std::string("fps:") + std::to_string(m_fps->fps()));
 			}
 		};
 	}

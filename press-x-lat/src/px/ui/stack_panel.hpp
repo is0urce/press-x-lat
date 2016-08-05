@@ -65,6 +65,7 @@ namespace px
 
 		protected:
 			rectangle bounds() const;
+			point2 start() const;
 			void layout();
 
 		public:

@@ -191,6 +191,7 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\core\environment.hpp" />
     <ClInclude Include="src\px\core\game.hpp" />
     <ClInclude Include="src\px\core\image.hpp" />
+    <ClInclude Include="src\px\core\sys\container_component.hpp" />
     <ClInclude Include="src\px\core\sys\image_component.hpp" />
     <ClInclude Include="src\px\core\input_adapter.hpp" />
     <ClInclude Include="src\px\core\i_game_control.hpp" />
@@ -199,6 +200,7 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\core\sys\location_system.hpp" />
     <ClInclude Include="src\px\core\sys\npc_component.hpp" />
     <ClInclude Include="src\px\core\sys\resource_component.hpp" />
+    <ClInclude Include="src\px\core\sys\ui_system.hpp" />
     <ClInclude Include="src\px\data\unit_composer.hpp" />
     <ClInclude Include="src\px\rl\i_ability.hpp" />
     <ClInclude Include="src\px\rl\astar.hpp" />
@@ -254,15 +256,15 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\shell\win\wingl.hpp" />
     <ClInclude Include="src\px\shell\win\winkey.hpp" />
     <ClInclude Include="src\px\ui\alignment.hpp" />
-    <ClInclude Include="src\px\ui\anvil_panel.hpp" />
+    <ClInclude Include="src\px\core\ui\anvil_panel.hpp" />
     <ClInclude Include="src\px\ui\board_panel.hpp" />
-    <ClInclude Include="src\px\ui\inventory_panel.hpp" />
+    <ClInclude Include="src\px\core\ui\inventory_panel.hpp" />
     <ClInclude Include="src\px\ui\main_panel.hpp" />
     <ClInclude Include="src\px\ui\panel.hpp" />
     <ClInclude Include="src\px\ui\performance_panel.hpp" />
     <ClInclude Include="src\px\ui\stack_panel.hpp" />
-    <ClInclude Include="src\px\ui\status_panel.hpp" />
-    <ClInclude Include="src\px\ui\target_panel.hpp" />
+    <ClInclude Include="src\px\core\ui\status_panel.hpp" />
+    <ClInclude Include="src\px\core\ui\target_panel.hpp" />
     <ClInclude Include="src\px\ui\static_text_panel.hpp" />
     <ClInclude Include="src\px\ui\text_panel.hpp" />
     <ClInclude Include="stdafx.h" />
@@ -279,6 +281,8 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClCompile Include="src\px\shell\renderer.cpp" />
     <ClCompile Include="src\px\shell\win\wingl.cpp" />
     <ClCompile Include="src\px\ui\stack_panel.cpp" />
+    <ClCompile Include="src\px\core\ui\status_panel.cpp" />
+    <ClCompile Include="src\px\core\ui\target_panel.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

@@ -7,10 +7,11 @@
 #define PX_CORE_ENGINE_HPP
 
 #include <px/common/toggle.hpp>
-#include <px/common/fps_counter.hpp>
+
 #include <px/es/i_engine.hpp>
 
 #include <px/core/sys/rendering_system.hpp>
+#include <px/core/sys/ui_system.hpp>
 #include <px/core/sys/location_system.hpp>
 #include <px/core/sys/terrain_system.hpp>
 #include <px/core/sys/body_system.hpp>
@@ -27,11 +28,6 @@
 #include <px/rl/skill.hpp>
 
 #include <px/ui/main_panel.hpp>
-#include <px/ui/performance_panel.hpp>
-#include <px/ui/status_panel.hpp>
-#include <px/ui/target_panel.hpp>
-#include <px/ui/inventory_panel.hpp>
-#include <px/ui/anvil_panel.hpp>
 
 #include <px/shell/control.hpp>
 #include <px/shell/control_chain.hpp>
@@ -58,6 +54,7 @@ namespace px
 			qtree<location_component*> m_space;
 			shell::renderer m_renderer;
 			shell::canvas m_canvas;
+			ui::main_panel m_ui;
 
 			location_system m_location_system;
 			rendering_system m_sprite_system;
@@ -65,17 +62,15 @@ namespace px
 			body_system m_body_system;
 			character_system m_character_system;
 			behavior_system m_behavior_system;
+			ui_system m_ui_system;
 
 			terrain m_terrain;
 			environment m_environment;
 			game m_game;
-			ui::main_panel m_ui;
 			unsigned int m_last_turn;
 
 			data::factory m_factory;
 			world m_world;
-
-			fps_counter m_fps;
 
 		public:
 			engine(shell::opengl* gl)
@@ -84,6 +79,7 @@ namespace px
 				, m_renderer(gl)
 				, m_space(space_start_width)
 				, m_canvas(1, 1)
+				, m_ui_system(m_canvas, m_ui)
 				, m_location_system(m_space)
 				, m_sprite_system(m_canvas)
 				, m_terrain_system(m_canvas, m_terrain)
@@ -95,18 +91,20 @@ namespace px
 				, m_game(m_environment)
 				, m_last_turn(0)
 			{
-				auto inventory = std::make_shared<ui::inventory_panel>();
-				auto craft = std::make_shared<ui::anvil_panel>();
-				m_ui.add("performance", std::make_shared<ui::performance_panel>(m_fps), ui::alignment({ 0.0, 0.0 }, { 1,0 }, { -2, 1 }, { 1, 0 }));
-				m_ui.add("status", std::make_shared<ui::status_panel>(m_environment), ui::alignment({ 0.0, 1.0 }, { 1, -12 }, { -2, 1 }, { 1, 0 }));
-				m_ui.add("target", std::make_shared<ui::target_panel>(m_environment), ui::alignment({ 1.0, 1.0 }, { -12, -12 }, { -2, 1 }, { 1, 0 }));
-				m_ui.add("inventory", inventory, ui::alignment({ 0.25, 0.25 }, { 0, 0 }, { 0, 0 }, { 0.25, 0.25 }));
-				m_ui.add("craft", craft, { { 0.25, 0.25 }, { 0, 0 }, { 0, 0 }, { 0.25, 0.25 } });
+				// mechanics systems
 
-				m_ui.disable("inventory");
-				m_ui.disable("craft");
+				add(&m_body_system);
+				add(&m_character_system);
+				add(&m_location_system);
+				add(&m_behavior_system);
 
-				m_character_system.skill_book().add_target("meelee", [](location_component* user, location_component* target) {
+				// visualization systems
+
+				add(&m_terrain_system);
+				add(&m_sprite_system);
+				add(&m_ui_system);
+
+				m_character_system.skill_book().add_target("melee", [](location_component* user, location_component* target) {
 					if (target && user)
 					{
 						body_component* target_body = *target;
@@ -132,13 +130,6 @@ namespace px
 						&& m_environment.distance(user->current(), target->current()) == 1; // 1 tile melee distance
 				});
 
-				add(&m_body_system);
-				add(&m_character_system);
-				add(&m_location_system);
-				add(&m_terrain_system);
-				add(&m_sprite_system);
-				add(&m_behavior_system);
-
 				auto weapon = std::make_shared<body_component::item_type>();
 				weapon->add({ rl::effect::weapon_damage, 0x00, 1 });
 
@@ -160,11 +151,10 @@ namespace px
 
 				body->join_faction(1);
 				body->equip_weapon(weapon);
-				character->add_skill("meelee");
+				character->add_skill("melee");
 
 				m_terrain.add(task->assemble());
 
-				inventory->show(body);
 				m_environment.impersonate(pawn);
 			}
 			virtual ~engine()
@@ -207,10 +197,9 @@ namespace px
 			}
 			virtual void post_update_engine() override
 			{
-				m_ui.draw(m_canvas);
 				m_renderer.render(0, m_canvas);
 			}
-			virtual bool fixed() override
+			virtual bool require_fixed() override
 			{
 				bool result = false;
 				auto turn = m_environment.time();

@@ -123,7 +123,7 @@ namespace px
 
 					body->equip_weapon(weapon);
 					body->join_faction(0);
-					character->add_skill("meelee");
+					character->add_skill("melee");
 
 					units.push_back(task->assemble());
 				}

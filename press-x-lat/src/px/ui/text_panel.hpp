@@ -28,14 +28,14 @@ namespace px
 			ColorProvider m_color;
 
 		public:
-			text_panel(const TextProvider &text = TP(), const ColorProvider &c = WhiteColorProvider()) : m_text(text), m_color(c) {}
+			text_panel(const TextProvider &text = TextProvider(), const ColorProvider &c = ColorProvider()) : m_text(text), m_color(c) {}
 			virtual ~text_panel() {}
 
 		protected:
 			virtual void draw_panel(shell::canvas& cnv) const override
 			{
 				stack_panel::draw_panel(cnv);
-				cnv.write(bounds().start(), m_text(), m_color());
+				cnv.write(start(), m_text(), m_color());
 			}
 		};
 	}

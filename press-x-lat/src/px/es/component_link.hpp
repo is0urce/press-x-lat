@@ -30,14 +30,14 @@ namespace px
 			{
 				m_link = smart_ptr;
 			}
-			L* linked() const
+			auto linked() const
 			{
-				std::shared_ptr<L> shared = m_link.lock();
-				return shared ? shared.get() : nullptr;
+				return m_link;
 			}
 			operator L*() const
 			{
-				return linked();
+				auto shared = m_link.lock();
+				return shared ? shared.get() : nullptr;
 			}
 		};
 	}

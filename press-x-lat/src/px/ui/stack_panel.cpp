@@ -8,6 +8,7 @@
 #include "stack_panel.hpp"
 
 #include <sstream>
+#include <stdexcept>
 
 namespace px
 {
@@ -50,12 +51,16 @@ namespace px
 
 		void stack_panel::add(tag name_tag, panel_ptr panel, alignment align)
 		{
+			if (!panel) throw std::runtime_error("px::ui::stack_panel::add(tag, panel, align) - panel is null, tag = " + name_tag);
+
 			remove(name_tag);
 			panel->layout(m_bounds);
 			m_stack.emplace(name_tag, stacked_panel(panel, align));
 		}
 		void stack_panel::add(panel_ptr panel, alignment align)
 		{
+			if (!panel) throw std::runtime_error("px::ui::stack_panel::add(panel, align) - panel is null");
+
 			panel->layout(m_bounds);
 			m_unnamed.emplace_back(panel, align);
 		}
@@ -129,6 +134,10 @@ namespace px
 		rectangle stack_panel::bounds() const
 		{
 			return m_bounds;
+		}
+		point2 stack_panel::start() const
+		{
+			return m_bounds.start();
 		}
 
 		void stack_panel::output(shell::canvas&c)
