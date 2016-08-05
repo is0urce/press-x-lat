@@ -254,6 +254,7 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\shell\win\wingl.hpp" />
     <ClInclude Include="src\px\shell\win\winkey.hpp" />
     <ClInclude Include="src\px\ui\alignment.hpp" />
+    <ClInclude Include="src\px\ui\anvil_panel.hpp" />
     <ClInclude Include="src\px\ui\inventory_panel.hpp" />
     <ClInclude Include="src\px\ui\main_panel.hpp" />
     <ClInclude Include="src\px\ui\panel.hpp" />

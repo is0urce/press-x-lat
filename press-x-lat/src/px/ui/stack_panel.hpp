@@ -22,6 +22,7 @@ namespace px
 		public:
 			typedef std::string tag;
 			typedef std::shared_ptr<stack_panel> panel_ptr;
+		private:
 			struct stacked_panel
 			{
 				panel_ptr panel;
@@ -42,15 +43,15 @@ namespace px
 
 		private:
 			template<typename Op>
-			bool panel_action(Op act)
+			bool panel_action(Op&& act)
 			{
 				for (auto &p : m_stack)
 				{
-					if (p.second.panel && p.second.panel->active() && act(p.second)) return true;
+					if (p.second.panel && p.second.panel->active() && std::forward<Op>(act)(p.second)) return true;
 				}
 				for (auto &p : m_unnamed)
 				{
-					if (p.panel && p.panel->active() && act(p)) return true;
+					if (p.panel && p.panel->active() && std::forward<Op>(act)(p)) return true;
 				}
 				return false;
 			}

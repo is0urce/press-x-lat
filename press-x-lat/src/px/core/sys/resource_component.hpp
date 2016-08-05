@@ -43,7 +43,7 @@ namespace px
 			}
 
 		public:
-			void bind(item_ptr resource)
+			void deposit(item_ptr resource)
 			{
 				m_item = resource;
 			}
