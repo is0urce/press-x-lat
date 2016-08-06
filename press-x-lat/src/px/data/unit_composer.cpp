@@ -62,15 +62,21 @@ namespace px
 		}
 		void unit_composer::add(npc_ptr npc)
 		{
-			if (m_npc) throw std::runtime_error("px::unit_composer::add(npc) - component already exists");
+			if (m_npc) throw std::runtime_error("px::unit_composer::add(npc_ptr) - component already exists");
 
 			m_npc = npc;
 		}
 		void unit_composer::add(resource_ptr resource)
 		{
-			if (m_npc) throw std::runtime_error("px::unit_composer::add(resource) - component already exists");
+			if (m_resource) throw std::runtime_error("px::unit_composer::add(resource_ptr) - component already exists");
 
 			m_resource = resource;
+		}
+		void unit_composer::add(container_ptr container)
+		{
+			if (m_npc) throw std::runtime_error("px::unit_composer::add(container_ptr) - component already exists");
+
+			m_container = container;
 		}
 		std::shared_ptr<core::unit> unit_composer::assemble()
 		{
@@ -107,6 +113,12 @@ namespace px
 			{
 				m_unit->add(m_resource);
 				if (m_body)	m_body->link(m_resource);
+			}
+			if (m_container)
+			{
+				m_unit->add(m_container);
+				m_container->link(m_body);
+				if (m_body) m_body->link(m_container);
 			}
 
 			return m_unit;

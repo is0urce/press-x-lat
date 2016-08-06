@@ -31,15 +31,11 @@ namespace px
 			skillbook_type m_spellbook;
 
 		public:
-			character_system() {}
-			virtual ~character_system() {}
+			character_system();
+			virtual ~character_system();
 
 		protected:
-			virtual void element_allocated(character_component &l) override
-			{
-				l.provide(&m_spellbook);
-			}
-
+			virtual void element_allocated(character_component &l) override;
 		public:
 			skillbook_type& skill_book()
 			{

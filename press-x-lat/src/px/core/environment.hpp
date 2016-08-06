@@ -30,6 +30,8 @@ namespace px
 	{
 		class environment
 		{
+		public:
+			static const unsigned int max_use_distance = 1;
 		private:
 			unsigned int m_time;
 
@@ -69,7 +71,7 @@ namespace px
 				m_ui->emplace<status_panel>("status", { { 0.0, 1.0 },{ 1, -12 },{ -2, 1 },{ 1.0, 0.0 } }, *this);
 				m_ui->emplace<target_panel>("target", { { 1.0, 1.0 },{ -12, -12 },{ -2, 1 },{ 1.0, 0.0 } }, *this);
 
-				m_ui->add("inventory", m_inventory, { { 0.25, 0.25 },{ 0, 0 },{ 0, 0 },{ 0.25, 0.25 } });
+				m_ui->add("inventory", m_inventory, { { 0.30, 0.1 },{ 0, 0 },{ 0, 0 },{ 0.4, 0.8 } });
 				m_ui->add("craft", m_craft, { { 0.25, 0.25 },{ 0, 0 },{ 0, 0 },{ 0.25, 0.25 } });
 
 				m_inventory->deactivate();
@@ -167,25 +169,25 @@ namespace px
 			bool activate(location_component& source, point2 position)
 			{
 				bool done = false;
-				m_space->find(position.x(), position.y(), [&](int x, int y, location_component* component)
+				if (distance(source.current(), position) <= max_use_distance)
 				{
-					if (done) return false;
-
-					if (body_component* body = *component)
+					m_space->find(position.x(), position.y(), [&](int x, int y, location_component* component)
 					{
-						if (i_useable_component* useable = *body)
+						if (body_component* body = *component)
 						{
-							done = useable->try_use(&source, *this);
+							if (i_useable_component* useable = *body)
+							{
+								done = useable->try_use(&source, *this);
+							}
 						}
-					}
-					return !done;
-				});
+					});
+				}
 				return done;
 			}
 
 			// props querry
 
-			auto distance(point2 a, point2 b) const
+			auto distance(point2 a, point2 b) const -> decltype(a.king_distance(b))
 			{
 				return a.king_distance(b);
 			}
@@ -278,9 +280,12 @@ namespace px
 				return m_target;
 			}
 
-			void inspect(std::weak_ptr<body_component> inventory)
+			void open_workshop(std::weak_ptr<body_component> body)
 			{
-				m_inventory->show(inventory);
+				m_craft->show(body);
+
+				m_inventory->deactivate();
+				m_craft->activate();
 			}
 		};
 	}

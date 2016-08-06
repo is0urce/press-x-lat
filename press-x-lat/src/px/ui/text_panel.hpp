@@ -16,11 +16,14 @@ namespace px
 {
 	namespace ui
 	{
-		struct WhiteColorProvider
+		namespace
 		{
-			color operator()() const { return color(1, 1, 1); }
-		};
-		template <typename TextProvider = TP, typename ColorProvider = WhiteColorProvider>
+			struct white_color_provider
+			{
+				color operator()() const { return color(1, 1, 1); }
+			};
+		}
+		template <typename TextProvider, typename ColorProvider = white_color_provider>
 		class text_panel : public stack_panel
 		{
 		private:

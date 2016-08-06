@@ -27,7 +27,7 @@
 #include <px/data/factory.hpp>
 #include <px/rl/skill.hpp>
 
-#include <px/ui/main_panel.hpp>
+#include <px/core/ui/main_panel.hpp>
 
 #include <px/shell/control.hpp>
 #include <px/shell/control_chain.hpp>
@@ -49,12 +49,12 @@ namespace px
 			, public toggle<true>
 		{
 		private:
-			input_adapter m_adapter;
+			input_adapter m_game_adapter;
 
 			qtree<location_component*> m_space;
 			shell::renderer m_renderer;
 			shell::canvas m_canvas;
-			ui::main_panel m_ui;
+			main_panel m_ui;
 
 			location_system m_location_system;
 			rendering_system m_sprite_system;
@@ -74,8 +74,8 @@ namespace px
 
 		public:
 			engine(shell::opengl* gl)
-				: control_chain(m_adapter, m_ui, [this](point2 pixel) { return translate_world(pixel); }, [this](point2 pixel) { return translate_canvas(pixel); })
-				, m_adapter(m_game)
+				: control_chain(m_ui, m_game_adapter, [this](point2 pixel) { return translate_canvas(pixel); }, [this](point2 pixel) { return translate_world(pixel); })
+				, m_game_adapter(m_game)
 				, m_renderer(gl)
 				, m_space(space_start_width)
 				, m_canvas(1, 1)
@@ -91,18 +91,7 @@ namespace px
 				, m_game(m_environment)
 				, m_last_turn(0)
 			{
-				// mechanics systems
-
-				add(&m_body_system);
-				add(&m_character_system);
-				add(&m_location_system);
-				add(&m_behavior_system);
-
-				// visualization systems
-
-				add(&m_terrain_system);
-				add(&m_sprite_system);
-				add(&m_ui_system);
+				add_systems();
 
 				m_character_system.skill_book().add_target("melee", [](location_component* user, location_component* target) {
 					if (target && user)
@@ -130,9 +119,12 @@ namespace px
 						&& m_environment.distance(user->current(), target->current()) == 1; // 1 tile melee distance
 				});
 
+
+				// player props
 				auto weapon = std::make_shared<body_component::item_type>();
 				weapon->add({ rl::effect::weapon_damage, 0x00, 1 });
-
+				weapon->set_name("Copper Sword");
+				weapon->set_tag("copper_sword");
 				auto ore = std::make_shared<body_component::item_type>();
 				ore->add({ rl::effect::ore_power, 0x00, 10 });
 				ore->set_name("Ore");
@@ -141,18 +133,38 @@ namespace px
 				auto vein = std::make_shared<core::resource_component>();
 				vein->deposit(ore);
 
-				auto task = m_factory.produce();
+				// make chest
+				auto chest = m_factory.produce();
+				chest->add_appearance('$', { 1, 1, 1 });
+				chest->add_location({ 2, 2 });
+				auto cb = chest->add_body(100, 100);
+				auto container = std::make_shared<core::container_component>();
+				chest->add(container);
+				// setup
+				cb->add(weapon);
+				cb->add(weapon);
+				cb->add(weapon);
+				// add
+				m_terrain.add(chest->assemble());
 
-				auto sprite = task->add_appearance('@', { 1, 1, 1 });
+				// make player
+				auto task = m_factory.produce();
+				task->add_appearance('@', { 1, 1, 1 });
 				auto pawn = task->add_location({ 1, 1 });
 				auto body = task->add_body(100, 100);
 				auto character = task->add_character();
 				task->add(vein);
-
+				// setup
 				body->join_faction(1);
 				body->equip_weapon(weapon);
+				for (int i = 0; i < 25; ++i)
+				{
+					auto item = std::make_shared<body_component::item_type>();
+					item->set_name("Amulet of Abstract Number " + std::to_string(i));
+					body->add(item);
+				}
 				character->add_skill("melee");
-
+				// add
 				m_terrain.add(task->assemble());
 
 				m_environment.impersonate(pawn);
@@ -176,6 +188,21 @@ namespace px
 					pos += camera->current();
 				}
 				return pos;
+			}
+			void add_systems()
+			{
+				// mechanics systems
+
+				add(&m_body_system);
+				add(&m_character_system);
+				add(&m_location_system);
+				add(&m_behavior_system);
+
+				// visualization systems
+
+				add(&m_terrain_system);
+				add(&m_sprite_system);
+				add(&m_ui_system);
 			}
 
 		protected:

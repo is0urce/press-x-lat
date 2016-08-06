@@ -92,6 +92,19 @@ namespace px
 				position.move(point2(1, 0));
 			});
 		}
+		size_t canvas::write_n(point2 position, const std::string &text, const color &front, size_t max_symbols)
+		{
+			string::enum_utf8(text, [&](unsigned int letter)
+			{
+				if (max_symbols > 0)
+				{
+					write(position, letter, front);
+					position.move(point2(1, 0));
+					--max_symbols;
+				}
+			});
+			return max_symbols;
+		}
 
 		void canvas::write(point2 position, const std::string &text)
 		{

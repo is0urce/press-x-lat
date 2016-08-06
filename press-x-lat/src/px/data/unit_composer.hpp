@@ -13,6 +13,7 @@
 #include <px/core/sys/character_component.hpp>
 #include <px/core/sys/npc_component.hpp>
 #include <px/core/sys/resource_component.hpp>
+#include <px/core/sys/container_component.hpp>
 
 #include <memory>
 
@@ -29,6 +30,7 @@ namespace px
 			typedef std::shared_ptr<core::character_component> char_ptr;
 			typedef std::shared_ptr<core::npc_component> npc_ptr;
 			typedef std::shared_ptr<core::resource_component> resource_ptr;
+			typedef std::shared_ptr<core::container_component> container_ptr;
 
 		private:
 			std::shared_ptr<core::unit> m_unit;
@@ -39,12 +41,13 @@ namespace px
 			char_ptr m_character;
 			npc_ptr m_npc;
 			resource_ptr m_resource;
+			container_ptr m_container;
 
 			bool m_done;
 
 		public:
 			unit_composer();
-			~unit_composer();
+			virtual ~unit_composer();
 			unit_composer(const unit_composer&) = delete;
 
 		private:
@@ -69,6 +72,7 @@ namespace px
 			void add(char_ptr c);
 			void add(npc_ptr npc);
 			void add(resource_ptr resource);
+			void add(container_ptr container);
 			std::shared_ptr<core::unit> assemble();
 		};
 	}

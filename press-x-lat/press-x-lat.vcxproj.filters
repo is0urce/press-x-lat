@@ -276,9 +276,6 @@
     <ClInclude Include="src\px\rl\skill_set.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\px\ui\main_panel.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\px\core\sys\resource_component.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -310,6 +307,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\px\core\ui\inventory_panel.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\core\ui\main_panel.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\ui\list_panel.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -351,6 +354,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\px\core\ui\target_panel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\px\core\sys\character_system.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\px\core\sys\container_component.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

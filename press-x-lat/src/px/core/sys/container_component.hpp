@@ -11,30 +11,23 @@
 #include <px/core/sys/body_component.hpp>
 #include <px/core/sys/i_useable_component.hpp>
 
-#include <px/core/environment.hpp>
-
 namespace px
 {
 	namespace core
 	{
+		class environment;
 		class container_component
 			: public es::i_component
 			, public i_useable_component
 			, public es::component_link<body_component>
 		{
 		public:
-			container_component() {}
-			virtual ~container_component() {}
+			container_component();
+			virtual ~container_component();
 
 		protected:
-			virtual bool useable_component(location_component* user_pawn, environment& env) const override
-			{
-				return true;
-			}
-			virtual void use_component(location_component* user_pawn, environment& env) override
-			{
-				env.inspect(linked());
-			}
+			virtual bool useable_component(location_component* user_pawn, environment& env) const override;
+			virtual void use_component(location_component* user_pawn, environment& env) override;
 		};
 	}
 }

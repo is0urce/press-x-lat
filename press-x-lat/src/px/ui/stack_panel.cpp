@@ -16,18 +16,18 @@ namespace px
 	{
 		void stack_panel::draw_panel(shell::canvas& cnv) const
 		{
-			for (auto &p : m_stack)
-			{
-				if (p.second.panel && p.second.panel->active())
-				{
-					p.second.panel->draw(cnv);
-				}
-			}
 			for (auto &p : m_unnamed)
 			{
 				if (p.panel && p.panel->active())
 				{
 					p.panel->draw(cnv);
+				}
+			}
+			for (auto &p : m_stack)
+			{
+				if (p.second.panel && p.second.panel->active())
+				{
+					p.second.panel->draw(cnv);
 				}
 			}
 		}
@@ -97,6 +97,9 @@ namespace px
 				panel &p = *find->second.panel;
 				p.deactivate();
 			}
+#ifdef _DEBUG
+			else throw std::runtime_error("stack_panel::disable tag=" + name_tag);
+#endif // _DEBUG
 		}
 
 		void stack_panel::enable(const tag &name_tag)

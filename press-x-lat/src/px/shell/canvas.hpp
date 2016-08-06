@@ -39,6 +39,7 @@ namespace px
 			void write(const point2 &position, symbol::code_t code, const color &front);
 			void write(point2 position, const std::string &text);
 			void write(point2 position, const std::string &text, const color &front);
+			size_t write_n(point2 position, const std::string &text, const color &front, size_t max_symbols);
 		};
 	}
 }

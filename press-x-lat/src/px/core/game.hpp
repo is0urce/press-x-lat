@@ -49,10 +49,10 @@ namespace px
 				{
 					action = m_environment->activate(*player, target);
 				}
-				if (action)
-				{
-					m_environment->turn();
-				}
+				//if (action)
+				//{
+				//	m_environment->turn();
+				//}
 				return action;
 			}
 			virtual bool player_step(point2 direction) override

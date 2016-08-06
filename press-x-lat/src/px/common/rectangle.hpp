@@ -56,7 +56,7 @@ namespace px
 		{
 			return point.x() >= m_start.x() && point.y() >= m_start.y() && point.x() < m_corner.x() && point.y() < m_corner.y();
 		}
-		bool contains(const rectangle &rect)
+		bool contains(const rectangle &rect) const
 		{
 			return rect.m_start.x() >= m_start.x()
 				&& rect.m_start.y() >= m_start.y()

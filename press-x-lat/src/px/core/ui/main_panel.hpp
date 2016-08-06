@@ -6,14 +6,15 @@
 #ifndef PX_UI_MAIN_PANEL_HPP
 #define PX_UI_MAIN_PANEL_HPP
 
-#include "stack_panel.hpp"
+#include <px/ui/stack_panel.hpp>
 #include <px/shell/key.hpp>
 
 namespace px
 {
-	namespace ui
+	using shell::key;
+	namespace core
 	{
-		class main_panel : public stack_panel
+		class main_panel : public ui::stack_panel
 		{
 		public:
 			main_panel() {}
@@ -24,7 +25,8 @@ namespace px
 			{
 				switch (code)
 				{
-				case shell::key::panel_inventory:
+				case key::panel_inventory:
+					disable("craft");
 					toggle("inventory");
 					break;
 				default:

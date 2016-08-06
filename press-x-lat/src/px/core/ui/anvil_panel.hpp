@@ -67,9 +67,18 @@ namespace px
 			{
 				return false;
 			}
+			virtual bool key_control(shell::key code) override
+			{
+				bool close = code == shell::key::command_cancel || code == shell::key::move_none;
+				if (close)
+				{
+					deactivate();
+				}
+				return close;
+			}
 
 		public:
-			void bind(inventory_ptr inventory)
+			void show(inventory_ptr inventory)
 			{
 				m_inventory = inventory;
 			}
