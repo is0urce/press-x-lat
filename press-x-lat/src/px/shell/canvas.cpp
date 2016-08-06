@@ -89,7 +89,7 @@ namespace px
 			string::enum_utf8(text, [&](unsigned int letter)
 			{
 				write(position, letter, front);
-				position.move(point2(1, 0));
+				position.move_axis<0>(1);
 			});
 		}
 		size_t canvas::write_n(point2 position, const std::string &text, const color &front, size_t max_symbols)
@@ -99,7 +99,7 @@ namespace px
 				if (max_symbols > 0)
 				{
 					write(position, letter, front);
-					position.move(point2(1, 0));
+					position.move_axis<0>(1);
 					--max_symbols;
 				}
 			});

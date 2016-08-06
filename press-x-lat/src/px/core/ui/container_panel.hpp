@@ -1,10 +1,10 @@
-// name: anvil_panel.hpp
+// name: container_panel.hpp
 // type: c++
 // desc: base class declaration
 // auth: is0urce
 
-#ifndef PX_UI_ANVIL_PANEL_HPP
-#define PX_UI_ANVIL_PANEL_HPP
+#ifndef PX_CORE_UI_CONTAINER_PANEL_HPP
+#define PX_CORE_UI_CONTAINER_PANEL_HPP
 
 #include <px/ui/stack_panel.hpp>
 
@@ -26,7 +26,7 @@ namespace px
 {
 	namespace core
 	{
-		class anvil_panel : public ui::stack_panel
+		class container_panel : public ui::stack_panel
 		{
 		public:
 			typedef rl::inventory<rl::effect> inventory_type;
@@ -34,44 +34,29 @@ namespace px
 			typedef std::weak_ptr<inventory_type> inventory_ptr;
 
 		private:
-			std::shared_ptr<list_type> m_list;
+			std::shared_ptr<list_type> m_user;
+			std::shared_ptr<list_type> m_container;
 
 		public:
-			anvil_panel()
+			container_panel()
 			{
 				emplace<ui::board_panel>({ { 0, 0 },{ 0, 0 },{ 0, 1 },{ 1, 0 } }, color(0, 0, 1));
 				emplace<ui::board_panel>({ { 0, 0 },{ 0, 1 },{ 0, -1 },{ 1, 1 } }, color(0, 0, 0.5));
-				emplace<ui::static_text_panel>({ { 0, 0 },{ 0, 0 },{ 0, 0 },{ 0, 0 } }, "[K IS FOR KRAFT]", color(1, 1, 1));
+				emplace<ui::static_text_panel>({ { 0, 0 },{ 0, 0 },{ 0, 0 },{ 0, 0 } }, "[YOU]", color(1, 1, 1));
+				emplace<ui::static_text_panel>({ { 0, 0 },{ 0, 0 },{ 0, 0 },{ 0, 0 } }, "[NOT YOU]", color(1, 1, 1));
 
-				m_list = std::make_shared<list_type>();
-				add(m_list, { { 0.3, 0 },{ 0, 1 },{ 0, -1 },{ 0.3, 1 } });
+				m_user = std::make_shared<list_type>();
+				add(m_user, { { 0.0, 0 },{ 0, 1 },{ 0, -1 },{ 0.5, 1 } });
+
+				m_container = std::make_shared<list_type>();
+				add(m_container, { { 0.5, 0 },{ 0, 1 },{ 0, -1 },{ 0.5, 1 } });
 			}
-			virtual ~anvil_panel() {}
+			virtual ~container_panel() {}
 
 		protected:
 			virtual void draw_panel(shell::canvas& cnv) const override
 			{
 				stack_panel::draw_panel(cnv);
-
-				auto pen = start();
-
-				pen.move_axis<1>(1);
-
-				cnv.write(pen, "Sword");
-				pen.move_axis<1>(1);
-				cnv.write(pen, "Bow");
-				pen.move_axis<1>(1);
-				cnv.write(pen, "Helmet");
-				pen.move_axis<1>(1);
-			}
-			virtual bool key_control(shell::key code) override
-			{
-				bool close = code == shell::key::command_cancel || code == shell::key::move_none;
-				if (close)
-				{
-					deactivate();
-				}
-				return close;
 			}
 			virtual bool click_control(const point2 &position, unsigned int button) override
 			{
@@ -83,11 +68,21 @@ namespace px
 				}
 				return result;
 			}
+			virtual bool key_control(shell::key code) override
+			{
+				bool close = code == shell::key::command_cancel || code == shell::key::move_none;
+				if (close)
+				{
+					deactivate();
+				}
+				return close;
+			}
 
 		public:
-			void show(inventory_ptr inventory)
+			void examine_container(inventory_ptr user, inventory_ptr container)
 			{
-				m_list->bind_data(inventory);
+				m_user->bind_data(user);
+				m_container->bind_data(container);
 			}
 		};
 	}

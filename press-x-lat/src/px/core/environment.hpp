@@ -8,8 +8,6 @@
 #ifndef PX_CORE_ENVIRONMENT_HPP
 #define PX_CORE_ENVIRONMENT_HPP
 
-#include <px/common/fps_counter.hpp>
-
 #include <px/rl/faction_relation.hpp>
 #include <px/rl/traverse.hpp>
 #include <px/core/terrain.hpp>
@@ -20,6 +18,7 @@
 #include <px/core/ui/status_panel.hpp>
 #include <px/core/ui/target_panel.hpp>
 #include <px/core/ui/inventory_panel.hpp>
+#include <px/core/ui/container_panel.hpp>
 #include <px/core/ui/anvil_panel.hpp>
 
 #include <px/ui/performance_panel.hpp>
@@ -47,6 +46,7 @@ namespace px
 			ui::stack_panel* m_ui;
 			std::shared_ptr<inventory_panel> m_inventory;
 			std::shared_ptr<anvil_panel> m_craft;
+			std::shared_ptr<container_panel> m_container;
 
 		public:
 			environment(ui::stack_panel &ui, terrain &terra, qtree<location_component*> &space)
@@ -60,22 +60,26 @@ namespace px
 			virtual ~environment()
 			{
 			}
+			environment(const environment&) = delete;
 
 		private:
 			void setup_ui()
 			{
 				m_inventory = std::make_shared<inventory_panel>();
 				m_craft = std::make_shared<anvil_panel>();
+				m_container = std::make_shared<container_panel>();
 
 				m_ui->emplace<ui::performance_panel>("performance", { { 0.0, 0.0 },{ 1,0 },{ -2, 1 },{ 1.0, 0.0 } }, m_fps);
 				m_ui->emplace<status_panel>("status", { { 0.0, 1.0 },{ 1, -12 },{ -2, 1 },{ 1.0, 0.0 } }, *this);
 				m_ui->emplace<target_panel>("target", { { 1.0, 1.0 },{ -12, -12 },{ -2, 1 },{ 1.0, 0.0 } }, *this);
 
-				m_ui->add("inventory", m_inventory, { { 0.30, 0.1 },{ 0, 0 },{ 0, 0 },{ 0.4, 0.8 } });
-				m_ui->add("craft", m_craft, { { 0.25, 0.25 },{ 0, 0 },{ 0, 0 },{ 0.25, 0.25 } });
+				m_ui->add("inventory", m_inventory, { { 0.3, 0.1 },{ 0, 0 },{ 0, 0 },{ 0.4, 0.8 } });
+				m_ui->add("craft", m_craft, { { 0.1, 0.1 },{ 0, 0 },{ 0, 0 },{ 0.8, 0.8 } });
+				m_ui->add("container", m_container, { { 0.2, 0.1 },{ 0, 0 },{ 0, 0 },{ 0.6, 0.8 } });
 
 				m_inventory->deactivate();
 				m_craft->deactivate();
+				m_container->deactivate();
 			}
 			void focus()
 			{
@@ -280,12 +284,23 @@ namespace px
 				return m_target;
 			}
 
-			void open_workshop(std::weak_ptr<body_component> body)
+			void open_workshop(std::weak_ptr<body_component> user)
 			{
-				m_craft->show(body);
+				m_craft->show(user);
 
 				m_inventory->deactivate();
+				m_container->deactivate();
+
 				m_craft->activate();
+			}
+			void open_container(std::weak_ptr<body_component> user, std::weak_ptr<body_component> container)
+			{
+				m_container->examine_container(user, container);
+
+				m_inventory->deactivate();
+				m_craft->deactivate();
+
+				m_container->activate();
 			}
 		};
 	}

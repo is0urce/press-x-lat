@@ -152,6 +152,14 @@ namespace px
 				m_list = list;
 				reset();
 			}
+			void set_filter(Filter filter)
+			{
+				m_filter = filter;
+			}
+			void set_format(Formatter format)
+			{
+				m_formatter = format;
+			}
 		};
 	}
 }

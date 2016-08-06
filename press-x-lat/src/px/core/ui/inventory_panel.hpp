@@ -15,9 +15,10 @@
 #include <px/rl/inventory.hpp>
 #include <px/rl/effect.hpp>
 
+#include <px/core/ui/item_operation.hpp>
+
 #include <px/shell/key.hpp>
 
-#include <string>
 #include <memory>
 
 namespace px
@@ -27,22 +28,11 @@ namespace px
 		class inventory_panel : public ui::stack_panel
 		{
 		public:
-			static const unsigned int line_size = 1;
-		public:
-			struct name_formatter
-			{
-				template <typename I>
-				std::string operator()(const I& item) const
-				{
-					return item->name();
-				}
-			};
 			typedef rl::inventory<rl::effect> inventory_type;
+			typedef ui::list_panel<inventory_type, item_formatter, item_color, item_filter> list_type;
 			typedef std::weak_ptr<inventory_type> inventory_ptr;
-			typedef ui::list_panel<inventory_type, name_formatter> list_type;
 
 		private:
-			inventory_ptr m_inventory;
 			std::shared_ptr<list_type> m_list;
 
 		public:
@@ -73,6 +63,16 @@ namespace px
 					{
 						deactivate();
 					}
+				}
+				return result;
+			}
+			virtual bool click_control(const point2 &position, unsigned int button) override
+			{
+				bool result = stack_panel::click_control(position, button);
+				if (!result && !bounds().contains(position))
+				{
+					deactivate();
+					result = true;
 				}
 				return result;
 			}
