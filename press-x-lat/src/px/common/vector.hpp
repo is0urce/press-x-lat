@@ -142,12 +142,15 @@ namespace px
 	template <typename _T>
 	vector2 operator/(vector2 lhs, const coordinate<_T, 2> &rhs) { lhs /= rhs; return lhs; }
 
-	inline vector2 operator*(vector2 lhs, point2::component c) { lhs *= c; return lhs; }
-	inline vector2 operator/(vector2 lhs, point2::component c) { lhs /= c; return lhs; }
-
-	inline std::string to_string(const vector2 &p)
+	namespace
 	{
-		return "[" + std::to_string(p.get<0>()) + ":" + std::to_string(p.get<1>()) + "]";
+		vector2 operator*(vector2 lhs, point2::component c) { lhs *= c; return lhs; }
+		vector2 operator/(vector2 lhs, point2::component c) { lhs /= c; return lhs; }
+
+		std::string to_string(const vector2 &p)
+		{
+			return "[" + std::to_string(p.get<0>()) + ":" + std::to_string(p.get<1>()) + "]";
+		}
 	}
 }
 

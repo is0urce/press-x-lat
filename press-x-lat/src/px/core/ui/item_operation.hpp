@@ -20,7 +20,10 @@ namespace px
 			template <typename I>
 			std::string operator()(const I& item) const
 			{
-				return item->name();
+				std::string text = item->name();
+				unsigned int stack = item->stack_size();
+				if (stack != 1) text += std::string(" (") + std::to_string(stack) + std::string(")");
+				return text;
 			}
 		};
 		struct item_color

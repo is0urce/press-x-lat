@@ -10,8 +10,8 @@
 
 #include <px/common/color.hpp>
 
-#include <string>
 #include <memory>
+#include <functional>
 
 namespace px
 {
@@ -44,7 +44,7 @@ namespace px
 				}
 			};
 		}
-		template <typename List, typename Formatter, typename Color = white_color_provider, typename Filter = permissive_filter, typename Hover = nop_callback, typename Click = nop_callback>
+		template <typename List, typename Formatter, typename Color = white_color_provider, typename Click = nop_callback, typename Hover = nop_callback, typename Filter = permissive_filter>
 		class list_panel : public stack_panel
 		{
 		public:
@@ -63,7 +63,7 @@ namespace px
 			int m_drawn;
 
 		public:
-			list_panel(const Formatter &formatter = Formatter(), const Color& c = Color(), const Filter& filter = Filter(), const Hover &hover = Hover(), const Click &click = Click())
+			list_panel(const Formatter &formatter = Formatter(), const Color& c = Color(), const Click &click = Click(), const Hover &hover = Hover(), const Filter& filter = Filter())
 				: m_formatter(formatter), m_color(c)
 				, m_hover(hover), m_click(click)
 				, m_line_size(1)
@@ -100,15 +100,60 @@ namespace px
 			}
 			virtual bool scroll_control(int scroll) override
 			{
-				if (scroll > 0 && scrollable_up())
+				bool result = stack_panel::scroll_control(scroll);
+
+				if (!result)
 				{
-					--m_skip;
+					if (scroll > 0 && scrollable_up())
+					{
+						--m_skip;
+					}
+					else if (scroll < 0 && scrollable_down(lines(), count()))
+					{
+						++m_skip;
+					}
+					result = true;
 				}
-				else if (scroll < 0 && scrollable_down(lines(), count()))
+				return result;
+			}
+			virtual bool click_control(const point2 &position, unsigned int vbutton) override
+			{
+				bool result = stack_panel::click_control(position, vbutton);
+
+				if (!result)
 				{
-					++m_skip;
+					auto shared = m_list.lock();
+					auto total_bounds = bounds();
+
+					if (total_bounds.contains(position) && shared)
+					{
+						point2 pen = total_bounds.start();
+						point2 record_range(total_bounds.range().x(), m_line_size);
+
+						unsigned int item_index = m_skip;
+						pen.move_axis<1>(-m_skip * m_line_size);
+
+						std::function<void()> click_call; // erasure of generic element type
+
+						shared->enumerate([&](const auto &element) {
+							if (m_filter(element))
+							{
+								if (rectangle(pen, record_range).contains(position))
+								{
+									click_call = [element,this]() { m_click(element); };
+									result = true;
+								}
+								
+								pen.move_axis<1>(m_line_size);
+								++item_index;
+							}
+						});
+
+						if (click_call) click_call(); // stored for future call for safe iteration
+					}
 				}
-				return true;
+
+				return result;
 			}
 
 		private:
@@ -159,6 +204,18 @@ namespace px
 			void set_format(Formatter format)
 			{
 				m_formatter = format;
+			}
+			std::shared_ptr<list_type> lock_data()
+			{
+				return m_list.lock();
+			}
+			void set_click(Click fn)
+			{
+				m_click = fn;
+			}
+			void set_hover(Hover fn)
+			{
+				m_hover = fn;
 			}
 		};
 	}

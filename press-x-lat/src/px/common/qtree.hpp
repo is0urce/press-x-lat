@@ -112,13 +112,13 @@ namespace px
 		{
 		}
 		qtree(const qtree&) = delete;
-		qtree(qtree&& that)
-		{
-			std::swap(m_center_x, that.m_center_x);
-			std::swap(m_center_y, that.m_center_y);
-			std::swap(m_range, that.m_range);
-			std::swap(m_bucket, that.m_bucket);
-		}
+		//qtree(qtree&& that)
+		//{
+		//	std::swap(m_center_x, that.m_center_x);
+		//	std::swap(m_center_y, that.m_center_y);
+		//	std::swap(m_range, that.m_range);
+		//	std::swap(m_bucket, that.m_bucket);
+		//}
 
 	private:
 		// select branch for specified coordinates

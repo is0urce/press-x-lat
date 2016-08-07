@@ -57,16 +57,19 @@ namespace px
 		}
 	};
 
-	inline point2 operator+(point2 lhs, const point2 &rhs) { lhs += rhs; return lhs; }
-	inline point2 operator-(point2 lhs, const point2 &rhs) { lhs -= rhs; return lhs; }
-	inline point2 operator*(point2 lhs, const point2 &rhs) { lhs *= rhs; return lhs; }
-	inline point2 operator/(point2 lhs, const point2 &rhs) { lhs /= rhs; return lhs; }
-	inline point2 operator*(point2 lhs, point2::component c) { lhs *= c; return lhs; }
-	inline point2 operator/(point2 lhs, point2::component c) { lhs /= c; return lhs; }
-
-	inline std::string to_string(const point2 &p)
+	namespace
 	{
-		return "[" + std::to_string(p.get<0>()) + ":" + std::to_string(p.get<1>()) + "]";
+		point2 operator+(point2 lhs, const point2 &rhs) { lhs += rhs; return lhs; }
+		point2 operator-(point2 lhs, const point2 &rhs) { lhs -= rhs; return lhs; }
+		point2 operator*(point2 lhs, const point2 &rhs) { lhs *= rhs; return lhs; }
+		point2 operator/(point2 lhs, const point2 &rhs) { lhs /= rhs; return lhs; }
+		point2 operator*(point2 lhs, point2::component c) { lhs *= c; return lhs; }
+		point2 operator/(point2 lhs, point2::component c) { lhs /= c; return lhs; }
+
+		std::string to_string(const point2 &p)
+		{
+			return "[" + std::to_string(p.get<0>()) + ":" + std::to_string(p.get<1>()) + "]";
+		}
 	}
 }
 

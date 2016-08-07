@@ -11,6 +11,7 @@
 #include <px/rl/enhancement.hpp>
 
 #include <vector>
+#include <algorithm>
 
 namespace px
 {
@@ -38,10 +39,6 @@ namespace px
 			{
 				m_effects.push_back(e);
 			}
-			//template <typename ...Args> void emplace(Args&& ...args)
-			//{
-			//	m_effects.emplace_back(std::forward<Args>(args)...);
-			//}
 
 			// returns true if element removed
 			bool remove_first(effect_type e)
@@ -110,7 +107,28 @@ namespace px
 				}
 				return start;
 			}
+
+			// compare
+
+			bool compare(enhancement_collection vs) const
+			{
+				return std::equal(m_effects.cbegin(), m_effects.cend(), vs.m_effects.cbegin(), vs.m_effects.cend(), [](const enhancement_type &l, const enhancement_type &r) { return l == r; });
+			}
 		};
+
+		namespace
+		{
+			template <typename E>
+			bool operator==(const enhancement_collection<E>& lh, const enhancement_collection<E>& rh)
+			{
+				return lh.compare(rh);
+			}
+			template <typename E>
+			bool operator!=(const enhancement_collection<E>& lh, const enhancement_collection<E>& rh)
+			{
+				return !operator=(lh, rh);
+			}
+		}
 	}
 }
 #endif

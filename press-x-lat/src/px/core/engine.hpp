@@ -141,9 +141,15 @@ namespace px
 				auto container = std::make_shared<core::container_component>();
 				chest->add(container);
 				// setup
-				cb->add(weapon);
-				cb->add(weapon);
-				cb->add(weapon);
+				for (int i = 0; i < 5; ++i)
+				{
+					auto loot = std::make_shared<body_component::item_type>();
+					loot->add({ rl::effect::ore_power, 0x00, i / 2 });
+					loot->set_name("Shiny ore");
+					loot->set_tag("shiny_ore");
+					loot->make_stacking();
+					cb->add(loot);
+				}
 				// add
 				m_terrain.add(chest->assemble());
 
@@ -157,12 +163,6 @@ namespace px
 				// setup
 				body->join_faction(1);
 				body->equip_weapon(weapon);
-				for (int i = 0; i < 25; ++i)
-				{
-					auto item = std::make_shared<body_component::item_type>();
-					item->set_name("Amulet of Abstract Number " + std::to_string(i));
-					body->add(item);
-				}
 				character->add_skill("melee");
 				// add
 				m_terrain.add(task->assemble());
@@ -182,7 +182,7 @@ namespace px
 			point2 translate_world(point2 pixel) const
 			{
 				auto pos = translate_canvas(pixel) - (m_canvas.range() / 2);
-				pos.mirror<1>(); // flip horisontally
+				pos.mirror<1>(); // flip Y axis, ui grid grows down
 				if (auto camera = m_environment.player())
 				{
 					pos += camera->current();

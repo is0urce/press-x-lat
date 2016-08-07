@@ -6,6 +6,8 @@
 #ifndef PX_RL_ENHANCEMENT_HPP
 #define PX_RL_ENHANCEMENT_HPP
 
+#include <cstring>
+
 namespace px
 {
 	namespace rl
@@ -52,6 +54,20 @@ namespace px
 				return *this;
 			}
 		};
+
+		namespace
+		{
+			template <typename E>
+			bool operator==(const enhancement<E>& lh, const enhancement<E>& rh)
+			{
+				return std::memcmp(&lh, &rh, sizeof(enhancement<E>)) == 0;
+			}
+			template <typename E>
+			bool operator!=(const enhancement<E>& lh, const enhancement<E>& rh)
+			{
+				return !operator=(lh, rh);
+			}
+		}
 	}
 }
 

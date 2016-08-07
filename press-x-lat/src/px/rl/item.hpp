@@ -15,32 +15,74 @@ namespace px
 {
 	namespace rl
 	{
-		template <typename _E>
+		template <typename E>
 		class item
 			: public entity
-			, public enhancement_collection<_E>
+			, public enhancement_collection<E>
 		{
 		private:
 			unsigned int m_stack;
-			unsigned int m_max_stack;
+			unsigned int m_max_stack; // default is 1, if max_stack is 0, allow unlimited stacking
 
 		public:
+			item() : m_stack(1), m_max_stack(1) {}
+
+		public:
+			unsigned int stack_size() const
+			{
+				return m_stack;
+			}
 			bool stack(item& i)
 			{
+				if (&i == this) throw std::runtime_error("px::rl::item::stack() - stacking into same item");
+
 				bool full = false;
 				auto total = m_stack + i.m_stack;
-				if (total > m_max_stack)
+
+				if (m_max_stack == 0 || total <= m_max_stack)
 				{
-					i.m_stack -= total - m_stack;
-					m_stack = m_max_stack;
+					m_stack = total;
+					i.m_stack = 0;
+					full = true;
 				}
 				else
 				{
-					i.m_stack = 0;
-					m_stack += i.m_stack;
-					full = true;
+					m_stack = m_max_stack;
+					i.m_stack -= total - m_stack;
 				}
 				return full;
+			}
+			unsigned int split(unsigned int n, item& into)
+			{
+				into = *this;
+
+				if (n == 0) return;
+				if (n > m_stack) n = m_stack;
+
+				m_stack -= n;
+				into.m_stack = n;
+
+				return m_stack;
+			}
+			bool can_stack(item& i) const
+			{
+				if (&i == this) return false; // stacking into same item
+				if (m_stack == m_max_stack) return false;
+				if (name() != i.name() || tag() != i.tag()) return false;
+
+				return static_cast<enhancement_collection<E>>(*this) == static_cast<enhancement_collection<E>>(i);
+			}
+
+			// unlimited max size
+			void make_stacking()
+			{
+				m_max_stack = 0;
+			}
+
+			// size - maximum size of a stack, use 0 for unlimited
+			void make_stacking(unsigned int size)
+			{
+				m_max_stack = size;
 			}
 		};
 	}

@@ -29,15 +29,44 @@ namespace px
 		public:
 			void add(item_ptr i)
 			{
+				for (item_ptr stack : m_items)
+				{
+					if (stack->can_stack(*i))
+					{
+						stack->stack(*i);
+
+						if (i->stack_size() == 0) return;
+					}
+				}
 				m_items.push_back(i);
+			}
+			void take_all(inventory &container)
+			{
+				for (item_ptr loot : container.m_items)
+				{
+					add(loot);
+				}
+				container.clear();
 			}
 			void remove(const item_ptr &i)
 			{
 				m_items.remove(i);
 			}
+			item_ptr remove(item_ptr i, unsigned int n)
+			{
+				auto part = std::make_shared<item_type>();
+
+				if (i->split(n, *part) == 0) remove(i);
+
+				return part;
+			}
 			void clear()
 			{
 				m_items.clear();
+			}
+			bool empty() const
+			{
+				return m_items.empty();
 			}
 			template <typename UnaryOperation>
 			void enumerate(UnaryOperation&& enum_fn) const

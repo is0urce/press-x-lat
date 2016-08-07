@@ -10,14 +10,14 @@
 
 namespace px
 {
-	template <bool _Initial>
+	template <bool Initial>
 	class toggle
 	{
 	private:
 		bool m_switch;
 
 	public:
-		toggle() : m_switch(_Initial)
+		toggle() : m_switch(Initial)
 		{
 		}
 
@@ -40,7 +40,7 @@ namespace px
 		}
 		void reset()
 		{
-			m_switch = _Initial;
+			m_switch = Initial;
 		}
 	};
 }
