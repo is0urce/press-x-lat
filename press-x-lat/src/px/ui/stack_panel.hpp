@@ -75,6 +75,7 @@ namespace px
 			panel_ptr at(const tag &name);
 			void disable(const tag &name);
 			void enable(const tag &name);
+			void enable(const tag &name, bool flag);
 			void toggle(const tag &name);
 			bool enabled(const tag &name) const;
 			std::string info() const;

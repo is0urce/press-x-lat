@@ -5,18 +5,19 @@
 
 #include "unit_composer.hpp"
 
-#include <px/core/unit.hpp>
 #include <px/core/sys/image_component.hpp>
 #include <px/core/sys/location_component.hpp>
 #include <px/core/sys/body_component.hpp>
 #include <px/core/sys/character_component.hpp>
 #include <px/core/sys/npc_component.hpp>
+#include <px/core/sys/resource_component.hpp>
+#include <px/core/sys/container_component.hpp>
 
 #include <stdexcept>
 
 namespace px
 {
-	namespace data
+	namespace core
 	{
 		unit_composer::unit_composer() : m_done(false)
 		{
@@ -26,21 +27,23 @@ namespace px
 
 		void unit_composer::clear()
 		{
-			m_location.reset();
-			m_appearance.reset();
-			m_body.reset();
-			m_character.reset();
-		}
-
-		void unit_composer::end()
-		{
-			clear();
+			m_location = nullptr;
+			m_appearance = nullptr;
+			m_body = nullptr;
+			m_character = nullptr;
+			m_npc = nullptr;
+			m_resource = nullptr;
+			m_container = nullptr;
 		}
 		void unit_composer::add(location_ptr l)
 		{
 			if (m_location) throw std::runtime_error("px::unit_composer::add(location) - location component already exists");
 
 			m_location = l;
+		}
+		unit_composer::location_ptr unit_composer::location()
+		{
+			return m_location;
 		}
 		void unit_composer::add(sprite_ptr sprite)
 		{
@@ -78,50 +81,46 @@ namespace px
 
 			m_container = container;
 		}
-		std::shared_ptr<core::unit> unit_composer::assemble()
+		void unit_composer::assemble(es::component_collection& container)
 		{
-			if (m_done) throw std::runtime_error("px::unit_composer::assemble - unit already created");
-			m_done = true;
-
-			// add components
 			if (m_body)
 			{
-				m_unit->add(m_body);
-
+				container.add(m_body);
 				m_body->link(m_character);
 			}
 			if (m_appearance)
 			{
-				m_unit->add(m_appearance);
+				container.add(m_appearance);
 				m_appearance->link(m_location);
 			}
 			if (m_location)
 			{
-				m_unit->add(m_location);
+				container.add(m_location);
 				m_location->link(m_body);
 			}
 			if (m_character)
 			{
-				m_unit->add(m_character);
+				container.add(m_character);
 			}
 			if (m_npc)
 			{
-				m_unit->add(m_npc);
+				container.add(m_npc);
 				m_npc->link(m_location);
+				if (m_body) m_body->link(m_npc);
 			}
 			if (m_resource)
 			{
-				m_unit->add(m_resource);
+				container.add(m_resource);
 				if (m_body)	m_body->link(m_resource);
 			}
 			if (m_container)
 			{
-				m_unit->add(m_container);
+				container.add(m_container);
 				m_container->link(m_body);
 				if (m_body) m_body->link(m_container);
 			}
 
-			return m_unit;
+			clear();
 		}
 	}
 }

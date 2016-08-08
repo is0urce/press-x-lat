@@ -16,17 +16,13 @@ namespace px
 	{
 		class canvas : public matrix2<symbol>
 		{
-		private:
-			color m_front;
-			color m_back;
-
 		public:
-			canvas(point2::component x, point2::component y);
-			virtual ~canvas();
+			// settings
 
-		public:
 			void text_color(color front_color);
 			void draw_color(color back_color);
+
+			// background drawing
 
 			void cls();
 			void cls(const symbol &fill);
@@ -35,11 +31,21 @@ namespace px
 			void pset(const point2 &position);
 			void pset(const point2 &position, const color &back);
 
+			// symbols drawing
+
 			void write(const point2 &position, symbol::code_t code);
 			void write(const point2 &position, symbol::code_t code, const color &front);
 			void write(point2 position, const std::string &text);
 			void write(point2 position, const std::string &text, const color &front);
 			size_t write_n(point2 position, const std::string &text, const color &front, size_t max_symbols);
+
+		public:
+			canvas(point2::component x, point2::component y);
+			virtual ~canvas();
+
+		private:
+			color m_front;
+			color m_back;
 		};
 	}
 }

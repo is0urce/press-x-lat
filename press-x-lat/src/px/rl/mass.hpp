@@ -14,41 +14,29 @@ namespace px
 {
 	namespace rl
 	{
-		template <size_t _Layers = 1>
+		template <size_t Layers = 1>
 		class mass
 		{
 		public:
-			typedef std::bitset<_Layers> bitset;
-
-			// attributes
-		private:
-			bool m_transparent;
-			std::bitset<_Layers> m_traversable;
-
-			// ctor & dtor
-		public:
-			mass() {}
-			mass(bool transparent) : m_transparent(transparent) {}
-			mass(bool is_transparent, bool is_traversable) : m_transparent(is_transparent) { traversable(is_traversable); }
-			mass(bool is_transparent, bitset traversable) : m_transparent(is_transparent), m_traversable(traversable) {}
+			typedef std::bitset<Layers> bitset;
 
 		public:
-
 			// transparency accessors
 
 			bool transparent() const { return m_transparent; }
-
 			void make_transparent(bool transparency) { m_transparent = transparency; }
 			void make_transparent() { m_transparent = true; }
 			void make_opaque() { m_transparent = false; }
 
-			// traversability accessors
+			// traverable getters
 
 			bool traversable() const { return m_traversable.test(0); }
 			bool traversable(size_t layer) const { return m_traversable.test(layer); }
 			bool traversable(bitset l) const { return (m_traversable & l).any(); }
 			template <typename _E>
 			bool traversable(_E enum_layer) const { return traversable(static_cast<size_t>(enum_layer)); }
+
+			// traversable setters
 
 			void make_traversable(size_t layer, bool val)	{ m_traversable.set(layer, val); }
 			void make_traversable(size_t layer) { m_traversable.set(layer); }
@@ -69,16 +57,26 @@ namespace px
 					m_traversable &= ~l;
 				}
 			}
-			template <typename _E>
-			void make_traversable(_E enum_layer) { m_traversable.set(static_cast<size_t>(enum_layer)); }
-			template <typename _E>
-			void make_traversable(_E enum_layer, bool val) { traversable(static_cast<size_t>(enum_layer), val); }
-			template <typename _E>
-			void make_blocking(_E enum_layer) { m_traversable.reset(static_cast<size_t>(enum_layer)); }
+			template <typename E>
+			void make_traversable(E enum_layer) { m_traversable.set(static_cast<size_t>(enum_layer)); }
+			template <typename E>
+			void make_traversable(E enum_layer, bool val) { traversable(static_cast<size_t>(enum_layer), val); }
+			template <typename E>
+			void make_blocking(E enum_layer) { m_traversable.reset(static_cast<size_t>(enum_layer)); }
 
 			// utility
 			void make_wall() { make_blocking(); make_opaque(); }
 			void make_ground() { make_traversable(); make_transparent(); }
+
+		public:
+			mass() {}
+			mass(bool transparent) : m_transparent(transparent) {}
+			mass(bool is_transparent, bool is_traversable) : m_transparent(is_transparent) { traversable(is_traversable); }
+			mass(bool is_transparent, bitset traversable) : m_transparent(is_transparent), m_traversable(traversable) {}
+
+		private:
+			bool m_transparent;
+			std::bitset<Layers> m_traversable;
 		};
 	}
 }

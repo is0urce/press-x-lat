@@ -41,6 +41,7 @@ namespace px
 
 				point2 start = camera - point2(w / 2, h / 2);
 
+				m_terrain->handle_units();
 				for (int j = 0; j < h; ++j)
 				{
 					for (int i = 0; i < w; ++i)

@@ -174,9 +174,6 @@
     <ClInclude Include="src\px\core\persistency.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\px\data\factory.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\px\core\world.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -220,9 +217,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\px\rl\entity.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\px\data\unit_composer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\px\core\sys\behavior_system.hpp">
@@ -324,6 +318,15 @@
     <ClInclude Include="src\px\ui\button_panel.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\px\core\sys\loot_component.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\core\data\factory.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\core\data\unit_composer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -353,9 +356,6 @@
     <ClCompile Include="src\px\ui\stack_panel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\px\data\unit_composer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\px\core\sys\npc_component.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -369,6 +369,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\px\core\sys\container_component.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\px\core\data\unit_composer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -24,19 +24,29 @@ namespace px
 
 			struct record
 			{
-			public:
 				tag_type tag;
 				skill_type ability;
 				record(tag_type t, skill_type s) : tag(t), ability(s) {}
 			};
-		private:
-			std::vector<record> m_skills;
-			skillbook_type* m_provider;
+
 
 		public:
 			void provide(skillbook_type* book)
 			{
 				m_provider = book;
+			}
+			void invalidate_skills()
+			{
+				if (!m_provider) throw std::runtime_error("px::rl::skill_set::invalidate() - book provider is null");
+
+				for (auto it = m_skills.begin(), last = m_skills.end(); it != last; ++it)
+				{
+					auto s = m_provider->find(it->tag);
+
+					if (s == m_provider->end()) throw std::runtime_error("px::rl::skill_set::invalidate - book has no skill with name " + it->tag);
+
+					it->ability = s->second;
+				}
 			}
 			auto add_skill(tag_type tag, size_t slot)
 			{
@@ -69,6 +79,15 @@ namespace px
 			{
 				return (Slot < m_skills.size()) ? &(m_skills[Slot].ability) : nullptr;
 			}
+
+		public:
+			skill_set() : m_provider(nullptr)
+			{
+			}
+
+		private:
+			std::vector<record> m_skills;
+			skillbook_type* m_provider;
 		};
 	}
 }

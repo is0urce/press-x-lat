@@ -97,9 +97,6 @@ namespace px
 				panel &p = *find->second.panel;
 				p.deactivate();
 			}
-#ifdef _DEBUG
-			else throw std::runtime_error("stack_panel::disable tag=" + name_tag);
-#endif // _DEBUG
 		}
 
 		void stack_panel::enable(const tag &name_tag)
@@ -109,6 +106,15 @@ namespace px
 			{
 				panel &p = *find->second.panel;
 				p.activate();
+			}
+		}
+		void stack_panel::enable(const tag &name_tag, bool flag)
+		{
+			auto find = m_stack.find(name_tag);
+			if (find != m_stack.end())
+			{
+				panel &p = *find->second.panel;
+				p.set_toggle(flag);
 			}
 		}
 		void stack_panel::toggle(const tag &name_tag)

@@ -42,7 +42,9 @@ namespace px
 				bind('8', key::action8);
 				bind('9', key::action9);
 				bind('0', key::action0);
+
 				bind('E', key::action_use);
+				bind('R', key::action_alt);
 
 				bind(VK_F5, key::quick_save);
 				bind(VK_F9, key::quick_load);

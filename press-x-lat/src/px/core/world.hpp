@@ -14,7 +14,7 @@
 
 #include "image.hpp"
 
-#include <px/data/factory.hpp>
+#include <px/core/data/factory.hpp>
 
 #include <memory>
 #include <list>
@@ -48,10 +48,10 @@ namespace px
 		private:
 			unsigned int m_seed;
 			matrix2<bool, cell_width, cell_height> m_created;
-			data::factory* m_factory;
+			factory* m_factory;
 
 		public:
-			world(data::factory &factory) : m_factory(&factory), m_seed(0)
+			world(factory &factory) : m_factory(&factory), m_seed(0)
 			{
 				generate(m_seed);
 			}
@@ -125,7 +125,7 @@ namespace px
 					body->join_faction(0);
 					character->add_skill("melee");
 
-					units.push_back(task->assemble());
+					units.push_back(task->assemble(persistency::serialized));
 				}
 			}
 			void store(unit_ptr unit)

@@ -24,7 +24,7 @@
 
 #include "input_adapter.hpp"
 
-#include <px/data/factory.hpp>
+#include <px/core/data/factory.hpp>
 #include <px/rl/skill.hpp>
 
 #include <px/core/ui/main_panel.hpp>
@@ -69,7 +69,7 @@ namespace px
 			game m_game;
 			unsigned int m_last_turn;
 
-			data::factory m_factory;
+			factory m_factory;
 			world m_world;
 
 		public:
@@ -122,50 +122,32 @@ namespace px
 
 				// player props
 				auto weapon = std::make_shared<body_component::item_type>();
-				weapon->add({ rl::effect::weapon_damage, 0x00, 1 });
+				weapon->add({ rl::effect::weapon_damage, 0x00, 50 });
 				weapon->set_name("Copper Sword");
 				weapon->set_tag("copper_sword");
-				auto ore = std::make_shared<body_component::item_type>();
-				ore->add({ rl::effect::ore_power, 0x00, 10 });
-				ore->set_name("Ore");
-				ore->set_tag("common_ore");
-				ore->set_description("This is a lump of ore, can be mined from ore vein deposits or bought from merchants.");
-				auto vein = std::make_shared<core::resource_component>();
-				vein->deposit(ore);
 
 				// make chest
 				auto chest = m_factory.produce();
 				chest->add_appearance('$', { 1, 1, 1 });
 				chest->add_location({ 2, 2 });
-				auto cb = chest->add_body(100, 100);
-				auto container = std::make_shared<core::container_component>();
-				chest->add(container);
-				// setup
-				for (int i = 0; i < 5; ++i)
-				{
-					auto loot = std::make_shared<body_component::item_type>();
-					loot->add({ rl::effect::ore_power, 0x00, i / 2 });
-					loot->set_name("Shiny ore");
-					loot->set_tag("shiny_ore");
-					loot->make_stacking();
-					cb->add(loot);
-				}
+				chest->add_body(100, 100);
+				chest->add_container();
 				// add
-				m_terrain.add(chest->assemble());
+				m_terrain.add(chest->assemble(persistency::serialized));
 
 				// make player
 				auto task = m_factory.produce();
-				task->add_appearance('@', { 1, 1, 1 });
+				auto img = task->add_appearance('@', { 1, 1, 1 });
 				auto pawn = task->add_location({ 1, 1 });
 				auto body = task->add_body(100, 100);
 				auto character = task->add_character();
-				task->add(vein);
 				// setup
 				body->join_faction(1);
 				body->equip_weapon(weapon);
 				character->add_skill("melee");
 				// add
-				m_terrain.add(task->assemble());
+				auto player = task->assemble(persistency::permanent);
+				m_terrain.add(player);
 
 				m_environment.impersonate(pawn);
 			}

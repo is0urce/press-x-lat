@@ -16,17 +16,21 @@ namespace px
 	{
 		class unit : public es::component_collection
 		{
-		private:
-			persistency m_persistency;
-
 		public:
-			unit() : m_persistency(persistency::serialized) {}
-
 			persistency get_persistency() const { return m_persistency; }
 			void set_persistency(persistency flag) { m_persistency = flag; }
 			void destroy() { m_persistency = persistency::destroying; }
 			void make_permanent() { m_persistency = persistency::permanent; }
 			void make_temporary() { m_persistency = persistency::temporary; }
+			void set_location(location_component* location) { m_location = location; }
+			location_component* location() { return m_location; }
+
+		public:
+			unit() : m_persistency(persistency::serialized) {}
+
+		private:
+			persistency m_persistency;
+			location_component* m_location;
 		};
 	}
 }

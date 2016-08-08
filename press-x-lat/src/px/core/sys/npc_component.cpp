@@ -31,8 +31,48 @@ namespace px
 				return false;
 			}
 		}
-		npc_component::npc_component() : m_alert(false) {}
+		npc_component::npc_component() {}
 		npc_component::~npc_component() {}
+
+		bool npc_component::useable_component(location_component* user_pawn, environment& env) const
+		{
+			if (location_component* location = *this)
+			{
+				if (body_component* body = *location)
+				{
+					if (auto hp = body->health())
+					{
+						if (hp->empty())
+						{
+							return true;
+						}
+						else
+						{
+							bool has_dialogue = false;
+							body_component* user_body = *user_pawn;
+							return user_body && env.reputation(*body, *user_body) >= 0 && has_dialogue;
+						}
+					}
+				}
+			}
+			return false;
+		}
+		void npc_component::use_component(location_component* user_pawn, environment& env)
+		{
+			if (location_component* location = *this)
+			{
+				if (body_component* body = *location)
+				{
+					if (auto hp = body->health())
+					{
+						if (hp->empty())
+						{
+							env.open_container(user_pawn->linked(), location->linked());
+						}
+					}
+				}
+			}
+		}
 
 		void npc_component::resolve_action(environment &env)
 		{

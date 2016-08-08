@@ -198,12 +198,13 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\core\location.hpp" />
     <ClInclude Include="src\px\core\sys\location_component.hpp" />
     <ClInclude Include="src\px\core\sys\location_system.hpp" />
+    <ClInclude Include="src\px\core\sys\loot_component.hpp" />
     <ClInclude Include="src\px\core\sys\npc_component.hpp" />
     <ClInclude Include="src\px\core\sys\resource_component.hpp" />
     <ClInclude Include="src\px\core\sys\ui_system.hpp" />
     <ClInclude Include="src\px\core\ui\container_panel.hpp" />
     <ClInclude Include="src\px\core\ui\item_operation.hpp" />
-    <ClInclude Include="src\px\data\unit_composer.hpp" />
+    <ClInclude Include="src\px\core\data\unit_composer.hpp" />
     <ClInclude Include="src\px\rl\i_ability.hpp" />
     <ClInclude Include="src\px\rl\astar.hpp" />
     <ClInclude Include="src\px\rl\body.hpp" />
@@ -222,7 +223,7 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\core\terrain.hpp" />
     <ClInclude Include="src\px\core\unit.hpp" />
     <ClInclude Include="src\px\core\world.hpp" />
-    <ClInclude Include="src\px\data\factory.hpp" />
+    <ClInclude Include="src\px\core\data\factory.hpp" />
     <ClInclude Include="src\px\es\i_engine.hpp" />
     <ClInclude Include="src\px\es\i_component.hpp" />
     <ClInclude Include="src\px\es\i_system.hpp" />
@@ -279,7 +280,7 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClCompile Include="src\px\core\sys\character_system.cpp" />
     <ClCompile Include="src\px\core\sys\container_component.cpp" />
     <ClCompile Include="src\px\core\sys\npc_component.cpp" />
-    <ClCompile Include="src\px\data\unit_composer.cpp" />
+    <ClCompile Include="src\px\core\data\unit_composer.cpp" />
     <ClCompile Include="src\px\shell\canvas.cpp" />
     <ClCompile Include="src\px\shell\font.cpp" />
     <ClCompile Include="src\px\shell\font_texture.cpp" />

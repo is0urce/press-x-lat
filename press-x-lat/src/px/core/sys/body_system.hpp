@@ -32,6 +32,23 @@ namespace px
 			{
 				l.clear_faction();
 			}
+			virtual void update_system() override
+			{
+				enumerate([](const body_component &body)
+				{
+					if (body.active())
+					{
+						auto hp = body.health();
+						if (hp)
+						{
+							if (hp->empty() && body.empty())
+							{
+								//dele
+							}
+						}
+					}
+				});
+			}
 		};
 	}
 }

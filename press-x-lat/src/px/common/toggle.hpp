@@ -42,6 +42,10 @@ namespace px
 		{
 			m_switch = Initial;
 		}
+		void set_toggle(bool flag)
+		{
+			m_switch = flag;
+		}
 	};
 }
 

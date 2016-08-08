@@ -251,6 +251,22 @@ namespace px
 			{
 				focus();
 				++m_time;
+
+				m_terrain->enumerate([](auto unit){			
+					if (location_component* pawn = unit->location())
+					{
+						if (body_component* body = *pawn)
+						{
+							if (auto hp = body->health())
+							{
+								if (hp->empty() && body->empty())
+								{
+									unit->destroy();
+								}
+							}
+						}
+					}
+				});
 			}
 
 			// player

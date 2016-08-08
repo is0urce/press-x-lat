@@ -12,25 +12,15 @@ namespace px
 {
 	namespace ui
 	{
-		namespace
+		struct nop_button
 		{
-			struct nop_button
-			{
-				bool operator()(unsigned int) { return false; }
-			};
-		}
+			bool operator()(unsigned int) { return false; }
+		};
 
-		// ButtonCallback = bool operator()(unsigned int virtual_button)
-		template <typename ButtonCallback = nop_button>
+		// Button = bool operator()(unsigned int virtual_button)
+		template <typename Button = nop_button>
 		class button_panel : public stack_panel
 		{
-		private:
-			ButtonCallback m_button;
-
-		public:
-			button_panel(const ButtonCallback &button = ButtonCallback()) : m_button(button) {}
-			virtual ~button_panel() {}
-
 		protected:
 			virtual bool click_control(const point2 &position, unsigned int v_button) override
 			{
@@ -40,6 +30,13 @@ namespace px
 				}
 				return stack_panel::click_control(position, v_button);
 			}
+
+		public:
+			button_panel(const Button &button = Button()) : m_button(button) {}
+			virtual ~button_panel() {}
+
+		private:
+			Button m_button;
 		};
 	}
 }

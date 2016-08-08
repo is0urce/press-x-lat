@@ -20,8 +20,6 @@ namespace px
 		{
 		public:
 			typedef key key_type;
-		public:
-			virtual ~control() {}
 
 		protected:
 			virtual bool key_control(key_type code) { return false; }
@@ -34,6 +32,9 @@ namespace px
 			bool hover(const point2 &position) { return hover_control(position); }
 			bool click(const point2 &position, unsigned int button) { return click_control(position, button); }
 			bool scroll(int delta) { return scroll_control(delta); }
+
+		public:
+			virtual ~control() {}
 		};
 	}
 }

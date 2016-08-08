@@ -13,6 +13,8 @@
 #include <px/core/sys/body_system.hpp>
 #include <px/core/sys/character_system.hpp>
 #include <px/core/sys/behavior_system.hpp>
+#include <px/core/sys/resource_component.hpp>
+#include <px/core/sys/container_component.hpp>
 
 #include "unit_composer.hpp"
 
@@ -20,7 +22,7 @@
 
 namespace px
 {
-	namespace data
+	namespace core
 	{
 		class factory;
 		class task;
@@ -74,10 +76,8 @@ namespace px
 			factory* m_factory;
 
 		public:
-			task(factory &builder) : m_factory(&builder)
-			{
-				begin<core::persistency::serialized>();
-			}
+			task(factory &builder)
+				: m_factory(&builder) {}
 			~task() {}
 
 		public:
@@ -91,6 +91,7 @@ namespace px
 
 				// register & return
 				add(location);
+
 				return location;
 			}
 			auto add_appearance(unsigned int glyph)
@@ -145,6 +146,27 @@ namespace px
 
 				add(npc);
 				return npc;
+			}
+			auto add_resource()
+			{
+				auto resource = std::make_shared<resource_component>();
+				add(resource);
+				return resource;
+			}
+			auto add_container()
+			{
+				auto container = std::make_shared<container_component>();
+				add(container);
+				return container;
+			}
+			std::shared_ptr<core::unit> assemble(persistency status)
+			{
+				auto unit = std::make_shared<core::unit>();
+				unit->set_persistency(status);
+				unit->set_location(location().get());
+
+				unit_composer::assemble(*unit);
+				return unit;
 			}
 		};
 	}

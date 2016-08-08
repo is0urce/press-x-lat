@@ -177,6 +177,39 @@ namespace px
 				unit->activate();
 				m_units.push_back(unit);
 			}
+
+			template <typename Op>
+			void enumerate(Op&& fn)
+			{
+				for (auto it = m_units.begin(), last = m_units.end(); it != last; ++it)
+				{
+					std::forward<Op>(fn)(*it);
+				}
+			}
+
+			void handle_units()
+			{
+				for (auto it = m_units.begin(), last = m_units.end(); it != last; )
+				{
+					switch ((*it)->get_persistency())
+					{
+					case persistency::destroying:
+						it = m_units.erase(it);
+						break;
+					case persistency::temporary:
+						++it;
+						break;
+					case persistency::serialized:
+						++it;
+						break;
+					case persistency::permanent:
+						++it;
+						break;
+					default:
+						break;
+					}
+				}
+			}
 		};
 	}
 }

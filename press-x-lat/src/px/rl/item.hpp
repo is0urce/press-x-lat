@@ -34,7 +34,7 @@ namespace px
 			}
 			bool stack(item& i)
 			{
-				if (&i == this) throw std::runtime_error("px::rl::item::stack() - stacking into same item");
+				if (&i == this) throw std::runtime_error("px::rl::item::stack(item&) - stacking into same item");
 
 				bool full = false;
 				auto total = m_stack + i.m_stack;

@@ -1,6 +1,6 @@
 // name: inventory.hpp
 // type: c++ header
-// desc: class definition
+// desc: template class definition
 // auth: is0urce
 
 #ifndef PX_RL_INVENTORY_HPP
@@ -22,9 +22,6 @@ namespace px
 			typedef Effect effect_type;
 			typedef item<effect_type> item_type;
 			typedef std::shared_ptr<item_type> item_ptr;
-
-		private:
-			std::list<item_ptr> m_items;
 
 		public:
 			void add(item_ptr i)
@@ -76,6 +73,9 @@ namespace px
 					std::forward<UnaryOperation>(enum_fn)(item);
 				}
 			}
+
+		private:
+			std::list<item_ptr> m_items;
 		};
 	}
 }
