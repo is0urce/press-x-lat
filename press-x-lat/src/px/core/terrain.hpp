@@ -193,16 +193,24 @@ namespace px
 				{
 					switch ((*it)->get_persistency())
 					{
+					case persistency::permanent:
+						++it;
+						break;
 					case persistency::destroying:
-						it = m_units.erase(it);
+						if ((*it)->decay_timer() == 0)
+						{
+							it = m_units.erase(it);
+						}
+						else
+						{
+							(*it)->decay();
+							++it;
+						}
 						break;
 					case persistency::temporary:
 						++it;
 						break;
 					case persistency::serialized:
-						++it;
-						break;
-					case persistency::permanent:
 						++it;
 						break;
 					default:

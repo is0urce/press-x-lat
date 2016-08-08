@@ -12,84 +12,34 @@
 #include <px/rl/traverse.hpp>
 #include <px/core/terrain.hpp>
 
-#include <px/common/fps_counter.hpp>
 #include <px/ui/stack_panel.hpp>
 
-#include <px/core/ui/status_panel.hpp>
-#include <px/core/ui/target_panel.hpp>
-#include <px/core/ui/inventory_panel.hpp>
-#include <px/core/ui/container_panel.hpp>
-#include <px/core/ui/anvil_panel.hpp>
+#include <px/common/fps_counter.hpp>
 
-#include <px/ui/performance_panel.hpp>
+#include <memory>
 
 namespace px
 {
 	namespace core
 	{
+		class inventory_panel;
+		class container_panel;
+		class anvil_panel;
+
 		class environment
 		{
 		public:
 			static const unsigned int max_use_distance = 1;
-		private:
-			unsigned int m_time;
-
-			std::shared_ptr<location_component> m_player;
-			terrain* m_terrain;
-			qtree<location_component*>* m_space;
-			faction_relation m_factions;
-
-			// user interface
-
-			fps_counter m_fps;
-			point2 m_target;
-			ui::stack_panel* m_ui;
-			std::shared_ptr<inventory_panel> m_inventory;
-			std::shared_ptr<anvil_panel> m_craft;
-			std::shared_ptr<container_panel> m_container;
 
 		public:
-			environment(ui::stack_panel &ui, terrain &terra, qtree<location_component*> &space)
-				: m_ui(&ui)
-				, m_terrain(&terra)
-				, m_space(&space)
-				, m_time(0)
-			{
-				setup_ui();
-			}
-			virtual ~environment()
-			{
-			}
-			environment(const environment&) = delete;
+			// interface relation
 
-		private:
-			void setup_ui()
-			{
-				m_inventory = std::make_shared<inventory_panel>();
-				m_craft = std::make_shared<anvil_panel>();
-				m_container = std::make_shared<container_panel>();
-
-				m_ui->emplace<ui::performance_panel>("performance", { { 0.0, 0.0 },{ 1,0 },{ -2, 1 },{ 1.0, 0.0 } }, m_fps);
-				m_ui->emplace<status_panel>("status", { { 0.0, 1.0 },{ 1, -12 },{ -2, 1 },{ 1.0, 0.0 } }, *this);
-				m_ui->emplace<target_panel>("target", { { 1.0, 1.0 },{ -12, -12 },{ -2, 1 },{ 1.0, 0.0 } }, *this);
-
-				m_ui->add("inventory", m_inventory, { { 0.3, 0.1 },{ 0, 0 },{ 0, 0 },{ 0.4, 0.8 } });
-				m_ui->add("craft", m_craft, { { 0.1, 0.1 },{ 0, 0 },{ 0, 0 },{ 0.8, 0.8 } });
-				m_ui->add("container", m_container, { { 0.2, 0.1 },{ 0, 0 },{ 0, 0 },{ 0.6, 0.8 } });
-
-				m_inventory->deactivate();
-				m_craft->deactivate();
-				m_container->deactivate();
-			}
-			void focus()
-			{
-				if (m_player)
-				{
-					m_terrain->focus(m_player->current());
-				}
-			}
-
-		public:
+			void setup_ui();
+			void target(point2 location);
+			point2 targeted() const;
+			void open_workshop(std::weak_ptr<body_component> user);
+			void open_container(std::weak_ptr<body_component> user, std::weak_ptr<body_component> container);
+			void assign_inventory(std::weak_ptr<body_component> body);
 
 			// actions
 
@@ -252,16 +202,16 @@ namespace px
 				focus();
 				++m_time;
 
-				m_terrain->enumerate([](auto unit){			
+				m_terrain->enumerate([](auto unit) {
 					if (location_component* pawn = unit->location())
 					{
 						if (body_component* body = *pawn)
 						{
 							if (auto hp = body->health())
 							{
-								if (hp->empty() && body->empty())
+								if (hp->empty() && body->empty() && unit->get_persistency() != persistency::destroying)
 								{
-									unit->destroy();
+									unit->destroy(5);
 								}
 							}
 						}
@@ -285,39 +235,45 @@ namespace px
 				focus();
 				if (unit)
 				{
-					m_inventory->show(unit->linked());
+					assign_inventory(unit->linked());
 				}
 			}
 
-			// interface relation
-
-			void target(point2 location)
+		public:
+			environment(ui::stack_panel &ui, terrain &terra, qtree<location_component*> &space)
+				: m_ui(&ui)
+				, m_terrain(&terra)
+				, m_space(&space)
+				, m_time(0)
 			{
-				m_target = location;
+				setup_ui();
 			}
-			point2 targeted() const
+			virtual ~environment() {}
+			environment(const environment&) = delete;
+
+		private:
+			void focus()
 			{
-				return m_target;
+				if (m_player)
+				{
+					m_terrain->focus(m_player->current());
+				}
 			}
 
-			void open_workshop(std::weak_ptr<body_component> user)
-			{
-				m_craft->show(user);
+		private:
+			unsigned int m_time;
+			std::shared_ptr<location_component> m_player;
+			terrain* m_terrain;
+			qtree<location_component*>* m_space;
+			faction_relation m_factions;
 
-				m_inventory->deactivate();
-				m_container->deactivate();
-
-				m_craft->activate();
-			}
-			void open_container(std::weak_ptr<body_component> user, std::weak_ptr<body_component> container)
-			{
-				m_container->examine_container(user, container);
-
-				m_inventory->deactivate();
-				m_craft->deactivate();
-
-				m_container->activate();
-			}
+			// user interface
+			ui::stack_panel* m_ui;
+			point2 m_target;
+			fps_counter m_fps;
+			std::shared_ptr<inventory_panel> m_inventory;
+			std::shared_ptr<anvil_panel> m_craft;
+			std::shared_ptr<container_panel> m_container;
 		};
 	}
 }

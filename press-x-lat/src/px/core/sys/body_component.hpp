@@ -26,6 +26,7 @@ namespace px
 	{
 		class i_useable_component;
 		class character_component;
+
 		class body_component
 			: public es::i_component
 			, public es::component_link<character_component>
@@ -38,12 +39,6 @@ namespace px
 			using es::component_link<character_component>::link;
 			using es::component_link<i_useable_component>::link;
 
-		private:
-			item_ptr m_hands;
-
-		public:
-			virtual ~body_component() {}
-
 		public:
 			item_ptr weapon()
 			{
@@ -55,6 +50,12 @@ namespace px
 
 				m_hands = i;
 			}
+
+		public:
+			virtual ~body_component() {}
+
+		private:
+			item_ptr m_hands;
 		};
 	}
 }

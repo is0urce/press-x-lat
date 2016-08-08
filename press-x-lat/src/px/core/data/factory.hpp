@@ -29,20 +29,6 @@ namespace px
 
 		class factory
 		{
-		private:
-			core::rendering_system* m_rs;
-			core::location_system* m_ls;
-			core::body_system* m_bs;
-			core::character_system* m_cs;
-			core::behavior_system* m_behavior_sys;
-
-		public:
-			factory(core::rendering_system& rs, core::location_system &ls, core::body_system &bs, core::character_system &cs, core::behavior_system &ai_sys)
-				: m_rs(&rs), m_ls(&ls), m_bs(&bs), m_cs(&cs), m_behavior_sys(&ai_sys)
-			{
-			}
-			virtual ~factory() {}
-
 		public:
 			std::unique_ptr<task> produce()
 			{
@@ -68,6 +54,21 @@ namespace px
 			{
 				return m_behavior_sys->make();
 			}
+
+		public:
+			factory(rendering_system& rs, location_system &ls, body_system &bs, character_system &cs, behavior_system &ai_sys)
+				: m_rs(&rs), m_ls(&ls), m_bs(&bs), m_cs(&cs), m_behavior_sys(&ai_sys)
+			{
+			}
+			factory(const factory&) = delete;
+			virtual ~factory() {}
+
+		private:
+			rendering_system* m_rs;
+			location_system* m_ls;
+			body_system* m_bs;
+			character_system* m_cs;
+			behavior_system* m_behavior_sys;
 		};
 
 		class task : public unit_composer

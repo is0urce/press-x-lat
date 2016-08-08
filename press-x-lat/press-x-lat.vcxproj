@@ -277,6 +277,7 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\press-x-lat.cpp" />
+    <ClCompile Include="src\px\core\environment-ui.cpp" />
     <ClCompile Include="src\px\core\sys\character_system.cpp" />
     <ClCompile Include="src\px\core\sys\container_component.cpp" />
     <ClCompile Include="src\px\core\sys\npc_component.cpp" />

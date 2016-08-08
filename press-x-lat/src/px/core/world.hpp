@@ -120,9 +120,14 @@ namespace px
 
 					auto weapon = std::make_shared<body_component::item_type>();
 					weapon->add({ rl::effect::weapon_damage, 0, 1 });
+					auto loot = std::make_shared<body_component::item_type>();
+					loot->add({ rl::effect::ore_power, 0x00, 50 });
+					loot->set_name("Ore");
+					loot->set_tag("common_ore");
 
 					body->equip_weapon(weapon);
 					body->join_faction(0);
+					body->add(loot);
 					character->add_skill("melee");
 
 					units.push_back(task->assemble(persistency::serialized));

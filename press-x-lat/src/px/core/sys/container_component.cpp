@@ -5,6 +5,9 @@
 
 #include "container_component.hpp"
 
+#include <px/core/sys/location_component.hpp>
+#include <px/core/sys/body_component.hpp>
+#include <px/core/sys/i_useable_component.hpp>
 #include <px/core/environment.hpp>
 
 namespace px

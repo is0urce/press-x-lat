@@ -16,6 +16,7 @@ namespace px
 	{
 		class environment;
 		class location_component;
+
 		class npc_component
 			: public es::i_component
 			, public es::component_link<location_component>

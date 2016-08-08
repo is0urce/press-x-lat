@@ -7,15 +7,16 @@
 #define PX_CORE_CONTAINER_COMPONENT_HPP
 
 #include <px/es/i_component.hpp>
-#include <px/core/sys/location_component.hpp>
-#include <px/core/sys/body_component.hpp>
 #include <px/core/sys/i_useable_component.hpp>
 
 namespace px
 {
 	namespace core
 	{
+		class location_component;
+		class body_component;
 		class environment;
+
 		class container_component
 			: public es::i_component
 			, public i_useable_component

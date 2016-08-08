@@ -27,8 +27,11 @@ namespace px
 		public:
 			typedef typename character_component::skillbook_type skillbook_type;
 
-		private:
-			skillbook_type m_spellbook;
+		public:
+			skillbook_type& skill_book()
+			{
+				return m_spellbook;
+			}
 
 		public:
 			character_system();
@@ -36,11 +39,9 @@ namespace px
 
 		protected:
 			virtual void element_allocated(character_component &l) override;
-		public:
-			skillbook_type& skill_book()
-			{
-				return m_spellbook;
-			}
+
+		private:
+			skillbook_type m_spellbook;
 		};
 	}
 }
