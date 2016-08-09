@@ -64,13 +64,13 @@ namespace px
 			behavior_system m_behavior_system;
 			ui_system m_ui_system;
 
+			world m_world;
 			terrain m_terrain;
+
 			environment m_environment;
 			game m_game;
-			unsigned int m_last_turn;
-
 			factory m_factory;
-			world m_world;
+			unsigned int m_last_turn;
 
 		public:
 			engine(shell::opengl* gl)
@@ -87,7 +87,7 @@ namespace px
 				, m_factory(m_sprite_system, m_location_system, m_body_system, m_character_system, m_behavior_system)
 				, m_world(m_factory)
 				, m_terrain(m_world)
-				, m_environment(m_ui, m_terrain, m_space)
+				, m_environment(m_ui)
 				, m_game(m_environment)
 				, m_last_turn(0)
 			{
@@ -119,6 +119,7 @@ namespace px
 						&& m_environment.distance(user->current(), target->current()) == 1; // 1 tile melee distance
 				});
 
+				m_environment.start(m_terrain, m_space, m_world);
 
 				// player props
 				auto weapon = std::make_shared<body_component::item_type>();

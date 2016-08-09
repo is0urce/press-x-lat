@@ -34,17 +34,13 @@ namespace px
 			}
 			virtual void update_system() override
 			{
-				enumerate([](const body_component &body)
+				enumerate([](body_component &body)
 				{
 					if (body.active())
 					{
-						auto hp = body.health();
-						if (hp)
+						if (body.dead())
 						{
-							if (hp->empty() && body.empty())
-							{
-								//dele
-							}
+							body.make_traversable(rl::traverse::floor);
 						}
 					}
 				});

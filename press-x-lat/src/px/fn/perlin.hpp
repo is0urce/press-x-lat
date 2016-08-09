@@ -19,7 +19,7 @@ namespace px
 			const double pi = 3.141592653589793238463;
 		}
 
-		template <unsigned int _W, unsigned int _H>
+		template <size_t W, size_t H>
 		class perlin
 		{
 		public:
@@ -28,29 +28,28 @@ namespace px
 				double x;
 				double y;
 			};
-		private:
-			matrix2<gradient, _W, _H> m_matrix; // gradient pairs
 
 		public:
-			// rng - random function should generate numbers in range 0..1
-			// size - determines area of unique tile generated
 			perlin()
 			{
-				if (_W == 0) throw std::runtime_error("w = 0");
-				if (_H == 0) throw std::runtime_error("h = 0");
+				static_assert(W > 1 && H > 1, "px::perlin require W > 1 && H > 1");
 			}
-			template <typename _Op>
-			perlin(_Op rng) : perlin()
+			// rng - random function should generate numbers in range 0..1
+			template <typename Generator>
+			perlin(Generator rng) : perlin()
 			{
 				fill(rng);
 			}
-			template <typename _Op>
-			void fill(_Op rng)
+			// rng - random function should generate numbers in range 0..1
+			template <typename Generator>
+			void fill(Generator rng)
 			{
 				m_matrix.fill([&rng](unsigned int i, unsigned int j) -> gradient
 				{
-					auto num = pi * 2.0 * rng();
-					return{ std::cos(num), std::sin(num) };
+					double num = pi * 2 * rng();
+					int random = std::rand();
+					//return{ std::cos(num), std::sin(num) };
+					return{ std::cos((double)random), std::sin((double)random) };
 				});
 			}
 
@@ -59,12 +58,19 @@ namespace px
 			{
 				// get remainder for 'repeat tiling' effect
 				// tiling also used in fractal sublevel sampling
-				x = modulo(x, _W);
-				y = modulo(y, _H);
+				x = modulo(x, W);
+				y = modulo(y, H);
 
 				// grid cell square coordinates
-				int x0 = static_cast<int>(std::floor(x));
-				int y0 = static_cast<int>(std::floor(y));
+				//int x0 = static_cast<int>(std::floor(x));
+				//int y0 = static_cast<int>(std::floor(y));
+				//int x1 = x0 + 1;
+				//int y1 = y0 + 1;
+
+				//if (x < 0 || y < 0 || x == W || y == H) throw std::runtime_error("asf");
+
+				int x0 = static_cast<int>(x);
+				int y0 = static_cast<int>(y);
 				int x1 = x0 + 1;
 				int y1 = y0 + 1;
 
@@ -74,8 +80,8 @@ namespace px
 				auto g11 = vertice_gradient(x1, y1, x, y);
 
 				// interpolation weights
-				auto sx = x - static_cast<double>(x0);
-				auto sy = y - static_cast<double>(y0);
+				double sx = x - x0;
+				double sy = y - y0;
 
 				auto d = lerp(g00, g10, sx);
 				auto u = lerp(g01, g11, sx);
@@ -87,9 +93,8 @@ namespace px
 			double sample(double x, double y, unsigned int iterations) const
 			{
 				double total = 0;
-
 				double multiplier = 1;
-				for (unsigned int i = 0; i < iterations; ++i)
+				for (; iterations > 0; --iterations)
 				{
 					total += sample(x, y) * multiplier;
 					x *= 2;
@@ -104,13 +109,13 @@ namespace px
 			double vertice_gradient(int vx, int vy, double x, double y) const
 			{
 				// distance
-				auto dx = x - static_cast<double>(vx);
-				auto dy = y - static_cast<double>(vy);
+				auto dx = x - vx;
+				auto dy = y - vy;
 
-				vx = vx >= _W ? 0 : vx;
-				vy = vy >= _H ? 0 : vy;
+				vx = (vx == W) ? 0 : vx;
+				vy = (vy == H) ? 0 : vy;
 
-				const gradient &g = m_matrix.at(vx, vy);
+				const gradient &g = m_matrix.at(point2(vx, vy));
 				return dx * g.x + dy * g.y;
 			}
 
@@ -120,11 +125,14 @@ namespace px
 			}
 
 			// linear interpolation helper function
-			template <typename _T>
-			static _T lerp(_T a, _T b, _T w)
+			template <typename T>
+			static T lerp(T a, T b, T w)
 			{
 				return a * (1 - w) + b * w;
 			}
+
+		private:
+			matrix2<gradient, W, H> m_matrix; // gradient pairs
 		};
 	}
 }

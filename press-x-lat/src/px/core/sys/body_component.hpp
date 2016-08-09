@@ -50,6 +50,11 @@ namespace px
 
 				m_hands = i;
 			}
+			bool dead() const
+			{
+				auto hp = health();
+				return hp && hp->empty();
+			}
 
 		public:
 			virtual ~body_component() {}

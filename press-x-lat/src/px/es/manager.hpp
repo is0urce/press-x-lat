@@ -20,31 +20,33 @@ namespace px
 {
 	namespace es
 	{
-		template<typename _C, size_t _B>
+		template<typename E, size_t _B>
 		class manager
 		{
 		public:
-			typedef _C element;
-			typedef std::shared_ptr<element> element_ptr;
-			typedef std::array<element, _B> container_t;
+			typedef E element;
+			struct element_record
+			{
+				bool exists;
+				E entry;
+				element_record() : exists(false) {}
+			};
 			struct batch
 			{
 			private:
-				container_t m_elements;
-				std::array<bool, _B> m_exist;
+				std::array<element_record, _B> m_elements;
 				std::list<size_t> m_recycle;
-				size_t m_cursor = 0;
+				size_t m_cursor;
 
 			public:
-				batch()
+				batch() : m_cursor(0)
 				{
-					m_exist.fill(false);
 				}
 
 			public:
 				bool exists(size_t n) const
 				{
-					return m_exist[n];
+					return m_elements[n].exists;
 				}
 				size_t recycled() const
 				{
@@ -70,6 +72,10 @@ namespace px
 				{
 					m_recycle.clear();
 					m_cursor = 0;
+					for (auto it = m_elements.begin(), last = m_elements.end(); it != last; ++it)
+					{
+						it->exists = false;
+					}
 				}
 				void optimise()
 				{
@@ -78,34 +84,34 @@ namespace px
 						clear();
 					}
 				}
-				const _C& operator[](size_t index) const
+				const element& operator[](size_t index) const
 				{
-					return m_elements[index];
+					return m_elements[index].entry;
 				}
-				_C& operator[](size_t index)
+				element& operator[](size_t index)
 				{
-					return m_elements[index];
+					return m_elements[index].entry;
 				}
-				const _C& select(size_t index) const
+				const element& select(size_t index) const
 				{
-					return m_elements[index];
+					return m_elements[index].entry;
 				}
-				_C& select(size_t index)
+				element& select(size_t index)
 				{
-					return m_elements[index];
+					return m_elements[index].entry;
 				}
 				size_t increment()
 				{
-					auto index = m_cursor;
+					size_t index = m_cursor;
 					++m_cursor;
 
-					m_exist[index] = true;
+					m_elements[index].exists = true;
 					return index;
 				}
 				void recycle(size_t index)
 				{
 					m_recycle.push_back(index);
-					m_exist[index] = false;
+					m_elements[index].exists = false;
 
 					// optimise batch
 					optimise();
@@ -115,8 +121,8 @@ namespace px
 					// use position of recycled component
 					auto it = m_recycle.end();
 					auto index = *it;
-					m_recycle.erase(it);
-					m_exist[index] = true;
+					m_recycle.pop_back();
+					m_elements[index].exists = true;
 					return index;
 				}
 			};
@@ -165,8 +171,8 @@ namespace px
 				return std::shared_ptr<element>(&e, [this, k](element* pointer) { destroy(k); element_released(*pointer); });
 			}
 
-			template<typename _O>
-			void enumerate(_O fn)
+			template<typename Op>
+			void enumerate(Op&& fn)
 			{
 				for (auto it = m_batches.begin(), last = m_batches.end(); it != last; ++it)
 				{
@@ -175,34 +181,35 @@ namespace px
 					{
 						if (it->exists(i))
 						{
-							fn((*it)[i]);
+							std::forward<Op>(fn)((*it)[i]);
 						}
 					}
 				}
 			}
 
 			// clear unused batches
-			void optimise()
-			{
-				for (auto it = m_batches.begin(), last = m_batches.end(); it != last;)
-				{
-					it->optimise();
-					if (it->count() == 0)
-					{
-						++it;
-						m_batches.erase(it);
-					}
-					else
-					{
-						++it;
-					}
-				}
-			}
+			//void optimise()
+			//{
+			//	for (auto it = m_batches.begin(), last = m_batches.end(); it != last;)
+			//	{
+			//		it->optimise();
+			//		if (it->count() == 0)
+			//		{
+			//			++it;
+			//			m_batches.erase(it);
+			//		}
+			//		else
+			//		{
+			//			++it;
+			//		}
+			//	}
+			//}
 
 		private:
 			key select()
 			{
 				std::lock_guard<std::mutex> lock(m_mutex);
+				++m_count;
 
 				// select batch
 				auto it = m_batches.begin();
@@ -217,18 +224,18 @@ namespace px
 					it = m_batches.emplace(it);
 				}
 
-				++m_count;
+				size_t cursor = (it->recycled() > 0) ? (it->recycle()) : (it->increment());
+				key result{ it, cursor };
 
-				return{ it, (it->recycled() > 0) ? it->recycle() : it->increment() };
+				return result;
 			}
 
 			void destroy(key k)
 			{
 				std::lock_guard<std::mutex> lock(m_mutex);
+				--m_count;
 
 				k.batch->recycle(k.cursor);
-
-				--m_count;
 			}
 		};
 	}

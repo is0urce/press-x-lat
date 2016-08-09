@@ -6,13 +6,15 @@
 #ifndef PX_CORE_WORLD_H
 #define PX_CORE_WORLD_H
 
+#include <px/core/gen/world_cell.hpp>
+
 #include <px/common/matrix.hpp>
 #include <px/rl/tile.hpp>
 #include <px/rl/traverse.hpp>
 #include <px/rl/map_stream.hpp>
 #include <px/fn/perlin.hpp>
 
-#include "image.hpp"
+#include <px/core/image.hpp>
 
 #include <px/core/data/factory.hpp>
 
@@ -29,44 +31,39 @@ namespace px
 		class world
 		{
 		public:
-			static const unsigned int cell_width = 10;
+			static const unsigned int world_width = 10;
+			static const unsigned int world_height = world_width;
+			static const unsigned int cell_width = 100;
 			static const unsigned int cell_height = cell_width;
-			static const unsigned int perlin_width = 3;
+			static const unsigned int perlin_width = 6;
 			static const unsigned int perlin_height = perlin_width;
-			static const unsigned int perlin_samples = 9;
+			static const unsigned int perlin_samples = 1;
 
 		public:
 			typedef std::shared_ptr<unit> unit_ptr;
-			typedef rl::tile<image> tile;
-			typedef matrix2<tile, cell_width, cell_height> map;
+			typedef rl::tile<image> tile_type;
+			typedef matrix2<tile_type, cell_width, cell_height> local_map_type;
+			typedef matrix2<world_cell, world_width, world_height> world_map_type;
 			typedef std::mersenne_twister_engine<std::uint_fast32_t, 32, 624, 397, 31,
 				0x9908b0df, 11,
 				0xffffffff, 7,
 				0x9d2c5680, 15,
 				0xefc60000, 18, 1812433253> rng;
 
-		private:
-			unsigned int m_seed;
-			matrix2<bool, cell_width, cell_height> m_created;
-			factory* m_factory;
-
-		public:
-			world(factory &factory) : m_factory(&factory), m_seed(0)
-			{
-				generate(m_seed);
-			}
-			virtual ~world()
-			{
-			}
-			world(const world&) = delete;
-
 		public:
 			void generate(unsigned int seed)
 			{
-				m_created.fill(false);
 			}
 
-			void arrange(const point2 &cell, map& terrain, std::list<unit_ptr>& units)
+			void arrange(const point2 &cell, local_map_type& terrain, std::list<unit_ptr>& units)
+			{
+				world_cell &c = m_map.select(cell, m_outer);
+				bool mobiles = c.generated;
+				c.generated = true;
+
+				generate(cell, terrain, !mobiles, units);
+			}
+			void generate(const point2 &cell, local_map_type& terrain, bool static_mobiles, std::list<unit_ptr>& units)
 			{
 				rng generator(m_seed + cell.x() + cell.y() * cell_width * cell_height);
 				std::uniform_real_distribution<double> distribution;
@@ -75,11 +72,11 @@ namespace px
 				double mx = static_cast<double>(perlin_width) / cell_width;
 				double my = static_cast<double>(perlin_height) / cell_height;
 
-				terrain.enumerate([&](int i, int j, tile& t)
+				terrain.enumerate([&](int i, int j, auto& t)
 				{
 					auto magnitude = noise.sample(mx * i, my * j, perlin_samples);
 					auto &img = t.appearance();
-					if (magnitude > -0.25)
+					if (magnitude > 0)
 					{
 						img.glyph = '.';
 						img.tint = { 0, 1, 0 };
@@ -89,13 +86,13 @@ namespace px
 					{
 						img.glyph = '#';
 						img.tint = { 0.5, 0.5, 0.5 };
-						t.make_blocking();
+						t.make_traversable();
 					}
-#ifdef _DEBUG
+
 					if (i == 0) terrain[{i, j}].appearance().glyph = '|';
 					if (j == 0) terrain[{i, j}].appearance().glyph = '-';
 					if (i == 0 && j == 0) terrain[{i, j}].appearance().glyph = '+';
-#endif
+
 				});
 #ifdef _DEBUG
 				const char* digits = "0123456789ABCDEF";
@@ -104,12 +101,8 @@ namespace px
 				terrain[{3, 1}].appearance().glyph = digits[cell.y() - 10 * size_t((std::floor)(cell.y() / 10.0))];
 #endif
 
-				bool outer = true;
-				bool &created = m_created.select(cell, outer);
-				if (!created)
+				if (static_mobiles)
 				{
-					created = true;
-
 					auto task = m_factory->produce();
 
 					auto sprite = task->add_appearance('g', { 1, 0, 0 });
@@ -137,6 +130,25 @@ namespace px
 			{
 
 			}
+
+		public:
+			world(factory &factory) : m_factory(&factory), m_seed(0)
+			{
+				m_outer.generated = true; // no additional generation for out-of-borders cells
+
+				generate(m_seed);
+			}
+			virtual ~world()
+			{
+			}
+			world(const world&) = delete;
+
+		private:
+			unsigned int m_seed;
+			world_map_type m_created;
+			factory* m_factory;
+			world_map_type m_map;
+			world_cell m_outer;
 		};
 	}
 }

@@ -53,6 +53,9 @@ namespace px
 				bind(VK_ESCAPE, key::command_cancel);
 
 				bind('I', key::panel_inventory);
+				bind('C', key::panel_character);
+				bind('M', key::panel_map);
+				bind('J', key::panel_journal);
 			}
 			virtual ~winkey()
 			{

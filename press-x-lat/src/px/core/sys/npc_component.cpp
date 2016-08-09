@@ -24,9 +24,8 @@ namespace px
 			{
 				if (body_component* target_body = target_location)
 				{
-					auto hp = target_body->health();
 					character_component* target_character = *target_body;
-					return target_character && !hp->empty() && env.reputation(source_body, *target_body) < 0; // an living enemy character
+					return target_character && !target_body->dead() && env.reputation(source_body, *target_body) < 0; // an living enemy character
 				}
 				return false;
 			}
@@ -40,18 +39,15 @@ namespace px
 			{
 				if (body_component* body = *location)
 				{
-					if (auto hp = body->health())
+					if (body->dead())
 					{
-						if (hp->empty())
-						{
-							return true;
-						}
-						else
-						{
-							bool has_dialogue = false;
-							body_component* user_body = *user_pawn;
-							return user_body && env.reputation(*body, *user_body) >= 0 && has_dialogue;
-						}
+						return true;
+					}
+					else
+					{
+						bool has_dialogue = false;
+						body_component* user_body = *user_pawn;
+						return user_body && env.reputation(*body, *user_body) >= 0 && has_dialogue;
 					}
 				}
 			}
@@ -63,12 +59,9 @@ namespace px
 			{
 				if (body_component* body = *location)
 				{
-					if (auto hp = body->health())
+					if (body->dead())
 					{
-						if (hp->empty())
-						{
-							env.open_container(user_pawn->linked(), location->linked());
-						}
+						env.open_container(user_pawn->linked(), location->linked());
 					}
 				}
 			}
@@ -80,8 +73,7 @@ namespace px
 			{
 				if (body_component* body = *location)
 				{
-					auto hp = body->health();
-					if (hp && !hp->empty())
+					if (!body->dead())
 					{
 						character_component* character = *body;
 						auto nearest = env.nearest(location->current(), sight_radius);

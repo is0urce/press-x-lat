@@ -1,4 +1,4 @@
-// name: environment.cpp
+// name: environment-ui.cpp
 // type: c++ header
 // desc: class methods implementation
 // auth: is0urce
@@ -14,6 +14,7 @@
 #include <px/core/ui/inventory_panel.hpp>
 #include <px/core/ui/container_panel.hpp>
 #include <px/core/ui/anvil_panel.hpp>
+#include <px/core/ui/map_panel.hpp>
 
 #include <px/ui/performance_panel.hpp>
 
@@ -21,11 +22,12 @@ namespace px
 {
 	namespace core
 	{
-		void environment::setup_ui()
+		void environment::compose_ui()
 		{
 			m_inventory = std::make_shared<inventory_panel>();
 			m_craft = std::make_shared<anvil_panel>();
 			m_container = std::make_shared<container_panel>();
+			m_map = std::make_shared<map_panel>();
 
 			m_ui->emplace<ui::performance_panel>("performance", { { 0.0, 0.0 },{ 1,0 },{ -2, 1 },{ 1.0, 0.0 } }, m_fps);
 			m_ui->emplace<status_panel>("status", { { 0.0, 1.0 },{ 1, -12 },{ -2, 1 },{ 1.0, 0.0 } }, *this);
@@ -34,10 +36,13 @@ namespace px
 			m_ui->add("inventory", m_inventory, { { 0.3, 0.1 },{ 0, 0 },{ 0, 0 },{ 0.4, 0.8 } });
 			m_ui->add("craft", m_craft, { { 0.1, 0.1 },{ 0, 0 },{ 0, 0 },{ 0.8, 0.8 } });
 			m_ui->add("container", m_container, { { 0.2, 0.1 },{ 0, 0 },{ 0, 0 },{ 0.6, 0.8 } });
+			m_ui->add("map", m_map, { { 0.1, 0.1 },{ 0, 0 },{ 0, 0 },{ 0.8, 0.8 } });
 
+			// start with panels closed
 			m_inventory->deactivate();
 			m_craft->deactivate();
 			m_container->deactivate();
+			m_map->deactivate();
 		}
 
 		void environment::target(point2 location)

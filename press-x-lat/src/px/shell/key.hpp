@@ -47,8 +47,9 @@ namespace px
 			navigate_previous,
 
 			panel_inventory,
-			panel_skills,
+			panel_character,
 			panel_map,
+			panel_journal,
 
 			command_ok,
 			command_cancel,

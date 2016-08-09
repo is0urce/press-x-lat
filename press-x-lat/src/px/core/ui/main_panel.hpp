@@ -27,8 +27,13 @@ namespace px
 				{
 				case key::panel_inventory:
 					disable("craft");
+					disable("map");
 					toggle("inventory");
 					break;
+				case key::panel_map:
+					disable("craft");
+					disable("inventory");
+					toggle("map");
 				default:
 					break;
 				}

@@ -25,16 +25,35 @@ namespace px
 		class inventory_panel;
 		class container_panel;
 		class anvil_panel;
+		class map_panel;
 
 		class environment
 		{
 		public:
+			typedef unsigned int time_type;
+			typedef qtree<location_component*> space_type;
+			typedef std::shared_ptr<location_component> player_type;
+
+		public:
 			static const unsigned int max_use_distance = 1;
 
 		public:
+			// game flow
+
+			void start(terrain &tiles, space_type &space, world &map);
+			void end();
+			bool running() const;
+			time_type time() const;
+			void turn();
+
+			// player
+			player_type player();
+			const player_type player() const;
+			void impersonate(player_type unit);
+
 			// interface relation
 
-			void setup_ui();
+			void compose_ui();
 			void target(point2 location);
 			point2 targeted() const;
 			void open_workshop(std::weak_ptr<body_component> user);
@@ -174,7 +193,7 @@ namespace px
 			{
 				m_space->find(postion.x(), postion.y(), radius, enum_fn);
 			}
-			auto nearest(point2 postion, unsigned int radius)
+			std::list<location_component*> nearest(point2 postion, unsigned int radius)
 			{
 				std::list<location_component*> list;
 				m_space->find(postion.x(), postion.y(), radius, [&](int x, int y, location_component* component)
@@ -184,87 +203,26 @@ namespace px
 				return list;
 			}
 
-			// game flow
-
-			void start()
-			{
-				m_time = 0;
-			}
-			void end()
-			{
-			}
-			auto time()
-			{
-				return m_time;
-			}
-			void turn()
-			{
-				focus();
-				++m_time;
-
-				m_terrain->enumerate([](auto unit) {
-					if (location_component* pawn = unit->location())
-					{
-						if (body_component* body = *pawn)
-						{
-							if (auto hp = body->health())
-							{
-								if (hp->empty() && body->empty() && unit->get_persistency() != persistency::destroying)
-								{
-									unit->destroy(5);
-								}
-							}
-						}
-					}
-				});
-			}
-
-			// player
-
-			auto player()
-			{
-				return m_player;
-			}
-			const auto player() const
-			{
-				return m_player;
-			}
-			void impersonate(std::shared_ptr<location_component> unit)
-			{
-				m_player = unit;
-				focus();
-				if (unit)
-				{
-					assign_inventory(unit->linked());
-				}
-			}
-
 		public:
-			environment(ui::stack_panel &ui, terrain &terra, qtree<location_component*> &space)
+			environment(ui::stack_panel &ui)
 				: m_ui(&ui)
-				, m_terrain(&terra)
-				, m_space(&space)
-				, m_time(0)
+				, m_running(false)
 			{
-				setup_ui();
+				compose_ui();
 			}
 			virtual ~environment() {}
 			environment(const environment&) = delete;
 
 		private:
-			void focus()
-			{
-				if (m_player)
-				{
-					m_terrain->focus(m_player->current());
-				}
-			}
+			void focus();
 
 		private:
-			unsigned int m_time;
-			std::shared_ptr<location_component> m_player;
+			bool m_running;
 			terrain* m_terrain;
-			qtree<location_component*>* m_space;
+			space_type* m_space;
+			world* m_world;
+			time_type m_time;
+			player_type m_player;
 			faction_relation m_factions;
 
 			// user interface
@@ -274,6 +232,7 @@ namespace px
 			std::shared_ptr<inventory_panel> m_inventory;
 			std::shared_ptr<anvil_panel> m_craft;
 			std::shared_ptr<container_panel> m_container;
+			std::shared_ptr<map_panel> m_map;
 		};
 	}
 }

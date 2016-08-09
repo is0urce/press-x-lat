@@ -17,14 +17,14 @@ namespace px
 
 	// matrix with fixed sizes
 
-	template <typename Element, unsigned int _W, unsigned int _H>
-	class matrix2<Element, _W, _H>
+	template <typename Element, unsigned int W, unsigned int H>
+	class matrix2<Element, W, H>
 	{
 	public:
 		typedef Element element;
 
 	private:
-		std::array<element, _W * _H> m_data;
+		std::array<element, W * H> m_data;
 
 	public:
 		matrix2(const matrix2&) = delete;
@@ -33,23 +33,23 @@ namespace px
 		{
 			fill(initial);
 		}
-		template <typename _O>
-		matrix2(_O op)
+		template <typename Generator>
+		matrix2(Generator op)
 		{
-			fill(op);
+			fill(std::forward<Generator>(op));
 		}
 
 		unsigned int width() const
 		{
-			return _W;
+			return W;
 		}
 		unsigned int height() const
 		{
-			return _H;
+			return H;
 		}
 		unsigned int size() const
 		{
-			return _W * _H;
+			return W * H;
 		}
 		void swap(matrix2 &that)
 		{
@@ -57,7 +57,7 @@ namespace px
 		}
 		void copy(const matrix2 &that)
 		{
-			size_t len = _W * _H;
+			size_t len = W * H;
 			for (size_t i = 0; i < len; ++i)
 			{
 				m_data[i] = that.m_data[i];
@@ -74,7 +74,7 @@ namespace px
 		}
 		bool contains(unsigned int x, unsigned int y) const
 		{
-			return x >= 0 && x < _W && y >= 0 && y < _H;
+			return x >= 0 && x < W && y >= 0 && y < H;
 		}
 
 		void fill(const element &e)
@@ -85,9 +85,9 @@ namespace px
 		void fill(Generator op)
 		{
 			size_t index = 0;
-			for (unsigned int j = 0; j < _H; ++j)
+			for (unsigned int j = 0; j < H; ++j)
 			{
-				for (unsigned int i = 0; i < _W; ++i)
+				for (unsigned int i = 0; i < W; ++i)
 				{
 					m_data[index] = op(i, j);
 					++index;
@@ -98,9 +98,9 @@ namespace px
 		void enumerate(CallbackOperator op)
 		{
 			size_t index = 0;
-			for (unsigned int j = 0; j < _H; ++j)
+			for (unsigned int j = 0; j < H; ++j)
 			{
-				for (unsigned int i = 0; i < _W; ++i)
+				for (unsigned int i = 0; i < W; ++i)
 				{
 					op(i, j, m_data[index]);
 					++index;
@@ -113,20 +113,20 @@ namespace px
 		template<typename Component>
 		const element& operator[](coordinate<Component, 2> key) const
 		{
-			return m_data[key.get<1>() * _W + key.get<0>()];
+			return m_data[key.get<1>() * W + key.get<0>()];
 		}
 		template<typename Component>
 		element& operator[](coordinate<Component, 2> key)
 		{
-			return m_data[key.get<1>() * _W + key.get<0>()];
+			return m_data[key.get<1>() * W + key.get<0>()];
 		}
 		const element& operator[](point2 key) const
 		{
-			return m_data[key.y() * _W + key.x()];
+			return m_data[key.y() * W + key.x()];
 		}
 		element& operator[](point2 key)
 		{
-			return m_data[key.y() * _W + key.x()];
+			return m_data[key.y() * W + key.x()];
 		}
 
 		template<typename Component>
@@ -154,12 +154,12 @@ namespace px
 		const element& at(unsigned int x, unsigned int y) const
 		{
 			if (!contains(x, y)) throw std::runtime_error("px::matrix<e,w,h>::at() - out of range");
-			return m_data[y * _W + x];
+			return m_data[y * W + x];
 		}
 		element& at(unsigned int x, unsigned int y)
 		{
 			if (!contains(x, y)) throw std::runtime_error("px::matrix<e,w,h>::at() - out of range");
-			return m_data[y * _W + x];
+			return m_data[y * W + x];
 		}
 
 		template<typename Component>
@@ -182,11 +182,11 @@ namespace px
 		}
 		const element& select(unsigned int x, unsigned int y, const element& outer) const
 		{
-			return contains(x, y) ? m_data[y * _W + x];
+			return contains(x, y) ? m_data[y * W + x];
 		}
 		element& select(unsigned int x, unsigned int y, element& outer)
 		{
-			return contains(x, y) ? m_data[y * _W + x];
+			return contains(x, y) ? m_data[y * W + x];
 		}
 	};
 
