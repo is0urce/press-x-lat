@@ -6,6 +6,8 @@
 #include "environment.hpp"
 
 #include <px/core/terrain.hpp>
+
+#include <px/core/sys/location_component.hpp>
 #include <px/core/sys/body_component.hpp>
 
 namespace px

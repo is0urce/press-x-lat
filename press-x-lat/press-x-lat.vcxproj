@@ -289,6 +289,7 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClCompile Include="src\px\core\sys\npc_component.cpp" />
     <ClCompile Include="src\px\core\data\unit_composer.cpp" />
     <ClCompile Include="src\px\core\environment-flow.cpp" />
+    <ClCompile Include="src\px\core\terrain.cpp" />
     <ClCompile Include="src\px\core\world.cpp" />
     <ClCompile Include="src\px\shell\canvas.cpp" />
     <ClCompile Include="src\px\shell\font.cpp" />

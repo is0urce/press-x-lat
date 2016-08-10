@@ -23,7 +23,8 @@ namespace px
 	{
 		class unit;
 		class factory;
-		class world
+
+		class world : public matrix2<world_cell>
 		{
 		public:
 			static const unsigned int world_width = 10;
@@ -39,8 +40,8 @@ namespace px
 
 		public:
 			void generate(unsigned int seed);
-			void arrange(const point2 &cell, local_map_type& terrain, std::list<unit_ptr>& units);
-			void generate(const point2 &cell, local_map_type& terrain, bool static_mobiles, std::list<unit_ptr>& units);
+			void generate_cell(const point2 &cell, local_map_type& terrain, std::list<unit_ptr>& units);
+			void generate_cell(const point2 &cell, local_map_type& terrain, bool static_mobiles, std::list<unit_ptr>& units);
 			void store(unit_ptr unit);
 
 		public:

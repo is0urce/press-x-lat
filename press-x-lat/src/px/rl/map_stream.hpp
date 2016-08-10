@@ -7,28 +7,27 @@
 #define PX_RL_MAP_STREAM_HPP
 
 #include <px/common/matrix.hpp>
-
-#include "tile.hpp"
+#include <px/rl/tile.hpp>
 
 #include <thread>
 #include <list>
-#include <chrono>
 #include <string>
+#include <stdexcept>
 
 namespace px
 {
 	namespace rl
 	{
-		template <typename _TP, typename _Unit, unsigned int _W, unsigned int _H>
+		template <typename TileProps, typename Unit, unsigned int W, unsigned int H>
 		class map_stream
 		{
 		public:
-			typedef tile<_TP> tile;
-			typedef matrix2<tile, _W, _H> map;
-			typedef std::list<_Unit> unit_list;
+			typedef tile<TileProps> tile_type;
+			typedef matrix2<tile_type, W, H> map_type;
+			typedef std::list<Unit> unit_list;
 
 		private:
-			map m_map;
+			map_type m_map;
 			unit_list m_units;
 			volatile bool m_loaded;
 			bool m_pending;
@@ -123,7 +122,7 @@ namespace px
 				grand.merge(m_units);
 			}
 
-			const map* operator->() const
+			const map_type* operator->() const
 			{
 				return &m_map;
 			}

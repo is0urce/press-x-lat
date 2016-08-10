@@ -8,6 +8,7 @@
 
 #include <px/core/world_cell.hpp>
 #include <px/common/matrix.hpp>
+#include <px/common/vector.hpp>
 
 #include <px/fn/perlin.hpp>
 
@@ -45,17 +46,24 @@ namespace px
 				generator.discard(rng::state_size);
 				fn::perlin<perlin_width, perlin_height> noise([generator, distribution = std::uniform_real_distribution<double>()]() mutable {return distribution(generator); });
 
-				double mx = static_cast<double>(perlin_width - 1) / m_map->width();
-				double my = static_cast<double>(perlin_height - 1) / m_map->height();
+				double w = m_map->width();
+				double h = m_map->height();
+				double mx = (perlin_width - 1) / w;
+				double my = (perlin_height - 1) / h;
+
+				vector2 center(w / 2.0f, h / 2.0f);
+				double size = (std::min)(w, h);
 
 				double max_peak = -1.0;
-				m_map->enumerate([mx, my, &noise, &max_peak](int i, int j, auto& cell)
+				m_map->enumerate([&](int i, int j, auto& cell)
 				{
-					double altitude = noise.sample(mx * i, my * j, perlin_samples);
+					double noise_magnitude = noise.sample(mx * i, my * j, perlin_samples);
+					double distance_to_center = center.distance(vector2(i, j));
+					double cone_magnitude = (size - distance_to_center) / size;
 
-					cell.altitude = altitude;
+					cell.altitude = std::asin(cone_magnitude + noise_magnitude);
 
-					if (max_peak < altitude) max_peak = altitude;
+					max_peak = (std::max)(max_peak, cell.altitude);
 				});
 
 				// normalise

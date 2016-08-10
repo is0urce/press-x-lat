@@ -9,6 +9,9 @@
 #include <px/core/world.hpp>
 
 #include <px/core/ui/map_panel.hpp>
+
+#include <px/core/unit.hpp>
+#include <px/core/sys/location_component.hpp>
 #include <px/core/sys/body_component.hpp>
 
 namespace px

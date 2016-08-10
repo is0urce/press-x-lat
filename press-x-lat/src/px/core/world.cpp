@@ -40,15 +40,15 @@ namespace px
 			world_generator generator(m_map, seed);
 		}
 
-		void world::arrange(const point2 &cell, local_map_type& terrain, std::list<unit_ptr>& units)
+		void world::generate_cell(const point2 &cell, local_map_type& terrain, std::list<unit_ptr>& units)
 		{
 			world_cell &c = m_map.select(cell, m_outer);
 			bool mobiles = c.generated;
 			c.generated = true;
 
-			generate(cell, terrain, !mobiles, units);
+			generate_cell(cell, terrain, !mobiles, units);
 		}
-		void world::generate(const point2 &cell, local_map_type& terrain, bool static_mobiles, std::list<unit_ptr>& units)
+		void world::generate_cell(const point2 &cell, local_map_type& terrain, bool static_mobiles, std::list<unit_ptr>& units)
 		{
 			unsigned int seed = m_seed + cell.x() * 51 + cell.y() * cell_width * cell_height;
 

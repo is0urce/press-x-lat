@@ -8,6 +8,7 @@
 #include <px/core/terrain.hpp>
 #include <px/core/ui/map_panel.hpp>
 
+#include <px/core/sys/location_component.hpp>
 #include <px/core/sys/body_component.hpp>
 #include <px/core/sys/character_component.hpp>
 #include <px/core/sys/i_useable_component.hpp>
