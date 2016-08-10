@@ -6,13 +6,14 @@
 #ifndef PX_CORE_TERRAIN_HPP
 #define PX_CORE_TERRAIN_HPP
 
-#include <px/core/image.hpp>
-#include <px/core/world.hpp>
+#include <px/common/matrix.hpp>
 
 #include <px/rl/tile.hpp>
 #include <px/rl/traverse.hpp>
 #include <px/rl/map_stream.hpp>
-#include <px/common/matrix.hpp>
+
+#include <px/core/image.hpp>
+#include <px/core/settings.hpp>
 
 #include <memory>
 
@@ -26,8 +27,8 @@ namespace px
 		class terrain
 		{
 		public:
-			static const unsigned int cell_width = world::cell_width;
-			static const unsigned int cell_height = world::cell_height;
+			static const unsigned int cell_width = settings::cell_width;
+			static const unsigned int cell_height = settings::cell_height;
 			static const unsigned int sight_reach = 1;
 			static const unsigned int sight_width = 1 + sight_reach * 2;
 			typedef std::shared_ptr<unit> unit_ptr;

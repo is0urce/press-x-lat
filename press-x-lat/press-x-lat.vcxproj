@@ -183,6 +183,7 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\common\timer.hpp" />
     <ClInclude Include="src\px\common\toggle.hpp" />
     <ClInclude Include="src\px\common\vector.hpp" />
+    <ClInclude Include="src\px\core\settings.hpp" />
     <ClInclude Include="src\px\core\world_cell.hpp" />
     <ClInclude Include="src\px\core\sys\behavior_system.hpp" />
     <ClInclude Include="src\px\core\sys\body_component.hpp" />

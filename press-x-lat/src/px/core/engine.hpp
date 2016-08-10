@@ -10,6 +10,14 @@
 
 #include <px/es/i_engine.hpp>
 
+#include <px/core/world.hpp>
+#include <px/core/terrain.hpp>
+#include <px/core/game.hpp>
+#include <px/core/unit.hpp>
+
+#include <px/core/data/factory.hpp>
+#include <px/core/ui/main_panel.hpp>
+
 #include <px/core/sys/rendering_system.hpp>
 #include <px/core/sys/ui_system.hpp>
 #include <px/core/sys/location_system.hpp>
@@ -18,16 +26,9 @@
 #include <px/core/sys/character_system.hpp>
 #include <px/core/sys/behavior_system.hpp>
 
-#include "unit.hpp"
-#include "game.hpp"
-#include "terrain.hpp"
-
 #include "input_adapter.hpp"
 
-#include <px/core/data/factory.hpp>
 #include <px/rl/skill.hpp>
-
-#include <px/core/ui/main_panel.hpp>
 
 #include <px/shell/control.hpp>
 #include <px/shell/control_chain.hpp>

@@ -8,6 +8,7 @@
 
 #include "environment.hpp"
 #include "i_game_control.hpp"
+#include <px/core/sys/location_component.hpp>
 
 namespace px
 {

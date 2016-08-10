@@ -24,9 +24,9 @@ namespace px
 		public:
 			typedef matrix2<world_cell> map_type;
 			typedef std::mt19937 rng;
-			static const unsigned int perlin_width = 5;
+			static const unsigned int perlin_width = 10;
 			static const unsigned int perlin_height = perlin_width;
-			static const unsigned int perlin_samples = 9;
+			static const unsigned int perlin_samples = 25;
 
 		public:
 			void generate()
@@ -59,9 +59,9 @@ namespace px
 				{
 					double noise_magnitude = noise.sample(mx * i, my * j, perlin_samples);
 					double distance_to_center = center.distance(vector2(i, j));
-					double cone_magnitude = (size - distance_to_center) / size;
+					double cone_magnitude = (size - distance_to_center * 4) / size; // [-1..1]
 
-					cell.altitude = std::asin(cone_magnitude + noise_magnitude);
+					cell.altitude = std::atan(cone_magnitude) + noise_magnitude;
 
 					max_peak = (std::max)(max_peak, cell.altitude);
 				});
@@ -77,7 +77,29 @@ namespace px
 			{
 				m_map->enumerate([](int i, int j, auto& cell)
 				{
-					cell.img.glyph = cell.altitude > 0 ? '^' : '.';
+					cell.img.glyph = '~';
+					cell.img.tint = { 1, 1, 1 };
+					cell.img.bg = { 0, 0, 1 };
+
+					if (cell.altitude > 0)
+					{
+						cell.img.glyph = '"';
+						cell.img.tint = { 0, 0, 0 };
+						cell.img.bg = { 0, 0.5, 0 };
+					}
+
+					if (cell.altitude > 0.6)
+					{
+						cell.img.glyph = '^';
+						cell.img.tint = { 0, 0, 0 };
+						cell.img.bg = { 0.5, 0.5, 0.5 };
+					}
+					if (cell.altitude > 0.8)
+					{
+						cell.img.glyph = '^';
+						cell.img.tint = { 0.5, 0.5, 1 };
+						cell.img.bg = { 1, 1, 1 };
+					}
 				});
 			}
 

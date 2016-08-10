@@ -17,6 +17,7 @@ namespace px
 		public:
 			unsigned int glyph;
 			color tint;
+			color bg;
 		};
 	}
 }

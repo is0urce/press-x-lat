@@ -7,6 +7,7 @@
 
 #include <px/common/vector.hpp>
 #include <px/core/unit.hpp>
+#include <px/core/world.hpp>
 
 namespace px
 {

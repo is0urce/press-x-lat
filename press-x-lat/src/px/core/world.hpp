@@ -14,6 +14,8 @@
 #include <px/rl/tile.hpp>
 #include <px/rl/traverse.hpp>
 
+#include <px/core/settings.hpp>
+
 #include <memory>
 #include <list>
 
@@ -24,13 +26,13 @@ namespace px
 		class unit;
 		class factory;
 
-		class world : public matrix2<world_cell>
+		class world
 		{
 		public:
-			static const unsigned int world_width = 10;
-			static const unsigned int world_height = world_width;
-			static const unsigned int cell_width = 100;
-			static const unsigned int cell_height = cell_width;
+			static const unsigned int world_width = settings::world_width;
+			static const unsigned int world_height = settings::world_height;
+			static const unsigned int cell_width = settings::cell_width;
+			static const unsigned int cell_height = settings::cell_height;
 
 		public:
 			typedef std::shared_ptr<unit> unit_ptr;
@@ -43,6 +45,8 @@ namespace px
 			void generate_cell(const point2 &cell, local_map_type& terrain, std::list<unit_ptr>& units);
 			void generate_cell(const point2 &cell, local_map_type& terrain, bool static_mobiles, std::list<unit_ptr>& units);
 			void store(unit_ptr unit);
+			world_map_type* operator->();
+			const world_map_type* operator->() const;
 
 		public:
 			world(factory &factory);

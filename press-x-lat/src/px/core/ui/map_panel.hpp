@@ -47,9 +47,18 @@ namespace px
 			{
 				stack_panel::draw_panel(cnv);
 
+				point2 pen = bounds().start().moved(0, 1);
 				if (m_world)
 				{
+					(*m_world)->enumerate([&](unsigned int x, unsigned int y, auto &cell) {
 
+						point2 pos = pen + point2(x, y);
+						if (bounds().contains(pos))
+						{
+							cnv.write(pos, cell.img.glyph, cell.img.tint);
+							cnv.pset(pos, cell.img.bg);
+						}
+					});
 				}
 			}
 			virtual bool key_control(shell::key code) override
@@ -62,6 +71,10 @@ namespace px
 					if (result)
 					{
 						deactivate();
+					}
+					else
+					{
+						m_world->generate(std::rand());
 					}
 				}
 				return result;

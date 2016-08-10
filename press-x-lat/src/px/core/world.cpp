@@ -37,7 +37,9 @@ namespace px
 			m_seed = seed;
 
 			m_map.resize(world_width, world_height);
+
 			world_generator generator(m_map, seed);
+			generator.generate();
 		}
 
 		void world::generate_cell(const point2 &cell, local_map_type& terrain, std::list<unit_ptr>& units)
@@ -123,6 +125,16 @@ namespace px
 		}
 		world::~world()
 		{
+
+		}
+
+		const world::world_map_type* world::operator->() const
+		{
+			return &m_map;
+		}
+		world::world_map_type* world::operator->()
+		{
+			return &m_map;
 		}
 	}
 }
