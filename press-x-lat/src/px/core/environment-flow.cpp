@@ -5,7 +5,11 @@
 
 #include "environment.hpp"
 
+#include <px/core/terrain.hpp>
+#include <px/core/world.hpp>
+
 #include <px/core/ui/map_panel.hpp>
+#include <px/core/sys/body_component.hpp>
 
 namespace px
 {

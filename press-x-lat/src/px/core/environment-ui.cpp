@@ -18,6 +18,8 @@
 
 #include <px/ui/performance_panel.hpp>
 
+#include <px/core/sys/body_component.hpp>
+
 namespace px
 {
 	namespace core

@@ -8,12 +8,13 @@
 
 #include <px/common/toggle.hpp>
 #include <px/es/component_collection.hpp>
-#include "persistency.hpp"
+#include <px/core/persistency.hpp>
 
 namespace px
 {
 	namespace core
 	{
+		class location_component;
 		class unit : public es::component_collection
 		{
 		public:

@@ -336,6 +336,9 @@
     <ClInclude Include="src\px\core\world_cell.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\px\core\world_generator.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -387,6 +390,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\px\core\environment-flow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\px\core\environment-act.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\px\core\environment.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\px\core\world.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

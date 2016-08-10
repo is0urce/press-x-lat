@@ -6,7 +6,9 @@
 #include "target_panel.hpp"
 
 #include <px/core/environment.hpp>
+
 #include <px/core/sys/location_component.hpp>
+#include <px/core/sys/body_component.hpp>
 
 #include <string>
 

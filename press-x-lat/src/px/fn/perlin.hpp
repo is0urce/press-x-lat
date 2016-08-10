@@ -6,6 +6,9 @@
 // 2d perilin noise with key values (gradients) at integer positions
 // supports repeat tiling and sampling with fractal octaves
 
+#ifndef PX_PERLIN_HPP
+#define PX_PERLIN_HPP
+
 #include <px/common/matrix.hpp>
 
 #include <cmath>
@@ -47,9 +50,7 @@ namespace px
 				m_matrix.fill([&rng](unsigned int i, unsigned int j) -> gradient
 				{
 					double num = pi * 2 * rng();
-					//int random = std::rand();
 					return{ std::cos(num), std::sin(num) };
-					//return{ std::cos((double)random), std::sin((double)random) };
 				});
 			}
 
@@ -61,40 +62,24 @@ namespace px
 				x = modulo(x, W);
 				y = modulo(y, H);
 
-				// grid cell square coordinates
-				//int x0 = static_cast<int>(std::floor(x));
-				//int y0 = static_cast<int>(std::floor(y));
-				//int x1 = x0 + 1;
-				//int y1 = y0 + 1;
-
 				int x0 = static_cast<int>(x);
 				int y0 = static_cast<int>(y);
 				int x1 = x0 + 1;
 				int y1 = y0 + 1;
 
-				//auto g00 = vertice_gradient(x0, y0, x, y);
-				//auto g10 = vertice_gradient(x1, y0, x, y);
-				//auto g01 = vertice_gradient(x0, y1, x, y);
-				//auto g11 = vertice_gradient(x1, y1, x, y);
+				auto g00 = vertice_gradient(x0, y0, x, y);
+				auto g10 = vertice_gradient(x1, y0, x, y);
+				auto g01 = vertice_gradient(x0, y1, x, y);
+				auto g11 = vertice_gradient(x1, y1, x, y);
 
-				//// interpolation weights
+				// interpolation weights
 				double sx = x - x0;
 				double sy = y - y0;
 
-				//auto d = lerp(g00, g10, sx);
-				//auto u = lerp(g01, g11, sx);
+				auto d = lerp(g00, g10, sx);
+				auto u = lerp(g01, g11, sx);
 
-				//return lerp(d, u, sy);
-
-				double n0, n1, ix0, ix1;
-				n0 = vertice_gradient(x0, y0, x, y);
-				n1 = vertice_gradient(x1, y0, x, y);
-				ix0 = lerp(n0, n1, sx);
-				n0 = vertice_gradient(x0, y1, x, y);
-				n1 = vertice_gradient(x1, y1, x, y);
-				ix1 = lerp(n0, n1, sx);
-
-				return lerp(ix0, ix1, sy);
+				return lerp(d, u, sy);
 			}
 
 			// multisample with fractal sublevels
@@ -123,7 +108,7 @@ namespace px
 				vx = (vx == W) ? 0 : vx;
 				vy = (vy == H) ? 0 : vy;
 
-				const gradient &g = m_matrix.at(point2(vx, vy));
+				const gradient &g = m_matrix[point2(vx, vy)];
 				return dx * g.x + dy * g.y;
 			}
 
@@ -144,3 +129,5 @@ namespace px
 		};
 	}
 }
+
+#endif

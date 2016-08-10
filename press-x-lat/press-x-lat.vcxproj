@@ -208,6 +208,7 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\core\ui\item_operation.hpp" />
     <ClInclude Include="src\px\core\data\unit_composer.hpp" />
     <ClInclude Include="src\px\core\ui\map_panel.hpp" />
+    <ClInclude Include="src\px\core\world_generator.hpp" />
     <ClInclude Include="src\px\rl\i_ability.hpp" />
     <ClInclude Include="src\px\rl\astar.hpp" />
     <ClInclude Include="src\px\rl\body.hpp" />
@@ -280,12 +281,15 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\press-x-lat.cpp" />
+    <ClCompile Include="src\px\core\environment-act.cpp" />
     <ClCompile Include="src\px\core\environment-ui.cpp" />
+    <ClCompile Include="src\px\core\environment.cpp" />
     <ClCompile Include="src\px\core\sys\character_system.cpp" />
     <ClCompile Include="src\px\core\sys\container_component.cpp" />
     <ClCompile Include="src\px\core\sys\npc_component.cpp" />
     <ClCompile Include="src\px\core\data\unit_composer.cpp" />
     <ClCompile Include="src\px\core\environment-flow.cpp" />
+    <ClCompile Include="src\px\core\world.cpp" />
     <ClCompile Include="src\px\shell\canvas.cpp" />
     <ClCompile Include="src\px\shell\font.cpp" />
     <ClCompile Include="src\px\shell\font_texture.cpp" />

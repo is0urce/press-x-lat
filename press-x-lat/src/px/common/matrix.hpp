@@ -94,15 +94,15 @@ namespace px
 				}
 			}
 		}
-		template <typename CallbackOperator>
-		void enumerate(CallbackOperator op)
+		template <typename Operator>
+		void enumerate(Operator&& op)
 		{
 			size_t index = 0;
 			for (unsigned int j = 0; j < H; ++j)
 			{
 				for (unsigned int i = 0; i < W; ++i)
 				{
-					op(i, j, m_data[index]);
+					std::forward<Operator>(op)(i, j, m_data[index]);
 					++index;
 				}
 			}
@@ -203,8 +203,11 @@ namespace px
 		unsigned int m_height;
 
 	public:
+		matrix2() : m_width(0), m_height(0)
+		{
+		}
 		matrix2(const matrix2&) = delete;
-		matrix2(matrix2&& that) : m_width(0), m_height(0)
+		matrix2(matrix2&& that) : matrix2()
 		{
 			swap(that);
 		}
@@ -223,8 +226,6 @@ namespace px
 		}
 		void resize(unsigned int w, unsigned int h)
 		{
-			if (w < 0) throw std::runtime_error("px::matrix<c>::resize - w < 0");
-			if (h < 0) throw std::runtime_error("px::matrix<c>::resize - w < 0");
 			m_width = w;
 			m_height = h;
 			m_data.resize(w * h);
@@ -288,15 +289,15 @@ namespace px
 				}
 			}
 		}
-		template <typename CallbackOperator>
-		void enumerate(CallbackOperator op)
+		template <typename Operator>
+		void enumerate(Operator &&op)
 		{
 			size_t index = 0;
 			for (unsigned int j = 0; j < m_height; ++j)
 			{
 				for (unsigned int i = 0; i < m_width; ++i)
 				{
-					op(i, j, m_data[index]);
+					std::forward<Operator>(op)(i, j, m_data[index]);
 					++index;
 				}
 			}
