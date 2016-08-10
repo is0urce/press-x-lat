@@ -85,16 +85,16 @@ namespace px
 				return m_pending;
 			}
 
-			template <typename _Op>
-			void load(_Op fn)
+			template <typename Op>
+			void load(Op fn)
 			{
 				if (m_pending) throw std::runtime_error("px::rl::map_stream::load() - pending");
 
 				m_pending = true;
 				fn(m_map, m_units);
 			}
-			template <typename _Op>
-			void load_stream(_Op fn)
+			template <typename Op>
+			void load_stream(Op fn)
 			{
 				if (m_pending) throw std::runtime_error("px::rl::map_stream::load_stream() - pending");
 

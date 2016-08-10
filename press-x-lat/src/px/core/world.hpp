@@ -6,12 +6,11 @@
 #ifndef PX_CORE_WORLD_H
 #define PX_CORE_WORLD_H
 
-#include <px/core/gen/world_cell.hpp>
+#include <px/core/world_cell.hpp>
 
 #include <px/common/matrix.hpp>
 #include <px/rl/tile.hpp>
 #include <px/rl/traverse.hpp>
-#include <px/rl/map_stream.hpp>
 #include <px/fn/perlin.hpp>
 
 #include <px/core/image.hpp>
@@ -35,9 +34,9 @@ namespace px
 			static const unsigned int world_height = world_width;
 			static const unsigned int cell_width = 100;
 			static const unsigned int cell_height = cell_width;
-			static const unsigned int perlin_width = 6;
+			static const unsigned int perlin_width = 7;
 			static const unsigned int perlin_height = perlin_width;
-			static const unsigned int perlin_samples = 1;
+			static const unsigned int perlin_samples = 9;
 
 		public:
 			typedef std::shared_ptr<unit> unit_ptr;
@@ -53,6 +52,7 @@ namespace px
 		public:
 			void generate(unsigned int seed)
 			{
+				m_seed = seed;
 			}
 
 			void arrange(const point2 &cell, local_map_type& terrain, std::list<unit_ptr>& units)
@@ -65,16 +65,18 @@ namespace px
 			}
 			void generate(const point2 &cell, local_map_type& terrain, bool static_mobiles, std::list<unit_ptr>& units)
 			{
-				rng generator(m_seed + cell.x() + cell.y() * cell_width * cell_height);
+				unsigned int seed = m_seed + cell.x() + cell.y() * cell_width * cell_height;
+				rng generator(seed);
 				std::uniform_real_distribution<double> distribution;
 				fn::perlin<perlin_width, perlin_height> noise([&]() {return distribution(generator); });
 
-				double mx = static_cast<double>(perlin_width) / cell_width;
-				double my = static_cast<double>(perlin_height) / cell_height;
+				double mx = static_cast<double>(perlin_width - 1) / static_cast<double>(cell_width);
+				double my = static_cast<double>(perlin_height - 1) / static_cast<double>(cell_height);
 
 				terrain.enumerate([&](int i, int j, auto& t)
 				{
 					auto magnitude = noise.sample(mx * i, my * j, perlin_samples);
+
 					auto &img = t.appearance();
 					if (magnitude > 0)
 					{
@@ -94,12 +96,6 @@ namespace px
 					if (i == 0 && j == 0) terrain[{i, j}].appearance().glyph = '+';
 
 				});
-#ifdef _DEBUG
-				const char* digits = "0123456789ABCDEF";
-				terrain[{1, 1}].appearance().glyph = digits[cell.x() - 10 * size_t((std::floor)(cell.x() / 10.0))];
-				terrain[{2, 1}].appearance().glyph = ':';
-				terrain[{3, 1}].appearance().glyph = digits[cell.y() - 10 * size_t((std::floor)(cell.y() / 10.0))];
-#endif
 
 				if (static_mobiles)
 				{
@@ -132,11 +128,9 @@ namespace px
 			}
 
 		public:
-			world(factory &factory) : m_factory(&factory), m_seed(0)
+			world(factory &factory) : m_factory(&factory)
 			{
 				m_outer.generated = true; // no additional generation for out-of-borders cells
-
-				generate(m_seed);
 			}
 			virtual ~world()
 			{
@@ -145,7 +139,6 @@ namespace px
 
 		private:
 			unsigned int m_seed;
-			world_map_type m_created;
 			factory* m_factory;
 			world_map_type m_map;
 			world_cell m_outer;

@@ -333,7 +333,7 @@
     <ClInclude Include="src\px\core\ui\map_panel.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\px\core\gen\world_cell.hpp">
+    <ClInclude Include="src\px\core\world_cell.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

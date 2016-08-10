@@ -18,6 +18,7 @@ namespace px
 			double altitude;
 			bool generated;
 			image img;
+			unsigned int seed;
 
 			world_cell() : generated(false)
 			{

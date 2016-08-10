@@ -22,6 +22,8 @@ namespace px
 			m_running = true;
 
 			m_map->bind(map);
+
+			m_world->generate(0);
 		}
 		void environment::end()
 		{

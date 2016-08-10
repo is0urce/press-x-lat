@@ -164,16 +164,28 @@ namespace px
 
 			std::shared_ptr<element> make()
 			{
+				std::lock_guard<std::mutex> lock(m_mutex);
+
 				key k = select();
 				element &e = k.batch->select(k.cursor);
 				element_allocated(e);
 
-				return std::shared_ptr<element>(&e, [this, k](element* pointer) { destroy(k); element_released(*pointer); });
+				return std::shared_ptr<element>(&e, [this, k](element* pointer) {
+					std::lock_guard<std::mutex> lock(m_mutex);
+
+					destroy(k);
+					if (pointer)
+					{
+						element_released(*pointer);
+					}
+				});
 			}
 
 			template<typename Op>
 			void enumerate(Op&& fn)
 			{
+				std::lock_guard<std::mutex> lock(m_mutex);
+
 				for (auto it = m_batches.begin(), last = m_batches.end(); it != last; ++it)
 				{
 					size_t cursor = it->cursor();
@@ -188,29 +200,28 @@ namespace px
 			}
 
 			// clear unused batches
-			//void optimise()
-			//{
-			//	for (auto it = m_batches.begin(), last = m_batches.end(); it != last;)
-			//	{
-			//		it->optimise();
-			//		if (it->count() == 0)
-			//		{
-			//			++it;
-			//			m_batches.erase(it);
-			//		}
-			//		else
-			//		{
-			//			++it;
-			//		}
-			//	}
-			//}
+			void optimise()
+			{
+				std::lock_guard<std::mutex> lock(m_mutex);
+
+				for (auto it = m_batches.begin(), last = m_batches.end(); it != last;)
+				{
+					it->optimise();
+					if (it->count() == 0)
+					{
+						++it;
+						m_batches.erase(it);
+					}
+					else
+					{
+						++it;
+					}
+				}
+			}
 
 		private:
 			key select()
 			{
-				std::lock_guard<std::mutex> lock(m_mutex);
-				++m_count;
-
 				// select batch
 				auto it = m_batches.begin();
 				auto last = m_batches.end();
@@ -224,18 +235,28 @@ namespace px
 					it = m_batches.emplace(it);
 				}
 
-				size_t cursor = (it->recycled() > 0) ? (it->recycle()) : (it->increment());
+				size_t cursor;
+
+				if (it->recycled() > 0)
+				{
+					cursor = it->recycle();
+				}
+				else
+				{
+					cursor = it->increment();
+				}
+
 				key result{ it, cursor };
 
+				++m_count;
 				return result;
 			}
 
 			void destroy(key k)
 			{
-				std::lock_guard<std::mutex> lock(m_mutex);
-				--m_count;
-
 				k.batch->recycle(k.cursor);
+
+				--m_count;
 			}
 		};
 	}
