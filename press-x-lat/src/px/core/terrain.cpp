@@ -7,7 +7,7 @@
 
 #include <px/common/vector.hpp>
 #include <px/core/unit.hpp>
-#include <px/core/world.hpp>
+#include <px/core/terrain_director.hpp>
 
 namespace px
 {
@@ -25,7 +25,7 @@ namespace px
 				return div;
 			}
 		}
-		terrain::terrain(world &w) : m_world(&w)
+		terrain::terrain(terrain_director &w) : m_world(&w)
 		{
 			m_default.appearance() = { '.',{ 0, 0, 0, 0 } };
 			m_default.make_wall();

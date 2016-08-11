@@ -22,7 +22,7 @@ namespace px
 	namespace core
 	{
 		class unit;
-		class world;
+		class terrain_director;
 
 		class terrain
 		{
@@ -54,7 +54,7 @@ namespace px
 			}
 
 		public:
-			terrain(world &w);
+			terrain(terrain_director &cell_manager);
 			virtual ~terrain();
 			terrain(const terrain&) = delete;
 
@@ -68,7 +68,7 @@ namespace px
 			maps_type m_maps;
 			point2 m_focus; // absolute world cell coordinate
 			units m_units; // storage container
-			world* m_world;
+			terrain_director* m_world;
 		};
 	}
 }

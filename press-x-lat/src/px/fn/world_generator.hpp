@@ -6,7 +6,7 @@
 #ifndef PX_CORE_WORLD_GENERATOR_HPP
 #define PX_CORE_WORLD_GENERATOR_HPP
 
-#include <px/core/world_cell.hpp>
+#include <px/fn/world_cell.hpp>
 #include <px/common/matrix.hpp>
 #include <px/common/vector.hpp>
 
@@ -17,7 +17,7 @@
 
 namespace px
 {
-	namespace core
+	namespace fn
 	{
 		class world_generator
 		{
@@ -31,8 +31,22 @@ namespace px
 		public:
 			void generate()
 			{
+				clear();
 				generate_landmass();
 				generate_appearance();
+			}
+
+			void clear()
+			{
+				m_map->enumerate([](int i, int j, auto& cell)
+				{
+					cell.altitude = 0;
+					cell.temperature = 0;
+					cell.moisture = 0;
+					cell.river = 0;
+
+					cell.generated = false;
+				});
 			}
 
 			// generate altitudes [-1+..1], sea level is 0
@@ -88,13 +102,13 @@ namespace px
 						cell.img.bg = { 0, 0.5, 0 };
 					}
 
-					if (cell.altitude > 0.6)
+					if (cell.altitude > 0.5)
 					{
 						cell.img.glyph = '^';
 						cell.img.tint = { 0, 0, 0 };
 						cell.img.bg = { 0.5, 0.5, 0.5 };
 					}
-					if (cell.altitude > 0.8)
+					if (cell.altitude > 0.75)
 					{
 						cell.img.glyph = '^';
 						cell.img.tint = { 0.5, 0.5, 1 };

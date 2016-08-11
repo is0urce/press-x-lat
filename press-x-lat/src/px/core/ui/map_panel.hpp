@@ -11,7 +11,7 @@
 #include <px/ui/board_panel.hpp>
 #include <px/ui/static_text_panel.hpp>
 
-#include <px/core/world.hpp>
+#include <px/core/terrain_director.hpp>
 
 #include <px/shell/key.hpp>
 
@@ -24,7 +24,7 @@ namespace px
 		class map_panel : public ui::stack_panel
 		{
 		public:
-			void bind(world &w)
+			void bind(terrain_director &w)
 			{
 				m_world = &w;
 			}
@@ -50,7 +50,7 @@ namespace px
 				point2 pen = bounds().start().moved(0, 1);
 				if (m_world)
 				{
-					(*m_world)->enumerate([&](unsigned int x, unsigned int y, auto &cell) {
+					m_world->map()->enumerate([&](unsigned int x, unsigned int y, auto &cell) {
 
 						point2 pos = pen + point2(x, y);
 						if (bounds().contains(pos))
@@ -91,7 +91,7 @@ namespace px
 			}
 
 		private:
-			world* m_world;
+			terrain_director* m_world;
 		};
 	}
 }

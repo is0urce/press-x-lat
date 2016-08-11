@@ -184,7 +184,9 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\common\toggle.hpp" />
     <ClInclude Include="src\px\common\vector.hpp" />
     <ClInclude Include="src\px\core\settings.hpp" />
-    <ClInclude Include="src\px\core\world_cell.hpp" />
+    <ClInclude Include="src\px\fn\river.hpp" />
+    <ClInclude Include="src\px\fn\river_net.hpp" />
+    <ClInclude Include="src\px\fn\world_cell.hpp" />
     <ClInclude Include="src\px\core\sys\behavior_system.hpp" />
     <ClInclude Include="src\px\core\sys\body_component.hpp" />
     <ClInclude Include="src\px\core\sys\body_system.hpp" />
@@ -209,7 +211,8 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\core\ui\item_operation.hpp" />
     <ClInclude Include="src\px\core\data\unit_composer.hpp" />
     <ClInclude Include="src\px\core\ui\map_panel.hpp" />
-    <ClInclude Include="src\px\core\world_generator.hpp" />
+    <ClInclude Include="src\px\fn\world_generator.hpp" />
+    <ClInclude Include="src\px\fn\world.hpp" />
     <ClInclude Include="src\px\rl\i_ability.hpp" />
     <ClInclude Include="src\px\rl\astar.hpp" />
     <ClInclude Include="src\px\rl\body.hpp" />
@@ -227,7 +230,7 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\core\sys\terrain_system.hpp" />
     <ClInclude Include="src\px\core\terrain.hpp" />
     <ClInclude Include="src\px\core\unit.hpp" />
-    <ClInclude Include="src\px\core\world.hpp" />
+    <ClInclude Include="src\px\core\terrain_director.hpp" />
     <ClInclude Include="src\px\core\data\factory.hpp" />
     <ClInclude Include="src\px\es\i_engine.hpp" />
     <ClInclude Include="src\px\es\i_component.hpp" />
@@ -291,7 +294,8 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClCompile Include="src\px\core\data\unit_composer.cpp" />
     <ClCompile Include="src\px\core\environment-flow.cpp" />
     <ClCompile Include="src\px\core\terrain.cpp" />
-    <ClCompile Include="src\px\core\world.cpp" />
+    <ClCompile Include="src\px\core\terrain_director.cpp" />
+    <ClCompile Include="src\px\fn\world.cpp" />
     <ClCompile Include="src\px\shell\canvas.cpp" />
     <ClCompile Include="src\px\shell\font.cpp" />
     <ClCompile Include="src\px\shell\font_texture.cpp" />
@@ -322,6 +326,9 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <None Include="config\shared\console_text.vert" />
     <None Include="doc\ores.json" />
     <None Include="src\px\core\sys\rendering_system.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="I:\projects\PressX\font\DejaVuSansMono.ttf" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

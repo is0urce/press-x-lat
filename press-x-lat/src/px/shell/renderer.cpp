@@ -32,7 +32,7 @@ namespace px
 			const double zoom_min = 0.01;
 			const double zoom_max = 10000;
 
-			const char* font_name = "PragmataPro.ttf";
+			const char* font_name = "DejaVuSansMono.ttf";
 			const unsigned int font_size = renderer::ui_cell_height;
 
 			//const char* texture_path = "textures/compiled.png";

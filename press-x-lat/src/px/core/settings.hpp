@@ -17,6 +17,8 @@ namespace px
 			static const unsigned int world_height = world_width;
 			static const unsigned int cell_width = 100;
 			static const unsigned int cell_height = cell_width;
+
+			//const char* font = "DejaVuSansMono.ttf";
 		};
 	}
 }

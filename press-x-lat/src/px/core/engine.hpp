@@ -10,7 +10,7 @@
 
 #include <px/es/i_engine.hpp>
 
-#include <px/core/world.hpp>
+#include <px/core/terrain_director.hpp>
 #include <px/core/terrain.hpp>
 #include <px/core/game.hpp>
 #include <px/core/unit.hpp>
@@ -65,7 +65,7 @@ namespace px
 			behavior_system m_behavior_system;
 			ui_system m_ui_system;
 
-			world m_world;
+			terrain_director m_terrain_director;
 			terrain m_terrain;
 
 			environment m_environment;
@@ -79,15 +79,14 @@ namespace px
 				, m_game_adapter(m_game)
 				, m_renderer(gl)
 				, m_space(space_start_width)
-				, m_canvas(1, 1)
 				, m_ui_system(m_canvas, m_ui)
 				, m_location_system(m_space)
 				, m_sprite_system(m_canvas)
 				, m_terrain_system(m_canvas, m_terrain)
 				, m_behavior_system(m_environment)
 				, m_factory(m_sprite_system, m_location_system, m_body_system, m_character_system, m_behavior_system)
-				, m_world(m_factory)
-				, m_terrain(m_world)
+				, m_terrain_director(m_factory)
+				, m_terrain(m_terrain_director)
 				, m_environment(m_ui)
 				, m_game(m_environment)
 				, m_last_turn(0)
@@ -120,7 +119,7 @@ namespace px
 						&& m_environment.distance(user->current(), target->current()) == 1; // 1 tile melee distance
 				});
 
-				m_environment.start(m_terrain, m_space, m_world);
+				m_environment.start(m_terrain, m_space, m_terrain_director);
 
 				// player props
 				auto weapon = std::make_shared<body_component::item_type>();

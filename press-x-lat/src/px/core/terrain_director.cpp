@@ -1,9 +1,9 @@
-// name: world.cpp
+// name: terrain_director.cpp
 // type: c++ header
 // desc: class methods
 // auth: is0urce
 
-#include "world.hpp"
+#include "terrain_director.hpp"
 
 #include <px/common/matrix.hpp>
 #include <px/rl/tile.hpp>
@@ -13,7 +13,7 @@
 #include <px/core/image.hpp>
 #include <px/core/data/factory.hpp>
 
-#include <px/core/world_generator.hpp>
+#include <px/fn/world_generator.hpp>
 
 #include <memory>
 #include <list>
@@ -32,25 +32,25 @@ namespace px
 			typedef std::mt19937 rng;
 		}
 
-		void world::generate(unsigned int seed)
+		void terrain_director::generate(unsigned int seed)
 		{
 			m_seed = seed;
 
 			m_map.resize(world_width, world_height);
 
-			world_generator generator(m_map, seed);
+			fn::world_generator generator(m_map, seed);
 			generator.generate();
 		}
 
-		void world::generate_cell(const point2 &cell, local_map_type& terrain, std::list<unit_ptr>& units)
+		void terrain_director::generate_cell(const point2 &cell, local_map_type& terrain, std::list<unit_ptr>& units)
 		{
-			world_cell &c = m_map.select(cell, m_outer);
+			auto &c = m_map.select(cell, m_outer);
 			bool mobiles = c.generated;
 			c.generated = true;
 
 			generate_cell(cell, terrain, !mobiles, units);
 		}
-		void world::generate_cell(const point2 &cell, local_map_type& terrain, bool static_mobiles, std::list<unit_ptr>& units)
+		void terrain_director::generate_cell(const point2 &cell, local_map_type& terrain, bool static_mobiles, std::list<unit_ptr>& units)
 		{
 			unsigned int seed = m_seed + cell.x() * 51 + cell.y() * cell_width * cell_height;
 
@@ -114,25 +114,20 @@ namespace px
 				units.push_back(task->assemble(persistency::serialized));
 			}
 		}
-		void world::store(unit_ptr unit)
-		{
 
-		}
-
-		world::world(factory &factory) : m_factory(&factory)
+		terrain_director::terrain_director(factory &factory) : m_factory(&factory)
 		{
 			m_outer.generated = true; // no additional generation for out-of-borders cells
 		}
-		world::~world()
+		terrain_director::~terrain_director()
 		{
-
 		}
 
-		const world::world_map_type* world::operator->() const
+		const terrain_director::world_map_type* terrain_director::map() const
 		{
 			return &m_map;
 		}
-		world::world_map_type* world::operator->()
+		terrain_director::world_map_type* terrain_director::map()
 		{
 			return &m_map;
 		}

@@ -6,7 +6,7 @@
 #include "environment.hpp"
 
 #include <px/core/terrain.hpp>
-#include <px/core/world.hpp>
+#include <px/core/terrain_director.hpp>
 
 #include <px/core/ui/map_panel.hpp>
 
@@ -18,7 +18,7 @@ namespace px
 {
 	namespace core
 	{
-		void environment::start(terrain &tiles, space_type &space, world &map)
+		void environment::start(terrain &tiles, space_type &space, terrain_director &map)
 		{
 			end();
 

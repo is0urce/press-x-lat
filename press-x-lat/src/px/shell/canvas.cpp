@@ -11,6 +11,10 @@ namespace px
 {
 	namespace shell
 	{
+		canvas::canvas()
+			: canvas(0, 0)
+		{
+		}
 		canvas::canvas(point2::component x, point2::component y)
 			: matrix2<symbol>(x, y)
 			, m_front(1, 1, 1, 1)

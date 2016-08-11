@@ -174,9 +174,6 @@
     <ClInclude Include="src\px\core\persistency.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\px\core\world.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\px\core\terrain.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -333,13 +330,25 @@
     <ClInclude Include="src\px\core\ui\map_panel.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\px\core\world_cell.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\px\core\world_generator.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\px\core\settings.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\core\terrain_director.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\fn\world.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\fn\world_generator.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\fn\world_cell.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\fn\river_net.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\fn\river.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -401,10 +410,13 @@
     <ClCompile Include="src\px\core\environment.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\px\core\world.cpp">
+    <ClCompile Include="src\px\core\terrain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\px\core\terrain.cpp">
+    <ClCompile Include="src\px\core\terrain_director.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\px\fn\world.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -428,5 +440,8 @@
     <None Include="config\shared\console_bg.vert" />
     <None Include="config\shared\console_bg.frag" />
     <None Include="src\px\core\sys\rendering_system.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="I:\projects\PressX\font\DejaVuSansMono.ttf" />
   </ItemGroup>
 </Project>

@@ -40,8 +40,10 @@ namespace px
 			size_t write_n(point2 position, const std::string &text, const color &front, size_t max_symbols);
 
 		public:
+			canvas();
 			canvas(point2::component x, point2::component y);
 			virtual ~canvas();
+			canvas(const canvas&) = delete;
 
 		private:
 			color m_front;
