@@ -78,23 +78,51 @@ namespace px
 		}
 
 		// enumerate rectangle points from start to start + range
-		template <typename _O>
-		void enumerate(_O fn) const
+		template <typename Operator>
+		void enumerate(Operator&& fn) const
 		{
 			for (int j = m_start.y(); j < m_corner.y(); ++j)
 			{
 				for (int i = m_start.x(); i < m_corner.x(); ++i)
 				{
-					fn(i, j);
+					std::forward<Operator>(fn)(i, j);
 				}
 			}
 		}
+
+		void inflate(int size)
+		{
+			m_start.move(point2(-size, -size));
+			m_range.move(point2(size * 2, size * 2));
+			m_corner.move(point2(size, size));
+		}
+		void deflate(int size)
+		{
+			inflate(-size);
+		}
+
+		rectangle inflated(int size) const
+		{
+			rectangle result = *this;
+			result.inflate(size);
+			return result;
+		}
+		rectangle deflated(int size) const
+		{
+			rectangle result = *this;
+			result.deflate(size);
+			return result;
+		}
 	};
-	inline bool operator==(const rectangle &a, const rectangle &b)
+}
+
+namespace
+{
+	bool operator==(const px::rectangle &a, const px::rectangle &b)
 	{
 		return a.range() == b.range() && a.start() == b.start();
 	}
-	inline bool operator!=(const rectangle &a, const rectangle &b)
+	bool operator!=(const px::rectangle &a, const px::rectangle &b)
 	{
 		return !operator==(a, b);
 	}
