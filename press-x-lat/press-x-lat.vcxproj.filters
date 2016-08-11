@@ -336,19 +336,16 @@
     <ClInclude Include="src\px\core\terrain_director.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\px\fn\world.hpp">
+    <ClInclude Include="src\px\core\gen\river.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\px\fn\world_generator.hpp">
+    <ClInclude Include="src\px\core\gen\river_net.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\px\fn\world_cell.hpp">
+    <ClInclude Include="src\px\core\gen\world.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\px\fn\river_net.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\px\fn\river.hpp">
+    <ClInclude Include="src\px\core\gen\world_cell.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -416,7 +413,7 @@
     <ClCompile Include="src\px\core\terrain_director.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\px\fn\world.cpp">
+    <ClCompile Include="src\px\core\gen\world.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -9,14 +9,18 @@
 #include <px/common/toggle.hpp>
 
 #include <px/es/i_engine.hpp>
+#include <px/rl/skill.hpp>
+
+#include <px/shell/control.hpp>
+#include <px/shell/control_chain.hpp>
+#include <px/shell/opengl.h>
+#include <px/shell/renderer.hpp>
 
 #include <px/core/terrain_director.hpp>
 #include <px/core/terrain.hpp>
 #include <px/core/game.hpp>
 #include <px/core/unit.hpp>
-
-#include <px/core/data/factory.hpp>
-#include <px/core/ui/main_panel.hpp>
+#include <px/core/input_adapter.hpp>
 
 #include <px/core/sys/rendering_system.hpp>
 #include <px/core/sys/ui_system.hpp>
@@ -26,14 +30,9 @@
 #include <px/core/sys/character_system.hpp>
 #include <px/core/sys/behavior_system.hpp>
 
-#include "input_adapter.hpp"
-
-#include <px/rl/skill.hpp>
-
-#include <px/shell/control.hpp>
-#include <px/shell/control_chain.hpp>
-#include <px/shell/opengl.h>
-#include <px/shell/renderer.hpp>
+#include <px/core/data/factory.hpp>
+#include <px/core/gen/world.hpp>
+#include <px/core/ui/main_panel.hpp>
 
 namespace px
 {
@@ -49,30 +48,6 @@ namespace px
 			, public shell::control_chain
 			, public toggle<true>
 		{
-		private:
-			input_adapter m_game_adapter;
-
-			qtree<location_component*> m_space;
-			shell::renderer m_renderer;
-			shell::canvas m_canvas;
-			main_panel m_ui;
-
-			location_system m_location_system;
-			rendering_system m_sprite_system;
-			terrain_system m_terrain_system;
-			body_system m_body_system;
-			character_system m_character_system;
-			behavior_system m_behavior_system;
-			ui_system m_ui_system;
-
-			terrain_director m_terrain_director;
-			terrain m_terrain;
-
-			environment m_environment;
-			game m_game;
-			factory m_factory;
-			unsigned int m_last_turn;
-
 		public:
 			engine(shell::opengl* gl)
 				: control_chain(m_ui, m_game_adapter, [this](point2 pixel) { return translate_canvas(pixel); }, [this](point2 pixel) { return translate_world(pixel); })
@@ -85,7 +60,7 @@ namespace px
 				, m_terrain_system(m_canvas, m_terrain)
 				, m_behavior_system(m_environment)
 				, m_factory(m_sprite_system, m_location_system, m_body_system, m_character_system, m_behavior_system)
-				, m_terrain_director(m_factory)
+				, m_terrain_director(m_world, m_factory)
 				, m_terrain(m_terrain_director)
 				, m_environment(m_ui)
 				, m_game(m_environment)
@@ -119,7 +94,7 @@ namespace px
 						&& m_environment.distance(user->current(), target->current()) == 1; // 1 tile melee distance
 				});
 
-				m_environment.start(m_terrain, m_space, m_terrain_director);
+				m_environment.start(m_terrain, m_space, m_world);
 
 				// player props
 				auto weapon = std::make_shared<body_component::item_type>();
@@ -220,6 +195,31 @@ namespace px
 				}
 				return result;
 			}
+
+		private:
+			input_adapter m_game_adapter;
+
+			qtree<location_component*> m_space;
+			shell::renderer m_renderer;
+			shell::canvas m_canvas;
+			main_panel m_ui;
+
+			location_system m_location_system;
+			rendering_system m_sprite_system;
+			terrain_system m_terrain_system;
+			body_system m_body_system;
+			character_system m_character_system;
+			behavior_system m_behavior_system;
+			ui_system m_ui_system;
+
+			world m_world;
+			terrain_director m_terrain_director;
+			terrain m_terrain;
+
+			environment m_environment;
+			game m_game;
+			factory m_factory;
+			unsigned int m_last_turn;
 		};
 	}
 }

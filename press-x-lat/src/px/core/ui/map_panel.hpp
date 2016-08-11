@@ -11,7 +11,7 @@
 #include <px/ui/board_panel.hpp>
 #include <px/ui/static_text_panel.hpp>
 
-#include <px/core/terrain_director.hpp>
+#include <px/core/gen/world.hpp>
 
 #include <px/shell/key.hpp>
 
@@ -24,7 +24,7 @@ namespace px
 		class map_panel : public ui::stack_panel
 		{
 		public:
-			void bind(terrain_director &w)
+			void bind(world &w)
 			{
 				m_world = &w;
 			}
@@ -91,7 +91,7 @@ namespace px
 			}
 
 		private:
-			terrain_director* m_world;
+			world* m_world;
 		};
 	}
 }

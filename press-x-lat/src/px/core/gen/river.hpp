@@ -1,16 +1,16 @@
 // name: river.hpp
 // type: c++ header
-// desc: class declaration
+// desc: struct declaration
 // auth: is0urce
 
-#ifndef PX_FN_RIVER_HPP
-#define PX_FN_RIVER_HPP
+#ifndef PX_CORE_RIVER_HPP
+#define PX_CORE_RIVER_HPP
 
 #include <px/common/point.hpp>
 
 namespace px
 {
-	namespace fn
+	namespace core
 	{
 		struct river
 		{

@@ -9,18 +9,22 @@
 #include <px/rl/i_ability.hpp>
 #include <px/rl/skill_base.hpp>
 
+#include <functional>
+
 namespace px
 {
 	namespace rl
 	{
-		template <typename _U, typename _T>
-		class skill : public i_ability<_U, _T>, public skill_base
+		template <typename User, typename Target>
+		class skill : public i_ability<User, Target>, public skill_base
 		{
 		public:
-			typedef std::function<void(_U, target)> target_fn;
-			typedef std::function<bool(_U, target)> target_check_fn;
-			typedef std::function<void(_U, const point2&)> ground_fn;
-			typedef std::function<bool(_U, const point2&)> ground_check_fn;
+			typedef User user_type;
+			typedef Target target_type;
+			typedef std::function<void(user_type, target_type)> target_fn;
+			typedef std::function<bool(user_type, target_type)> target_check_fn;
+			typedef std::function<void(user_type, const point2&)> ground_fn;
+			typedef std::function<bool(user_type, const point2&)> ground_check_fn;
 
 		private:
 			bool m_targeted;
@@ -71,23 +75,23 @@ namespace px
 			{
 				return m_targeted;
 			}
-			virtual void use_ability(_U u, _T t) override
+			virtual void use_ability(user_type u, target_type t) override
 			{
 				if (!m_target) throw std::logic_error("px::targeted_ability::use_abitity(..) - m_target function is null");
 
 				m_target(u, t);
 			}
-			virtual void use_ability(_U u, const point2 &t) override
+			virtual void use_ability(user_type u, const point2 &t) override
 			{
 				if (!m_ground) throw std::logic_error("px::targeted_ability::use_abitity(..) - m_ground function is null");
 
 				m_ground(u, t);
 			}
-			virtual bool useable_ability(_U u, _T t) const override
+			virtual bool useable_ability(user_type u, target_type t) const override
 			{
 				return !(is_cooldown() || (m_target_check && !m_target_check(u, t)));
 			}
-			virtual bool useable_ability(_U u, const point2 &t) const override
+			virtual bool useable_ability(user_type u, const point2 &t) const override
 			{
 				return !(is_cooldown() || (m_ground_check && !m_ground_check(u, t)));
 			}

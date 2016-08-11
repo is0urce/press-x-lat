@@ -5,14 +5,14 @@
 
 // proprities container of world map cell
 
-#ifndef PX_FN_WORLD_CELL_HPP
-#define PX_FN_WORLD_CELL_HPP
+#ifndef PX_CORE_WORLD_CELL_HPP
+#define PX_CORE_WORLD_CELL_HPP
 
 #include <px/core/image.hpp>
 
 namespace px
 {
-	namespace fn
+	namespace core
 	{
 		struct world_cell
 		{
@@ -21,7 +21,7 @@ namespace px
 			double moisture;
 			double river;
 
-			core::image img;
+			image img;
 			unsigned int seed;
 			bool generated;
 		};

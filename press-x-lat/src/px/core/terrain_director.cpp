@@ -13,8 +13,6 @@
 #include <px/core/image.hpp>
 #include <px/core/data/factory.hpp>
 
-#include <px/fn/world_generator.hpp>
-
 #include <memory>
 #include <list>
 #include <random>
@@ -36,21 +34,19 @@ namespace px
 		{
 			m_seed = seed;
 
-			m_map.resize(world_width, world_height);
-
-			fn::world_generator generator(m_map, seed);
-			generator.generate();
+			m_world->resize(settings::world_width, settings::world_height);
+			m_world->generate(seed);
 		}
 
-		void terrain_director::generate_cell(const point2 &cell, local_map_type& terrain, std::list<unit_ptr>& units)
+		void terrain_director::generate_cell(const point2 &cell, map_type& terrain, std::list<unit_ptr>& units)
 		{
-			auto &c = m_map.select(cell, m_outer);
+			auto &c = m_world->map()->select(cell, m_outer);
 			bool mobiles = c.generated;
 			c.generated = true;
 
 			generate_cell(cell, terrain, !mobiles, units);
 		}
-		void terrain_director::generate_cell(const point2 &cell, local_map_type& terrain, bool static_mobiles, std::list<unit_ptr>& units)
+		void terrain_director::generate_cell(const point2 &cell, map_type& terrain, bool static_mobiles, std::list<unit_ptr>& units)
 		{
 			unsigned int seed = m_seed + cell.x() * 51 + cell.y() * cell_width * cell_height;
 
@@ -115,7 +111,8 @@ namespace px
 			}
 		}
 
-		terrain_director::terrain_director(factory &factory) : m_factory(&factory)
+		terrain_director::terrain_director(world &w, factory &factory)
+			: m_world(&w), m_factory(&factory)
 		{
 			m_outer.generated = true; // no additional generation for out-of-borders cells
 		}
@@ -123,13 +120,13 @@ namespace px
 		{
 		}
 
-		const terrain_director::world_map_type* terrain_director::map() const
+		const world::map_type* terrain_director::map() const
 		{
-			return &m_map;
+			return m_world->map();
 		}
-		terrain_director::world_map_type* terrain_director::map()
+		world::map_type* terrain_director::map()
 		{
-			return &m_map;
+			return m_world->map();
 		}
 	}
 }

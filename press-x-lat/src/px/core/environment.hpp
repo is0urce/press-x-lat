@@ -23,7 +23,7 @@ namespace px
 	namespace core
 	{
 		class terrain;
-		class terrain_director;
+		class world;
 
 		class location_component;
 		class body_component;
@@ -43,7 +43,7 @@ namespace px
 		public:
 			// game flow
 
-			void start(terrain &tiles, space_type &space, terrain_director &map);
+			void start(terrain &tiles, space_type &space, world &map);
 			void end();
 			bool running() const;
 			time_type time() const;
@@ -94,7 +94,7 @@ namespace px
 			bool m_running;
 			terrain* m_terrain;
 			space_type* m_space;
-			terrain_director* m_world;
+			world* m_world;
 			time_type m_time;
 			player_type m_player;
 			faction_relation m_factions;

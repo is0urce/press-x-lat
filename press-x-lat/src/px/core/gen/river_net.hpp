@@ -1,18 +1,18 @@
-// name: world_cell.hpp
+// name: river_net.hpp
 // type: c++ header
 // desc: class declaration
 // auth: is0urce
 
-#ifndef PX_FN_RIVER_NET_HPP
-#define PX_FN_RIVER_NET_HPP
+#ifndef PX_CORE_RIVER_NET_HPP
+#define PX_CORE_RIVER_NET_HPP
 
 #include <px/common/matrix.hpp>
 
-#include <px/fn/river.hpp>
+#include <px/core/gen/river.hpp>
 
 namespace px
 {
-	namespace fn
+	namespace core
 	{
 		class river_net
 		{

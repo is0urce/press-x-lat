@@ -5,20 +5,17 @@
 
 #include "world.hpp"
 
-#include <px/fn/world_cell.hpp>
-#include <px/core/image.hpp>
+#include <px/common/vector.hpp>
 
+#include <px/core/gen/world_cell.hpp>
+#include <px/fn/perlin.hpp>
 
-#include <px/core/settings.hpp>
-
-#include <px/fn/world_generator.hpp>
-
-#include <memory>
-#include <list>
+#include <random>
+#include <numeric>
 
 namespace px
 {
-	namespace fn
+	namespace core
 	{
 		namespace
 		{

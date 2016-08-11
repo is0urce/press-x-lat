@@ -14,31 +14,31 @@ namespace px
 {
 	namespace rl
 	{
-		template <typename _U, typename _T>
+		template <typename User, typename Target>
 		class i_ability
 		{
 		public:
-			typedef _U user;
-			typedef _T target;
+			typedef User user_type;
+			typedef Target target_type;
 
 		public:
 			virtual ~i_ability() = 0 {}
 
 		protected:
-			virtual void use_ability(_U u, _T t) = 0;
-			virtual void use_ability(_U u, const point2 &t) = 0;
-			virtual bool useable_ability(_U u, _T t) const = 0;
-			virtual bool useable_ability(_U u, const point2 &t) const = 0;
+			virtual void use_ability(user_type u, target_type t) = 0;
+			virtual void use_ability(user_type u, const point2 &t) = 0;
+			virtual bool useable_ability(user_type u, target_type t) const = 0;
+			virtual bool useable_ability(user_type u, const point2 &t) const = 0;
 			virtual bool targeted_ability() const = 0;
 
 		public:
 			bool targeted() const { return targeted_ability(); }
-			bool useable(_U u, _T t) const { return useable_ability(u, t); }
-			bool useable(_U u, const point2 &t) const { return useable_ability(u, t); }
-			void use(_U u, _T t) { use_ability(u, t); }
-			void use(_U u, const point2 &t) { use_ability(u, t); }
+			bool useable(user_type u, target_type t) const { return useable_ability(u, t); }
+			bool useable(user_type u, const point2 &t) const { return useable_ability(u, t); }
+			void use(user_type u, target_type t) { use_ability(u, t); }
+			void use(user_type u, const point2 &t) { use_ability(u, t); }
 
-			bool try_use(_U u, _T t)
+			bool try_use(user_type u, target_type t)
 			{
 				if (useable_ability(u, t))
 				{
@@ -47,7 +47,7 @@ namespace px
 				}
 				return false;
 			}
-			bool try_use(_U u, const point2 &t)
+			bool try_use(user_type u, const point2 &t)
 			{
 				if (useable_ability(u, t))
 				{

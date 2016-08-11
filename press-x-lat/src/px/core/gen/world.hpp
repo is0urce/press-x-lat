@@ -3,17 +3,17 @@
 // desc: class declaration
 // auth: is0urce
 
-#ifndef PX_FN_WORLD_HPP
-#define PX_FN_WORLD_HPP
+#ifndef PX_CORE_WORLD_HPP
+#define PX_CORE_WORLD_HPP
 
 #include <px/common/matrix.hpp>
 
-#include <px/fn/world_cell.hpp>
-#include <px/fn/river_net.hpp>
+#include <px/core/gen/world_cell.hpp>
+#include <px/core/gen/river_net.hpp>
 
 namespace px
 {
-	namespace fn
+	namespace core
 	{
 		class world
 		{
@@ -39,7 +39,7 @@ namespace px
 			unsigned int m_seed;
 			map_type m_map;
 			river_net m_rivers;
-			cell_type m_outer;
+			cell_type m_outer; // out-of-border cell props
 		};
 	}
 }

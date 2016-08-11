@@ -6,8 +6,8 @@
 #include "environment.hpp"
 
 #include <px/core/terrain.hpp>
-#include <px/core/terrain_director.hpp>
 
+#include <px/core/gen/world.hpp>
 #include <px/core/ui/map_panel.hpp>
 
 #include <px/core/unit.hpp>
@@ -18,7 +18,7 @@ namespace px
 {
 	namespace core
 	{
-		void environment::start(terrain &tiles, space_type &space, terrain_director &map)
+		void environment::start(terrain &tiles, space_type &space, world &map)
 		{
 			end();
 
@@ -30,6 +30,7 @@ namespace px
 
 			m_map->bind(map);
 
+			m_world->resize(settings::world_width, settings::world_height);
 			m_world->generate(0);
 		}
 		void environment::end()
@@ -37,10 +38,14 @@ namespace px
 			if (!m_running) return;
 
 			m_running = false;
+
 			m_terrain = nullptr;
 			m_space = nullptr;
+			m_world = nullptr;
 
 			m_map->tear();
+
+			m_world->clear();
 		}
 		bool environment::running() const
 		{
