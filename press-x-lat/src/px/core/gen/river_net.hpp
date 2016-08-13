@@ -27,8 +27,8 @@ namespace px
 			void clear()
 			{
 				m_map.enumerate([](int, int, auto& r) {
-					r.size = 0;
-					r.flow = point2(0, 0);
+					//r.size = 0;
+					//r.flow = point2(0, 0);
 				});
 			}
 

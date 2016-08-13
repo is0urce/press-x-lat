@@ -31,8 +31,8 @@ namespace px
 			typedef double time_t;
 
 		public:
-			const static unsigned int ui_cell_width = 10;
-			const static unsigned int ui_cell_height = 10;
+			const static unsigned int ui_cell_width = 16;
+			const static unsigned int ui_cell_height = 16;
 
 		private:
 			opengl* m_opengl;

@@ -47,13 +47,13 @@
     <ClCompile Include="src\manager_tests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\perlin.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\coordinate_test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\rectangle_test.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\perlin_tests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -53,10 +53,10 @@ namespace px
 			std::array<unsigned int, 624> seed_data;
 			std::iota(std::begin(seed_data), std::end(seed_data), seed);
 			std::seed_seq state(std::begin(seed_data), std::end(seed_data));
-
 			rng generator(state);
 			generator.discard(rng::state_size);
-			fn::perlin<perlin_width, perlin_height> noise([generator, distribution = std::uniform_real_distribution<double>()]() mutable {return distribution(generator); });
+
+			fn::perlin<perlin_width, perlin_height> noise(generator);
 
 			double mx = static_cast<double>(perlin_width - 1) / cell_width;
 			double my = static_cast<double>(perlin_height - 1) / cell_height;

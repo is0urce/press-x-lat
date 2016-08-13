@@ -8,14 +8,16 @@
 
 #include <px/common/point.hpp>
 
+#include <px/rl/entity.hpp>
+
 namespace px
 {
 	namespace core
 	{
-		struct river
+		class river : public rl::entity
 		{
-			double size;
-			point2 flow; // direction of flow x = horisontal, y = vertical
+			//double size;
+			//point2 flow; // direction of flow x = horisontal, y = vertical
 		};
 	}
 }

@@ -10,7 +10,7 @@ using namespace px::fn;
 TEST_CASE("perlin", "[perlin]")
 {
 	perlin<100, 100> noise;
-	noise.fill(&std::rand);
+	noise.fill(std::mt19937());
 
 	auto v = noise.sample(0.3, 0.3, 2);
 }

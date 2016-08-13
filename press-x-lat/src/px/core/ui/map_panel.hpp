@@ -27,6 +27,7 @@ namespace px
 			void bind(world &w)
 			{
 				m_world = &w;
+
 			}
 			void tear()
 			{
@@ -36,9 +37,9 @@ namespace px
 		public:
 			map_panel()
 			{
-				emplace<ui::board_panel>({ { 0, 0 },{ 0, 0 },{ 0, 1 },{ 1, 0 } }, color(0.3, 0.3, 0.3));
-				emplace<ui::board_panel>({ { 0, 0 },{ 0, 1 },{ 0, -1 },{ 1, 1 } }, color(0.8, 0.8, 0.8));
-				emplace<ui::static_text_panel>({ { 0, 0 },{ 0, 0 },{ 0, 0 },{ 0, 0 } }, "[MAP]", color(1, 1, 1));
+				//emplace<ui::board_panel>({ { 0, 0 },{ 0, 0 },{ 0, 1 },{ 1, 0 } }, color(0.3, 0.3, 0.3));
+				//emplace<ui::board_panel>({ { 0, 0 },{ 0, 1 },{ 0, -1 },{ 1, 1 } }, color(0.8, 0.8, 0.8));
+				//emplace<ui::static_text_panel>({ { 0, 0 },{ 0, 0 },{ 0, 0 },{ 0, 0 } }, "[MAP]", color(1, 1, 1));
 			}
 			virtual ~map_panel() {}
 
@@ -47,13 +48,21 @@ namespace px
 			{
 				stack_panel::draw_panel(cnv);
 
-				point2 pen = bounds().start().moved(0, 1);
 				if (m_world)
 				{
-					m_world->map()->enumerate([&](unsigned int x, unsigned int y, auto &cell) {
+					int w = m_world->map()->width();
+					int h = m_world->map()->height();
 
-						point2 pos = pen + point2(x, y);
-						if (bounds().contains(pos))
+					point2 center = bounds().start() + bounds().range() / 2;
+					//pen.move(point2(-m_width / 2, m_height / 2));
+					point2 start = center.moved(point2(-w / 2, -h / 2));
+					rectangle map = { start, {w, h} };
+					point2 pen = start.moved({ 0, h - 1 });
+
+					cnv.rectangle(map.inflated(1), { 1, 1, 1 });
+					m_world->map()->enumerate([&](int x, int y, auto &cell) {
+
+						point2 pos = pen + point2(x, -y);
 						{
 							cnv.write(pos, cell.img.glyph, cell.img.tint);
 							cnv.pset(pos, cell.img.bg);
@@ -92,6 +101,8 @@ namespace px
 
 		private:
 			world* m_world;
+			unsigned int m_width;
+			unsigned int m_height;
 		};
 	}
 }

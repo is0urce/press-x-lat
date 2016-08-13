@@ -12,6 +12,7 @@
 #include <px/common/matrix.hpp>
 
 #include <cmath>
+#include <random>
 
 namespace px
 {
@@ -30,6 +31,8 @@ namespace px
 			{
 				double x;
 				double y;
+				gradient() {}
+				gradient(double dx, double dy) : x(dx), y(dy) {}
 			};
 
 		public:
@@ -47,10 +50,10 @@ namespace px
 			template <typename Generator>
 			void fill(Generator rng)
 			{
-				m_matrix.fill([&rng](unsigned int i, unsigned int j) -> gradient
+				m_matrix.fill([&rng, distribution = std::uniform_real_distribution<double>(0, pi * 2)](unsigned int i, unsigned int j) -> gradient
 				{
-					double num = pi * 2 * rng();
-					return{ std::cos(num), std::sin(num) };
+					double num = distribution(rng);
+					return gradient(std::cos(num), std::sin(num));
 				});
 			}
 
