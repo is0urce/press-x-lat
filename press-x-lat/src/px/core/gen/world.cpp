@@ -30,6 +30,7 @@ namespace px
 				return a * (1 - w) + b * w;
 			}
 
+			// lerp between w0 and w1, w0 < w < w1
 			template <typename T, typename M>
 			static T lerp(T a, T b, M w, M w0, M w1)
 			{
@@ -126,13 +127,15 @@ namespace px
 			expand_moisture();
 
 			// generate rivers
-			std::uniform_int_distribution<unsigned int> rx(0, m_map.width() - 1);
-			std::uniform_int_distribution<unsigned int> ry(0, m_map.height() - 1);
+			std::uniform_int_distribution<unsigned int> rand_x(0, m_map.width() - 1);
+			std::uniform_int_distribution<unsigned int> rand_y(0, m_map.height() - 1);
 			unsigned int n = 0;
-			while (n < rivers)
+			unsigned int tries = 0;
+			while (n < rivers && tries < max_try_stop)
 			{
-				unsigned int x = rx(m_generator);
-				unsigned int y = ry(m_generator);
+				++tries;
+				unsigned int x = rand_x(m_generator);
+				unsigned int y = rand_y(m_generator);
 
 				auto &cell = m_map[point2(x, y)];
 				if (cell.river_size <= 0 && cell.altitude > 0.35)
