@@ -43,6 +43,7 @@ namespace px
 			// out-of-border cell proprieties
 			m_outer.altitude = -1;
 			m_outer.moisture = 0;
+			m_outer.river = nullptr;
 			m_outer.river_size = 0;
 			m_outer.gradient = { 0, 0 };
 		}
@@ -84,10 +85,11 @@ namespace px
 			double mx = (perlin_width - 1) / w;
 			double my = (perlin_height - 1) / h;
 
+			double max_peak = -1.0;
+
+			// calculate altitudes
 			vector2 center(w / 2.0f, h / 2.0f);
 			double size = (std::min)(w, h);
-
-			double max_peak = -1.0;
 			m_map.enumerate([&](int i, int j, auto& cell)
 			{
 				double noise_magnitude = noise.sample(mx * i, my * j, perlin_samples);
@@ -99,15 +101,11 @@ namespace px
 				max_peak = (std::max)(max_peak, cell.altitude);
 			});
 
-			// normalise
-			m_map.enumerate([mx, my, max_peak](unsigned int, unsigned int, auto& cell)
+			// normalise, calculate gradient
+			m_map.enumerate([mx, my, max_peak, this](int i, int j, auto& cell)
 			{
 				cell.altitude = cell.altitude / max_peak;
-			});
 
-			// calculate altitude gradient
-			m_map.enumerate([this](int i, int j, auto& cell)
-			{
 				auto dx = m_map.select({ i + 1, j }, m_outer).altitude - m_map.select({ i - 1, j }, m_outer).altitude;
 				auto dy = m_map.select({ i, j + 1 }, m_outer).altitude - m_map.select({ i, j - 1 }, m_outer).altitude;
 
@@ -117,37 +115,17 @@ namespace px
 
 		void world::generate_climate(double rivers)
 		{
-			// temperature
+			// fill moisture from ocean
 			m_rivers.clear();
-			m_map.enumerate([](unsigned int i, unsigned int j, auto& cell)
+			m_map.enumerate([h = m_map.height()](unsigned int i, unsigned int j, auto& cell)
 			{
-				cell.temperature = 0.25;
 				cell.moisture = cell.altitude <= 0 ? 1.0 : 0.0;
+				cell.temperature = -0.25 + 1.0 * (h - j) / h - cell.altitude * 0.5;
 				cell.river = nullptr;
 			});
+			expand_moisture();
 
-			// fill moisture from ocean
-			bool change = true;
-			while (change)
-			{
-				change = false;
-				m_map.enumerate([&change, this](int x, int y, world_cell& cell)
-				{
-					world_cell &u = m_map.select({ x, y + 1 }, m_outer);
-					world_cell &d = m_map.select({ x, y - 1 }, m_outer);
-					world_cell &l = m_map.select({ x - 1, y }, m_outer);
-					world_cell &r = m_map.select({ x + 1, y }, m_outer);
-
-					double moisture = (std::max)((std::max)(u.moisture, d.moisture), (std::max)(l.moisture, r.moisture)) / 2;
-
-					if (cell.moisture < moisture)
-					{
-						cell.moisture = moisture;
-						change = true;
-					}
-				});
-			}
-
+			// generate rivers
 			std::uniform_int_distribution<unsigned int> rx(0, m_map.width() - 1);
 			std::uniform_int_distribution<unsigned int> ry(0, m_map.height() - 1);
 			unsigned int n = 0;
@@ -163,7 +141,7 @@ namespace px
 					r.set_tag(std::string("river") + std::to_string(n));
 
 					m_rivers.emplace_back(r);
-					generate_river(x, y, 1.0, m_rivers.back());
+					generate_river(x, y, cell.moisture, m_rivers.back());
 					++n;
 				}
 			}
@@ -171,28 +149,9 @@ namespace px
 			// fill moisture from rivers
 			m_map.enumerate([](unsigned int i, unsigned int j, auto& cell)
 			{
-				cell.moisture = cell.river_size > 0 ? 1.0 : 0.0;
+				cell.moisture = cell.river_size > 0 ? 1.0 : cell.altitude < 0 ? 0.0125 : 0.0;
 			});
-			change = true;
-			while (change)
-			{
-				change = false;
-				m_map.enumerate([&change, this](int x, int y, world_cell& cell)
-				{
-					world_cell &u = m_map.select({ x, y + 1 }, m_outer);
-					world_cell &d = m_map.select({ x, y - 1 }, m_outer);
-					world_cell &l = m_map.select({ x - 1, y }, m_outer);
-					world_cell &r = m_map.select({ x + 1, y }, m_outer);
-
-					double moisture = (std::max)((std::max)(u.moisture, d.moisture), (std::max)(l.moisture, r.moisture)) / 2;
-
-					if (cell.moisture < moisture)
-					{
-						cell.moisture = moisture;
-						change = true;
-					}
-				});
-			}
+			expand_moisture();
 		}
 
 		void world::generate_appearance()
@@ -211,10 +170,6 @@ namespace px
 			//}
 			m_map.enumerate([w = m_map.width(), h = m_map.height(), this](int i, int j, auto& cell)
 			{
-				std::uniform_real_distribution<double> dist(-0.05, 0.05);
-				double altitude = cell.altitude;
-				double temperature = -0.25 + 1.0 * (h - j) / h - cell.altitude * 0.5;
-
 				if (cell.altitude <= 0)
 				{
 					cell.img.glyph = '~';
@@ -225,13 +180,13 @@ namespace px
 				{
 					if (cell.altitude < 0.5)
 					{
-						if (temperature < 0)
+						if (cell.temperature < 0)
 						{
 							cell.img.glyph = cell.moisture < 0.0625 ? '.' : 9650;
 							cell.img.tint = cell.moisture < 0.0625 ? color(0, 0, 0) : color(0, 0.25, 0);
 							cell.img.bg = lerp(color(0.9, 0.9, 0.9), color(1, 1, 1), cell.altitude, 0.0, 1.0);
 						}
-						else if (temperature > 0.25 && cell.moisture < 0.0625)
+						else if (cell.temperature > 0.25 && cell.moisture < 0.0625)
 						{
 							cell.img.glyph = '.';
 							cell.img.tint = { 0, 0, 0 };
@@ -244,10 +199,10 @@ namespace px
 							cell.img.bg = lerp(color(0.0, 0.5, 0.0), color(0, 0.75, 0), cell.altitude, 0.0, 1.0);
 						}
 					}
-					else
+					else // mountains
 					{
 						cell.img.glyph = '^';
-						if (temperature > 0)
+						if (cell.temperature > 0)
 						{
 							cell.img.tint = { 0, 0, 0 };
 							cell.img.bg = { 0.5, 0.5, 0.5 };// lerp(color(0.5, 0.5, 0.5), color(0.55, 0.55, 0.55), cell.altitude, 0.5, 1.0);
@@ -266,6 +221,30 @@ namespace px
 					}
 				}
 			});
+		}
+
+		void world::expand_moisture()
+		{
+			bool change = true;
+			while (change)
+			{
+				change = false;
+				m_map.enumerate([&change, this](int x, int y, auto& cell)
+				{
+					auto &u = m_map.select({ x, y + 1 }, m_outer);
+					auto &d = m_map.select({ x, y - 1 }, m_outer);
+					auto &l = m_map.select({ x - 1, y }, m_outer);
+					auto &r = m_map.select({ x + 1, y }, m_outer);
+
+					double moisture = (std::max)((std::max)(u.moisture, d.moisture), (std::max)(l.moisture, r.moisture)) / 2;
+
+					if (cell.moisture < moisture)
+					{
+						cell.moisture = moisture;
+						change = true;
+					}
+				});
+			}
 		}
 
 		void world::generate_river(int x, int y, double size, river& current)
@@ -354,7 +333,6 @@ namespace px
 
 				if (dx != 0 || dy != 0)
 				{
-					if (std::abs(dx) > 1 || std::abs(dy) > 1) throw std::runtime_error("sadf");
 					generate_river(x + dx, y + dy, size + 1.0, current);
 				}
 			}

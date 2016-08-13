@@ -43,6 +43,7 @@ namespace px
 			world(const world&) = delete;
 
 		private:
+			void expand_moisture();
 			void generate_river(int x, int y, double size, river&);
 
 		private:

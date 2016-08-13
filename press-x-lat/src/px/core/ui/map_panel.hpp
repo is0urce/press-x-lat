@@ -54,7 +54,6 @@ namespace px
 					int h = m_world->map()->height();
 
 					point2 center = bounds().start() + bounds().range() / 2;
-					//pen.move(point2(-m_width / 2, m_height / 2));
 					point2 start = center.moved(point2(-w / 2, -h / 2));
 					rectangle map = { start, {w, h} };
 					point2 pen = start.moved({ 0, h - 1 });
@@ -91,18 +90,12 @@ namespace px
 			virtual bool click_control(const point2 &position, unsigned int button) override
 			{
 				bool result = stack_panel::click_control(position, button);
-				if (!result && !bounds().contains(position))
-				{
-					deactivate();
-					result = true;
-				}
+
 				return result;
 			}
 
 		private:
 			world* m_world;
-			unsigned int m_width;
-			unsigned int m_height;
 		};
 	}
 }
