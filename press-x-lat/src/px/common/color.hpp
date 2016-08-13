@@ -33,9 +33,9 @@ namespace px
 
 		// ctor & dtor
 	public:
-		color() : R{}, G{}, B{}, A(1) {};
-		color(component r, component g, component b) : R(r), G(g), B(b), A(1) {};
-		color(component r, component g, component b, component a) : R(r), G(g), B(b), A(a) {};
+		constexpr color() : R{}, G{}, B{}, A(1) {};
+		constexpr color(component r, component g, component b) : R(r), G(g), B(b), A(1) {};
+		constexpr color(component r, component g, component b, component a) : R(r), G(g), B(b), A(a) {};
 		color(unsigned int hex) : A(1) { set_hex(hex); }
 
 	public:
@@ -113,7 +113,7 @@ namespace px
 			return ret;
 		}
 
-		// io
+		// io, we have dedicated repeat function arguments to compliment structures like solid-tinted polygons
 		template <typename Memory>
 		void write(Memory *memory) const
 		{
@@ -123,7 +123,10 @@ namespace px
 			memory[3] = static_cast<Memory>(A);
 		};
 		template <typename Memory>
-		void write(Memory *memory, unsigned int repeat) const { for (unsigned int i = 0; i < repeat; ++i) { write(memory); memory += depth; } };
+		void write(Memory *memory, unsigned int repeat) const
+		{
+			for (unsigned int i = 0; i < repeat; ++i) { write(memory); memory += depth; }
+		};
 		void write(component *memory) const { memory[0] = R; memory[1] = G; memory[2] = B; memory[3] = A; };
 		void write(component *memory, unsigned int repeat) const { for (unsigned int i = 0; i < repeat; ++i) { write(memory); memory += depth; } };
 
