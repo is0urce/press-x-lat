@@ -102,35 +102,7 @@ namespace px
 					}
 				}
 			};
-			//class iterator
-			//{
-			//	node* operator*() { return m_branch == 0 ? m_node->l : m_node->r; }
-			//	iterator& operator++()
-			//	{
-			//		++m_branch;
-			//		if (m_branch > 1)
-			//		{
-			//			iterator* next = m_upper;
-			//			while (m_next && m_next.branch > 1)
-			//			{
-			//				m_next = m_next->upper;
-			//			}
-			//			
-			//			iterator i;
-			//			i.m_upper = m_next;////
-			//		}
-			//		return *this;
-			//	}
 
-			//	iterator() : m_node(nullptr), m_upper(nullptr), m_branch(0) {}
-			//	iterator(const iterator&) = default;
-			//	iterator& operator=(iterator&) = default;
-			//	iterator(iterator&& s) : iterator() { std::swap(m_node, s.m_node); std::swap(m_upper, s.m_upper); std::swap(m_branch, s.m_branch); }
-
-			//	node* m_node;
-			//	iterator* m_upper;
-			//	int m_branch;
-			//};
 		public:
 			bsp(rng_type &rng, rectangle bounds, int min)
 			{
