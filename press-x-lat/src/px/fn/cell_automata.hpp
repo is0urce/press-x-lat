@@ -1,52 +1,50 @@
-// name: cell_automata.h
+// name: cell_automata.hpp
 // type: c++ header
 // desc: template class for cellular automation
 // auth: is0urce
 
 // template for cellular automata based on matrix2
-// _C - cell / element type
+// C - cell / element type
 
 #ifndef PX_FN_CELL_AUTOMATA_HPP
 #define PX_FN_CELL_AUTOMATA_HPP
 
 #include <px/common/matrix.hpp>
 
-#include <functional>
 #include <memory>
 
-// _A acc type
-// _F fold functor
-// _S select functor
+// A acc type
+// F fold functor
+// S select functor
 
 namespace px
 {
 	namespace fn
 	{
-		template<typename _C, unsigned int _W, unsigned int _H>
+		template<typename _C, size_t W, size_t H>
 		class cell_automata
 		{
 		public:
-			typedef matrix2<_C, _W, _H> map;
+			typedef matrix2<_C, W, H> map;
 		private:
 			std::unique_ptr<map> m_map;
 		public:
 			cell_automata() : m_map(std::make_unique<map>()) {}
 			cell_automata(const _C &initial) : m_map(std::make_unique<map>(initial)) {}
-			template <typename _Op>
-			cell_automata(_Op fn) : m_map(std::make_unique<map>(fn)) {}
-			~cell_automata() {}
+			template <typename Op>
+			cell_automata(Op fn) : m_map(std::make_unique<map>(fn)) {}
 
 		private:
 			// clip out-of-range access to bounds
 			const _C& sample(const point2 &position) const
 			{
-				return m_map->at(position.clamped({ 0, 0 }, { _W - 1, _H - 1 }));
+				return m_map->at(position.clamped({ 0, 0 }, { W - 1, H - 1 }));
 			}
 
 		public:
 			// run generator for several generations
-			template<typename _A, typename _F, typename _S>
-			void mutate(_F fold, _A start, _S select, unsigned int generations)
+			template<typename A, typename F, typename S>
+			void mutate(F fold, A start, S select, unsigned int generations)
 			{
 				for (unsigned int i = 0; i < generations; ++i)
 				{
@@ -55,14 +53,14 @@ namespace px
 			}
 
 			// run generator once
-			template<typename _A, typename _F, typename _S>
-			void next_generation(_F fold, _A start, _S select)
+			template<typename A, typename F, typename S>
+			void next_generation(F fold, A start, S select)
 			{
 				// generate and swap
 				m_map = std::make_unique<map>([&](unsigned int i, unsigned int j)
 				{
 					point2 pos(i, j);
-					_A acc = start;
+					A acc = start;
 					acc = fold(acc, sample(pos));
 					acc = fold(acc, sample(pos.moved({ 0, 1 })));
 					acc = fold(acc, sample(pos.moved({ 0, -1 })));

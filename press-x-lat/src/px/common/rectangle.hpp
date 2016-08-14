@@ -89,6 +89,32 @@ namespace px
 				}
 			}
 		}
+		template <typename Operator>
+		void enumerate_bounds(Operator&& fn) const
+		{
+			int j = m_start.y();
+			for (int i = m_start.x(); i < m_corner.x(); ++i)
+			{
+				std::forward<Operator>(fn)(i, j);
+			}
+
+			j = m_corner.y() - 1;
+			if (j != m_start.y()) for (int i = m_start.x(); i < m_corner.x(); ++i)
+			{
+				std::forward<Operator>(fn)(i, j);
+			}
+
+			int i = m_start.x();
+			for (int j = m_start.y() + 1; j < m_corner.y() - 1; ++j)
+			{
+				std::forward<Operator>(fn)(i, j);
+			}
+			i = m_corner.x() - 1;
+			if (i != m_start.x()) for (int j = m_start.y() + 1; j < m_corner.y() - 1; ++j)
+			{
+				std::forward<Operator>(fn)(i, j);
+			}
+		}
 
 		void inflate(int size)
 		{

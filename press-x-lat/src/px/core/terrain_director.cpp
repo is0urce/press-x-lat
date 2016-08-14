@@ -9,6 +9,7 @@
 #include <px/rl/tile.hpp>
 #include <px/rl/traverse.hpp>
 #include <px/fn/perlin.hpp>
+#include <px/fn/bsp.hpp>
 
 #include <px/core/image.hpp>
 #include <px/core/data/factory.hpp>
@@ -27,7 +28,7 @@ namespace px
 			static const unsigned int perlin_width = 7;
 			static const unsigned int perlin_height = perlin_width;
 			static const unsigned int perlin_samples = 9;
-			typedef std::mt19937 rng;
+			typedef std::mt19937 rng_type;
 		}
 
 		void terrain_director::generate(unsigned int seed)
@@ -53,8 +54,8 @@ namespace px
 			std::array<unsigned int, 624> seed_data;
 			std::iota(std::begin(seed_data), std::end(seed_data), seed);
 			std::seed_seq state(std::begin(seed_data), std::end(seed_data));
-			rng generator(state);
-			generator.discard(rng::state_size);
+			rng_type generator(state);
+			generator.discard(rng_type::state_size);
 
 			fn::perlin<perlin_width, perlin_height> noise(generator);
 
@@ -83,6 +84,24 @@ namespace px
 				if (j == 0) terrain[{i, j}].appearance().glyph = '-';
 				if (i == 0 && j == 0) terrain[{i, j}].appearance().glyph = '+';
 
+			});
+
+			fn::bsp<rng_type, int> tree(generator, { { 6, 6 }, { 38, 38 } }, 5);
+			int rooms = 0;
+			tree.enumerate([&rooms](auto &node) mutable {
+				node.data = ++rooms;
+			});
+			tree.enumerate([&](const auto &node)	{
+				node.bounds.enumerate_bounds([&](int i, int j)	{
+					auto& img = terrain[point2(i, j)].appearance();
+
+					color red = { 1, 0, 0 };
+					red.shift_hue(node.data * 3.14 * 2 / rooms);
+					//red.shift_brightness(0.5);
+					
+					img.glyph = '#';
+					img.tint = red;
+				});
 			});
 
 			if (static_mobiles)

@@ -11,14 +11,12 @@
 
 #include <cmath>
 
-namespace
-{
-	const double pi = 3.141592653589793238463; // more than enought
-	const unsigned int depth = 4;
-}
-
 namespace px
 {
+	namespace
+	{
+		const unsigned int depth = 4;
+	}
 	class color
 	{
 	public:
@@ -78,8 +76,8 @@ namespace px
 		// saturation - saturation multiplier (scalar), v - value multiplier (scalar)
 		static color transform_hsv(const color &in, double hue, double saturation, double V)
 		{
-			double VSU = V * saturation * std::cos(hue * pi / 180.0);
-			double VSW = V * saturation * std::sin(hue * pi / 180.0);
+			double VSU = V * saturation * std::cos(hue);
+			double VSW = V * saturation * std::sin(hue);
 
 			color ret(in);
 			ret.R = (.299*V + .701*VSU + .168*VSW)*in.R
@@ -96,8 +94,8 @@ namespace px
 		}
 		static color transform_hue(const color &in, double angle)
 		{
-			double U = std::cos(angle * pi / 180.0);
-			double W = std::sin(angle * pi / 180.0);
+			double U = std::cos(angle);
+			double W = std::sin(angle);
 
 			color ret(in);
 			ret.R = (.299 + .701*U + .168*W) * in.R
