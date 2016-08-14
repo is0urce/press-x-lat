@@ -21,8 +21,8 @@ namespace px
 			, public es::component_link<body_component>
 			, protected location
 		{
-		private:
-			qtree<location_component*>* m_space;
+		public:
+			typedef qtree<location_component*>* space_ptr;
 
 		public:
 			location_component() : m_space(nullptr) {}
@@ -46,7 +46,7 @@ namespace px
 
 		public:
 			// lame mnemonics > good names
-			void incarnate(qtree<location_component*>* space)
+			void incarnate(space_ptr space)
 			{
 				if (m_space != space)
 				{
@@ -76,6 +76,14 @@ namespace px
 				}
 				position = destination;
 			}
+			space_ptr space() const
+			{
+				return m_space;
+			}
+
+
+		private:
+			space_ptr m_space;
 		};
 	}
 }

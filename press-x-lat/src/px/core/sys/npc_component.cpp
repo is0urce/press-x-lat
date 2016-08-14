@@ -74,6 +74,7 @@ namespace px
 			{
 				if (body_component* body = *location)
 				{
+					//return;
 					if (!body->dead())
 					{
 						character_component* character = *body;

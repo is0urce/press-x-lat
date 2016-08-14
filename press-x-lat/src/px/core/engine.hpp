@@ -121,6 +121,7 @@ namespace px
 				body->join_faction(1);
 				body->equip_weapon(weapon);
 				character->add_skill("melee");
+				character->set_tag("player");
 				// add
 				auto player = task->assemble(persistency::permanent);
 				m_terrain.add(player);

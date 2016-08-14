@@ -12,9 +12,10 @@ namespace px
 		character_system::character_system() {}
 		character_system::~character_system() {}
 
-		void character_system::element_allocated(character_component &l)
+		void character_system::element_allocated(character_component &element)
 		{
-			l.provide(&m_spellbook);
+			element.deactivate();
+			element.provide(&m_spellbook);
 		}
 	}
 }

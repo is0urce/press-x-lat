@@ -19,6 +19,7 @@
 #include "unit_composer.hpp"
 
 #include <memory>
+#include <mutex>
 
 namespace px
 {
@@ -32,6 +33,8 @@ namespace px
 		public:
 			std::unique_ptr<task> produce()
 			{
+				std::lock_guard<std::mutex> lock(m_mutex);
+
 				return std::make_unique<task>(*this);
 			}
 			auto make_appearance()
@@ -69,6 +72,7 @@ namespace px
 			body_system* m_bs;
 			character_system* m_cs;
 			behavior_system* m_behavior_sys;
+			std::mutex m_mutex;
 		};
 
 		class task : public unit_composer

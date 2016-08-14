@@ -80,53 +80,53 @@ namespace px
 					t.make_traversable();
 				}
 
-				if (i == 0) terrain[{i, j}].appearance().glyph = '|';
-				if (j == 0) terrain[{i, j}].appearance().glyph = '-';
-				if (i == 0 && j == 0) terrain[{i, j}].appearance().glyph = '+';
+				//if (i == 0) terrain[{i, j}].appearance().glyph = '|';
+				//if (j == 0) terrain[{i, j}].appearance().glyph = '-';
+				//if (i == 0 && j == 0) terrain[{i, j}].appearance().glyph = '+';
 
 			});
 
-			fn::bsp<rng_type, int> tree(generator, { { 6, 6 }, { 38, 38 } }, 5);
-			int rooms = 0;
-			tree.enumerate([&rooms](auto &node) mutable {
-				node.data = ++rooms;
-			});
-			tree.enumerate([&](const auto &node)	{
-				node.bounds.enumerate_bounds([&](int i, int j)	{
-					auto& img = terrain[point2(i, j)].appearance();
+			std::list<point2> room_center;
 
-					color red = { 1, 0, 0 };
-					red.shift_hue(node.data * 3.14 * 2 / rooms);
-					//red.shift_brightness(0.5);
-					
-					img.glyph = '#';
-					img.tint = red;
+			fn::bsp<rng_type> buildings(generator, { { 0, 0 }, point2(cell_width, cell_height) }, 12);
+			buildings.enumerate([&](const auto &building) {
+				fn::bsp<rng_type> rooms(generator, building.bounds.deflated(1), 4);
+
+				rooms.enumerate([&](const auto &room) {
+
+					rectangle(room.bounds.start(), room.bounds.range() + point2(1, 1)).enumerate_bounds([&](int i, int j)	{
+						auto& img = terrain[point2(i, j)].appearance();
+						
+						img.glyph = '#';
+						img.tint = color::white();
+					});
+					room_center.push_back(room.bounds.start() + room.bounds.range() / 2);
 				});
 			});
 
 			if (static_mobiles)
 			{
-				auto task = m_factory->produce();
+				point2 spawn(3, 3);
+				for (point2 spawn : room_center)
+				{
+					auto task = m_factory->produce();
 
-				auto sprite = task->add_appearance('g', { 1, 0, 0 });
-				auto pawn = task->add_location(cell * point2(cell_width, cell_height) + point2(3, 3));
-				auto body = task->add_body(100, 100);
-				auto character = task->add_character();
-				auto ai = task->add_npc_behavior();
+					auto sprite = task->add_appearance('f', { 1, 0.0, 0 });
+					auto pawn = task->add_location((cell * point2(cell_width, cell_height)) + spawn);
+					auto body = task->add_body(100, 100);
+					auto character = task->add_character();
+					auto ai = task->add_npc_behavior();
 
-				auto weapon = std::make_shared<body_component::item_type>();
-				weapon->add({ rl::effect::weapon_damage, 0, 1 });
-				auto loot = std::make_shared<body_component::item_type>();
-				loot->add({ rl::effect::ore_power, 0x00, 50 });
-				loot->set_name("Ore");
-				loot->set_tag("common_ore");
+					auto weapon = std::make_shared<body_component::item_type>();
+					weapon->add({ rl::effect::weapon_damage, 0, 0 });
 
-				body->equip_weapon(weapon);
-				body->join_faction(0);
-				body->add(loot);
-				character->add_skill("melee");
+					body->equip_weapon(weapon);
+					body->join_faction(0);
+					character->add_skill("melee");
+					character->set_tag("mob");
 
-				units.push_back(task->assemble(persistency::serialized));
+					units.push_back(task->assemble(persistency::serialized));
+				}
 			}
 		}
 

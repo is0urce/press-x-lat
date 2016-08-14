@@ -28,6 +28,10 @@ namespace px
 			virtual ~behavior_system() {}
 
 		protected:
+			virtual void element_allocated(npc_component &component) override
+			{
+				component.deactivate();
+			}
 			virtual void fixed_update_system() override
 			{
 				enumerate([this](npc_component &npc)

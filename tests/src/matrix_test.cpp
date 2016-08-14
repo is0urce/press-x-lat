@@ -34,6 +34,8 @@ TEST_CASE("matrix", "[matrix]")
 	REQUIRE_THROWS(m1.at({ 0, (int)H }));
 	REQUIRE_THROWS(m1.at({ (int)W, 0 }));
 
+	REQUIRE(m1.at(0, 0) == m1[px::point2(0, 0)]);
+
 	px::matrix2<int> a(w, h);
 	px::matrix2<int> c(w, h, element);
 	px::matrix2<int> e(w, h, generator);

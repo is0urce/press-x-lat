@@ -27,17 +27,19 @@ namespace px
 			virtual ~location_system() {}
 
 		protected:
-			virtual void element_allocated(location_component &l) override
+			virtual void element_allocated(location_component &element) override
 			{
-				l.incarnate(m_space);
+				element.deactivate();
+				element.incarnate(m_space);
 			}
-			virtual void element_released(location_component &l) override
+			virtual void element_released(location_component &element) override
 			{
-				l.incarnate(nullptr);
+				element.deactivate();
+				element.incarnate(nullptr);
 			}
 
 		public:
-			auto make_location(point2 position)-> decltype(make())
+			auto make_location(point2 position)
 			{
 				auto component = make();
 				component->move(position);

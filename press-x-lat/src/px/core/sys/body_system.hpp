@@ -17,20 +17,20 @@ namespace px
 	{
 		class body_system
 			: public es::i_system
-			, public es::manager<body_component, 10000>
+			, public es::manager<body_component, 100>
 		{
 		public:
 			body_system() {}
 			virtual ~body_system() {}
 
 		protected:
-			virtual void element_allocated(body_component &l) override
+			virtual void element_allocated(body_component &component) override
 			{
-				l.clear_faction();
+				reset_component(component);
 			}
-			virtual void element_released(body_component &l) override
+			virtual void element_released(body_component &component) override
 			{
-				l.clear_faction();
+				reset_component(component);
 			}
 			virtual void update_system() override
 			{
@@ -44,6 +44,13 @@ namespace px
 						}
 					}
 				});
+			}
+		private:
+			void reset_component(body_component &component)
+			{
+				component.deactivate();
+				component.clear_faction();
+				component.clear_equipment();
 			}
 		};
 	}

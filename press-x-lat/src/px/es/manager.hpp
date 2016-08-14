@@ -25,6 +25,7 @@ namespace px
 		{
 		public:
 			typedef E element;
+			typedef std::recursive_mutex mutex_type;
 			struct element_record
 			{
 				bool exists;
@@ -119,7 +120,7 @@ namespace px
 				size_t recycle()
 				{
 					// use position of recycled component
-					auto it = m_recycle.end();
+					auto it = m_recycle.rbegin();
 					auto index = *it;
 					m_recycle.pop_back();
 					m_elements[index].exists = true;
@@ -143,7 +144,7 @@ namespace px
 
 		private:
 			batch_t m_batches;
-			std::mutex m_mutex;
+			mutex_type m_mutex;
 			size_t m_count = 0;
 
 		public:
@@ -164,14 +165,11 @@ namespace px
 
 			std::shared_ptr<element> make()
 			{
-				std::lock_guard<std::mutex> lock(m_mutex);
-
 				key k = select();
 				element &e = k.batch->select(k.cursor);
 				element_allocated(e);
 
 				return std::shared_ptr<element>(&e, [this, k](element* pointer) {
-					std::lock_guard<std::mutex> lock(m_mutex);
 
 					destroy(k);
 					if (pointer)
@@ -184,7 +182,7 @@ namespace px
 			template<typename Op>
 			void enumerate(Op&& fn)
 			{
-				std::lock_guard<std::mutex> lock(m_mutex);
+				std::lock_guard<mutex_type> lock(m_mutex);
 
 				for (auto it = m_batches.begin(), last = m_batches.end(); it != last; ++it)
 				{
@@ -202,7 +200,7 @@ namespace px
 			// clear unused batches
 			void optimise()
 			{
-				std::lock_guard<std::mutex> lock(m_mutex);
+				std::lock_guard<mutex_type> lock(m_mutex);
 
 				for (auto it = m_batches.begin(), last = m_batches.end(); it != last;)
 				{
@@ -222,6 +220,8 @@ namespace px
 		private:
 			key select()
 			{
+				std::lock_guard<mutex_type> lock(m_mutex);
+
 				// select batch
 				auto it = m_batches.begin();
 				auto last = m_batches.end();
@@ -254,6 +254,8 @@ namespace px
 
 			void destroy(key k)
 			{
+				std::lock_guard<mutex_type> lock(m_mutex);
+
 				k.batch->recycle(k.cursor);
 
 				--m_count;

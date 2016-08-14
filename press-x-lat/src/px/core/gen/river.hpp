@@ -8,6 +8,8 @@
 
 #include <px/common/point.hpp>
 
+#include <px/core/image.hpp>
+
 #include <px/rl/entity.hpp>
 
 namespace px
@@ -16,6 +18,7 @@ namespace px
 	{
 		class river : public rl::entity
 		{
+			image appearance;
 			//double size;
 			//point2 flow; // direction of flow x = horisontal, y = vertical
 		};

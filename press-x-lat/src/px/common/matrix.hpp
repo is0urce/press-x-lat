@@ -329,23 +329,23 @@ namespace px
 		const element& at(coordinate<Component, 2> key) const
 		{
 			if (!contains(key)) throw std::runtime_error("px::matrix<e>::at() - out of range");
-			return operator[](key);
+			return (*this)[key];
 		}
 		template<typename Component>
 		element& at(coordinate<Component, 2> key)
 		{
 			if (!contains(key)) throw std::runtime_error("px::matrix<e>::at() - out of range");
-			return operator[](key);
+			return (*this)[key];
 		}
 		const element& at(point2 key) const
 		{
 			if (!contains(key)) throw std::runtime_error("px::matrix<e>::at() - out of range");
-			return operator[](key);
+			return (*this)[key];
 		}
 		element& at(point2 key)
 		{
 			if (!contains(key)) throw std::runtime_error("px::matrix<e>::at() - out of range");
-			return operator[](key);
+			return (*this)[key];
 		}
 		const element& at(unsigned int x, unsigned int y) const
 		{
@@ -361,20 +361,20 @@ namespace px
 		template<typename Component>
 		const element& select(coordinate<Component, 2> key, const element& outer) const
 		{
-			return contains(key) ? operator[](key) : outer;
+			return contains(key) ? (*this)[key] : outer;
 		}
 		template<typename Component>
 		element& select(coordinate<Component, 2> key, element& outer)
 		{
-			return contains(key) ? operator[](key) : outer;
+			return contains(key) ? (*this)[key] : outer;
 		}
 		const element& select(point2 key, const element& outer) const
 		{
-			return contains(key) ? operator[](key) : outer;
+			return contains(key) ? (*this)[key] : outer;
 		}
 		element& select(point2 key, element& outer)
 		{
-			return contains(key) ? operator[](key) : outer;
+			return contains(key) ? (*this)[key] : outer;
 		}
 		const element& select(unsigned int x, unsigned int y, const element& outer) const
 		{

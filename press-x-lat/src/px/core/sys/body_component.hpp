@@ -55,6 +55,10 @@ namespace px
 				auto hp = health();
 				return hp && hp->empty();
 			}
+			void clear_equipment()
+			{
+				m_hands = nullptr;
+			}
 
 		public:
 			virtual ~body_component() {}

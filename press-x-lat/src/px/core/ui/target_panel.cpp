@@ -37,20 +37,22 @@ namespace px
 				pen.move_axis<1>(1);
 			}
 
-			auto* blocking = m_environment->blocking(target, rl::traverse::floor);
-			if (blocking)
+			for (auto* pawn : m_environment->nearest(target, 0))
 			{
-				if (auto body = static_cast<core::body_component*>(*blocking))
+				if (pawn)
 				{
-					if (auto hp = body->health())
+					if (body_component* body = *pawn)
 					{
-						cnv.write(pen, std::string("HP ") + std::to_string(hp->current()) + "/" + std::to_string(hp->maximum()));
-						pen.move_axis<1>(1);
-					}
-					if (auto mp = body->energy())
-					{
-						cnv.write(pen, std::string("MP ") + std::to_string(mp->current()) + "/" + std::to_string(mp->maximum()));
-						pen.move_axis<1>(1);
+						if (auto hp = body->health())
+						{
+							cnv.write(pen, std::string("HP ") + std::to_string(hp->current()) + "/" + std::to_string(hp->maximum()));
+							pen.move_axis<1>(1);
+						}
+						if (auto mp = body->energy())
+						{
+							cnv.write(pen, std::string("MP ") + std::to_string(mp->current()) + "/" + std::to_string(mp->maximum()));
+							pen.move_axis<1>(1);
+						}
 					}
 				}
 			}

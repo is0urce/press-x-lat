@@ -32,8 +32,8 @@ namespace px
 			m_map = std::make_shared<map_panel>();
 
 			m_ui->emplace<ui::performance_panel>("performance", { { 0.0, 0.0 },{ 1,0 },{ -2, 1 },{ 1.0, 0.0 } }, m_fps);
-			m_ui->emplace<status_panel>("status", { { 0.0, 1.0 },{ 1, -12 },{ -2, 1 },{ 1.0, 0.0 } }, *this);
-			m_ui->emplace<target_panel>("target", { { 1.0, 1.0 },{ -12, -12 },{ -2, 1 },{ 1.0, 0.0 } }, *this);
+			m_ui->emplace<status_panel>("status", { { 0.0, 0.0 },{ 1, 2 },{ -2, 1 },{ 1.0, 0.0 } }, *this);
+			m_ui->emplace<target_panel>("target", { { 1.0, 0.0 },{ -12, 2 },{ -2, 1 },{ 1.0, 0.0 } }, *this);
 
 			m_ui->add("inventory", m_inventory, { { 0.3, 0.1 },{ 0, 0 },{ 0, 0 },{ 0.4, 0.8 } });
 			m_ui->add("craft", m_craft, { { 0.1, 0.1 },{ 0, 0 },{ 0, 0 },{ 0.8, 0.8 } });

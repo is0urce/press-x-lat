@@ -47,6 +47,7 @@ namespace px
 			m_outer.river = nullptr;
 			m_outer.river_size = 0;
 			m_outer.gradient = { 0, 0 };
+			m_outer.generated = true;
 		}
 		world::~world() {}
 
@@ -98,6 +99,7 @@ namespace px
 				double cone_magnitude = (size - distance_to_center * 4) / size; // [-1..1]
 
 				cell.altitude = std::atan(cone_magnitude) + noise_magnitude;
+				cell.generated = false;
 
 				max_peak = (std::max)(max_peak, cell.altitude);
 			});

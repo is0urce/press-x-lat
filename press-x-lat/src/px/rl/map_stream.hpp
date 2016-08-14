@@ -119,7 +119,8 @@ namespace px
 				wait();
 
 				m_pending = false;
-				grand.merge(m_units);
+
+				grand.splice(std::end(grand), m_units);
 			}
 
 			const map_type* operator->() const

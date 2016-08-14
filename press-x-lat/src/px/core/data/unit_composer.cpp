@@ -37,6 +37,7 @@ namespace px
 		}
 		void unit_composer::add(location_ptr l)
 		{
+			if (!l) throw std::runtime_error("px::unit_composer::add(..) - component is null");
 			if (m_location) throw std::runtime_error("px::unit_composer::add(location) - location component already exists");
 
 			m_location = l;
@@ -47,36 +48,42 @@ namespace px
 		}
 		void unit_composer::add(sprite_ptr sprite)
 		{
+			if (!sprite) throw std::runtime_error("px::unit_composer::add(..) - component is null");
 			if (m_appearance) throw std::runtime_error("px::unit_composer::add(sprite_ptr) - image component already exists");
 
 			m_appearance = sprite;
 		}
 		void unit_composer::add(body_ptr b)
 		{
+			if (!b) throw std::runtime_error("px::unit_composer::add(..) - component is null");
 			if (m_body) throw std::runtime_error("px::unit_composer::add(body_ptr) - body component already exists");
 
 			m_body = b;
 		}
 		void unit_composer::add(char_ptr c)
 		{
+			if (!c) throw std::runtime_error("px::unit_composer::add(..) - component is null");
 			if (m_character) throw std::runtime_error("px::unit_composer::add(character) - component already exists");
 
 			m_character = c;
 		}
 		void unit_composer::add(npc_ptr npc)
 		{
+			if (!npc) throw std::runtime_error("px::unit_composer::add(..) - component is null");
 			if (m_npc) throw std::runtime_error("px::unit_composer::add(npc_ptr) - component already exists");
 
 			m_npc = npc;
 		}
 		void unit_composer::add(resource_ptr resource)
 		{
+			if (!resource) throw std::runtime_error("px::unit_composer::add(..) - component is null");
 			if (m_resource) throw std::runtime_error("px::unit_composer::add(resource_ptr) - component already exists");
 
 			m_resource = resource;
 		}
 		void unit_composer::add(container_ptr container)
 		{
+			if (!container) throw std::runtime_error("px::unit_composer::add(..) - component is null");
 			if (m_npc) throw std::runtime_error("px::unit_composer::add(container_ptr) - component already exists");
 
 			m_container = container;

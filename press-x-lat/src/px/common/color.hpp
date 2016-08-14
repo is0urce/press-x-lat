@@ -37,10 +37,10 @@ namespace px
 		color(unsigned int hex) : A(1) { set_hex(hex); }
 
 	public:
-		static color rgb(unsigned int r, unsigned int g, unsigned int b) { return color(r / 255.0, g / 255.0, b / 255.0); }
-		static color rgba(unsigned int r, unsigned int g, unsigned int b, unsigned int a) { return color(r / 255.0, g / 255.0, b / 255.0, a / 255.0); }
-		static color black() { return color(0, 0, 0, 1); };
-		static color white() { return color(1, 1, 1, 1); };
+		static constexpr color rgb(unsigned int r, unsigned int g, unsigned int b) { return color(r / 255.0, g / 255.0, b / 255.0); }
+		static constexpr color rgba(unsigned int r, unsigned int g, unsigned int b, unsigned int a) { return color(r / 255.0, g / 255.0, b / 255.0, a / 255.0); }
+		static constexpr color black() { return color(0, 0, 0, 1); };
+		static constexpr color white() { return color(1, 1, 1, 1); };
 
 		// operators
 

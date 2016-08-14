@@ -35,6 +35,10 @@ namespace px
 			}
 
 		protected:
+			virtual void element_allocated(image_component &component) override
+			{
+				component.deactivate();
+			}
 			virtual void update_system() override
 			{
 				int w = m_canvas->width() / 2;

@@ -44,10 +44,9 @@ namespace px
 		{
 			units list;
 			map.merge(list);
-			for (auto u : list)
-			{
-				add(u);
-			}
+
+			std::for_each(list.begin(), list.end(), [](auto &unit) { unit->activate(); });
+			m_units.splice(m_units.end(), list);
 		}
 
 		void terrain::focus(point2 position)
