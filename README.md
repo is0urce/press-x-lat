@@ -16,17 +16,16 @@ px::fn - procedural generation
 
 px::es - entity / component system
 
-px::shell - rendering
+px::shell - rendering and os-specific stuff
 
 px::io - serialization
 
 px::rl - game mechanics
 
-###tier 2
-
 px::ui - user interface
+
+###tier 2
 
 px::core - engine
 
-px::data - data drive
 
