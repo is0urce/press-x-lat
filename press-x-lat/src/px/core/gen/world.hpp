@@ -10,6 +10,7 @@
 
 #include <px/core/gen/world_cell.hpp>
 #include <px/core/gen/river_net.hpp>
+#include <px/core/gen/city.hpp>
 
 #include <list>
 #include <random>
@@ -23,15 +24,16 @@ namespace px
 		public:
 			typedef world_cell cell_type;
 			typedef matrix2<cell_type> map_type;
-			typedef std::mt19937 rng;
+			typedef std::mt19937 rng_type;
 
 		public:
-			void resize(unsigned int width, unsigned int height);
+			void resize(size_t width, size_t height);
 			void clear();
 
 			void generate(unsigned int seed);
 			void generate_landmass();
 			void generate_climate(double rivers);
+			void generate_civilisation(unsigned int cities);
 			void generate_appearance();
 
 			map_type* map();
@@ -43,16 +45,19 @@ namespace px
 			world(const world&) = delete;
 
 		private:
+			void clear_cell(cell_type &cell);
 			void expand_moisture();
 			void generate_river(int x, int y, double size, river&);
 
 		private:
-			unsigned int m_seed;
+			unsigned int m_seed; // world unique seed
+			rng_type m_generator; // rng state
+
 			map_type m_map;
-			std::list<river> m_rivers;
-			//river_net m_rivers;
 			cell_type m_outer; // out-of-border cell props
-			rng m_generator;
+
+			std::list<river> m_rivers;
+			std::list<city> m_cities;
 		};
 	}
 }

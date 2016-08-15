@@ -50,8 +50,9 @@ namespace px
 
 				if (m_world)
 				{
-					int w = m_world->map()->width();
-					int h = m_world->map()->height();
+					auto m = m_world->map();
+					int w = m->width();
+					int h = m->height();
 
 					point2 center = bounds().start() + bounds().range() / 2;
 					point2 start = center.moved(point2(-w / 2, -h / 2));
@@ -59,15 +60,30 @@ namespace px
 					point2 pen = start.moved({ 0, h - 1 });
 
 					cnv.rectangle(map.inflated(1), { 1, 1, 1 });
-					m_world->map()->enumerate([&](int x, int y, auto &cell) {
-
+					m->enumerate([&](int x, int y, auto &cell) {
 						point2 pos = pen + point2(x, -y);
-						{
-							cnv.write(pos, cell.img.glyph, cell.img.tint);
-							cnv.pset(pos, cell.img.bg);
-						}
+
+						cnv.write(pos, cell.img.glyph, cell.img.tint);
+						cnv.pset(pos, cell.img.bg);
 					});
+
+					point2 hover_location = m_hover - pen;
+					hover_location.mirror<1>();
+					if (m->contains(hover_location))
+					{
+						const auto &hover_cell = m->at(hover_location);
+						cnv.write(start, to_string(hover_cell.location), color(1, 1, 0));
+						if (hover_cell.landmark)
+						{
+							cnv.write(start, hover_cell.landmark->name(), color(1, 1, 0));
+						}
+					}
 				}
+			}
+			virtual bool hover_control(const point2 &position) override
+			{
+				m_hover = position;
+				return stack_panel::hover_control(position);
 			}
 			virtual bool key_control(shell::key code) override
 			{
@@ -96,6 +112,7 @@ namespace px
 
 		private:
 			world* m_world;
+			point2 m_hover;
 		};
 	}
 }

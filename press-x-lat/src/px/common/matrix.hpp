@@ -274,7 +274,10 @@ namespace px
 		void fill(const element &e)
 		{
 			unsigned int len = size();
-			for (unsigned int i = 0; i < len; ++i) m_data[i] = e;
+			for (unsigned int i = 0; i < len; ++i)
+			{
+				m_data[i] = e;
+			}
 		}
 		template <typename Generator>
 		void fill(Generator op)

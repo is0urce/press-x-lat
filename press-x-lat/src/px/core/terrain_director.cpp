@@ -39,17 +39,23 @@ namespace px
 			m_world->generate(seed);
 		}
 
-		void terrain_director::generate_cell(const point2 &cell, map_type& terrain, std::list<unit_ptr>& units)
+		void terrain_director::generate_cell(const point2 &world_position, map_type& terrain, std::list<unit_ptr>& units)
 		{
-			auto &c = m_world->map()->select(cell, m_outer);
-			bool mobiles = c.generated;
-			c.generated = true;
+			auto &world_cell = m_world->map()->select(world_position, m_outer);
 
-			generate_cell(cell, terrain, !mobiles, units);
+			bool mobiles = world_cell.generated;
+			world_cell.generated = true;
+
+			generate_cell(world_position, terrain, !mobiles, units);
+
+			if (auto &landmark = world_cell.landmark)
+			{
+				landmark->generate(terrain);
+			}
 		}
-		void terrain_director::generate_cell(const point2 &cell, map_type& terrain, bool static_mobiles, std::list<unit_ptr>& units)
+		void terrain_director::generate_cell(const point2 &world_position, map_type& terrain, bool static_mobiles, std::list<unit_ptr>& units)
 		{
-			unsigned int seed = m_seed + cell.x() * 51 + cell.y() * cell_width * cell_height;
+			unsigned int seed = m_seed + world_position.x() * 51 + world_position.y() * cell_width * cell_height;
 
 			std::array<unsigned int, 624> seed_data;
 			std::iota(std::begin(seed_data), std::end(seed_data), seed);
@@ -111,7 +117,7 @@ namespace px
 					auto task = m_factory->produce();
 
 					auto sprite = task->add_appearance('f', { 1, 0, 0 });
-					auto pawn = task->add_location((cell * point2(cell_width, cell_height)) + spawn);
+					auto pawn = task->add_location((world_position * point2(cell_width, cell_height)) + spawn);
 					auto body = task->add_body(100, 100);
 					auto character = task->add_character();
 					auto ai = task->add_npc_behavior();

@@ -41,21 +41,39 @@ namespace px
 
 		world::world()
 		{
-			// out-of-border cell proprieties
-			m_outer.altitude = -1;
-			m_outer.moisture = 0;
-			m_outer.river = nullptr;
-			m_outer.river_size = 0;
-			m_outer.gradient = { 0, 0 };
-			m_outer.generated = true;
+			clear_cell(m_outer);
 		}
 		world::~world() {}
 
-		void world::resize(unsigned int width, unsigned int height)
+		void world::clear()
+		{
+			m_map.enumerate([this](int x, int y, auto& cell) {
+				clear_cell(cell);
+				cell.location = { x, y };
+			});
+			m_rivers.clear();
+			m_cities.clear();
+		}
+
+		void  world::clear_cell(cell_type &cell)
+		{
+			// out-of-border cell proprieties
+			m_outer.altitude = -1;
+			m_outer.gradient = { 0, 0 };
+			m_outer.moisture = 0;
+			m_outer.temperature = 0;
+			m_outer.river = nullptr;
+			m_outer.river_size = 0;
+			m_outer.landmark = nullptr;
+			m_outer.level = 0;
+			m_outer.generated = true;
+		}
+
+		void world::resize(size_t width, size_t height)
 		{
 			m_map.resize(width, height);
-			//m_rivers.resize(width + 1, height + 1);
 		}
+
 		void world::generate(unsigned int seed)
 		{
 			// setup and warmup random generator
@@ -64,17 +82,13 @@ namespace px
 			std::iota(std::begin(seed_data), std::end(seed_data), m_seed);
 			std::seed_seq state(std::begin(seed_data), std::end(seed_data));
 			m_generator.seed(state);
-			m_generator.discard(rng::state_size);
+			m_generator.discard(rng_type::state_size);
 
 			clear();
 			generate_landmass();
 			generate_climate(3);
+			generate_civilisation(2);
 			generate_appearance();
-		}
-		void world::clear()
-		{
-			m_map.fill(m_outer);
-			m_rivers.clear();
 		}
 
 		// generate altitudes [-1+..1], sea level is 0
@@ -125,6 +139,7 @@ namespace px
 				cell.moisture = cell.altitude <= 0 ? 1.0 : 0.0;
 				cell.temperature = -0.25 + 1.0 * (h - j) / h - cell.altitude * 0.5;
 				cell.river = nullptr;
+				cell.river_size = 0;
 			});
 			expand_moisture();
 
@@ -157,6 +172,57 @@ namespace px
 				cell.moisture = cell.river_size > 0 ? 1.0 : cell.altitude < 0 ? 0.0125 : 0.0;
 			});
 			expand_moisture();
+		}
+
+		void world::generate_civilisation(unsigned int cities)
+		{
+			m_cities.clear();
+			m_map.enumerate([](auto, auto, auto& cell)
+			{
+				cell.landmark = nullptr;
+			});
+
+			// generate cities
+			std::uniform_int_distribution<unsigned int> rand_x(0, m_map.width() - 1);
+			std::uniform_int_distribution<unsigned int> rand_y(0, m_map.height() - 1);
+			unsigned int n = 0;
+			unsigned int tries = 0;
+			while (n < cities && tries < max_try_stop)
+			{
+				++tries;
+				unsigned int x = rand_x(m_generator);
+				unsigned int y = rand_y(m_generator);
+
+				point2 location = point2(x, y);
+				auto &cell = m_map[location];
+				int distance = m_map.width() * 2 + m_map.height() * 2 + 5; // something big
+				std::for_each(m_cities.begin(), m_cities.end(), [&distance, &location](auto& c)	{
+					distance = (std::min)(distance, location.king_distance(c.center_location));
+				});
+
+				if (cell.landmark == 0 && cell.altitude > 0 && cell.altitude < 0.5 && cell.moisture > 0 && distance > 5)
+				{
+					city capital;
+					capital.center_location = location;
+					capital.set_tag(std::string("city") + std::to_string(n));
+					m_cities.push_back(capital);
+
+					cell.landmark = std::make_unique<landmark>();
+					cell.landmark->set_name(std::string("landmark") + std::to_string(n));
+					++n;
+				}
+			}
+
+			// generate other landmarks
+			int count = 0;
+			m_map.enumerate([&count](unsigned int i, unsigned int j, auto& cell)
+			{
+				if (!cell.landmark && cell.altitude > 0)
+				{
+					cell.landmark = std::make_unique<landmark>();
+					cell.landmark->set_name(std::string("point-of-interest#") + std::to_string(++count));
+				}
+			});
 		}
 
 		void world::generate_appearance()
@@ -224,6 +290,11 @@ namespace px
 						cell.img.glyph = '~';
 						cell.img.tint = { 0, 0, 1 };
 					}
+					//if (cell.landmark)
+					//{
+					//	cell.img.glyph = '*';
+					//	cell.img.tint = { 1, 0, 1 };
+					//}
 				}
 			});
 		}
