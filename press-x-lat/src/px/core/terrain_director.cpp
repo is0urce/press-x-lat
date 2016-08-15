@@ -106,24 +106,24 @@ namespace px
 
 			if (static_mobiles)
 			{
-				point2 spawn(3, 3);
 				for (point2 spawn : room_center)
 				{
 					auto task = m_factory->produce();
 
-					auto sprite = task->add_appearance('f', { 1, 0.0, 0 });
+					auto sprite = task->add_appearance('f', { 1, 0, 0 });
 					auto pawn = task->add_location((cell * point2(cell_width, cell_height)) + spawn);
 					auto body = task->add_body(100, 100);
 					auto character = task->add_character();
 					auto ai = task->add_npc_behavior();
 
 					auto weapon = std::make_shared<body_component::item_type>();
-					weapon->add({ rl::effect::weapon_damage, 0, 0 });
+					weapon->add({ rl::effect::weapon_damage, 0x00, 1 });
 
 					body->equip_weapon(weapon);
-					body->join_faction(0);
+					body->join_faction(1);
 					character->add_skill("melee");
 					character->set_tag("mob");
+					character->set_name("Monster");
 
 					units.push_back(task->assemble(persistency::serialized));
 				}

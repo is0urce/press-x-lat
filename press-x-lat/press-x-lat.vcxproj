@@ -183,6 +183,7 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\common\timer.hpp" />
     <ClInclude Include="src\px\common\toggle.hpp" />
     <ClInclude Include="src\px\common\vector.hpp" />
+    <ClInclude Include="src\px\core\gen\landmark.hpp" />
     <ClInclude Include="src\px\core\settings.hpp" />
     <ClInclude Include="src\px\core\gen\river.hpp" />
     <ClInclude Include="src\px\core\gen\river_net.hpp" />

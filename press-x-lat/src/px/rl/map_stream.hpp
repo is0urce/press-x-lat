@@ -120,7 +120,7 @@ namespace px
 
 				m_pending = false;
 
-				grand.splice(std::end(grand), m_units);
+				grand.splice(grand.end(), m_units);
 			}
 
 			const map_type* operator->() const
