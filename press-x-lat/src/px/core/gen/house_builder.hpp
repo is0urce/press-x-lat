@@ -52,10 +52,10 @@ namespace px
 			animal_hunter,
 			animal_prey,
 
-			monster,
-			monster_champion,
-			monster_boss,
-			monster_leader,
+			mobile,
+			mobile_champion,
+			mobile_boss,
+			mobile_leader,
 
 			door,
 			door_heavy,
@@ -80,16 +80,20 @@ namespace px
 
 			max_vaule = statue
 		};
-		struct build
+
+		struct placeable_entry
 		{
 			point2 location;
 			build_placeable placeable;
+			placeable_entry(point2 l, build_placeable p) : location(l), placeable(p) {}
 		};
+
 		struct build_result
 		{
 			px::matrix2<build_tile> tiles;
-			std::list<build> placeables;
+			std::list<placeable_entry> placeables;
 		};
+
 		class house_builder
 		{
 		public:
@@ -98,31 +102,47 @@ namespace px
 			{
 				build_result result;
 
-				//result.tiles.resize(bounds);
-				//result.tiles.fill(build_tile::no_change);
+				result.tiles.resize(bounds);
+				result.tiles.fill(build_tile::no_change);
 
-				//fn::bsp<Generator> bsp(rng, bounds, 6);
-				//std::uniform_int_distribution<unsigned int> furniture_chance(0, 5);
-				//bsp.enumerate([&](const auto& room) {
+				std::uniform_int_distribution<unsigned int> furniture_chance(1, 100);
+				std::uniform_int_distribution<unsigned int> monster_chance(1, 100);
 
-				//	auto furniture_line = room.bounds.deflated(1);
+				fn::bsp<Generator> bsp(rng, bounds, 6);
+				bsp.enumerate([&](const auto& room) {
+					room.bounds.enumerate([&](const point2& location) {
+						result.tiles[location] = build_tile::floor;
+					});
+					////room.bounds.enumerate_border([&](const point2& location) {
+					////	result.tiles[location] = build_tile::wall_inside;
+					////});
 
-				//	room.bounds.enumerate([](auto x, auto y) {
-				//		result.tiles[point2(x, y)] = tile::floor;
-				//	});
+					auto furniture_line = room.bounds.deflated(1);
 
-				//	furniture_line.enumerate_bounds([&](auto x, auto y) {
-				//		if (furniture_chance(rng) == 0)
-				//		{
-				//			result.tiles[point2(x, y)] = build_placeable::furniture;
-				//		}
-				//	});
+					furniture_line.enumerate_bounds([&](const point2& location) {
+						if (furniture_chance(rng) <= 20)
+						{
+							result.placeables.emplace_back(location, build_placeable::furniture);
+						}
+						if (monster_chance(rng) <= 70)
+						{
+							result.placeables.emplace_back(room.bounds.start() + room.bounds.range() / 2, build_placeable::mobile);
+							if (monster_chance(rng) <= 30)
+							{
+								result.placeables.emplace_back(room.bounds.start() + room.bounds.range() / 2, build_placeable::mobile);
+								if (monster_chance(rng) <= 10)
+								{
+									result.placeables.emplace_back(room.bounds.start() + room.bounds.range() / 2, build_placeable::mobile);
+								}
+							}
+						}
+					});
 
-				//	if (furniture_chance(rng) == 0)
-				//	{
-				//		result.tiles[room.bounds.start() + room.bounds.range() / 2] = build_placeable::table;
-				//	}
-				//});
+					if (furniture_chance(rng) <= 20)
+					{
+						result.placeables.emplace_back(room.bounds.start() + room.bounds.range() / 2, build_placeable::table);
+					}
+				});
 
 				return result;
 			}

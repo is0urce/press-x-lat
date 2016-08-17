@@ -32,12 +32,13 @@ namespace px
 				user_type data;
 				std::unique_ptr<node> l;
 				std::unique_ptr<node> r;
+				unsigned int count;
 
 				bool leaf() const
 				{
 					return (l && r);
 				}
-				void split(rng_type &rng, int min)
+				unsigned int split(rng_type &rng, int min) // returns number of created leaves
 				{
 					int w = bounds.width();
 					int h = bounds.height();
@@ -73,9 +74,14 @@ namespace px
 							r->bounds = { bounds.start().moved(point2(0, c)), { w, h - c } };
 						}
 
-						l->split(rng, min);
-						r->split(rng, min);
+						count = l->split(rng, min) + r->split(rng, min);
 					}
+					else
+					{
+						count = 1;
+					}
+
+					return count;
 				}
 				template <typename Operator> void traverse(Operator &fn) const
 				{
@@ -116,6 +122,10 @@ namespace px
 			template <typename Operator> void enumerate(Operator &fn)
 			{
 				m_root.traverse(fn);
+			}
+			unsigned int count() const
+			{
+				m_root.count;
 			}
 
 		private:
