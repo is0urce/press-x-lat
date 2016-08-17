@@ -184,6 +184,7 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\common\toggle.hpp" />
     <ClInclude Include="src\px\common\vector.hpp" />
     <ClInclude Include="src\px\core\gen\builder.hpp" />
+    <ClInclude Include="src\px\core\gen\build_result.hpp" />
     <ClInclude Include="src\px\core\gen\city.hpp" />
     <ClInclude Include="src\px\core\gen\house_builder.hpp" />
     <ClInclude Include="src\px\core\gen\landmark.hpp" />
@@ -294,6 +295,7 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClCompile Include="src\px\core\environment-act.cpp" />
     <ClCompile Include="src\px\core\environment-ui.cpp" />
     <ClCompile Include="src\px\core\environment.cpp" />
+    <ClCompile Include="src\px\core\gen\landmark.cpp" />
     <ClCompile Include="src\px\core\sys\character_system.cpp" />
     <ClCompile Include="src\px\core\sys\container_component.cpp" />
     <ClCompile Include="src\px\core\sys\npc_component.cpp" />

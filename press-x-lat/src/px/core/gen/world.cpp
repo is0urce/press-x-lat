@@ -7,8 +7,10 @@
 
 #include <px/common/vector.hpp>
 
-#include <px/core/gen/world_cell.hpp>
 #include <px/fn/perlin.hpp>
+
+#include <px/core/gen/world_cell.hpp>
+#include <px/core/gen/landmark.hpp>
 
 #include <random>
 #include <numeric>

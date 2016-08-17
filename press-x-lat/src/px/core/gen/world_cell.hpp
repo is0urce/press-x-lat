@@ -11,14 +11,16 @@
 #include <px/common/vector.hpp>
 #include <px/core/image.hpp>
 #include <px/core/gen/river.hpp>
-#include <px/core/gen/landmark.hpp>
 
 #include <memory>
+#include <random>
 
 namespace px
 {
 	namespace core
 	{
+		class landmark;
+
 		struct world_cell
 		{
 			unsigned int seed;

@@ -40,11 +40,11 @@ namespace px
 		{
 			if (area) throw std::runtime_error("px::terrain::load - not null");
 			area = std::make_unique<stream_type>();
-			area->load_stream([cell, this](map_type &m, units &u) { m_world->generate_cell(cell, m, u); });
+			area->load_stream([cell, this](auto &m, auto &u) { m_world->generate_cell(cell, m, u); });
 		}
 		void terrain::splice(stream_type& map, const point2 &cell)
 		{
-			units list;
+			stream_type::unit_list list;
 			map.splice_into(list);
 
 			std::for_each(list.begin(), list.end(), [&](unit_record &record) {

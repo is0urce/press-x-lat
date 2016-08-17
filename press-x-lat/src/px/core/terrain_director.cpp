@@ -11,8 +11,10 @@
 #include <px/fn/perlin.hpp>
 #include <px/fn/bsp.hpp>
 
+#include <px/core/unit_record.hpp>
 #include <px/core/image.hpp>
 #include <px/core/data/factory.hpp>
+#include <px/core/gen/landmark.hpp>
 
 #include <memory>
 #include <list>
@@ -39,21 +41,21 @@ namespace px
 			m_world->generate(seed);
 		}
 
-		void terrain_director::generate_cell(const point2 &world_position, map_type& terrain, unit_list& units)
+		void terrain_director::generate_cell(point2 const& world_position, map_type &terrain, unit_list &units)
 		{
 			auto &world_cell = m_world->map()->select(world_position, m_outer);
 
 			bool mobiles = world_cell.generated;
 			world_cell.generated = true;
 
-			generate_cell(world_position, terrain, !mobiles, units);
+			generate_cell(world_position, terrain, units, !mobiles);
 
 			if (auto &landmark = world_cell.landmark)
 			{
-				landmark->generate(terrain);
+				landmark->generate(m_seed, terrain, units, !mobiles);
 			}
 		}
-		void terrain_director::generate_cell(const point2 &world_position, map_type& terrain, bool static_mobiles, unit_list& units)
+		void terrain_director::generate_cell(point2 const& world_position, map_type &terrain, unit_list &units, bool static_mobiles)
 		{
 			unsigned int seed = m_seed + world_position.x() * 51 + world_position.y() * terrain.width() * terrain.height();
 
@@ -95,10 +97,10 @@ namespace px
 			std::list<point2> room_center;
 
 			fn::bsp<rng_type> buildings(generator, terrain.range(), 12);
-			buildings.enumerate([&](const auto &building) {
+			buildings.enumerate([&](auto const& building) {
 				fn::bsp<rng_type> rooms(generator, building.bounds.deflated(1), 4);
 
-				rooms.enumerate([&](const auto &room) {
+				rooms.enumerate([&](auto const& room) {
 
 					rectangle(room.bounds.start(), room.bounds.range() + point2(1, 1)).enumerate_bounds([&](const point2& location) {
 						auto& img = terrain[location].appearance();

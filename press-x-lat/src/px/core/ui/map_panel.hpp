@@ -12,6 +12,7 @@
 #include <px/ui/static_text_panel.hpp>
 
 #include <px/core/gen/world.hpp>
+#include <px/core/gen/landmark.hpp>
 
 #include <px/shell/key.hpp>
 

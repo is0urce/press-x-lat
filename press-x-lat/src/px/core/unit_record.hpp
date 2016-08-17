@@ -15,8 +15,10 @@ namespace px
 	{
 		class unit;
 		class location_component;
+
 		struct unit_record
 		{
+		public:
 			typedef std::shared_ptr<unit> unit_ptr;
 			typedef std::shared_ptr<location_component> location_ptr;
 

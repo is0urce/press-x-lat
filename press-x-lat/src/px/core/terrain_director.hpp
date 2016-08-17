@@ -16,7 +16,6 @@
 
 #include <px/core/settings.hpp>
 #include <px/core/image.hpp>
-#include <px/core/unit_record.hpp>
 
 #include <memory>
 #include <list>
@@ -25,22 +24,20 @@ namespace px
 {
 	namespace core
 	{
-		class unit;
 		class location_component;
 		class factory;
+		struct unit_record;
 
 		class terrain_director
 		{
 		public:
-			typedef std::shared_ptr<unit> unit_ptr;
-			typedef rl::tile<image> tile_type;
-			typedef matrix2<tile_type, settings::cell_width, settings::cell_height> map_type;
+			typedef matrix2<rl::tile<image>, settings::cell_width, settings::cell_height> map_type;
 			typedef std::list<unit_record> unit_list;
 
 		public:
 			void generate(unsigned int seed);
-			void generate_cell(const point2 &cell, map_type& terrain, unit_list& units);
-			void generate_cell(const point2 &cell, map_type& terrain, bool static_mobiles, unit_list& units);
+			void generate_cell(point2 const& cell, map_type &terrain, unit_list &units);
+			void generate_cell(point2 const& cell, map_type &terrain, unit_list &units, bool static_mobiles);
 			world::map_type* map();
 			const world::map_type* map() const;
 

@@ -18,89 +18,12 @@
 
 #include <px/rl/tile.hpp>
 
-#include <list>
+#include <px/core/gen/build_result.hpp>
 
 namespace px
 {
 	namespace core
 	{
-		enum build_tile : unsigned int
-		{
-			no_change,
-			background,
-			background_pass,
-			background_block,
-			background_flora,
-			background_doodad,
-			background_water,
-
-			grass,
-			snow,
-			sand,
-			gravel,
-			stone,
-			ice,
-			water,
-			lava,
-			chasm,
-
-			floor,
-			wall,
-			wall_outside,
-			wall_inside,
-
-			door_ark,
-
-			max_value = door_ark
-		};
-		enum build_placeable : unsigned int
-		{
-			animal,
-			animal_hunter,
-			animal_prey,
-
-			mobile,
-			mobile_champion,
-			mobile_boss,
-			mobile_leader,
-
-			door,
-			door_heavy,
-			door_locked,
-
-			furniture,
-			table,
-			chair,
-			bed,
-			shelf,
-
-			chest,
-			chest_loot,
-			chest_score,
-
-			flora_bloom,
-
-			torch,
-			braiser,
-
-			statue,
-
-			max_vaule = statue
-		};
-
-		struct placeable_entry
-		{
-			point2 location;
-			build_placeable placeable;
-			placeable_entry(point2 l, build_placeable p) : location(l), placeable(p) {}
-		};
-
-		struct build_result
-		{
-			px::matrix2<build_tile> tiles;
-			std::list<placeable_entry> placeables;
-		};
-
 		class house_builder
 		{
 		public:
@@ -155,18 +78,6 @@ namespace px
 			}
 		};
 
-		class mapper
-		{
-		public:
-			typedef std::shared_ptr<unit> unit_ptr;
-			typedef rl::tile<image> tile_type;
-			typedef matrix2<tile_type, settings::cell_width, settings::cell_height> map_type;
-
-		public:
-			virtual void map(build_result build, const point2 &world_location, map_type& terrain, std::list<unit_record>& units, bool generate_placeables)
-			{
-			}
-		};
 	}
 }
 

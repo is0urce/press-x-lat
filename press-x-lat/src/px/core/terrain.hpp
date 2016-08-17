@@ -13,8 +13,8 @@
 #include <px/rl/map_stream.hpp>
 
 #include <px/core/image.hpp>
-#include <px/core/settings.hpp>
 #include <px/core/unit_record.hpp>
+#include <px/core/settings.hpp>
 
 #include <memory>
 
@@ -32,9 +32,7 @@ namespace px
 			static const unsigned int sight_width = 1 + sight_reach * 2;
 			typedef std::shared_ptr<unit> unit_ptr;
 			typedef rl::map_stream<image, unit_record, settings::cell_width, settings::cell_height> stream_type;
-			typedef stream_type::map_type map_type;
 			typedef stream_type::tile_type tile_type;
-			typedef stream_type::unit_list units;
 			typedef std::unique_ptr<stream_type> stream_ptr;
 			typedef matrix2<stream_ptr, sight_width, sight_width> maps_type;
 

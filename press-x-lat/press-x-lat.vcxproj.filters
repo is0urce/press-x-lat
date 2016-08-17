@@ -369,6 +369,9 @@
     <ClInclude Include="src\px\core\gen\builder.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\px\core\gen\build_result.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -435,6 +438,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\px\core\gen\world.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\px\core\gen\landmark.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
