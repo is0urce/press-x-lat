@@ -100,8 +100,8 @@ namespace px
 
 				rooms.enumerate([&](const auto &room) {
 
-					rectangle(room.bounds.start(), room.bounds.range() + point2(1, 1)).enumerate_bounds([&](int i, int j)	{
-						auto& img = terrain[point2(i, j)].appearance();
+					rectangle(room.bounds.start(), room.bounds.range() + point2(1, 1)).enumerate_bounds([&](const point2& location) {
+						auto& img = terrain[location].appearance();
 						
 						img.glyph = '#';
 						img.tint = color::white();

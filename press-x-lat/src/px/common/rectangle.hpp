@@ -83,9 +83,9 @@ namespace px
 		{
 			for (int j = m_start.y(); j < m_corner.y(); ++j)
 			{
-				for (int i = m_start.x(); i < m_corner.x(); ++i)
+				for (point2 cursor(m_start.x(), j); cursor.x() < m_corner.x(); cursor.increment_axis<0>())
 				{
-					std::forward<Operator>(fn)(i, j);
+					std::forward<Operator>(fn)(cursor);
 				}
 			}
 		}
@@ -95,24 +95,24 @@ namespace px
 			int j = m_start.y();
 			for (int i = m_start.x(); i < m_corner.x(); ++i)
 			{
-				std::forward<Operator>(fn)(i, j);
+				std::forward<Operator>(fn)(point2(i, j));
 			}
 
 			j = m_corner.y() - 1;
 			if (j != m_start.y()) for (int i = m_start.x(); i < m_corner.x(); ++i)
 			{
-				std::forward<Operator>(fn)(i, j);
+				std::forward<Operator>(fn)(point2(i, j));
 			}
 
 			int i = m_start.x();
 			for (int j = m_start.y() + 1; j < m_corner.y() - 1; ++j)
 			{
-				std::forward<Operator>(fn)(i, j);
+				std::forward<Operator>(fn)(point2(i, j));
 			}
 			i = m_corner.x() - 1;
 			if (i != m_start.x()) for (int j = m_start.y() + 1; j < m_corner.y() - 1; ++j)
 			{
-				std::forward<Operator>(fn)(i, j);
+				std::forward<Operator>(fn)(point2(i, j));
 			}
 		}
 

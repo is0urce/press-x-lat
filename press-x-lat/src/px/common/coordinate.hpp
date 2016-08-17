@@ -85,6 +85,11 @@ namespace px
 		{
 			m_array[axis] += distance;
 		}
+		template <size_t Axis>
+		void increment_axis()
+		{
+			m_array[Axis] += 1;
+		}
 
 		// vector transforms
 
