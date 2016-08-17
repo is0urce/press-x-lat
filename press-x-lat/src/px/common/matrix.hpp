@@ -230,6 +230,10 @@ namespace px
 			m_height = h;
 			m_data.resize(w * h);
 		}
+		void resize(point2 range)
+		{
+			resize(range.x(), range.y());
+		}
 
 		void swap(matrix2 &that)
 		{

@@ -184,6 +184,7 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\common\toggle.hpp" />
     <ClInclude Include="src\px\common\vector.hpp" />
     <ClInclude Include="src\px\core\gen\city.hpp" />
+    <ClInclude Include="src\px\core\gen\house_builder.hpp" />
     <ClInclude Include="src\px\core\gen\landmark.hpp" />
     <ClInclude Include="src\px\core\settings.hpp" />
     <ClInclude Include="src\px\core\gen\river.hpp" />

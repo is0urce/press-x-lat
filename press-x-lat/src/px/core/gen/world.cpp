@@ -214,15 +214,15 @@ namespace px
 			}
 
 			// generate other landmarks
-			int count = 0;
-			m_map.enumerate([&count](unsigned int i, unsigned int j, auto& cell)
-			{
-				if (!cell.landmark && cell.altitude > 0)
-				{
-					cell.landmark = std::make_unique<landmark>();
-					cell.landmark->set_name(std::string("point-of-interest#") + std::to_string(++count));
-				}
-			});
+			//int count = 0;
+			//m_map.enumerate([&count](unsigned int i, unsigned int j, auto& cell)
+			//{
+			//	if (!cell.landmark && cell.altitude > 0)
+			//	{
+			//		cell.landmark = std::make_unique<landmark>();
+			//		cell.landmark->set_name(std::string("point-of-interest#") + std::to_string(++count));
+			//	}
+			//});
 		}
 
 		void world::generate_appearance()
