@@ -5,11 +5,11 @@
 #ifndef PX_COMMON_ARRAY_BASE_HPP
 #define PX_COMMON_ARRAY_BASE_HPP
 
+#include <px/common/point.hpp>
+
 #include <array>
 #include <vector>
 #include <stdexcept>
-
-#include "point.hpp"
 
 namespace px
 {
@@ -39,18 +39,23 @@ namespace px
 			fill(std::forward<Generator>(op));
 		}
 
-		unsigned int width() const
+		constexpr unsigned int width() const
 		{
 			return W;
 		}
-		unsigned int height() const
+		constexpr unsigned int height() const
 		{
 			return H;
 		}
-		unsigned int size() const
+		constexpr unsigned int size() const
 		{
 			return W * H;
 		}
+		constexpr point2 range() const
+		{
+			return point2(W, H);
+		}
+
 		void swap(matrix2 &that)
 		{
 			std::swap(m_data, that.m_data);

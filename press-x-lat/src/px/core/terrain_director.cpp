@@ -39,7 +39,7 @@ namespace px
 			m_world->generate(seed);
 		}
 
-		void terrain_director::generate_cell(const point2 &world_position, map_type& terrain, std::list<unit_ptr>& units)
+		void terrain_director::generate_cell(const point2 &world_position, map_type& terrain, unit_list& units)
 		{
 			auto &world_cell = m_world->map()->select(world_position, m_outer);
 
@@ -53,9 +53,9 @@ namespace px
 				landmark->generate(terrain);
 			}
 		}
-		void terrain_director::generate_cell(const point2 &world_position, map_type& terrain, bool static_mobiles, std::list<unit_ptr>& units)
+		void terrain_director::generate_cell(const point2 &world_position, map_type& terrain, bool static_mobiles, unit_list& units)
 		{
-			unsigned int seed = m_seed + world_position.x() * 51 + world_position.y() * cell_width * cell_height;
+			unsigned int seed = m_seed + world_position.x() * 51 + world_position.y() * terrain.width() * terrain.height();
 
 			std::array<unsigned int, 624> seed_data;
 			std::iota(std::begin(seed_data), std::end(seed_data), seed);
@@ -65,8 +65,8 @@ namespace px
 
 			fn::perlin<perlin_width, perlin_height> noise(generator);
 
-			double mx = static_cast<double>(perlin_width - 1) / cell_width;
-			double my = static_cast<double>(perlin_height - 1) / cell_height;
+			double mx = static_cast<double>(perlin_width - 1) / terrain.width();
+			double my = static_cast<double>(perlin_height - 1) / terrain.height();
 
 			terrain.enumerate([&](int i, int j, auto& t)
 			{
@@ -94,7 +94,7 @@ namespace px
 
 			std::list<point2> room_center;
 
-			fn::bsp<rng_type> buildings(generator, { { 0, 0 }, point2(cell_width, cell_height) }, 12);
+			fn::bsp<rng_type> buildings(generator, terrain.range(), 12);
 			buildings.enumerate([&](const auto &building) {
 				fn::bsp<rng_type> rooms(generator, building.bounds.deflated(1), 4);
 
@@ -117,7 +117,7 @@ namespace px
 					auto task = m_factory->produce();
 
 					auto sprite = task->add_appearance('f', { 1, 0, 0 });
-					auto pawn = task->add_location((world_position * point2(cell_width, cell_height)) + spawn);
+					auto pawn = task->add_location(world_position * terrain.range() + spawn);
 					auto body = task->add_body(100, 100);
 					auto character = task->add_character();
 					auto ai = task->add_npc_behavior();
@@ -129,7 +129,6 @@ namespace px
 					body->join_faction(1);
 					character->add_skill("melee");
 					character->set_tag("mob");
-					character->set_name("Monster");
 
 					units.push_back(task->assemble(persistency::serialized));
 				}

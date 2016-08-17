@@ -112,7 +112,7 @@ namespace px
 					}
 				});
 			}
-			void merge(unit_list &grand)
+			void splice_into(unit_list &grand)
 			{
 				if (!m_pending) throw std::runtime_error("px::rl::map_stream::merge() - no pending");
 

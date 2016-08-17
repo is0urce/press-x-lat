@@ -25,23 +25,27 @@ namespace px
 	namespace core
 	{
 		class unit;
+		class location_component;
 		class factory;
 
 		class terrain_director
 		{
 		public:
-			static const unsigned int cell_width = settings::cell_width;
-			static const unsigned int cell_height = settings::cell_height;
-
-		public:
 			typedef std::shared_ptr<unit> unit_ptr;
 			typedef rl::tile<image> tile_type;
-			typedef matrix2<tile_type, cell_width, cell_height> map_type;
+			typedef matrix2<tile_type, settings::cell_width, settings::cell_height> map_type;
+			struct unit_record
+			{
+				unit_ptr unit;
+				point2 location;
+				unit_record(unit_ptr u, point2 l) : unit(u), location(l) {} // for emplace construction
+			};
+			typedef std::list<unit_ptr> unit_list;
 
 		public:
 			void generate(unsigned int seed);
-			void generate_cell(const point2 &cell, map_type& terrain, std::list<unit_ptr>& units);
-			void generate_cell(const point2 &cell, map_type& terrain, bool static_mobiles, std::list<unit_ptr>& units);
+			void generate_cell(const point2 &cell, map_type& terrain, unit_list& units);
+			void generate_cell(const point2 &cell, map_type& terrain, bool static_mobiles, unit_list& units);
 			world::map_type* map();
 			const world::map_type* map() const;
 
@@ -55,6 +59,7 @@ namespace px
 			factory* m_factory;
 			world* m_world;
 			world_cell m_outer;
+			//std::list<unit_record> m_record;
 		};
 	}
 }

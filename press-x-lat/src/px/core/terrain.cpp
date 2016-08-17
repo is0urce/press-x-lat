@@ -15,10 +15,10 @@ namespace px
 	{
 		namespace
 		{
-			static const point2 cell_range = point2(terrain::cell_width, terrain::cell_height);
+			static const point2 cell_range = point2(settings::cell_width, settings::cell_height);
 			static const point2 sight_center = point2(terrain::sight_reach, terrain::sight_reach);
 
-			point2 divide(point2 a, point2& remainder)
+			point2 divide(point2 a, point2 &remainder)
 			{
 				point2 div = (vector2(a) / cell_range).floor();
 				remainder = a - div * cell_range;
@@ -40,10 +40,10 @@ namespace px
 			area = std::make_unique<stream_type>();
 			area->load_stream([cell, this](map_type &m, units &u) { m_world->generate_cell(cell, m, u); });
 		}
-		void terrain::merge(stream_type& map)
+		void terrain::splice(stream_type& map, const point2 &cell)
 		{
 			units list;
-			map.merge(list);
+			map.splice_into(list);
 
 			std::for_each(list.begin(), list.end(), [](auto &unit) { unit->activate(); });
 			m_units.splice(m_units.end(), list);
@@ -75,9 +75,10 @@ namespace px
 				// should clear not swapped destroying maps as they can have not treminated threads
 				origin.enumerate([&](unsigned int x, unsigned int y, stream_ptr &map)
 				{
+					point2 world_cell = m_focus - sight_center + point2(x, y);
 					if (map && map->pending())
 					{
-						merge(*map);
+						splice(*map, world_cell);
 					}
 				});
 
@@ -104,7 +105,7 @@ namespace px
 				// join loaded maps
 				if (map->pending() && map->loaded())
 				{
-					merge(*map);
+					splice(*map, world_cell);
 				}
 			});
 		}

@@ -27,12 +27,10 @@ namespace px
 		class terrain
 		{
 		public:
-			static const unsigned int cell_width = settings::cell_width;
-			static const unsigned int cell_height = settings::cell_height;
 			static const unsigned int sight_reach = 1;
 			static const unsigned int sight_width = 1 + sight_reach * 2;
 			typedef std::shared_ptr<unit> unit_ptr;
-			typedef rl::map_stream<image, unit_ptr, cell_width, cell_height> stream_type;
+			typedef rl::map_stream<image, unit_ptr, settings::cell_width, settings::cell_height> stream_type;
 			typedef stream_type::map_type map_type;
 			typedef stream_type::tile_type tile_type;
 			typedef stream_type::unit_list units;
@@ -60,7 +58,7 @@ namespace px
 
 		private:
 			void load_stream(point2 cell, stream_ptr& area);
-			void merge(stream_type& map);
+			void splice(stream_type& map, const point2& cell);
 
 		private:
 			// loading
