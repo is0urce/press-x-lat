@@ -16,6 +16,7 @@
 
 #include <px/core/settings.hpp>
 #include <px/core/image.hpp>
+#include <px/core/unit_record.hpp>
 
 #include <memory>
 #include <list>
@@ -34,13 +35,7 @@ namespace px
 			typedef std::shared_ptr<unit> unit_ptr;
 			typedef rl::tile<image> tile_type;
 			typedef matrix2<tile_type, settings::cell_width, settings::cell_height> map_type;
-			struct unit_record
-			{
-				unit_ptr unit;
-				point2 location;
-				unit_record(unit_ptr u, point2 l) : unit(u), location(l) {} // for emplace construction
-			};
-			typedef std::list<unit_ptr> unit_list;
+			typedef std::list<unit_record> unit_list;
 
 		public:
 			void generate(unsigned int seed);
@@ -59,7 +54,6 @@ namespace px
 			factory* m_factory;
 			world* m_world;
 			world_cell m_outer;
-			//std::list<unit_record> m_record;
 		};
 	}
 }

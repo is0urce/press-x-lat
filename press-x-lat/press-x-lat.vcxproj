@@ -183,9 +183,11 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\common\timer.hpp" />
     <ClInclude Include="src\px\common\toggle.hpp" />
     <ClInclude Include="src\px\common\vector.hpp" />
+    <ClInclude Include="src\px\core\gen\builder.hpp" />
     <ClInclude Include="src\px\core\gen\city.hpp" />
     <ClInclude Include="src\px\core\gen\house_builder.hpp" />
     <ClInclude Include="src\px\core\gen\landmark.hpp" />
+    <ClInclude Include="src\px\core\gen\mapper.hpp" />
     <ClInclude Include="src\px\core\settings.hpp" />
     <ClInclude Include="src\px\core\gen\river.hpp" />
     <ClInclude Include="src\px\core\gen\river_net.hpp" />
@@ -215,6 +217,7 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\core\data\unit_composer.hpp" />
     <ClInclude Include="src\px\core\ui\map_panel.hpp" />
     <ClInclude Include="src\px\core\gen\world.hpp" />
+    <ClInclude Include="src\px\core\unit_record.hpp" />
     <ClInclude Include="src\px\fn\bsp.hpp" />
     <ClInclude Include="src\px\rl\i_ability.hpp" />
     <ClInclude Include="src\px\rl\astar.hpp" />

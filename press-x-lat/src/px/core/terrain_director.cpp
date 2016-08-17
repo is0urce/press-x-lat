@@ -117,7 +117,7 @@ namespace px
 					auto task = m_factory->produce();
 
 					auto sprite = task->add_appearance('f', { 1, 0, 0 });
-					auto pawn = task->add_location(world_position * terrain.range() + spawn);
+					auto pawn = task->add_location(spawn);
 					auto body = task->add_body(100, 100);
 					auto character = task->add_character();
 					auto ai = task->add_npc_behavior();
@@ -130,7 +130,7 @@ namespace px
 					character->add_skill("melee");
 					character->set_tag("mob");
 
-					units.push_back(task->assemble(persistency::serialized));
+					units.emplace_back(task->assemble(persistency::serialized), task->location());
 				}
 			}
 		}

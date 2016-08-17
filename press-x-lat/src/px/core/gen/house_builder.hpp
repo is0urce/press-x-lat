@@ -14,6 +14,7 @@
 #include <px/core/unit.hpp>
 #include <px/core/image.hpp>
 #include <px/core/settings.hpp>
+#include <px/core/unit_record.hpp>
 
 #include <px/rl/tile.hpp>
 
@@ -162,7 +163,7 @@ namespace px
 			typedef matrix2<tile_type, settings::cell_width, settings::cell_height> map_type;
 
 		public:
-			void map(build_result build, const point2 &world_location, map_type& terrain, bool static_mobiles, std::list<unit_ptr>& units)
+			virtual void map(build_result build, const point2 &world_location, map_type& terrain, std::list<unit_record>& units, bool generate_placeables)
 			{
 			}
 		};

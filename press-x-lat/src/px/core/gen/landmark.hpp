@@ -15,30 +15,30 @@
 #include <px/core/settings.hpp>
 
 #include <functional>
+#include <memory>
 
 namespace px
 {
 	namespace core
 	{
+		class builder;
+		class mapper;
+
 		struct landmark : public rl::entity
 		{
 		public:
-			typedef rl::tile<image> tile_type;
-			typedef matrix2<tile_type, settings::cell_width, settings::cell_height> map_type;
-			typedef std::function<void(map_type&)> generator_fn;
+			typedef matrix2<rl::tile<image>, settings::cell_width, settings::cell_height> map_type;
 
 		public:
 			void generate(map_type& cell) const
 			{
-				if (generator)
-				{
-					generator(cell);
-				}
+				//mapper->map(builder(cell), cell, units, placeables);
 			}
 
 		public:
 			image appearance;
-			generator_fn generator;
+			//std::unique_ptr<builder> builder;
+			//std::unique_ptr<mapper> mapper;
 		};
 	}
 }

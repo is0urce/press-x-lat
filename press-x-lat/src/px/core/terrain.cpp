@@ -9,6 +9,8 @@
 #include <px/core/unit.hpp>
 #include <px/core/terrain_director.hpp>
 
+#include <px/core/sys/location_component.hpp>
+
 namespace px
 {
 	namespace core
@@ -45,8 +47,10 @@ namespace px
 			units list;
 			map.splice_into(list);
 
-			std::for_each(list.begin(), list.end(), [](auto &unit) { unit->activate(); });
-			m_units.splice(m_units.end(), list);
+			std::for_each(list.begin(), list.end(), [&](unit_record &record) {
+				record.location->move(cell_range * cell + record.location->current());
+				add(record.unit);
+			});
 		}
 
 		void terrain::focus(point2 position)

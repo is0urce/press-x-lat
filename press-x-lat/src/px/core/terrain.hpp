@@ -14,6 +14,7 @@
 
 #include <px/core/image.hpp>
 #include <px/core/settings.hpp>
+#include <px/core/unit_record.hpp>
 
 #include <memory>
 
@@ -30,7 +31,7 @@ namespace px
 			static const unsigned int sight_reach = 1;
 			static const unsigned int sight_width = 1 + sight_reach * 2;
 			typedef std::shared_ptr<unit> unit_ptr;
-			typedef rl::map_stream<image, unit_ptr, settings::cell_width, settings::cell_height> stream_type;
+			typedef rl::map_stream<image, unit_record, settings::cell_width, settings::cell_height> stream_type;
 			typedef stream_type::map_type map_type;
 			typedef stream_type::tile_type tile_type;
 			typedef stream_type::unit_list units;
@@ -65,7 +66,7 @@ namespace px
 			tile_type m_default;
 			maps_type m_maps;
 			point2 m_focus; // absolute world cell coordinate
-			units m_units; // storage container
+			std::list<unit_ptr> m_units; // storage container
 			terrain_director* m_world;
 		};
 	}
