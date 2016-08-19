@@ -12,6 +12,9 @@
 #include <px/core/gen/world_cell.hpp>
 #include <px/core/gen/landmark.hpp>
 
+#include <px/core/gen/poi/farm_builder.hpp>
+#include <px/core/gen/poi/farm_mapper.hpp>
+
 #include <random>
 #include <numeric>
 
@@ -49,9 +52,10 @@ namespace px
 
 		void world::clear()
 		{
-			m_map.enumerate([this](auto location, auto& cell) {
+			m_map.enumerate([this, size = m_map.size()](auto location, auto& cell) {
 				clear_cell(cell);
 				cell.location = location;
+				cell.seed = m_seed + location.y() * size + location.x();
 			});
 			m_rivers.clear();
 			m_cities.clear();
@@ -185,15 +189,15 @@ namespace px
 			});
 
 			// generate cities
-			std::uniform_int_distribution<unsigned int> rand_x(0, static_cast<int>(m_map.width()) - 1);
-			std::uniform_int_distribution<unsigned int> rand_y(0, static_cast<int>(m_map.height()) - 1);
+			std::uniform_int_distribution<size_t> rand_x(0, m_map.width() - 1);
+			std::uniform_int_distribution<size_t> rand_y(0, m_map.height() - 1);
 			unsigned int n = 0;
 			unsigned int tries = 0;
 			while (n < cities && tries < max_try_stop)
 			{
 				++tries;
-				unsigned int x = rand_x(m_generator);
-				unsigned int y = rand_y(m_generator);
+				unsigned int x = static_cast<unsigned int>(rand_x(m_generator));
+				unsigned int y = static_cast<unsigned int>(rand_y(m_generator));
 
 				point2 location = point2(x, y);
 				auto &cell = m_map[location];
@@ -216,15 +220,17 @@ namespace px
 			}
 
 			// generate other landmarks
-			//int count = 0;
-			//m_map.enumerate([&count](unsigned int i, unsigned int j, auto& cell)
-			//{
-			//	if (!cell.landmark && cell.altitude > 0)
-			//	{
-			//		cell.landmark = std::make_unique<landmark>();
-			//		cell.landmark->set_name(std::string("point-of-interest#") + std::to_string(++count));
-			//	}
-			//});
+			int count = 0;
+			m_map.enumerate([&count](auto const& location, auto & cell)
+			{
+				//if (!cell.landmark && cell.altitude > 0)
+				{
+					cell.landmark = std::make_unique<landmark>();
+					cell.landmark->set_name(std::string("point-of-interest#") + std::to_string(++count));
+
+					cell.landmark->set_pipeline(std::make_unique<farm_builder>(), std::make_unique<farm_mapper>());
+				}
+			});
 		}
 
 		void world::generate_appearance()
@@ -292,11 +298,11 @@ namespace px
 						cell.img.glyph = '~';
 						cell.img.tint = { 0, 0, 1 };
 					}
-					//if (cell.landmark)
-					//{
-					//	cell.img.glyph = '*';
-					//	cell.img.tint = { 1, 0, 1 };
-					//}
+					if (cell.landmark)
+					{
+						cell.img.glyph = '*';
+						cell.img.tint = { 1, 0, 1 };
+					}
 				}
 			});
 		}

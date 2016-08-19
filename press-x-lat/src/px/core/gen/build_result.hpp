@@ -25,6 +25,7 @@ namespace px
 			background_doodad,
 			background_water,
 
+			soil,
 			grass,
 			snow,
 			sand,
@@ -36,6 +37,8 @@ namespace px
 			chasm,
 
 			floor,
+			floor_rock,
+
 			wall,
 			wall_outside,
 			wall_inside,
@@ -79,6 +82,12 @@ namespace px
 			max_vaule = statue
 		};
 
+		struct tile_entry
+		{
+			build_tile tile;
+			unsigned int group;
+			tile_entry(build_tile t, unsigned int g) : tile(t), group(g) {}
+		};
 		struct placeable_entry
 		{
 			point2 location;

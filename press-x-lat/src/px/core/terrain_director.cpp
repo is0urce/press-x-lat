@@ -52,7 +52,7 @@ namespace px
 
 			if (auto &landmark = world_cell.landmark)
 			{
-				landmark->generate(m_seed, terrain, units, !mobiles);
+				landmark->generate(world_cell.seed, terrain, units, !mobiles);
 			}
 		}
 		void terrain_director::generate_cell(point2 const& world_position, map_type &terrain, unit_list &units, bool static_mobiles)
@@ -90,53 +90,52 @@ namespace px
 					t.make_traversable();
 				}
 
-				//if (i == 0) terrain[{i, j}].appearance().glyph = '|';
-				//if (j == 0) terrain[{i, j}].appearance().glyph = '-';
-				//if (i == 0 && j == 0) terrain[{i, j}].appearance().glyph = '+';
-
+				if (location.x() == 0) terrain[location].appearance().glyph = '|';
+				if (location.y() == 0) terrain[location].appearance().glyph = '-';
+				if (location.empty()) terrain[location].appearance().glyph = '+';
 			});
 
-			std::list<point2> room_center;
+			//std::list<point2> room_center;
 
-			fn::bsp<rng_type> buildings(generator, terrain.range(), 12);
-			buildings.enumerate([&](auto const& building) {
-				fn::bsp<rng_type> rooms(generator, building.bounds.deflated(1), 4);
+			//fn::bsp<rng_type> buildings(generator, terrain.range(), 12);
+			//buildings.enumerate([&](auto const& building) {
+			//	fn::bsp<rng_type> rooms(generator, building.bounds.deflated(1), 4);
 
-				rooms.enumerate([&](auto const& room) {
+			//	rooms.enumerate([&](auto const& room) {
 
-					rectangle(room.bounds.start(), room.bounds.range() + point2(1, 1)).enumerate_bounds([&](const point2& location) {
-						auto& img = terrain[location].appearance();
-						
-						img.glyph = '#';
-						img.tint = color::white();
-					});
-					room_center.push_back(room.bounds.start() + room.bounds.range() / 2);
-				});
-			});
+			//		rectangle(room.bounds.start(), room.bounds.range() + point2(1, 1)).enumerate_bounds([&](const point2& location) {
+			//			auto& img = terrain[location].appearance();
+			//			
+			//			img.glyph = '#';
+			//			img.tint = color::white();
+			//		});
+			//		room_center.push_back(room.bounds.start() + room.bounds.range() / 2);
+			//	});
+			//});
 
-			if (static_mobiles)
-			{
-				for (point2 spawn : room_center)
-				{
-					auto task = m_factory->produce();
+			//if (static_mobiles)
+			//{
+			//	for (point2 spawn : room_center)
+			//	{
+			//		auto task = m_factory->produce();
 
-					auto sprite = task->add_appearance('f', { 1, 0, 0 });
-					auto pawn = task->add_location(spawn);
-					auto body = task->add_body(100, 100);
-					auto character = task->add_character();
-					auto ai = task->add_npc_behavior();
+			//		auto sprite = task->add_appearance('f', { 1, 0, 0 });
+			//		auto pawn = task->add_location(spawn);
+			//		auto body = task->add_body(100, 100);
+			//		auto character = task->add_character();
+			//		auto ai = task->add_npc_behavior();
 
-					auto weapon = std::make_shared<body_component::item_type>();
-					weapon->add({ rl::effect::weapon_damage, 0x00, 1 });
+			//		auto weapon = std::make_shared<body_component::item_type>();
+			//		weapon->add({ rl::effect::weapon_damage, 0x00, 1 });
 
-					body->equip_weapon(weapon);
-					body->join_faction(1);
-					character->add_skill("melee");
-					character->set_tag("mob");
+			//		body->equip_weapon(weapon);
+			//		body->join_faction(1);
+			//		character->add_skill("melee");
+			//		character->set_tag("mob");
 
-					units.emplace_back(task->assemble(persistency::serialized), task->location());
-				}
-			}
+			//		units.emplace_back(task->assemble(persistency::serialized), task->location());
+			//	}
+			//}
 		}
 
 		terrain_director::terrain_director(world &w, factory &factory)

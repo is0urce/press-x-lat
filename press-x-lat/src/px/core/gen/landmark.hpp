@@ -31,7 +31,12 @@ namespace px
 			typedef matrix2<rl::tile<image>, settings::cell_width, settings::cell_height> map_type;
 
 		public:
-			void generate(unsigned int seed, map_type &map, std::list<unit_record> &units, bool generate_placeables) const;
+			void generate(unsigned int seed, map_type & map, std::list<unit_record> & units, bool generate_placeables) const;
+			void set_pipeline(std::unique_ptr<builder> && b, std::unique_ptr<mapper> && m)
+			{
+				std::swap(m_builder, b);
+				std::swap(m_mapper, m);
+			}
 
 		public:
 			image appearance;

@@ -90,7 +90,7 @@ namespace px
 			}
 		}
 		template <typename Operator>
-		void enumerate_bounds(Operator&& fn) const
+		void enumerate_border(Operator&& fn) const
 		{
 			int j = m_start.y();
 			for (int i = m_start.x(); i < m_corner.x(); ++i)

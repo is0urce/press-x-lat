@@ -45,14 +45,14 @@ namespace px
 			m_back = back_color;
 		}
 
-		void canvas::rectangle(const px::rectangle &bounds)
+		void canvas::rectangle(px::rectangle const& bounds)
 		{
 			rectangle(bounds, m_back);
 		}
 
-		void canvas::rectangle(const px::rectangle &bounds, const color &back)
+		void canvas::rectangle(px::rectangle const& bounds, color const& back)
 		{
-			bounds.intersection(range()).enumerate([&](const point2& location)
+			bounds.intersection(range()).enumerate([&](point2 const& location)
 			{
 				symbol &s = (*this)[location];
 				s.code = ' ';
@@ -65,7 +65,7 @@ namespace px
 			pset(pos, m_back);
 		}
 
-		void canvas::pset(const point2& position, const color& back)
+		void canvas::pset(point2 const& position, color const& back)
 		{
 			if (contains(position))
 			{
@@ -73,7 +73,7 @@ namespace px
 			}
 		}
 
-		void canvas::write(const point2 &position, symbol::code_t code, const color &front)
+		void canvas::write(point2 const& position, symbol::code_t code, color const& front)
 		{
 			if (contains(position))
 			{
@@ -88,7 +88,7 @@ namespace px
 			write(position, code, m_front);
 		}
 
-		void canvas::write(point2 position, const std::string &text, const color &front)
+		void canvas::write(point2 position, const std::string &text, color const& front)
 		{
 			string::enum_utf8(text, [&](unsigned int letter)
 			{
@@ -96,7 +96,7 @@ namespace px
 				position.move_axis<0>(1);
 			});
 		}
-		size_t canvas::write_n(point2 position, const std::string &text, const color &front, size_t max_symbols)
+		size_t canvas::write_n(point2 position, std::string const& text, color const& front, size_t max_symbols)
 		{
 			string::enum_utf8(text, [&](unsigned int letter)
 			{
@@ -110,7 +110,7 @@ namespace px
 			return max_symbols;
 		}
 
-		void canvas::write(point2 position, const std::string &text)
+		void canvas::write(point2 position, std::string const& text)
 		{
 			write(position, text, m_front);
 		}

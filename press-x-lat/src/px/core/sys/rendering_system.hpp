@@ -41,18 +41,18 @@ namespace px
 			}
 			virtual void update_system() override
 			{
-				int w = static_cast<int>(m_canvas->width()) / 2;
-				int h = static_cast<int>(m_canvas->height()) / 2;
-				point2 camera = m_camera ? m_camera->current(): point2(0, 0);
-				enumerate([this,camera,w,h](const image_component &img)
+				auto center = m_canvas->range() / 2;
+				auto camera = m_camera ? m_camera->current() : point2(0, 0);
+				enumerate([this, camera, center](auto const& img)
 				{
 					if (img.active())
 					{
-						if (location_component* location = static_cast<location_component*>(img))
+						if (location_component* location = img)
 						{
 							auto relative = location->current() - camera;
+							relative.mirror<1>();
 
-							m_canvas->write({ w + relative.x(), h - relative.y() }, img.glyph, img.tint);
+							m_canvas->write(center + relative, img.glyph, img.tint);
 						}
 					}
 				});
