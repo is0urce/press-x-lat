@@ -52,8 +52,8 @@ namespace px
 				if (m_world)
 				{
 					auto m = m_world->map();
-					int w = m->width();
-					int h = m->height();
+					int w = static_cast<int>(m->width());
+					int h = static_cast<int>(m->height());
 
 					point2 center = bounds().start() + bounds().range() / 2;
 					point2 start = center.moved(point2(-w / 2, -h / 2));
@@ -61,8 +61,8 @@ namespace px
 					point2 pen = start.moved({ 0, h - 1 });
 
 					cnv.rectangle(map.inflated(1), { 1, 1, 1 });
-					m->enumerate([&](int x, int y, auto &cell) {
-						point2 pos = pen + point2(x, -y);
+					m->enumerate([&](auto const& location, auto &cell) {
+						point2 pos = pen + point2(location.x(), -location.y());
 
 						cnv.write(pos, cell.img.glyph, cell.img.tint);
 						cnv.pset(pos, cell.img.bg);

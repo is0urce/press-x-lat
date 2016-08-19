@@ -40,12 +40,8 @@ namespace px
 		template <size_t Index>
 		const component get() const
 		{
+			static_assert(Index < Dim, "Index < Dim");
 			return m_array[Index];
-		}
-		template <size_t Index>
-		const component at() const
-		{
-			return m_array.at(Index);
 		}
 
 		bool empty() const
@@ -70,6 +66,7 @@ namespace px
 		template <size_t Axis>
 		void mirror()
 		{
+			static_assert(Axis < Dim, "Axis < Dim");
 			m_array[Axis] = -m_array[Axis];
 		}
 		void mirror(size_t axis)
@@ -79,6 +76,7 @@ namespace px
 		template <size_t Axis>
 		void move_axis(component distance)
 		{
+			static_assert(Axis < Dim, "Axis < Dim");
 			m_array[Axis] += distance;
 		}
 		void move_axis(size_t axis, component distance)
@@ -88,6 +86,7 @@ namespace px
 		template <size_t Axis>
 		void increment_axis()
 		{
+			static_assert(Axis < Dim, "Axis < Dim");
 			m_array[Axis] += 1;
 		}
 

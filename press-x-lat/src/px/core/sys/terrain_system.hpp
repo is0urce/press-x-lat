@@ -41,9 +41,9 @@ namespace px
 
 				point2 start = camera - point2(w / 2, h / 2);
 
-				m_canvas->enumerate([&](auto i, auto j, auto const& symbol) {
-					auto img = m_terrain->select(start.moved(i, j)).appearance();
-					point2 position(i, h - j - 1);
+				m_canvas->enumerate([&](point2 const& location, auto const& symbol) {
+					auto img = m_terrain->select(start.moved(location)).appearance();
+					point2 position(location.x(), h - location.y() - 1);
 					m_canvas->write(position, img.glyph, img.tint);
 					m_canvas->pset(position, img.bg);
 				});

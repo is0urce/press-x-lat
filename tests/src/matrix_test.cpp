@@ -13,7 +13,7 @@ TEST_CASE("matrix", "[matrix]")
 
 	int element = 100500;
 
-	auto generator = [](unsigned int x, unsigned int y) -> int { return x * 2 + y - 1; };
+	auto generator = [](size_t x, size_t y) -> int { return static_cast<int>(x) * 2 + static_cast<int>(y) - 1; };
 	int g = generator(5, 5);
 
 	// constructors
@@ -67,6 +67,6 @@ TEST_CASE("matrix", "[matrix]")
 
 	a.fill(element + 4);
 	REQUIRE((a[{0, 0}]) == element + 4);
-	a.fill([=](unsigned int i, unsigned int j) -> int { return element + 5; });
+	a.fill([=](size_t i, size_t j) -> int { return element + 5; });
 	REQUIRE((a[{0, 0}]) == element + 5);
 }

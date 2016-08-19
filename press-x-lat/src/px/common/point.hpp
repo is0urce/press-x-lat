@@ -34,6 +34,7 @@ namespace px
 
 		point2 moved(point2 move) const { move.move(*this); return move; }
 		point2 moved(component x, component y) const { point2 result(x, y); result.move(*this); return result; }
+
 		point2 multiplied(point2 stretch) const { stretch.multiply(*this); return stretch; }
 
 		point2 operator-() const { point2 negated = *this; negated.negate(); return negated; }
@@ -55,6 +56,14 @@ namespace px
 			}
 			return result;
 		}
+
+		template <size_t Axis>
+		point2 moved_axis(point2 move) const {
+			move.move(*this); return move;
+		}
+
+		template <size_t Axis>
+		point2 moved_axis(component s) const { point2 result = *this; result.move_axis<Axis>(s); return result; }
 	};
 
 	namespace

@@ -26,8 +26,8 @@ namespace px
 			void apply_mapping(build_result &build, map_type &terrain, units_list &units, bool generate_placeables) const override
 			{
 
-				build.tiles.enumerate([&](auto x, auto y, auto const& blueprint_tile) {
-					auto &tile = terrain[point2(x, y)];
+				build.tiles.enumerate([&](auto const& location, auto const& blueprint_tile) {
+					auto &tile = terrain[location];
 					auto &img = tile.appearance();
 
 					switch (blueprint_tile)

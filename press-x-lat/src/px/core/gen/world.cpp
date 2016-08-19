@@ -49,9 +49,9 @@ namespace px
 
 		void world::clear()
 		{
-			m_map.enumerate([this](int x, int y, auto& cell) {
+			m_map.enumerate([this](auto location, auto& cell) {
 				clear_cell(cell);
-				cell.location = { x, y };
+				cell.location = location;
 			});
 			m_rivers.clear();
 			m_cities.clear();
@@ -98,8 +98,8 @@ namespace px
 		{
 			fn::perlin<perlin_width, perlin_height> noise(m_generator);
 
-			double w = m_map.width();
-			double h = m_map.height();
+			double w = static_cast<double>(m_map.width());
+			double h = static_cast<double>(m_map.height());
 			double mx = (perlin_width - 1) / w;
 			double my = (perlin_height - 1) / h;
 
@@ -108,10 +108,10 @@ namespace px
 			// calculate altitudes
 			vector2 center(w / 2.0f, h / 2.0f);
 			double size = (std::min)(w, h);
-			m_map.enumerate([&](int i, int j, auto& cell)
+			m_map.enumerate([&](auto const& location, auto &cell)
 			{
-				double noise_magnitude = noise.sample(mx * i, my * j, perlin_samples);
-				double distance_to_center = center.distance(vector2(i, j));
+				double noise_magnitude = noise.sample(mx * location.x(), my * location.y(), perlin_samples);
+				double distance_to_center = center.distance(vector2(location));
 				double cone_magnitude = (size - distance_to_center * 4) / size; // [-1..1]
 
 				cell.altitude = std::atan(cone_magnitude) + noise_magnitude;
@@ -121,12 +121,12 @@ namespace px
 			});
 
 			// normalise, calculate gradient
-			m_map.enumerate([mx, my, max_peak, this](int i, int j, auto& cell)
+			m_map.enumerate([mx, my, max_peak, this](auto const& location, auto& cell)
 			{
 				cell.altitude = cell.altitude / max_peak;
 
-				auto dx = m_map.select({ i + 1, j }, m_outer).altitude - m_map.select({ i - 1, j }, m_outer).altitude;
-				auto dy = m_map.select({ i, j + 1 }, m_outer).altitude - m_map.select({ i, j - 1 }, m_outer).altitude;
+				auto dx = m_map.select({ location.x() + 1, location.y() }, m_outer).altitude - m_map.select({ location.x() - 1, location.y() }, m_outer).altitude;
+				auto dy = m_map.select({ location.x(), location.y() + 1 }, m_outer).altitude - m_map.select({ location.x(), location.y() - 1 }, m_outer).altitude;
 
 				cell.gradient = { dx, dy };
 			});
@@ -136,25 +136,25 @@ namespace px
 		{
 			// fill moisture from ocean
 			m_rivers.clear();
-			m_map.enumerate([h = m_map.height()](unsigned int i, unsigned int j, auto& cell)
+			m_map.enumerate([h = m_map.height()](auto const& location, auto& cell)
 			{
 				cell.moisture = cell.altitude <= 0 ? 1.0 : 0.0;
-				cell.temperature = -0.25 + 1.0 * (h - j) / h - cell.altitude * 0.5;
+				cell.temperature = -0.25 + 1.0 * (h - location.y()) / h - cell.altitude * 0.5;
 				cell.river = nullptr;
 				cell.river_size = 0;
 			});
 			expand_moisture();
 
 			// generate rivers
-			std::uniform_int_distribution<unsigned int> rand_x(0, m_map.width() - 1);
-			std::uniform_int_distribution<unsigned int> rand_y(0, m_map.height() - 1);
+			std::uniform_int_distribution<size_t> rand_x(0, m_map.width() - 1);
+			std::uniform_int_distribution<size_t> rand_y(0, m_map.height() - 1);
 			unsigned int n = 0;
 			unsigned int tries = 0;
 			while (n < rivers && tries < max_try_stop)
 			{
 				++tries;
-				unsigned int x = rand_x(m_generator);
-				unsigned int y = rand_y(m_generator);
+				int x = static_cast<int>(rand_x(m_generator));
+				int y = static_cast<int>(rand_y(m_generator));
 
 				auto &cell = m_map[point2(x, y)];
 				if (cell.river_size <= 0 && cell.altitude > 0.35)
@@ -169,7 +169,7 @@ namespace px
 			}
 
 			// fill moisture from rivers
-			m_map.enumerate([](unsigned int i, unsigned int j, auto& cell)
+			m_map.enumerate([](auto const&, auto& cell)
 			{
 				cell.moisture = cell.river_size > 0 ? 1.0 : cell.altitude < 0 ? 0.0125 : 0.0;
 			});
@@ -179,14 +179,14 @@ namespace px
 		void world::generate_civilisation(unsigned int cities)
 		{
 			m_cities.clear();
-			m_map.enumerate([](auto, auto, auto& cell)
+			m_map.enumerate([](auto const&, auto& cell)
 			{
 				cell.landmark = nullptr;
 			});
 
 			// generate cities
-			std::uniform_int_distribution<unsigned int> rand_x(0, m_map.width() - 1);
-			std::uniform_int_distribution<unsigned int> rand_y(0, m_map.height() - 1);
+			std::uniform_int_distribution<unsigned int> rand_x(0, static_cast<int>(m_map.width()) - 1);
+			std::uniform_int_distribution<unsigned int> rand_y(0, static_cast<int>(m_map.height()) - 1);
 			unsigned int n = 0;
 			unsigned int tries = 0;
 			while (n < cities && tries < max_try_stop)
@@ -197,7 +197,7 @@ namespace px
 
 				point2 location = point2(x, y);
 				auto &cell = m_map[location];
-				int distance = m_map.width() * 2 + m_map.height() * 2 + 5; // something big
+				int distance = static_cast<int>(m_map.width()) * 2 + static_cast<int>(m_map.height()) * 2 + 5; // something big
 				std::for_each(m_cities.begin(), m_cities.end(), [&distance, &location](auto& c)	{
 					distance = (std::min)(distance, location.king_distance(c.center_location));
 				});
@@ -241,7 +241,7 @@ namespace px
 			//{
 			//	target = (moisture > 5) ? &dryland : &desert;
 			//}
-			m_map.enumerate([w = m_map.width(), h = m_map.height(), this](int i, int j, auto& cell)
+			m_map.enumerate([w = m_map.width(), h = m_map.height(), this](auto const&, auto& cell)
 			{
 				if (cell.altitude <= 0)
 				{
@@ -307,12 +307,12 @@ namespace px
 			while (change)
 			{
 				change = false;
-				m_map.enumerate([&change, this](int x, int y, auto& cell)
+				m_map.enumerate([&change, this](auto const& location, auto& cell)
 				{
-					auto &u = m_map.select({ x, y + 1 }, m_outer);
-					auto &d = m_map.select({ x, y - 1 }, m_outer);
-					auto &l = m_map.select({ x - 1, y }, m_outer);
-					auto &r = m_map.select({ x + 1, y }, m_outer);
+					auto &u = m_map.select(location.moved_axis<1>(1), m_outer);
+					auto &d = m_map.select(location.moved_axis<1>(-1), m_outer);
+					auto &l = m_map.select(location.moved_axis<0>(-1), m_outer);
+					auto &r = m_map.select(location.moved_axis<0>(1), m_outer);
 
 					double moisture = (std::max)((std::max)(u.moisture, d.moisture), (std::max)(l.moisture, r.moisture)) / 2;
 
