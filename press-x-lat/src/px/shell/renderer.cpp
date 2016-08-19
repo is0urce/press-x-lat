@@ -184,8 +184,8 @@ namespace px
 		void renderer::draw_canvas(const canvas& cnv)
 		{
 			// ui
-			int w = cnv.width();
-			int h = cnv.height();
+			int w = static_cast<int>(cnv.width());
+			int h = static_cast<int>(cnv.height());
 			if (w <= 0 || h <= 0) return;
 			int size = w * h;
 

@@ -52,7 +52,7 @@ namespace px
 
 		void canvas::rectangle(const px::rectangle &bounds, const color &back)
 		{
-			bounds.intersection(point2(width(), height())).enumerate([&](const point2& location)
+			bounds.intersection(range()).enumerate([&](const point2& location)
 			{
 				symbol &s = (*this)[location];
 				s.code = ' ';

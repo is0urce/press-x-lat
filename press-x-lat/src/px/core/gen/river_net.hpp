@@ -26,10 +26,10 @@ namespace px
 			}
 			void clear()
 			{
-				m_map.enumerate([](int, int, auto& r) {
-					//r.size = 0;
-					//r.flow = point2(0, 0);
-				});
+				//m_map.enumerate([](auto, auto, auto& r) {
+				//	//r.size = 0;
+				//	//r.flow = point2(0, 0);
+				//});
 			}
 
 		private:

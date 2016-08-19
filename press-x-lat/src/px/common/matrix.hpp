@@ -204,8 +204,8 @@ namespace px
 		typedef Element element;
 	private:
 		std::vector<element> m_data;
-		unsigned int m_width;
-		unsigned int m_height;
+		size_t m_width;
+		size_t m_height;
 
 	public:
 		matrix2() : m_width(0), m_height(0)
@@ -216,26 +216,26 @@ namespace px
 		{
 			swap(that);
 		}
-		matrix2(unsigned int w, unsigned int h) : m_width(w), m_height(h)
+		matrix2(size_t w, size_t h) : m_width(w), m_height(h)
 		{
 			m_data.resize(w * h);
 		}
-		matrix2(unsigned int w, unsigned int h, const element &initial) : m_width(w), m_height(h)
+		matrix2(size_t w, size_t h, const element &initial) : m_width(w), m_height(h)
 		{
 			m_data.assign(w * h, initial);
 		}
 		template <typename Generator>
-		matrix2(unsigned int w, unsigned int h, Generator op) : matrix2(w, h)
+		matrix2(size_t w, size_t h, Generator op) : matrix2(w, h)
 		{
 			fill(op);
 		}
-		void resize(unsigned int w, unsigned int h)
+		void resize(size_t w, size_t h)
 		{
 			m_width = w;
 			m_height = h;
 			m_data.resize(w * h);
 		}
-		void resize(point2 range)
+		void resize(point2 const& range)
 		{
 			resize(range.x(), range.y());
 		}
@@ -247,19 +247,19 @@ namespace px
 			std::swap(m_data, that.m_data);
 		}
 
-		unsigned int width() const
+		size_t width() const
 		{
 			return m_width;
 		}
-		unsigned int height() const
+		size_t height() const
 		{
 			return m_height;
 		}
 		point2 range() const
 		{
-			return point2(m_width, m_height);
+			return point2(static_cast<point2::component>(m_width), static_cast<point2::component>(m_height));
 		}
-		unsigned int size() const
+		size_t size() const
 		{
 			return m_width * m_height;
 		}
@@ -282,8 +282,8 @@ namespace px
 
 		void fill(const element &e)
 		{
-			unsigned int len = size();
-			for (unsigned int i = 0; i < len; ++i)
+			size_t len = size();
+			for (size_t i = 0; i < len; ++i)
 			{
 				m_data[i] = e;
 			}
@@ -292,9 +292,9 @@ namespace px
 		void fill(Generator op)
 		{
 			size_t index = 0;
-			for (unsigned int j = 0; j < m_height; ++j)
+			for (size_t j = 0; j < m_height; ++j)
 			{
-				for (unsigned int i = 0; i < m_width; ++i)
+				for (size_t i = 0; i < m_width; ++i)
 				{
 					m_data[index] = op(i, j);
 					++index;
@@ -305,9 +305,9 @@ namespace px
 		void enumerate(Operator &&op)
 		{
 			size_t index = 0;
-			for (unsigned int j = 0; j < m_height; ++j)
+			for (size_t j = 0; j < m_height; ++j)
 			{
-				for (unsigned int i = 0; i < m_width; ++i)
+				for (size_t i = 0; i < m_width; ++i)
 				{
 					std::forward<Operator>(op)(i, j, m_data[index]);
 					++index;

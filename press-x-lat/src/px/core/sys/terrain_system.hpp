@@ -35,22 +35,28 @@ namespace px
 		protected:
 			virtual void update_system() override
 			{
-				int w = m_canvas->width();
-				int h = m_canvas->height();
+				int w = static_cast<int>(m_canvas->width());
+				int h = static_cast<int>(m_canvas->height());
 				point2 camera = m_camera ? m_camera->current() : point2(0, 0);
 
 				point2 start = camera - point2(w / 2, h / 2);
 
-				for (int j = 0; j < h; ++j)
-				{
-					for (int i = 0; i < w; ++i)
-					{
-						auto img = m_terrain->select(start.moved(i, j)).appearance();
-						point2 position(i, h - j - 1);
-						m_canvas->write(position, img.glyph, img.tint);
-						m_canvas->pset(position, img.bg);
-					}
-				}
+				m_canvas->enumerate([&](auto i, auto j, auto const& symbol) {
+					auto img = m_terrain->select(start.moved(i, j)).appearance();
+					point2 position(i, h - j - 1);
+					m_canvas->write(position, img.glyph, img.tint);
+					m_canvas->pset(position, img.bg);
+				});
+				//for (int j = 0; j < h; ++j)
+				//{
+				//	for (int i = 0; i < w; ++i)
+				//	{
+				//		auto img = m_terrain->select(start.moved(i, j)).appearance();
+				//		point2 position(i, h - j - 1);
+				//		m_canvas->write(position, img.glyph, img.tint);
+				//		m_canvas->pset(position, img.bg);
+				//	}
+				//}
 			}
 			virtual void fixed_update_system() override
 			{

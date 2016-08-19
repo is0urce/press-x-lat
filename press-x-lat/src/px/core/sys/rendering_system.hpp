@@ -41,8 +41,8 @@ namespace px
 			}
 			virtual void update_system() override
 			{
-				int w = m_canvas->width() / 2;
-				int h = m_canvas->height() / 2;
+				int w = static_cast<int>(m_canvas->width()) / 2;
+				int h = static_cast<int>(m_canvas->height()) / 2;
 				point2 camera = m_camera ? m_camera->current(): point2(0, 0);
 				enumerate([this,camera,w,h](const image_component &img)
 				{
