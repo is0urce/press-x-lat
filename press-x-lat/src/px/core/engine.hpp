@@ -114,7 +114,7 @@ namespace px
 				// make player
 				auto task = m_factory.produce();
 				auto img = task->add_appearance('@', { 1, 1, 1 });
-				auto pawn = task->add_location({ 1, 1 });
+				auto pawn = task->add_location({ -1, -1 });
 				auto body = task->add_body(100, 100);
 				auto character = task->add_character();
 				// setup

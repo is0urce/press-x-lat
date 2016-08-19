@@ -127,6 +127,12 @@ namespace px
 			{
 				m_root.count;
 			}
+			template <typename Operator>
+			static void enumerate(rng_type &rng, rectangle bounds, int min, Operator &fn)
+			{
+				bsp partition(rng, bounds, min);
+				partition.enumerate(fn);
+			}
 
 		private:
 			node m_root;

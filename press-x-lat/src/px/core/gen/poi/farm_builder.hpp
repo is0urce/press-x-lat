@@ -13,10 +13,17 @@
 
 #include <px/core/gen/builder.hpp>
 
+#include <random>
+
 namespace px
 {
 	namespace core
 	{
+		namespace
+		{
+			unsigned int sector_size = 15;
+			unsigned int room_size = 5;
+		}
 		class farm_builder : public builder
 		{
 		public:
@@ -26,84 +33,74 @@ namespace px
 		public:
 			void build(unsigned int seed, rectangle const& bounds, build_result &result) const override
 			{
-				bounds.enumerate([&](const point2& location) {
-					result.tiles[location] = build_tile::no_change;
-				});
-
+				std::mt19937 rng(seed);
+				std::uniform_int_distribution<unsigned int> sector_chance(0, 1);
 				//std::uniform_int_distribution<unsigned int> furniture_chance(1, 100);
 				//std::uniform_int_distribution<unsigned int> monster_chance(1, 100);
 
-				std::uniform_int_distribution<unsigned int> sector_chance(0, 3);
+				bool done = false;
+				while (!done)
+				{
+					bool living = false;
+					bool crops = false;
 
-				std::mt19937 rng(seed);
+					bounds.enumerate([&](const point2& location) {
+						result.tiles[location] = build_tile::no_change;
+					});
 
-				fn::bsp<> sector_bsp(rng, bounds, 15);
-				sector_bsp.enumerate([&](auto const& sector) {
+					fn::bsp<decltype(rng)>::enumerate(rng, bounds, sector_size, [&](auto const& sector) {
 
-					switch (sector_chance(rng))
-					{
-					case 0:
+						auto sector_bounds = sector.bounds.deflated(1); // some space between "districts"
+
+						switch (sector_chance(rng))
 						{
-							int w = sector.bounds.width();
-							int h = sector.bounds.height();
-							std::uniform_int_distribution<int> wd(w / 4 * 3, w);
-							std::uniform_int_distribution<int> hd(h / 4 * 3, h);
-							w = wd(rng) - 2;
-							h = hd(rng) - 2;
-							w = w < 0 ? 0 : w;
-							h = h < 0 ? 0 : h;
-							fn::bsp<> room_bsp(rng, { sector.bounds.start(), { w, h } }, 5);
-							room_bsp.enumerate([&](auto const& room) {
+						case 0:
+							living = true;
+							{
+								int w = sector_bounds.width();
+								int h = sector_bounds.height();
+								std::uniform_int_distribution<int> wd(w / 4 * 3, w);
+								std::uniform_int_distribution<int> hd(h / 4 * 3, h);
+								w = wd(rng) - 2;
+								h = hd(rng) - 2;
+								w = w < 0 ? 0 : w;
+								h = h < 0 ? 0 : h;
 
-								room.bounds.enumerate([&](point2 const& location) {
-									result.tiles[location] = build_tile::floor;
+								auto house_bounds = rectangle(sector_bounds.start(),{ w, h });
+								fn::bsp<decltype(rng), bool> room_bsp(rng, house_bounds, room_size);
+								room_bsp.enumerate([&](auto const& room) {
+
+									room.bounds.enumerate([&](point2 const& location) {
+										result.tiles[location] = build_tile::floor;
+									});
+
+									room.bounds.enumerate_border([&](point2 const& location) {
+										result.tiles[location] = build_tile::wall_inside;
+									});
+
+									rectangle room_inflated = room.bounds.inflated(1);
+
+									if (room_inflated.intersection(house_bounds) != room_inflated) // near wall
+									{
+										result.tiles[room.bounds.start().moved_axis<0>(room.bounds.width() / 2)] = build_tile::floor;
+									}
 								});
-
-								room.bounds.enumerate_border([&](point2 const& location) {
-									result.tiles[location] = build_tile::wall_inside;
-								});
-
+							}
+							break;
+						case 1:
+							crops = true;
+							sector_bounds.enumerate([&](auto const& location) {
+								result.tiles[location] = build_tile::soil;
 							});
+							break;
+						default:
+							break;
 						}
-						break;
-					case 1:
-						sector.bounds.enumerate([&](auto const& location) {
-							result.tiles[location] = build_tile::soil;
-						});
-						break;
-					default:
-						break;
-					}
-
-					//auto furniture_line = room.bounds.deflated(1);
-
-					//furniture_line.enumerate_bounds([&](const point2& location) {
-					//	if (furniture_chance(rng) <= 20)
-					//	{
-					//		result.placeables.emplace_back(location, build_placeable::furniture);
-					//	}
-					//	if (monster_chance(rng) <= 70)
-					//	{
-					//		result.placeables.emplace_back(room.bounds.start() + room.bounds.range() / 2, build_placeable::mobile);
-					//		if (monster_chance(rng) <= 30)
-					//		{
-					//			result.placeables.emplace_back(room.bounds.start() + room.bounds.range() / 2, build_placeable::mobile);
-					//			if (monster_chance(rng) <= 10)
-					//			{
-					//				result.placeables.emplace_back(room.bounds.start() + room.bounds.range() / 2, build_placeable::mobile);
-					//			}
-					//		}
-					//	}
-					//});
-
-					//if (furniture_chance(rng) <= 20)
-					//{
-					//	result.placeables.emplace_back(room.bounds.start() + room.bounds.range() / 2, build_placeable::table);
-					//}
-				});
+					});
+					done = living && crops && true;
+				}
 			}
 		};
-
 	}
 }
 

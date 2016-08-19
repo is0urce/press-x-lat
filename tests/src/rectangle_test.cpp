@@ -20,4 +20,17 @@ TEST_CASE("rectangle", "[rectangle]")
 
 	rect.deflate(1);
 	REQUIRE(rect == orig);
+
+
+	{
+		px::rectangle a({ 0, 0 }, { 10, 10 });
+		px::rectangle b({ 9, 9 }, { 1, 1 });
+		px::rectangle c({ 10, 10 }, { 0, 0 });
+		REQUIRE(a.intersection(b) == b);
+		
+		
+		
+		REQUIRE(a.intersection(c).empty());
+	}
+
 }

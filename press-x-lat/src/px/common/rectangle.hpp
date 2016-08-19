@@ -51,24 +51,28 @@ namespace px
 		{
 			return m_range.x() * m_range.y();
 		}
+		bool empty() const
+		{
+			return m_range.x() <= 0 && m_range.y() <= 0;
+		}
 
-		bool contains(const point2 &point) const
+		bool contains(point2 const& point) const
 		{
 			return point.x() >= m_start.x() && point.y() >= m_start.y() && point.x() < m_corner.x() && point.y() < m_corner.y();
 		}
-		bool contains(const rectangle &rect) const
+		bool contains(rectangle const& rect) const
 		{
 			return rect.m_start.x() >= m_start.x()
 				&& rect.m_start.y() >= m_start.y()
 				&& rect.m_corner.x() <= m_corner.x()
 				&& rect.m_corner.y() <= m_corner.y();
 		}
-		bool is_border(const point2 &point) const
+		bool is_border(point2 const& point) const
 		{
 			if (m_range.x() <= 0 || m_range.y() <= 0) return false;
 			return point.x() == m_start.x() || point.y() == m_start.y() || point.x() == m_corner.x() || point.y() == m_corner.y();
 		}
-		rectangle intersection(const rectangle &with) const
+		rectangle intersection(rectangle const& with) const
 		{
 			auto start_x = (std::max)(m_start.x(), with.m_start.x());
 			auto start_y = (std::max)(m_start.y(), with.m_start.y());
@@ -92,27 +96,38 @@ namespace px
 		template <typename Operator>
 		void enumerate_border(Operator&& fn) const
 		{
-			int j = m_start.y();
-			for (int i = m_start.x(); i < m_corner.x(); ++i)
+			if (m_range.x() == 1)
 			{
-				std::forward<Operator>(fn)(point2(i, j));
+				for (int i = m_start.x(), j = m_start.y(); j < m_corner.y(); ++j)
+				{
+					std::forward<Operator>(fn)(point2(i, j));
+				}
 			}
-
-			j = m_corner.y() - 1;
-			if (j != m_start.y()) for (int i = m_start.x(); i < m_corner.x(); ++i)
+			else if (m_range.y() == 1)
 			{
-				std::forward<Operator>(fn)(point2(i, j));
+				for (int i = m_start.x(), j = m_start.y(); i < m_corner.x(); ++i)
+				{
+					std::forward<Operator>(fn)(point2(i, j));
+				}
 			}
-
-			int i = m_start.x();
-			for (int j = m_start.y() + 1; j < m_corner.y() - 1; ++j)
+			else if (m_range.x() > 0 && m_range.y() > 0)
 			{
-				std::forward<Operator>(fn)(point2(i, j));
-			}
-			i = m_corner.x() - 1;
-			if (i != m_start.x()) for (int j = m_start.y() + 1; j < m_corner.y() - 1; ++j)
-			{
-				std::forward<Operator>(fn)(point2(i, j));
+				for (int i = m_start.x(), j = m_start.y(); i < m_corner.x(); ++i)
+				{
+					std::forward<Operator>(fn)(point2(i, j));
+				}
+				for (int i = m_corner.x() - 1, j = m_start.y() + 1; j < m_corner.y(); ++j)
+				{
+					std::forward<Operator>(fn)(point2(i, j));
+				}
+				for (int i = m_corner.x() - 1, j = m_corner.y() - 1; i > m_start.x(); --i)
+				{
+					std::forward<Operator>(fn)(point2(i - 1, j));
+				}
+				for (int i = m_start.x(), j = m_corner.y() - 1; j > m_start.y() + 1; --j)
+				{
+					std::forward<Operator>(fn)(point2(i, j - 1));
+				}
 			}
 		}
 
@@ -122,9 +137,19 @@ namespace px
 			m_range.move(point2(size * 2, size * 2));
 			m_corner.move(point2(size, size));
 		}
+		void inflate()
+		{
+			m_start.move(point2(-1, -1));
+			m_range.move(point2(2, 2));
+			m_corner.move(point2(1, 1));
+		}
 		void deflate(int size)
 		{
 			inflate(-size);
+		}
+		void deflate()
+		{
+			inflate(-1);
 		}
 
 		rectangle inflated(int size) const
@@ -140,15 +165,12 @@ namespace px
 			return result;
 		}
 	};
-}
 
-namespace
-{
-	bool operator==(const px::rectangle &a, const px::rectangle &b)
+	inline bool operator==(px::rectangle const& a, px::rectangle const& b)
 	{
 		return a.range() == b.range() && a.start() == b.start();
 	}
-	bool operator!=(const px::rectangle &a, const px::rectangle &b)
+	inline bool operator!=(px::rectangle const& a, px::rectangle const& b)
 	{
 		return !operator==(a, b);
 	}

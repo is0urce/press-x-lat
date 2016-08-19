@@ -21,7 +21,7 @@ namespace px
 		public:
 			static const unsigned int world_width = 50;
 			static const unsigned int world_height = world_width;
-			static const unsigned int cell_width = 50;
+			static const unsigned int cell_width = 100;
 			static const unsigned int cell_height = cell_width;
 
 			//typedef std::shared_ptr<unit> unit_ptr;
