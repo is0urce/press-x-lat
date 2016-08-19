@@ -26,10 +26,20 @@ namespace px
 		{
 		public:
 			typedef matrix2<rl::tile<image>, settings::cell_width, settings::cell_height> map_type;
+			typedef std::list<unit_record> units_list;
 
 		public:
-			virtual void map(build_result &build, map_type &terrain, std::list<unit_record> &units, bool generate_placeables) = 0;
+			void map(build_result &build, map_type &terrain, units_list &units, bool generate_placeables) const
+			{
+				apply_mapping(build, terrain, units, generate_placeables);
+			}
+
+		public:
+			mapper() {}
 			virtual ~mapper() = 0 {}
+
+		protected:
+			virtual void apply_mapping(build_result &build, map_type &terrain, units_list &units, bool generate_placeables) const = 0;
 		};
 	}
 }

@@ -5,6 +5,8 @@
 
 #include "landmark.hpp"
 
+#include <px/common/rectangle.hpp>
+
 #include <px/core/gen/builder.hpp>
 #include <px/core/gen/mapper.hpp>
 
@@ -22,6 +24,8 @@ namespace px
 			if (m_builder && m_mapper)
 			{
 				build_result result;
+				result.tiles.resize(map.range());
+
 				m_builder->build(seed, map.range(), result);
 				m_mapper->map(result, map, units, generate_placeables);
 			}

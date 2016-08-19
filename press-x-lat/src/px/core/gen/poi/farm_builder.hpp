@@ -1,51 +1,50 @@
-// name: house_builder.hpp
+// name: farm_builder.hpp
 // type: c++ header
 // desc: struct declaration
 // auth: is0urce
 
-#ifndef PX_CORE_HOUSE_BUILDER_HPP
-#define PX_CORE_HOUSE_BUILDER_HPP
+#ifndef PX_CORE_GEN_POI_FARM_BUILDER_HPP
+#define PX_CORE_GEN_POI_FARM_BUILDER_HPP
 
 #include <px/common/rectangle.hpp>
-#include <px/common/matrix.hpp>
 
 #include <px/fn/bsp.hpp>
-
-#include <px/core/unit.hpp>
-#include <px/core/image.hpp>
-#include <px/core/settings.hpp>
-#include <px/core/unit_record.hpp>
-
-#include <px/rl/tile.hpp>
-
 #include <px/core/gen/build_result.hpp>
+
+#include <px/core/gen/builder.hpp>
 
 namespace px
 {
 	namespace core
 	{
-		class house_builder
+		class farm_builder : public builder
 		{
 		public:
-			template<typename Generator = std::mt19937>
-			build_result build(Generator &rng, const point2& bounds) const
-			{
-				build_result result;
+			farm_builder() {}
+			~farm_builder() {}
 
-				result.tiles.resize(bounds);
-				result.tiles.fill(build_tile::no_change);
+		public:
+			void build(unsigned int seed, rectangle const& bounds, build_result &result) const override
+			{
+				bounds.enumerate([&](const point2& location) {
+					result.tiles[location] = build_tile::no_change;
+				});
 
 				std::uniform_int_distribution<unsigned int> furniture_chance(1, 100);
 				std::uniform_int_distribution<unsigned int> monster_chance(1, 100);
 
-				fn::bsp<Generator> bsp(rng, bounds, 6);
+				std::mt19937 rng(seed);
+
+				fn::bsp<> bsp(rng, bounds, 6);
+
 				bsp.enumerate([&](const auto& room) {
-					room.bounds.enumerate([&](const point2& location) {
+					room.bounds.enumerate([&](point2 const& location) {
 						result.tiles[location] = build_tile::floor;
 					});
-					////room.bounds.enumerate_border([&](const point2& location) {
-					////	result.tiles[location] = build_tile::wall_inside;
-					////});
+
+					//room.bounds.enumerate_border([&](point2 const& location) {
+					//	result.tiles[location] = build_tile::wall_inside;
+					//});
 
 					auto furniture_line = room.bounds.deflated(1);
 
@@ -73,8 +72,6 @@ namespace px
 						result.placeables.emplace_back(room.bounds.start() + room.bounds.range() / 2, build_placeable::table);
 					}
 				});
-
-				return result;
 			}
 		};
 

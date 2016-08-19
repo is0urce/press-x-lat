@@ -17,7 +17,7 @@ namespace px
 		class builder
 		{
 		public:
-			virtual void build(unsigned int seed, rectangle const& bounds, build_result &result) = 0;
+			virtual void build(unsigned int seed, rectangle const& bounds, build_result &result) const = 0;
 			virtual ~builder() = 0 {}
 		};
 	}

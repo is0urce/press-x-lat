@@ -78,13 +78,15 @@ namespace px
 				if (magnitude > 0)
 				{
 					img.glyph = '.';
-					img.tint = { 0, 1, 0 };
+					img.tint = { 1, 1, 1 };
+					img.bg = { 0, 0.25, 0 };
 					t.make_traversable();
 				}
 				else
 				{
 					img.glyph = '#';
 					img.tint = { 0.5, 0.5, 0.5 };
+					img.bg = { 0, 0, 0 };
 					t.make_traversable();
 				}
 

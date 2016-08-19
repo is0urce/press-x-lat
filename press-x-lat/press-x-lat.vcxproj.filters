@@ -357,9 +357,6 @@
     <ClInclude Include="src\px\core\gen\city.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\px\core\gen\house_builder.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\px\core\unit_record.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -370,6 +367,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\px\core\gen\build_result.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\core\gen\poi\farm_builder.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\core\gen\poi\farm_mapper.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

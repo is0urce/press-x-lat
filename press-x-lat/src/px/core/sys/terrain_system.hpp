@@ -46,7 +46,9 @@ namespace px
 					for (int i = 0; i < w; ++i)
 					{
 						auto img = m_terrain->select(start.moved(i, j)).appearance();
-						m_canvas->write(point2(i, h - j - 1), img.glyph, img.tint);
+						point2 position(i, h - j - 1);
+						m_canvas->write(position, img.glyph, img.tint);
+						m_canvas->pset(position, img.bg);
 					}
 				}
 			}
