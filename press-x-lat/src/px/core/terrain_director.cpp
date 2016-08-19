@@ -70,9 +70,9 @@ namespace px
 			double mx = static_cast<double>(perlin_width - 1) / terrain.width();
 			double my = static_cast<double>(perlin_height - 1) / terrain.height();
 
-			terrain.enumerate([&](int i, int j, auto& t)
+			terrain.enumerate([&](auto const& location, auto& t)
 			{
-				auto magnitude = noise.sample(mx * i, my * j, perlin_samples);
+				auto magnitude = noise.sample(mx * location.x(), my * location.y(), perlin_samples);
 
 				auto &img = t.appearance();
 				if (magnitude > 0)

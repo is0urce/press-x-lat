@@ -29,7 +29,7 @@ namespace px
 		}
 		terrain::terrain(terrain_director &w) : m_world(&w)
 		{
-			m_default.appearance() = { '.',{ 0, 0, 0, 0 } };
+			m_default.appearance() = { '.', { 0, 0, 0, 0 } };
 			m_default.make_wall();
 		}
 		terrain::~terrain()
@@ -67,22 +67,22 @@ namespace px
 
 				// copy old
 				point2 shift = focus - m_focus;
-				m_maps.enumerate([&](unsigned int cell_x, unsigned int cell_y, stream_ptr &map)
+				m_maps.enumerate([&](auto location, stream_ptr &map)
 				{
-					auto index = shift + point2(cell_x, cell_y);
-					if (origin.contains(index))
+					location += shift;
+
+					if (origin.contains(location))
 					{
-						std::swap(map, origin[index]);
+						std::swap(map, origin[location]);
 					}
 				});
 
 				// should clear not swapped destroying maps as they can have not treminated threads
-				origin.enumerate([&](unsigned int x, unsigned int y, stream_ptr &map)
+				origin.enumerate([&](auto const& location, stream_ptr &map)
 				{
-					point2 world_cell = m_focus - sight_center + point2(x, y);
 					if (map && map->pending())
 					{
-						splice(*map, world_cell);
+						splice(*map, location + m_focus - sight_center);
 					}
 				});
 
@@ -90,18 +90,18 @@ namespace px
 			}
 
 			// post update maps
-			m_maps.enumerate([&](unsigned int x, unsigned int y, stream_ptr &map)
+			m_maps.enumerate([&](auto location, stream_ptr &map)
 			{
-				point2 world_cell = m_focus - sight_center + point2(x, y);
+				location += m_focus - sight_center;
 
 				// create maps if required
 				if (!map)
 				{
-					load_stream(world_cell, map);
+					load_stream(location, map);
 				}
 
 				// need central cell loaded
-				if (world_cell == m_focus)
+				if (location == m_focus)
 				{
 					map->wait();
 				}
@@ -109,11 +109,11 @@ namespace px
 				// join loaded maps
 				if (map->pending() && map->loaded())
 				{
-					splice(*map, world_cell);
+					splice(*map, location);
 				}
 			});
 		}
-		const terrain::tile_type& terrain::select(const point2 &position) const
+		const terrain::tile_type& terrain::select(point2 const& position) const
 		{
 			point2 relative;
 			point2 cell = divide(position, relative) - m_focus + sight_center;
@@ -128,11 +128,11 @@ namespace px
 			}
 			return m_default;
 		}
-		bool terrain::transparent(const point2 &point) const
+		bool terrain::transparent(point2 const& point) const
 		{
 			return select(point).transparent();
 		}
-		bool terrain::traversable(const point2 &point, rl::traverse layer) const
+		bool terrain::traversable(point2 const& point, rl::traverse layer) const
 		{
 			return select(point).traversable(layer);
 		}

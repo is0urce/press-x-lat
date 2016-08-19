@@ -107,7 +107,7 @@ namespace px
 			{
 				for (unsigned int i = 0; i < W; ++i)
 				{
-					std::forward<Operator>(op)(i, j, m_data[index]);
+					std::forward<Operator>(op)(point2(static_cast<point2::component>(i), static_cast<point2::component>(j)), m_data[index]);
 					++index;
 				}
 			}
