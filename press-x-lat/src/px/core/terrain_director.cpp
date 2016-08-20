@@ -84,7 +84,7 @@ namespace px
 				}
 				else
 				{
-					img.glyph = '#';
+					img.glyph = '^';
 					img.tint = { 0.5, 0.5, 0.5 };
 					img.bg = { 0, 0, 0 };
 					t.make_traversable();
@@ -94,24 +94,6 @@ namespace px
 				if (location.y() == 0) terrain[location].appearance().glyph = '-';
 				if (location.empty()) terrain[location].appearance().glyph = '+';
 			});
-
-			//std::list<point2> room_center;
-
-			//fn::bsp<rng_type> buildings(generator, terrain.range(), 12);
-			//buildings.enumerate([&](auto const& building) {
-			//	fn::bsp<rng_type> rooms(generator, building.bounds.deflated(1), 4);
-
-			//	rooms.enumerate([&](auto const& room) {
-
-			//		rectangle(room.bounds.start(), room.bounds.range() + point2(1, 1)).enumerate_bounds([&](const point2& location) {
-			//			auto& img = terrain[location].appearance();
-			//			
-			//			img.glyph = '#';
-			//			img.tint = color::white();
-			//		});
-			//		room_center.push_back(room.bounds.start() + room.bounds.range() / 2);
-			//	});
-			//});
 
 			//if (static_mobiles)
 			//{

@@ -28,13 +28,15 @@ namespace px
 			typedef Props user_type;
 			struct node
 			{
+			public:
 				rectangle bounds;
 				user_type data;
 				std::unique_ptr<node> l;
 				std::unique_ptr<node> r;
 				unsigned int count;
 
-				bool leaf() const
+			public:
+				bool leaf() const noexcept
 				{
 					return (l && r);
 				}
@@ -125,7 +127,7 @@ namespace px
 			}
 			unsigned int count() const
 			{
-				m_root.count;
+				return m_root.count;
 			}
 			template <typename Operator>
 			static void enumerate(rng_type &rng, rectangle bounds, int min, Operator &fn)

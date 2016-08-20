@@ -22,57 +22,57 @@ namespace px
 		point2 m_corner;
 
 	public:
-		rectangle() : m_start{}, m_range{}, m_corner{} {}
-		rectangle(point2 range) : m_start(0, 0), m_range(range), m_corner(range) {}
-		rectangle(point2 start, point2 range) : m_start(start), m_range(range), m_corner(start + range) {}
+		rectangle() noexcept : m_start{}, m_range{}, m_corner{} {}
+		rectangle(point2 range) noexcept : m_start(0, 0), m_range(range), m_corner(range) {}
+		rectangle(point2 start, point2 range) noexcept : m_start(start), m_range(range), m_corner(start + range) {}
 
 	public:
-		point2::component width() const
+		point2::component width() const noexcept
 		{
 			return m_range.x();
 		}
-		point2::component height() const
+		point2::component height() const noexcept
 		{
 			return m_range.y();
 		}
-		point2 range() const
+		point2 range() const noexcept
 		{
 			return m_range;
 		}
-		point2 start() const
+		point2 start() const noexcept
 		{
 			return m_start;
 		}
-		point2 corner() const
+		point2 corner() const noexcept
 		{
 			return m_corner;
 		}
-		unsigned int size() const
+		unsigned int size() const noexcept
 		{
 			return m_range.x() * m_range.y();
 		}
-		bool empty() const
+		bool empty() const noexcept
 		{
 			return m_range.x() <= 0 && m_range.y() <= 0;
 		}
 
-		bool contains(point2 const& point) const
+		bool contains(point2 const& point) const noexcept
 		{
 			return point.x() >= m_start.x() && point.y() >= m_start.y() && point.x() < m_corner.x() && point.y() < m_corner.y();
 		}
-		bool contains(rectangle const& rect) const
+		bool contains(rectangle const& rect) const noexcept
 		{
 			return rect.m_start.x() >= m_start.x()
 				&& rect.m_start.y() >= m_start.y()
 				&& rect.m_corner.x() <= m_corner.x()
 				&& rect.m_corner.y() <= m_corner.y();
 		}
-		bool is_border(point2 const& point) const
+		bool is_border(point2 const& point) const noexcept
 		{
 			if (m_range.x() <= 0 || m_range.y() <= 0) return false;
 			return point.x() == m_start.x() || point.y() == m_start.y() || point.x() == m_corner.x() || point.y() == m_corner.y();
 		}
-		rectangle intersection(rectangle const& with) const
+		rectangle intersection(rectangle const& with) const noexcept
 		{
 			auto start_x = (std::max)(m_start.x(), with.m_start.x());
 			auto start_y = (std::max)(m_start.y(), with.m_start.y());
@@ -131,34 +131,34 @@ namespace px
 			}
 		}
 
-		void inflate(int size)
+		void inflate(int size) noexcept
 		{
 			m_start.move(point2(-size, -size));
 			m_range.move(point2(size * 2, size * 2));
 			m_corner.move(point2(size, size));
 		}
-		void inflate()
+		void inflate() noexcept
 		{
 			m_start.move(point2(-1, -1));
 			m_range.move(point2(2, 2));
 			m_corner.move(point2(1, 1));
 		}
-		void deflate(int size)
+		void deflate(int size) noexcept
 		{
 			inflate(-size);
 		}
-		void deflate()
+		void deflate() noexcept
 		{
 			inflate(-1);
 		}
 
-		rectangle inflated(int size) const
+		rectangle inflated(int size) const noexcept
 		{
 			rectangle result = *this;
 			result.inflate(size);
 			return result;
 		}
-		rectangle deflated(int size) const
+		rectangle deflated(int size) const noexcept
 		{
 			rectangle result = *this;
 			result.deflate(size);
@@ -166,11 +166,11 @@ namespace px
 		}
 	};
 
-	inline bool operator==(px::rectangle const& a, px::rectangle const& b)
+	inline bool operator==(px::rectangle const& a, px::rectangle const& b) noexcept
 	{
 		return a.range() == b.range() && a.start() == b.start();
 	}
-	inline bool operator!=(px::rectangle const& a, px::rectangle const& b)
+	inline bool operator!=(px::rectangle const& a, px::rectangle const& b) noexcept
 	{
 		return !operator==(a, b);
 	}

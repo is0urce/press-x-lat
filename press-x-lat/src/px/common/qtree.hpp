@@ -49,7 +49,7 @@ namespace px
 					if (!std::forward<CallbackOperator>(fn)(m_x, m_y, *it)) return;
 				}
 			}
-			bool match(int x, int y) const
+			bool match(int x, int y) const noexcept
 			{
 				return m_x == x && m_y == y;
 			}

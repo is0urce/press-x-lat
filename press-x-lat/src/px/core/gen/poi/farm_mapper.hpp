@@ -1,4 +1,4 @@
-// name: farm_mapper.hpp
+﻿// name: farm_mapper.hpp
 // type: c++ header
 // desc: struct declaration
 // auth: is0urce
@@ -20,7 +20,7 @@ namespace px
 		{
 		public:
 			farm_mapper() {}
-			~farm_mapper() {}
+			virtual ~farm_mapper() {}
 
 		protected:
 			void apply_mapping(build_result &build, map_type &terrain, units_list &units, bool generate_placeables) const override
@@ -36,7 +36,7 @@ namespace px
 					case build_tile::wall_outside:
 						tile.make_blocking();
 						tile.make_opaque();
-						img.glyph = '#';
+						img.glyph = 0x2317; // '#'
 						img.tint = { 1, 1, 1 };
 						img.bg = { 0, 0, 0 };
 						break;

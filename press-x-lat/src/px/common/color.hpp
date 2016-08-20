@@ -31,45 +31,45 @@ namespace px
 
 		// ctor & dtor
 	public:
-		constexpr color() : R{}, G{}, B{}, A(1) {};
-		constexpr color(component r, component g, component b) : R(r), G(g), B(b), A(1) {};
-		constexpr color(component r, component g, component b, component a) : R(r), G(g), B(b), A(a) {};
-		color(unsigned int hex) : A(1) { set_hex(hex); }
+		constexpr color() noexcept : R{}, G{}, B{}, A(1) {};
+		constexpr color(component r, component g, component b) noexcept : R(r), G(g), B(b), A(1) {};
+		constexpr color(component r, component g, component b, component a) noexcept : R(r), G(g), B(b), A(a) {};
+		color(unsigned int hex) noexcept : A(1) { set_hex(hex); }
 
 	public:
-		static constexpr color rgb(unsigned int r, unsigned int g, unsigned int b) { return color(r / 255.0, g / 255.0, b / 255.0); }
-		static constexpr color rgba(unsigned int r, unsigned int g, unsigned int b, unsigned int a) { return color(r / 255.0, g / 255.0, b / 255.0, a / 255.0); }
-		static constexpr color black() { return color(0, 0, 0, 1); };
-		static constexpr color white() { return color(1, 1, 1, 1); };
+		static constexpr color rgb(unsigned int r, unsigned int g, unsigned int b) noexcept { return color(r / 255.0, g / 255.0, b / 255.0); }
+		static constexpr color rgba(unsigned int r, unsigned int g, unsigned int b, unsigned int a) noexcept { return color(r / 255.0, g / 255.0, b / 255.0, a / 255.0); }
+		static constexpr color black() noexcept { return color(0, 0, 0, 1); };
+		static constexpr color white() noexcept { return color(1, 1, 1, 1); };
 
 		// operators
 
-		color operator-() const { return color(-R, -G, -B, A); };
-		color& operator+=(const color &color) { R += color.R; G += color.G; B += color.B; A += color.A; return *this; };
-		color& operator-=(const color &color) { R -= color.R; G -= color.G; B -= color.B; A -= color.A; return *this; };
-		color& operator*=(const color &color) { R *= color.R, G *= color.G, B *= color.B, A *= color.A; return *this; };
+		color operator-() const noexcept { return color(-R, -G, -B, A); };
+		color& operator+=(const color &color) noexcept { R += color.R; G += color.G; B += color.B; A += color.A; return *this; };
+		color& operator-=(const color &color) noexcept { R -= color.R; G -= color.G; B -= color.B; A -= color.A; return *this; };
+		color& operator*=(const color &color) noexcept { R *= color.R, G *= color.G, B *= color.B, A *= color.A; return *this; };
 
-		bool operator==(const color &color) const { return R == color.R && G == color.G && B == color.B && A == color.A; }
-		bool operator!=(const color &color) const { return !(*this == color); }
-		color operator+(color c) const { c += *this; return c; }
-		color operator-(color c) const { c -= *this; return c; }
-		color operator*(color c) const { c *= *this; return c; }
+		bool operator==(const color &color) const noexcept { return R == color.R && G == color.G && B == color.B && A == color.A; }
+		bool operator!=(const color &color) const noexcept { return !(*this == color); }
+		color operator+(color c) const noexcept { c += *this; return c; }
+		color operator-(color c) const noexcept { c -= *this; return c; }
+		color operator*(color c) const noexcept { c *= *this; return c; }
 
-		color operator*(component c) const { return color(R * c, G * c, B * c, A * c); };
+		color operator*(component c) const noexcept { return color(R * c, G * c, B * c, A * c); };
 		color operator/(component c) const { return color(R / c, G / c, B / c, A / c); };
-		color operator*=(component c) { *this = *this * c; return *this; };
+		color operator*=(component c) noexcept { *this = *this * c; return *this; };
 		color operator/=(component c) { *this = *this / c; return *this; };
 
-		void set_rgba(unsigned int r, unsigned int g, unsigned int b, unsigned int a) { R = r / 255.0; G = g / 255.0; B = b / 255.0; A = a / 255.0; }
-		void set_rgb(unsigned int r, unsigned int g, unsigned int b) { R = r / 255.0; G = g / 255.0; B = b / 255.0; }
-		void set_hex(unsigned int hex) { set_rgb(hex / 256 / 256 % 256, hex / 256 % 256, hex % 256); };
+		void set_rgba(unsigned int r, unsigned int g, unsigned int b, unsigned int a) noexcept { R = r / 255.0; G = g / 255.0; B = b / 255.0; A = a / 255.0; }
+		void set_rgb(unsigned int r, unsigned int g, unsigned int b) noexcept { R = r / 255.0; G = g / 255.0; B = b / 255.0; }
+		void set_hex(unsigned int hex) noexcept { set_rgb(hex / 256 / 256 % 256, hex / 256 % 256, hex % 256); };
 		void shift_hue(double angle) { *this = transform_hue(*this, angle); };
 		void shift_brightness(double scale) { *this = transform_hsv(*this, 0, 1.0, scale); }
 		void shift_hsv(double hue, double saturation, double v) { *this = transform_hsv(*this, hue, saturation, v); };
 		color transform_hsv(double hue, double saturation, double v) const { return transform_hsv(*this, hue, saturation, v); };
-		color average(color other) const { other += *this; other /= 2; return other; };
-		double luminance() const { return 0.2125 * R + 0.7154 * G + 0.0721 * B; };
-		color lerp(color b, component t) const { b *= t; b += *this * (t - 1); return b; }
+		color average(color other) const noexcept { other += *this; other /= 2; return other; };
+		double luminance() const noexcept { return 0.2125 * R + 0.7154 * G + 0.0721 * B; };
+		color lerp(color b, component t) const noexcept { b *= t; b += *this * (t - 1); return b; }
 
 		// hsv transformation
 		// hue - hue shift (in degrees) in hardcoded 'default' colorspace preset

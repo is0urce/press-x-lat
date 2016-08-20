@@ -16,7 +16,7 @@ namespace px
 		{
 		public:
 			farm_builder();
-			~farm_builder();
+			virtual ~farm_builder();
 
 		public:
 			void build(unsigned int seed, rectangle const& bounds, build_result &result) const override;
