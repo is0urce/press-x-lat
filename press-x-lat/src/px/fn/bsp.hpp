@@ -3,7 +3,7 @@
 // desc: template class
 // auth: is0urce
 
-// binary space partition
+// binary space partition generator
 
 #ifndef PX_FN_BSP_HPP
 #define PX_FN_BSP_HPP
@@ -40,7 +40,7 @@ namespace px
 				{
 					return (l && r);
 				}
-				unsigned int split(rng_type &rng, int min) // returns number of created leaves
+				unsigned int split(rng_type &rng, int min, int margin) // returns number of created leaves
 				{
 					int w = bounds.width();
 					int h = bounds.height();
@@ -57,7 +57,7 @@ namespace px
 						horisontal = false;
 					}
 
-					int max = (horisontal ? w : h) - min;
+					int max = (horisontal ? w : h) - min - margin;
 					if (max >= min)
 					{
 						std::uniform_int_distribution<int> split(min, max);
@@ -68,15 +68,15 @@ namespace px
 						if (horisontal)
 						{
 							l->bounds = { bounds.start(), { c , h } };
-							r->bounds = { bounds.start().moved(point2(c, 0)), { w - c, h } };
+							r->bounds = { bounds.start().moved(point2(c + margin, 0)), { w - c - margin, h } };
 						}
 						else
 						{
 							l->bounds = { bounds.start(), { w , c } };
-							r->bounds = { bounds.start().moved(point2(0, c)), { w, h - c } };
+							r->bounds = { bounds.start().moved(point2(0, c + margin)), { w, h - c - margin} };
 						}
 
-						count = l->split(rng, min) + r->split(rng, min);
+						count = l->split(rng, min, margin) + r->split(rng, min, margin);
 					}
 					else
 					{
@@ -109,13 +109,65 @@ namespace px
 						fn(*this);
 					}
 				}
+				template <typename Operator> void traverse_bounds(Operator &fn)
+				{
+					if (l && r)
+					{
+						l->traverse_bounds(fn);
+						r->traverse_bounds(fn);
+					}
+					else
+					{
+						fn(bounds);
+					}
+				}
+				template <typename Operator> void traverse_bounds(Operator &fn) const
+				{
+					if (l && r)
+					{
+						l->traverse_bounds(fn);
+						r->traverse_bounds(fn);
+					}
+					else
+					{
+						fn(bounds);
+					}
+				}
+				template <typename Operator> void traverse_data(Operator &fn)
+				{
+					if (l && r)
+					{
+						l->traverse_data(fn);
+						r->traverse_data(fn);
+					}
+					else
+					{
+						fn(data);
+					}
+				}
+				template <typename Operator> void traverse_data(Operator &fn) const
+				{
+					if (l && r)
+					{
+						l->traverse_data(fn);
+						r->traverse_data(fn);
+					}
+					else
+					{
+						fn(data);
+					}
+				}
 			};
 
 		public:
-			bsp(rng_type &rng, rectangle bounds, int min)
+			bsp(rng_type &rng, rectangle bounds, int min, int margin)
 			{
 				m_root.bounds = bounds;
-				m_root.split(rng, min);
+				m_root.bounds.deflate(margin);
+				m_root.split(rng, min, margin);
+			}
+			bsp(rng_type &rng, rectangle bounds, int min) : bsp(rng, bounds, min, 0)
+			{
 			}
 			template <typename Operator> void enumerate(Operator &fn) const
 			{
@@ -125,10 +177,27 @@ namespace px
 			{
 				m_root.traverse(fn);
 			}
-			unsigned int count() const
+			template <typename Operator> void enumerate_bounds(Operator &fn) const
+			{
+				m_root.traverse_bounds(fn);
+			}
+			template <typename Operator> void enumerate_bounds(Operator &fn)
+			{
+				m_root.traverse_bounds(fn);
+			}
+			template <typename Operator> void enumerate_data(Operator &fn) const
+			{
+				m_root.traverse_data(fn);
+			}
+			template <typename Operator> void enumerate_data(Operator &fn)
+			{
+				m_root.traverse_data(fn);
+			}
+			unsigned int count() const noexcept
 			{
 				return m_root.count;
 			}
+
 			template <typename Operator>
 			static void enumerate(rng_type &rng, rectangle bounds, int min, Operator &fn)
 			{

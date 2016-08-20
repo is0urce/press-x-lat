@@ -20,7 +20,8 @@ namespace px
 		namespace
 		{
 			static const unsigned int sector_size = 15;
-			static const unsigned int room_size = 5;
+			static const unsigned int room_size = 4;
+			static const unsigned int wall_size = 1;
 			typedef std::mt19937 rng_type;
 
 			enum class farm_sector : unsigned int
@@ -33,6 +34,28 @@ namespace px
 				min_value = house,
 				max_value = garden
 			};
+
+			rectangle shrink_line(rectangle const& line)
+			{
+				if (line.range().x() > line.range().y())
+				{
+					return rectangle(line.start().moved_axis<0>(1), line.range().moved_axis<0>(-1));
+				}
+				else
+				{
+					return rectangle(line.start().moved_axis<1>(1), line.range().moved_axis<1>(-1));
+				}
+			}
+			template <typename Generator, typename Item>
+			Item const& random_item(std::vector<Item> const& vec, Generator &rng)
+			{
+				return vec[std::uniform_int_distribution<std::vector<Item>::size_type>(0, vec.size() - 1)(rng)];
+			}
+			template <typename Generator>
+			point2 random_range(point2 const& range, Generator &rng)
+			{
+				return point2(std::uniform_int_distribution<int>(0, range.x())(rng), std::uniform_int_distribution<int>(0, range.y())(rng));
+			}
 		}
 
 		farm_builder::farm_builder() {}
@@ -73,27 +96,47 @@ namespace px
 
 							auto house_bounds = rectangle(sector_bounds.start().moved(move_x, move_y), { w - shrink_x, h - shrink_y });
 							house_bounds.enumerate([&](auto const& location) {
-								result.tiles[location] = build_tile::floor;
+								result.tiles[location] = build_tile::wall_inside;
 							});
 
-							fn::bsp<rng_type> room_bsp(rng, house_bounds, room_size);
-							std::vector<fn::bsp<rng_type>::node*> enters;
-							enters.reserve(room_bsp.count()); // most of rooms at border anyway
+							fn::bsp<rng_type> room_bsp(rng, house_bounds, room_size, wall_size); // room_zise rooms with 1-tile wall
+
+							std::vector<fn::bsp<rng_type>::node*> entrance_room_candidates;
+							entrance_room_candidates.reserve(room_bsp.count()); // most of rooms at border anyway
+
 							room_bsp.enumerate([&](auto & room) {
 
-								// drawing
-								room.bounds.enumerate_border([&](point2 const& location) {
-									result.tiles[location] = build_tile::wall_inside;
+								// add entrance room candidate
+								rectangle room_inflated = room.bounds.inflated(wall_size + 1);
+								if ((room_inflated & house_bounds) != room_inflated) // touching outside wall
+								{
+									entrance_room_candidates.push_back(&room);
+								}
+
+								// draw
+								room.bounds.enumerate([&](point2 const& location) {
+									result.tiles[location] = build_tile::floor;
+								});
+							});
+
+							if (entrance_room_candidates.size() > 0)
+							{
+								auto &entrance_room_bounds = random_item(entrance_room_candidates, rng)->bounds;
+								std::vector<point2> entrance_door_candidates;
+								entrance_door_candidates.reserve(entrance_room_bounds.range().x() + entrance_room_bounds.range().y() * 2); // perimeter
+
+								auto room_inflated = entrance_room_bounds.inflated(wall_size);
+								room_inflated.enumerate_border([&](auto const& location)
+								{
+									if (house_bounds.is_border(location) && !room_inflated.is_corner(location)) entrance_door_candidates.push_back(location);
 								});
 
-								rectangle room_inflated = room.bounds.inflated(1);
-								if (room_inflated.intersection(house_bounds) != room_inflated) // touching outside wall
+								if (entrance_door_candidates.size() > 0)
 								{
-									enters.push_back(&room);
+									point2 entrance_door = random_item(entrance_door_candidates, rng);
+									result.tiles[entrance_door] = build_tile::floor;
 								}
-							});
-							auto &enter_bounds = enters[std::uniform_int_distribution<size_t>(0, enters.size() - 1)(rng)]->bounds;
-							result.tiles[enter_bounds.start().moved_axis<0>(enter_bounds.width() / 2)] = build_tile::floor;
+							}
 						}
 						break;
 					case farm_sector::barn:
@@ -111,6 +154,6 @@ namespace px
 				});
 				done = living && food;
 			}
-		}
+		} // build() method
 	}
 }

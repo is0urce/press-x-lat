@@ -27,4 +27,18 @@ TEST_CASE("rectangle", "[rectangle]")
 	px::rectangle c({ 10, 10 }, { 0, 0 });
 	REQUIRE(a.intersection(b) == b);
 	REQUIRE(a.intersection(c).empty());
+
+	// border test
+	px::rectangle x({ 5, 5 }, { 5, 5 });
+	REQUIRE(!x.is_border({ 4, 4 }));
+	REQUIRE(x.is_border({ 5, 5 }));
+	REQUIRE(!x.is_border({ 6, 6 }));
+	REQUIRE(!x.is_border({ 8, 8 }));
+	REQUIRE(x.is_border({ 9, 9 }));
+	REQUIRE(!x.is_border({ 10, 10 }));
+
+	// corner test
+	REQUIRE(x.is_corner({ 5, 5 }));
+	REQUIRE(!x.is_corner({ 5, 6 }));
+	REQUIRE(x.is_corner({ 9, 9 }));
 }

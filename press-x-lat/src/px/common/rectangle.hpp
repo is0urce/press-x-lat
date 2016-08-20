@@ -70,7 +70,12 @@ namespace px
 		bool is_border(point2 const& point) const noexcept
 		{
 			if (m_range.x() <= 0 || m_range.y() <= 0) return false;
-			return point.x() == m_start.x() || point.y() == m_start.y() || point.x() == m_corner.x() || point.y() == m_corner.y();
+			return point.x() == m_start.x() || point.y() == m_start.y() || point.x() == m_corner.x() - 1 || point.y() == m_corner.y() - 1;
+		}
+		bool is_corner(point2 const& point) const noexcept
+		{
+			if (m_range.x() <= 0 || m_range.y() <= 0) return false;
+			return (point.x() == m_start.x() || point.x() == m_corner.x() - 1) && (point.y() == m_start.y() || point.y() == m_corner.y() - 1);
 		}
 		rectangle intersection(rectangle const& with) const noexcept
 		{
@@ -173,6 +178,10 @@ namespace px
 	inline bool operator!=(px::rectangle const& a, px::rectangle const& b) noexcept
 	{
 		return !operator==(a, b);
+	}
+	inline px::rectangle operator&(px::rectangle const& a, px::rectangle const& b) noexcept
+	{
+		return a.intersection(b);
 	}
 }
 

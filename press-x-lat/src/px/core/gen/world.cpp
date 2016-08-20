@@ -55,7 +55,7 @@ namespace px
 			m_map.enumerate([this, size = m_map.size()](auto location, auto& cell) {
 				clear_cell(cell);
 				cell.location = location;
-				cell.seed = m_seed + location.y() * size + location.x();
+				cell.seed = static_cast<unsigned int>(m_seed + location.y() * size + location.x());
 			});
 			m_rivers.clear();
 			m_cities.clear();
