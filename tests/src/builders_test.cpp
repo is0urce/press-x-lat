@@ -9,7 +9,6 @@
 
 TEST_CASE("builders_test", "[house_builder]")
 {
-	px::core::farm_builder builder;
-
+	//px::core::farm_builder builder;
 	//auto result = builder.build(rng, { 117, 117 });
 }

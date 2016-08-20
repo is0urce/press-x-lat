@@ -446,6 +446,9 @@
     <ClCompile Include="src\px\core\gen\landmark.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\px\core\gen\poi\farm_builder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="press-x-lat.rc">
