@@ -24,7 +24,7 @@ namespace px
 			static const unsigned int wall_size = 1;
 			typedef std::mt19937 rng_type;
 
-			enum class farm_sector : unsigned int
+			enum class farm_sector : int
 			{
 				house,
 				field,
@@ -64,7 +64,6 @@ namespace px
 		void farm_builder::build(unsigned int seed, rectangle const& bounds, build_result &result) const
 		{
 			rng_type rng(seed);
-			std::uniform_int_distribution<unsigned int> sector_distribution(static_cast<unsigned int>(farm_sector::min_value), static_cast<unsigned int>(farm_sector::max_value));
 			//std::uniform_int_distribution<unsigned int> furniture_chance(1, 100);
 			//std::uniform_int_distribution<unsigned int> monster_chance(1, 100);
 
@@ -74,7 +73,7 @@ namespace px
 				bool living = false;
 				bool food = false;
 
-				bounds.enumerate([&](const point2& location) {
+				bounds.enumerate([&](point2 const& location) {
 					result.tiles[location] = build_tile::no_change;
 				});
 
@@ -82,27 +81,22 @@ namespace px
 
 					auto sector_bounds = sector.bounds.deflated(1); // some space between "districts"
 
-					switch (static_cast<farm_sector>(sector_distribution(rng)))
+					auto sector_index = std::uniform_int_distribution<int>(static_cast<int>(farm_sector::min_value), static_cast<int>(farm_sector::max_value))(rng);
+					switch (static_cast<farm_sector>(sector_index))
 					{
 					case farm_sector::house:
 						living = true;
 						{
-							int w = sector_bounds.width();
-							int h = sector_bounds.height();
-							int shrink_x = std::uniform_int_distribution<int>(0, w / 4)(rng);
-							int shrink_y = std::uniform_int_distribution<int>(0, w / 4)(rng);
-							int move_x = std::uniform_int_distribution<int>(0, shrink_x)(rng);
-							int move_y = std::uniform_int_distribution<int>(0, shrink_y)(rng);
-
-							auto house_bounds = rectangle(sector_bounds.start().moved(move_x, move_y), { w - shrink_x, h - shrink_y });
+							point2 shrink = random_range(sector_bounds.range() / 4, rng);
+							auto house_bounds = rectangle(sector_bounds.start() + random_range(shrink, rng), sector_bounds.range() - shrink);
 							house_bounds.enumerate([&](auto const& location) {
-								result.tiles[location] = build_tile::wall_inside;
+								result.tiles[location] = build_tile::wall;
 							});
 
 							fn::bsp<rng_type> room_bsp(rng, house_bounds, room_size, wall_size); // room_zise rooms with 1-tile wall
 
-							std::vector<fn::bsp<rng_type>::node*> entrance_room_candidates;
-							entrance_room_candidates.reserve(room_bsp.count()); // most of rooms at border anyway
+							std::vector<rectangle> entrance_room_candidates;
+							entrance_room_candidates.reserve(room_bsp.count()); // most rooms at border anyway
 
 							room_bsp.enumerate([&](auto & room) {
 
@@ -110,7 +104,7 @@ namespace px
 								rectangle room_inflated = room.bounds.inflated(wall_size + 1);
 								if ((room_inflated & house_bounds) != room_inflated) // touching outside wall
 								{
-									entrance_room_candidates.push_back(&room);
+									entrance_room_candidates.push_back(room.bounds);
 								}
 
 								// draw
@@ -121,9 +115,9 @@ namespace px
 
 							if (entrance_room_candidates.size() > 0)
 							{
-								auto &entrance_room_bounds = random_item(entrance_room_candidates, rng)->bounds;
+								auto const& entrance_room_bounds = random_item(entrance_room_candidates, rng);
 								std::vector<point2> entrance_door_candidates;
-								entrance_door_candidates.reserve(entrance_room_bounds.range().x() + entrance_room_bounds.range().y() * 2); // perimeter
+								entrance_door_candidates.reserve(entrance_room_bounds.perimeter());
 
 								auto room_inflated = entrance_room_bounds.inflated(wall_size);
 								room_inflated.enumerate_border([&](auto const& location)
@@ -134,7 +128,7 @@ namespace px
 								if (entrance_door_candidates.size() > 0)
 								{
 									point2 entrance_door = random_item(entrance_door_candidates, rng);
-									result.tiles[entrance_door] = build_tile::floor;
+									result.tiles[entrance_door] = build_tile::door_ark;
 								}
 							}
 						}

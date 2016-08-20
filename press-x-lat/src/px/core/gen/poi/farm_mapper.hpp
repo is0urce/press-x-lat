@@ -47,6 +47,13 @@ namespace px
 						img.tint = { 1, 1, 1 };
 						img.bg = { 0, 0, 0 };
 						break;
+					case build_tile::door_ark:
+						tile.make_traversable();
+						tile.make_transparent();
+						img.glyph = '-';
+						img.tint = { 1, 1, 1 };
+						img.bg = { 0, 0, 0 };
+						break;
 					case build_tile::soil:
 						tile.make_traversable();
 						tile.make_transparent();
