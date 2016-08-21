@@ -12,6 +12,7 @@
 #include <px/core/gen/builder.hpp>
 
 #include <random>
+#include <tuple>
 
 namespace px
 {
@@ -39,22 +40,34 @@ namespace px
 			{
 				if (line.range().x() > line.range().y())
 				{
-					return rectangle(line.start().moved_axis<0>(1), line.range().moved_axis<0>(-1));
+					return rectangle(line.start().moved_axis<0>(1), line.range().moved_axis<0>(-2));
 				}
 				else
 				{
-					return rectangle(line.start().moved_axis<1>(1), line.range().moved_axis<1>(-1));
+					return rectangle(line.start().moved_axis<1>(1), line.range().moved_axis<1>(-2));
 				}
 			}
 			template <typename Generator, typename Item>
 			Item const& random_item(std::vector<Item> const& vec, Generator &rng)
 			{
+				if (vec.empty()) throw std::runtime_error("px::random_item(vector<i> v, generator rng) - vector size = 0");
 				return vec[std::uniform_int_distribution<std::vector<Item>::size_type>(0, vec.size() - 1)(rng)];
+			}
+			template <typename Generator, typename Item>
+			typename std::vector<Item>::size_type random_index(std::vector<Item> const& vec, Generator &rng)
+			{
+				if (vec.empty()) throw std::runtime_error("px::random_item(vector<i> v, generator rng) - vector size = 0");
+				return std::uniform_int_distribution<std::vector<Item>::size_type>(0, vec.size() - 1)(rng);
 			}
 			template <typename Generator>
 			point2 random_range(point2 const& range, Generator &rng)
 			{
 				return point2(std::uniform_int_distribution<int>(0, range.x())(rng), std::uniform_int_distribution<int>(0, range.y())(rng));
+			}
+			template <typename Generator>
+			point2 random_rectangle_point(rectangle const& rect, Generator &rng)
+			{
+				return rect.start() + point2(std::uniform_int_distribution<int>(0, rect.range().x() - 1)(rng), std::uniform_int_distribution<int>(0, rect.range().y() - 1)(rng));
 			}
 		}
 
@@ -98,38 +111,82 @@ namespace px
 							std::vector<rectangle> entrance_room_candidates;
 							entrance_room_candidates.reserve(room_bsp.count()); // most rooms at border anyway
 
-							room_bsp.enumerate([&](auto & room) {
+							room_bsp.enumerate_bounds([&](auto const& room) {
 
 								// add entrance room candidate
-								rectangle room_inflated = room.bounds.inflated(wall_size + 1);
+								rectangle room_inflated = room.inflated(wall_size + 1);
 								if ((room_inflated & house_bounds) != room_inflated) // touching outside wall
 								{
-									entrance_room_candidates.push_back(room.bounds);
+									entrance_room_candidates.push_back(room);
 								}
 
 								// draw
-								room.bounds.enumerate([&](point2 const& location) {
+								room.enumerate([&](point2 const& location) {
 									result.tiles[location] = build_tile::floor;
 								});
 							});
 
-							if (entrance_room_candidates.size() > 0)
+							auto entrance_room = random_item(entrance_room_candidates, rng);
+
+							// secect door
+
+							std::vector<point2> entrance_door_candidates;
+							entrance_door_candidates.reserve(entrance_room.perimeter());
+							auto room_inflated = entrance_room.inflated(wall_size);
+							room_inflated.enumerate_border([&](auto const& location)
 							{
-								auto const& entrance_room_bounds = random_item(entrance_room_candidates, rng);
-								std::vector<point2> entrance_door_candidates;
-								entrance_door_candidates.reserve(entrance_room_bounds.perimeter());
+								if (house_bounds.is_border(location) && !room_inflated.is_corner(location)) entrance_door_candidates.push_back(location);
+							});
+							auto entrance_door = random_item(entrance_door_candidates, rng);
+							result.tiles[entrance_door] = build_tile::door_ark;
 
-								auto room_inflated = entrance_room_bounds.inflated(wall_size);
-								room_inflated.enumerate_border([&](auto const& location)
-								{
-									if (house_bounds.is_border(location) && !room_inflated.is_corner(location)) entrance_door_candidates.push_back(location);
-								});
+							// interconnect rooms
 
-								if (entrance_door_candidates.size() > 0)
+							std::vector<rectangle> untangled;
+							std::vector<rectangle> tangled;
+							untangled.reserve(room_bsp.count());
+							tangled.reserve(room_bsp.count());
+							room_bsp.enumerate_bounds([&](auto const& room) {
+								if (room == entrance_room)
 								{
-									point2 entrance_door = random_item(entrance_door_candidates, rng);
-									result.tiles[entrance_door] = build_tile::door_ark;
+									tangled.push_back(room);
 								}
+								else
+								{
+									untangled.push_back(room);
+								}
+							});
+
+							while (!untangled.empty())
+							{
+								std::vector<std::tuple<rectangle, rectangle>> tangle_candidates;
+								for (auto const& untangled_room : untangled)
+								{
+									for (auto const& tangled_room : tangled)
+									{
+										rectangle cross = untangled_room.inflated(wall_size) & tangled_room.inflated(wall_size);
+										if (!cross.empty() && cross.size() >= 3) // not empty and not corners
+										{
+											tangle_candidates.emplace_back(untangled_room, tangled_room);
+										}
+									}
+								}
+
+								auto tangle = random_item(tangle_candidates, rng);
+								auto doorway = shrink_line(std::get<0>(tangle).inflated(wall_size) & std::get<1>(tangle).inflated(wall_size));
+								bool last = untangled.size() == 1;
+
+								switch (last ? 0 : std::uniform_int_distribution<int>(0, 1)(rng)) // 0 - door, 1 - random size gap
+								{
+								case 0:
+								case 1:
+								default:
+									result.tiles[random_rectangle_point(doorway, rng)] = build_tile::door_ark;
+									break;
+								}
+
+								untangled.erase(std::remove(untangled.begin(), untangled.end(), std::get<0>(tangle)), untangled.end());
+								tangled.push_back(std::get<0>(tangle));
 							}
 						}
 						break;

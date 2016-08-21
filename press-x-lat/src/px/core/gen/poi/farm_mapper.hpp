@@ -59,7 +59,14 @@ namespace px
 						tile.make_transparent();
 						img.glyph = '"';
 						img.tint = { 0, 1, 0 };
-						img.bg = { 0.25, 0.25, 0 };
+						img.bg = { 0.25, 0.25, 0.0 };
+						break;
+					case build_tile::water:
+						tile.make_blocking();
+						tile.make_transparent();
+						img.glyph = '~';
+						img.tint = { 0, 0, 1 };
+						img.bg = { 0.0, 0.0, 0.25 };
 						break;
 					case build_tile::no_change:
 						break;

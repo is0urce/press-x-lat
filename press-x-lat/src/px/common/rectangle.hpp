@@ -53,12 +53,11 @@ namespace px
 		}
 		bool empty() const noexcept
 		{
-			return m_range.x() <= 0 && m_range.y() <= 0;
+			return m_range.x() <= 0 || m_range.y() <= 0;
 		}
 		unsigned int perimeter() const noexcept
 		{
-			if (m_range.x() <= 0 || m_range.y() <= 0) return 0;
-			return (m_range.x() + m_range.y()) * 2;
+			return empty() ? 0 : (m_range.x() + m_range.y()) * 2;
 		}
 
 		bool contains(point2 const& point) const noexcept
