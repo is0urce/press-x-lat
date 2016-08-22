@@ -23,9 +23,13 @@ namespace px
 			std::shared_ptr<location_component> m_camera;
 
 		public:
-			terrain_system(shell::canvas& cnv, terrain& terra)
-				: m_canvas(&cnv), m_terrain(&terra)
+			terrain_system(shell::canvas& cnv)
+				: m_canvas(&cnv), m_terrain(nullptr)
 			{
+			}
+			terrain_system(shell::canvas& cnv, terrain& terra) : terrain_system(cnv)
+			{
+				bind(terra);
 			}
 			virtual ~terrain_system()
 			{
@@ -35,28 +39,19 @@ namespace px
 		protected:
 			virtual void update_system() override
 			{
-				int w = static_cast<int>(m_canvas->width());
-				int h = static_cast<int>(m_canvas->height());
-				point2 camera = m_camera ? m_camera->current() : point2(0, 0);
+				if (m_canvas && m_terrain && m_camera)
+				{
+					int w = static_cast<int>(m_canvas->width());
+					int h = static_cast<int>(m_canvas->height());
+					point2 start = m_camera->current() - point2(w / 2, h / 2);
 
-				point2 start = camera - point2(w / 2, h / 2);
-
-				m_canvas->enumerate([&](point2 const& location, auto const& symbol) {
-					auto img = m_terrain->select(start.moved(location)).appearance();
-					point2 position(location.x(), h - location.y() - 1);
-					m_canvas->write(position, img.glyph, img.tint);
-					m_canvas->pset(position, img.bg);
-				});
-				//for (int j = 0; j < h; ++j)
-				//{
-				//	for (int i = 0; i < w; ++i)
-				//	{
-				//		auto img = m_terrain->select(start.moved(i, j)).appearance();
-				//		point2 position(i, h - j - 1);
-				//		m_canvas->write(position, img.glyph, img.tint);
-				//		m_canvas->pset(position, img.bg);
-				//	}
-				//}
+					m_canvas->enumerate([&](point2 const& location, auto const& symbol) {
+						auto &img = m_terrain->select(start.moved(location)).appearance();
+						point2 position(location.x(), h - location.y() - 1);
+						m_canvas->write(position, img.glyph, img.tint);
+						m_canvas->pset(position, img.bg);
+					});
+				}
 			}
 			virtual void fixed_update_system() override
 			{
@@ -64,6 +59,14 @@ namespace px
 			}
 
 		public:
+			void bind(terrain &terra)
+			{
+				m_terrain = &terra;
+			}
+			void tear()
+			{
+				m_terrain = nullptr;
+			}
 			void focus_camera(std::shared_ptr<location_component> camera)
 			{
 				m_camera = camera;

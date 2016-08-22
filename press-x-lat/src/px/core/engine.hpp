@@ -33,6 +33,7 @@
 #include <px/core/data/factory.hpp>
 #include <px/core/gen/world.hpp>
 #include <px/core/ui/main_panel.hpp>
+#include <px/core/ui/main_menu_panel.hpp>
 
 namespace px
 {
@@ -57,7 +58,7 @@ namespace px
 				, m_ui_system(m_canvas, m_ui)
 				, m_location_system(m_space)
 				, m_sprite_system(m_canvas)
-				, m_terrain_system(m_canvas, m_terrain)
+				, m_terrain_system(m_canvas)
 				, m_behavior_system(m_environment)
 				, m_factory(m_sprite_system, m_location_system, m_body_system, m_character_system, m_behavior_system)
 				, m_terrain_director(m_world, m_factory)
@@ -67,6 +68,19 @@ namespace px
 				, m_last_turn(0)
 			{
 				add_systems();
+
+				create_environment();
+			}
+			virtual ~engine()
+			{
+			}
+			engine(engine const&) = delete;
+
+			void create_environment()
+			{
+				m_ui.emplace<main_menu_panel>(ui::alignment());
+				m_environment.start(m_terrain, m_space, m_world);
+				m_terrain_system.bind(*(m_environment.map()));
 
 				m_character_system.skill_book().add_target("melee", [](location_component* user, location_component* target) {
 					if (target && user)
@@ -93,8 +107,6 @@ namespace px
 						&& m_environment.reputation(*body, *target_body) < 0 // friend-or-foe
 						&& m_environment.distance(user->current(), target->current()) == 1; // 1 tile melee distance
 				});
-
-				m_environment.start(m_terrain, m_space, m_world);
 
 				// player props
 				auto weapon = std::make_shared<body_component::item_type>();
@@ -128,13 +140,9 @@ namespace px
 
 				m_environment.impersonate(pawn);
 			}
-			virtual ~engine()
-			{
-			}
-			engine(const engine&) = delete;
 
 		private:
-			point2 translate_canvas(point2 pixel) const
+			point2 translate_canvas(point2 const& pixel) const
 			{
 				return m_renderer.translate_canvas(pixel);
 			}

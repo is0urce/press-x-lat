@@ -90,9 +90,9 @@ namespace px
 					t.make_traversable();
 				}
 
-				if (location.x() == 0) terrain[location].appearance().glyph = '|';
-				if (location.y() == 0) terrain[location].appearance().glyph = '-';
-				if (location.empty()) terrain[location].appearance().glyph = '+';
+				//if (location.x() == 0) terrain[location].appearance().glyph = '|';
+				//if (location.y() == 0) terrain[location].appearance().glyph = '-';
+				//if (location.empty()) terrain[location].appearance().glyph = '+';
 			});
 
 			//if (static_mobiles)

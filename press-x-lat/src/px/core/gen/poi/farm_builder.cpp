@@ -53,12 +53,6 @@ namespace px
 				if (vec.empty()) throw std::runtime_error("px::random_item(vector<i> v, generator rng) - vector size = 0");
 				return vec[std::uniform_int_distribution<std::vector<Item>::size_type>(0, vec.size() - 1)(rng)];
 			}
-			template <typename Generator, typename Item>
-			typename std::vector<Item>::size_type random_index(std::vector<Item> const& vec, Generator &rng)
-			{
-				if (vec.empty()) throw std::runtime_error("px::random_item(vector<i> v, generator rng) - vector size = 0");
-				return std::uniform_int_distribution<std::vector<Item>::size_type>(0, vec.size() - 1)(rng);
-			}
 			template <typename Generator>
 			point2 random_range(point2 const& range, Generator &rng)
 			{

@@ -41,6 +41,11 @@ namespace px
 			typedef std::shared_ptr<location_component> player_type;
 
 		public:
+			terrain* map() const
+			{
+				return m_terrain;
+			}
+
 			// game flow
 
 			void start(terrain &tiles, space_type &space, world &map);
@@ -85,7 +90,7 @@ namespace px
 		public:
 			environment(ui::stack_panel &ui);
 			virtual ~environment();
-			environment(const environment&) = delete;
+			environment(environment const&) = delete;
 
 		private:
 			void focus();

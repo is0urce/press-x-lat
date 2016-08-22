@@ -217,6 +217,7 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\core\ui\container_panel.hpp" />
     <ClInclude Include="src\px\core\ui\item_operation.hpp" />
     <ClInclude Include="src\px\core\data\unit_composer.hpp" />
+    <ClInclude Include="src\px\core\ui\main_menu_panel.hpp" />
     <ClInclude Include="src\px\core\ui\map_panel.hpp" />
     <ClInclude Include="src\px\core\gen\world.hpp" />
     <ClInclude Include="src\px\core\unit_record.hpp" />
@@ -306,6 +307,7 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClCompile Include="src\px\core\terrain.cpp" />
     <ClCompile Include="src\px\core\terrain_director.cpp" />
     <ClCompile Include="src\px\core\gen\world.cpp" />
+    <ClCompile Include="src\px\core\ui\main_menu_panel.cpp" />
     <ClCompile Include="src\px\shell\canvas.cpp" />
     <ClCompile Include="src\px\shell\font.cpp" />
     <ClCompile Include="src\px\shell\font_texture.cpp" />

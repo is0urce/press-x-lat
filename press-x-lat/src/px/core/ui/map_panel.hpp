@@ -36,12 +36,7 @@ namespace px
 			}
 
 		public:
-			map_panel()
-			{
-				//emplace<ui::board_panel>({ { 0, 0 },{ 0, 0 },{ 0, 1 },{ 1, 0 } }, color(0.3, 0.3, 0.3));
-				//emplace<ui::board_panel>({ { 0, 0 },{ 0, 1 },{ 0, -1 },{ 1, 1 } }, color(0.8, 0.8, 0.8));
-				//emplace<ui::static_text_panel>({ { 0, 0 },{ 0, 0 },{ 0, 0 },{ 0, 0 } }, "[MAP]", color(1, 1, 1));
-			}
+			map_panel()	{}
 			virtual ~map_panel() {}
 
 		protected:
@@ -96,10 +91,6 @@ namespace px
 					if (result)
 					{
 						deactivate();
-					}
-					else
-					{
-						m_world->generate(std::rand());
 					}
 				}
 				return result;
