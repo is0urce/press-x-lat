@@ -9,7 +9,6 @@
 #include <px/common/toggle.hpp>
 
 #include <px/es/i_engine.hpp>
-#include <px/rl/skill.hpp>
 
 #include <px/shell/control.hpp>
 #include <px/shell/control_chain.hpp>
@@ -30,7 +29,7 @@
 #include <px/core/input_adapter.hpp>
 
 #include <px/core/ui/main_panel.hpp>
-#include <px/core/ui/main_menu_panel.hpp>
+//#include <px/core/ui/main_menu_panel.hpp>
 
 namespace px
 {
@@ -63,8 +62,18 @@ namespace px
 				, m_factory(m_sprite_system, m_location_system, m_body_system, m_character_system, m_behavior_system)
 				, m_environment(m_ui, m_factory, m_space)
 			{
-				add_systems();
-				m_ui.emplace<main_menu_panel>(ui::alignment());
+				// mechanics systems
+
+				add(&m_body_system);
+				add(&m_character_system);
+				add(&m_location_system);
+				add(&m_behavior_system);
+
+				// visualization systems
+
+				add(&m_terrain_system);
+				add(&m_sprite_system);
+				add(&m_ui_system);
 
 				m_environment.start();
 			}
@@ -85,21 +94,6 @@ namespace px
 					pos += camera->current();
 				}
 				return pos;
-			}
-			void add_systems()
-			{
-				// mechanics systems
-
-				add(&m_body_system);
-				add(&m_character_system);
-				add(&m_location_system);
-				add(&m_behavior_system);
-
-				// visualization systems
-
-				add(&m_terrain_system);
-				add(&m_sprite_system);
-				add(&m_ui_system);
 			}
 
 		protected:
