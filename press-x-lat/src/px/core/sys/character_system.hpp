@@ -19,6 +19,7 @@ namespace px
 	namespace core
 	{
 		class location_component;
+		class environment;
 
 		class character_system
 			: public es::i_system
@@ -28,14 +29,13 @@ namespace px
 			typedef typename character_component::skillbook_type skillbook_type;
 
 		public:
-			skillbook_type& skill_book()
-			{
-				return m_spellbook;
-			}
+			skillbook_type* skill_book();
+			void fill(environment &e);
 
 		public:
-			character_system();
+			character_system(environment &e);
 			virtual ~character_system();
+			character_system(character_system const&) = delete;
 
 		protected:
 			virtual void element_allocated(character_component &l) override;

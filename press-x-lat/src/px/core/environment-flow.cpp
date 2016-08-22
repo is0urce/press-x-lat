@@ -9,29 +9,68 @@
 
 #include <px/core/gen/world.hpp>
 #include <px/core/ui/map_panel.hpp>
+#include <px/core/data/factory.hpp>
 
 #include <px/core/unit.hpp>
 #include <px/core/sys/location_component.hpp>
 #include <px/core/sys/body_component.hpp>
+#include <px/core/sys/character_component.hpp>
+
+#include <px/core/terrain_director.hpp>
 
 namespace px
 {
 	namespace core
 	{
-		void environment::start(terrain &tiles, space_type &space, world &map)
+		void environment::start()
 		{
 			end();
 
-			m_terrain = &tiles;
-			m_space = &space;
-			m_world = &map;
+			//m_terrain_director = std::make_unique<terrain_director>(map, *m_factory);
+			//m_terrain = &tiles;
+
+			//m_terrain = std::make_unique<terrain>(map);
+			//m_space = &space;
+			//m_world = &map;
 			m_time = 0;
 			m_running = true;
 
-			m_map->bind(map);
+			m_map->bind(m_world);
 
-			m_world->resize(settings::world_width, settings::world_height);
-			m_world->generate(0);
+			m_world.resize(settings::world_width, settings::world_height);
+			m_world.generate(0);
+
+			// player props
+			auto weapon = std::make_shared<body_component::item_type>();
+			weapon->add({ rl::effect::weapon_damage, 0x00, 50 });
+			weapon->set_name("Copper Sword");
+			weapon->set_tag("copper_sword");
+
+			// make chest
+			auto chest = m_factory->produce();
+			chest->add_appearance('$', { 1, 1, 1 });
+			chest->add_location({ 2, 2 });
+			chest->add_body(100, 100);
+			chest->add_container();
+			// add
+			m_terrain.add(chest->assemble(persistency::serialized));
+
+			// make player
+			auto task = m_factory->produce();
+			auto img = task->add_appearance('@', { 1, 1, 1 });
+			auto pawn = task->add_location({ -1, -1 });
+			auto body = task->add_body(100, 100);
+			auto character = task->add_character();
+			// setup
+			body->join_faction(1);
+			body->equip_weapon(weapon);
+			character->add_skill("melee");
+			character->set_tag("player");
+			// add
+			auto player = task->assemble(persistency::permanent);
+			m_terrain.add(player);
+
+			impersonate(pawn);
 		}
 		void environment::end()
 		{
@@ -39,13 +78,13 @@ namespace px
 
 			m_running = false;
 
-			m_terrain = nullptr;
-			m_space = nullptr;
-			m_world = nullptr;
+			//m_terrain = nullptr;
+			//m_space = nullptr;
+			//m_world = nullptr;
 
 			m_map->tear();
 
-			m_world->clear();
+			m_world.clear();
 		}
 		bool environment::running() const
 		{
@@ -60,7 +99,7 @@ namespace px
 			focus();
 			++m_time;
 
-			m_terrain->enumerate([](auto &unit) {
+			m_terrain.enumerate([](auto &unit) {
 				if (location_component* pawn = unit->location())
 				{
 					if (body_component* body = *pawn)
@@ -96,7 +135,7 @@ namespace px
 		{
 			if (m_player)
 			{
-				m_terrain->focus(m_player->current());
+				m_terrain.focus(m_player->current());
 			}
 		}
 	}

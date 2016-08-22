@@ -14,8 +14,10 @@ namespace px
 {
 	namespace core
 	{
-		environment::environment(ui::stack_panel &ui)
-			: m_ui(&ui)
+		environment::environment(ui::stack_panel &ui, factory &builder, space_type &space)
+			: m_ui(&ui), m_factory(&builder), m_space(&space)
+			, m_terrain_director(m_world, builder)
+			, m_terrain(m_terrain_director)
 			, m_running(false)
 		{
 			compose_ui();
@@ -24,9 +26,13 @@ namespace px
 		{
 		}
 
-		terrain* environment::scene() const
+		terrain const* environment::scene() const
 		{
-			return m_terrain;
+			return &m_terrain;
+		}
+		terrain* environment::scene()
+		{
+			return &m_terrain;
 		}
 
 		int environment::distance(point2 a, point2 b) const
@@ -42,7 +48,7 @@ namespace px
 
 		bool environment::traversable(point2 position, rl::traverse layer) const
 		{
-			return m_terrain->traversable(position, layer) && !blocking(position, layer);
+			return m_terrain.traversable(position, layer) && !blocking(position, layer);
 		}
 		location_component* environment::blocking(point2 position, rl::traverse layer) const
 		{

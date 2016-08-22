@@ -25,7 +25,7 @@ namespace px
 		{
 			bool action = false;
 			auto layers = rl::traverse::floor;
-			if (m_terrain->traversable(target, layers))
+			if (m_terrain.traversable(target, layers))
 			{
 				location_component* versus = blocking(target, rl::traverse::floor);
 

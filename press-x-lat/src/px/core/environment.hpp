@@ -16,15 +16,17 @@
 #include <px/rl/faction_relation.hpp>
 #include <px/rl/traverse.hpp>
 
+#include <px/core/gen/world.hpp>
+#include <px/core/terrain_director.hpp>
+#include <px/core/terrain.hpp>
+
 #include <memory>
 
 namespace px
 {
 	namespace core
 	{
-		class terrain;
-		class world;
-
+		class factory;
 		class location_component;
 		class body_component;
 
@@ -43,7 +45,7 @@ namespace px
 		public:
 			// game flow
 
-			void start(terrain &tiles, space_type &space, world &map);
+			void start();
 			void end();
 			bool running() const;
 			time_type time() const;
@@ -51,7 +53,8 @@ namespace px
 
 			// props querry
 
-			terrain* scene() const;
+			terrain const* scene() const;
+			terrain* scene();
 			int distance(point2 a, point2 b) const;
 			int reputation(body_component& a, body_component& b);
 
@@ -84,7 +87,7 @@ namespace px
 			void assign_inventory(std::weak_ptr<body_component> body);
 
 		public:
-			environment(ui::stack_panel &ui);
+			environment(ui::stack_panel &ui, factory &builder, space_type &space);
 			virtual ~environment();
 			environment(environment const&) = delete;
 
@@ -92,13 +95,17 @@ namespace px
 			void focus();
 
 		private:
-			bool m_running;
-			terrain* m_terrain;
 			space_type* m_space;
-			world* m_world;
+			factory* m_factory;
+			world m_world;
+			terrain_director m_terrain_director;
+			terrain m_terrain;
+			faction_relation m_factions;
+
+			// flow
+			bool m_running;
 			time_type m_time;
 			player_type m_player;
-			faction_relation m_factions;
 
 			// user interface
 			ui::stack_panel* m_ui;

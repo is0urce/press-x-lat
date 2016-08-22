@@ -19,11 +19,19 @@ namespace px
 			: public es::i_system
 			, public es::manager<location_component, 10000>
 		{
-		private:
-			qtree<location_component*>* m_space;
+		public:
+			typedef qtree<location_component*> space_type;
 
 		public:
-			location_system(qtree<location_component*> &space) : m_space(&space) {}
+			std::shared_ptr<location_component> make_location(point2 position)
+			{
+				auto component = make();
+				component->move(position);
+				return component;
+			}
+
+		public:
+			location_system(space_type &space) : m_space(&space) {}
 			virtual ~location_system() {}
 
 		protected:
@@ -38,13 +46,8 @@ namespace px
 				element.incarnate(nullptr);
 			}
 
-		public:
-			auto make_location(point2 position)
-			{
-				auto component = make();
-				component->move(position);
-				return component;
-			}
+		private:
+			space_type* m_space;
 		};
 	}
 }

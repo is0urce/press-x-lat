@@ -41,7 +41,7 @@ namespace px
 			{
 				if (m_canvas && m_environment && m_camera)
 				{
-					if (terrain* scene = m_environment->scene())
+					if (terrain const* scene = m_environment->scene())
 					{
 						int w = static_cast<int>(m_canvas->width());
 						int h = static_cast<int>(m_canvas->height());
