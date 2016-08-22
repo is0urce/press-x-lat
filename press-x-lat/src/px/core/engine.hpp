@@ -58,8 +58,9 @@ namespace px
 				, m_ui_system(m_canvas, m_ui)
 				, m_location_system(m_space)
 				, m_sprite_system(m_canvas)
-				, m_terrain_system(m_canvas)
+				, m_terrain_system(m_canvas, m_environment)
 				, m_behavior_system(m_environment)
+
 				, m_factory(m_sprite_system, m_location_system, m_body_system, m_character_system, m_behavior_system)
 				, m_terrain_director(m_world, m_factory)
 				, m_terrain(m_terrain_director)
@@ -68,7 +69,6 @@ namespace px
 				, m_last_turn(0)
 			{
 				add_systems();
-
 				create_environment();
 			}
 			virtual ~engine()
@@ -80,7 +80,7 @@ namespace px
 			{
 				m_ui.emplace<main_menu_panel>(ui::alignment());
 				m_environment.start(m_terrain, m_space, m_world);
-				m_terrain_system.bind(*(m_environment.map()));
+				//m_terrain_system.bind(m_environment);
 
 				m_character_system.skill_book().add_target("melee", [](location_component* user, location_component* target) {
 					if (target && user)

@@ -41,11 +41,6 @@ namespace px
 			typedef std::shared_ptr<location_component> player_type;
 
 		public:
-			terrain* map() const
-			{
-				return m_terrain;
-			}
-
 			// game flow
 
 			void start(terrain &tiles, space_type &space, world &map);
@@ -53,6 +48,12 @@ namespace px
 			bool running() const;
 			time_type time() const;
 			void turn();
+
+			// props querry
+
+			terrain* scene() const;
+			int distance(point2 a, point2 b) const;
+			int reputation(body_component& a, body_component& b);
 
 			// player
 
@@ -66,11 +67,6 @@ namespace px
 			bool cast(location_component& source, unsigned int slot, location_component& target_location);
 			bool cast(location_component& source, unsigned int slot, point2 target);
 			bool activate(location_component& source, point2 position);
-
-			// props querry
-
-			int distance(point2 a, point2 b) const;
-			int reputation(body_component& a, body_component& b);
 
 			// space and actors querry
 

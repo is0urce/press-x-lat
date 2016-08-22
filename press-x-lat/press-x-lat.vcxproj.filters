@@ -455,6 +455,9 @@
     <ClCompile Include="src\px\core\ui\main_menu_panel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\px\core\data\factory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="press-x-lat.rc">

@@ -294,6 +294,7 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\press-x-lat.cpp" />
+    <ClCompile Include="src\px\core\data\factory.cpp" />
     <ClCompile Include="src\px\core\environment-act.cpp" />
     <ClCompile Include="src\px\core\environment-ui.cpp" />
     <ClCompile Include="src\px\core\environment.cpp" />

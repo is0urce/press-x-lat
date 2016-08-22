@@ -24,6 +24,11 @@ namespace px
 		{
 		}
 
+		terrain* environment::scene() const
+		{
+			return m_terrain;
+		}
+
 		int environment::distance(point2 a, point2 b) const
 		{
 			return a.king_distance(b);
