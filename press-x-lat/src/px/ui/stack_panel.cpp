@@ -14,6 +14,9 @@ namespace px
 {
 	namespace ui
 	{
+		stack_panel::stack_panel() {}
+		stack_panel::~stack_panel() {}
+
 		void stack_panel::draw_panel(shell::canvas& cnv) const
 		{
 			for (auto &p : m_unnamed)
@@ -78,58 +81,51 @@ namespace px
 			m_unnamed.clear();
 		}
 
-		stack_panel::panel_ptr stack_panel::at(const tag &name_tag)
+		stack_panel::panel_ptr stack_panel::at(const tag &name) const
 		{
-			auto find = m_stack.find(name_tag);
-			if (find == m_stack.end()) throw std::logic_error("px::ui::stack_panel::at(panel_id) panel not found");
+			auto find = m_stack.find(name);
+			if (find == m_stack.end()) throw std::logic_error("px::ui::stack_panel::at(panel_id) panel not found, name = " + name);
 			return find->second.panel;
 		}
-		stack_panel::panel_ptr stack_panel::operator[](const tag &name)
+		stack_panel::panel_ptr stack_panel::operator[](const tag &name) const noexcept
 		{
-			return at(name);
+			auto find = m_stack.find(name);
+			return find == m_stack.end() ? nullptr : find->second.panel;
 		}
 
-		void stack_panel::disable(const tag &name_tag)
+		void stack_panel::deactivate(tag const& name)
 		{
-			auto find = m_stack.find(name_tag);
-			if (find != m_stack.end())
+			if (auto p = (*this)[name])
 			{
-				panel &p = *find->second.panel;
-				p.deactivate();
+				p->deactivate();
 			}
 		}
 
-		void stack_panel::enable(const tag &name_tag)
+		void stack_panel::activate(tag const& name)
 		{
-			auto find = m_stack.find(name_tag);
-			if (find != m_stack.end())
+			if (auto p = (*this)[name])
 			{
-				panel &p = *find->second.panel;
-				p.activate();
+				p->activate();
 			}
 		}
-		void stack_panel::enable(const tag &name_tag, bool flag)
+		void stack_panel::activate(tag const& name, bool flag)
 		{
-			auto find = m_stack.find(name_tag);
-			if (find != m_stack.end())
+			if (auto p = (*this)[name])
 			{
-				panel &p = *find->second.panel;
-				p.set_toggle(flag);
+				p->set_toggle(flag);
 			}
 		}
-		void stack_panel::toggle(const tag &name_tag)
+		void stack_panel::reverse_toggle(tag const& name)
 		{
-			auto find = m_stack.find(name_tag);
-			if (find != m_stack.end())
+			if (auto p = (*this)[name])
 			{
-				panel &p = *find->second.panel;
-				p.reverse_toggle();
+				p->reverse_toggle();
 			}
 		}
-		bool stack_panel::enabled(const tag &name_tag) const
+		bool stack_panel::active(tag const& name) const
 		{
-			auto find = m_stack.find(name_tag);
-			return find == m_stack.end() ? false : find->second.panel->active();
+			auto p = (*this)[name];
+			return p ? p->active() : false;
 		}
 		void stack_panel::layout(rectangle bounds)
 		{

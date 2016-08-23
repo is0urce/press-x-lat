@@ -1,10 +1,10 @@
-// name: main_panel.hpp
+// name: ingame.hpp
 // type: c++
-// desc: base class declaration
+// desc: class declaration
 // auth: is0urce
 
-#ifndef PX_UI_MAIN_PANEL_HPP
-#define PX_UI_MAIN_PANEL_HPP
+#ifndef PX_UI_INGAME_PANEL_HPP
+#define PX_UI_INGAME_PANEL_HPP
 
 #include <px/ui/stack_panel.hpp>
 #include <px/shell/key.hpp>
@@ -14,11 +14,10 @@ namespace px
 	using shell::key;
 	namespace core
 	{
-		class main_panel : public ui::stack_panel
+		class ingame_panel : public ui::stack_panel
 		{
 		public:
-			main_panel() {}
-			virtual ~main_panel() {}
+			virtual ~ingame_panel() {}
 
 		protected:
 			virtual bool key_control(shell::key code) override

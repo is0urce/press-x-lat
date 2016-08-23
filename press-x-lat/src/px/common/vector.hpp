@@ -17,7 +17,6 @@ namespace px
 	public:
 		vector2()
 		{
-
 		}
 		vector2(component x, component y)
 		{

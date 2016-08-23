@@ -22,7 +22,7 @@ namespace px
 			point2 size_absolute;
 			vector2 size_relative;
 
-			alignment()
+			alignment() noexcept
 			{
 			}
 			alignment(vector2 a_percent, point2 a_offset, point2 s_absolute, vector2 s_relative)
@@ -31,6 +31,10 @@ namespace px
 				, size_absolute(s_absolute)
 				, size_relative(s_relative)
 			{
+			}
+			static alignment fill()
+			{
+				return{ { 0.0, 0.0 },{ 0, 0 },{ 0, 0 },{ 1.0, 1.0 } };
 			}
 
 			rectangle calculate(const rectangle &parent) const

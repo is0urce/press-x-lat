@@ -43,6 +43,12 @@ namespace px
 			static_assert(Index < Dim, "Index < Dim");
 			return m_array[Index];
 		}
+		template <size_t Index>
+		void set(component val)
+		{
+			static_assert(Index < Dim, "Index < Dim");
+			m_array[Index] = val;
+		}
 
 		bool empty() const
 		{

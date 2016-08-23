@@ -138,7 +138,7 @@ namespace px
 			{
 				if (auto cont = m_container.lock())
 				{
-					enable("take_all", !cont->empty());
+					activate("take_all", !cont->empty());
 				}
 			}
 			void take_all()

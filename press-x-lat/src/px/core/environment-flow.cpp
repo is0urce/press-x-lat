@@ -26,12 +26,6 @@ namespace px
 		{
 			end();
 
-			//m_terrain_director = std::make_unique<terrain_director>(map, *m_factory);
-			//m_terrain = &tiles;
-
-			//m_terrain = std::make_unique<terrain>(map);
-			//m_space = &space;
-			//m_world = &map;
 			m_time = 0;
 			m_running = true;
 
@@ -77,10 +71,6 @@ namespace px
 			if (!m_running) return;
 
 			m_running = false;
-
-			//m_terrain = nullptr;
-			//m_space = nullptr;
-			//m_world = nullptr;
 
 			m_map->tear();
 

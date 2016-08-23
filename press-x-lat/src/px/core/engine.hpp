@@ -9,6 +9,7 @@
 #include <px/common/toggle.hpp>
 
 #include <px/es/i_engine.hpp>
+#include <px/ui/stack_panel.hpp>
 
 #include <px/shell/control.hpp>
 #include <px/shell/control_chain.hpp>
@@ -28,8 +29,6 @@
 #include <px/core/game.hpp>
 #include <px/core/input_adapter.hpp>
 
-#include <px/core/ui/main_panel.hpp>
-//#include <px/core/ui/main_menu_panel.hpp>
 
 namespace px
 {
@@ -133,7 +132,7 @@ namespace px
 			qtree<location_component*> m_space;
 			shell::renderer m_renderer;
 			shell::canvas m_canvas;
-			main_panel m_ui;
+			ui::stack_panel m_ui;
 
 			location_system m_location_system;
 			rendering_system m_sprite_system;

@@ -375,7 +375,10 @@
     <ClInclude Include="src\px\core\gen\poi\farm_mapper.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\px\core\ui\main_menu_panel.hpp">
+    <ClInclude Include="src\px\core\ui\title_panel.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\core\ui\ingame_panel.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -452,10 +455,10 @@
     <ClCompile Include="src\px\core\gen\poi\farm_builder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\px\core\ui\main_menu_panel.cpp">
+    <ClCompile Include="src\px\core\data\factory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\px\core\data\factory.cpp">
+    <ClCompile Include="src\px\core\ui\title_panel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
