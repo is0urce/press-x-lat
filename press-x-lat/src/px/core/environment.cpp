@@ -15,7 +15,7 @@ namespace px
 	namespace core
 	{
 		environment::environment(ui::stack_panel &ui, factory &builder, space_type &space)
-			: m_ui(&ui), m_factory(&builder), m_space(&space)
+			: m_ui(&ui), m_factory(&builder), m_space(&space), m_world(builder)
 			, m_terrain_director(m_world, builder)
 			, m_terrain(m_terrain_director)
 			, m_running(false)
@@ -35,7 +35,7 @@ namespace px
 			return &m_terrain;
 		}
 
-		int environment::distance(point2 a, point2 b) const
+		int environment::distance(point2 const& a, point2 const& b) const
 		{
 			return a.king_distance(b);
 		}

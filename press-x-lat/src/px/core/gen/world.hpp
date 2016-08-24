@@ -19,6 +19,7 @@ namespace px
 {
 	namespace core
 	{
+		class factory;
 		class world
 		{
 		public:
@@ -40,7 +41,7 @@ namespace px
 			const map_type* map() const;
 
 		public:
-			world();
+			world(factory &unit_builder);
 			virtual ~world();
 			world(const world&) = delete;
 
@@ -52,6 +53,7 @@ namespace px
 		private:
 			unsigned int m_seed; // world unique seed
 			rng_type m_generator; // rng state
+			factory* m_factory;
 
 			map_type m_map;
 			cell_type m_outer; // out-of-border cell props

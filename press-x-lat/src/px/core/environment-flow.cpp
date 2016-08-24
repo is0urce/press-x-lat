@@ -29,6 +29,9 @@ namespace px
 			m_time = 0;
 			m_running = true;
 
+			// ui
+			m_ui->deactivate("title");
+			m_ui->activate("ingame");
 			m_map->bind(m_world);
 
 			m_world.resize(settings::world_width, settings::world_height);

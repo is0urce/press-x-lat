@@ -44,7 +44,7 @@ namespace px
 			}
 		}
 
-		world::world()
+		world::world(factory &unit_builder) : m_factory(&unit_builder)
 		{
 			clear_cell(m_outer);
 		}
@@ -221,14 +221,14 @@ namespace px
 
 			// generate other landmarks
 			int count = 0;
-			m_map.enumerate([&count](auto const& location, auto & cell)
+			m_map.enumerate([&count, this](auto const& location, auto & cell)
 			{
 				//if (!cell.landmark && cell.altitude > 0)
 				{
 					cell.landmark = std::make_unique<landmark>();
 					cell.landmark->set_name(std::string("point-of-interest#") + std::to_string(++count));
 
-					cell.landmark->set_pipeline(std::make_unique<farm_builder>(), std::make_unique<farm_mapper>());
+					cell.landmark->set_pipeline(std::make_unique<farm_builder>(), std::make_unique<farm_mapper>(*m_factory));
 				}
 			});
 		}

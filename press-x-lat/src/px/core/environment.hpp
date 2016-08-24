@@ -8,10 +8,10 @@
 #ifndef PX_CORE_ENVIRONMENT_HPP
 #define PX_CORE_ENVIRONMENT_HPP
 
-#include <px/ui/stack_panel.hpp>
-
 #include <px/common/fps_counter.hpp>
 #include <px/common/qtree.hpp>
+
+#include <px/ui/stack_panel.hpp>
 
 #include <px/rl/faction_relation.hpp>
 #include <px/rl/traverse.hpp>
@@ -55,7 +55,7 @@ namespace px
 
 			terrain const* scene() const;
 			terrain* scene();
-			int distance(point2 a, point2 b) const;
+			int distance(point2 const& a, point2 const& b) const;
 			int reputation(body_component& a, body_component& b);
 
 			// player

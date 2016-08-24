@@ -122,7 +122,7 @@ namespace px
 
 							auto entrance_room = random_item(entrance_room_candidates, rng);
 
-							// secect door
+							// select door
 
 							std::vector<point2> entrance_door_candidates;
 							entrance_door_candidates.reserve(entrance_room.perimeter());
@@ -182,6 +182,24 @@ namespace px
 								untangled.erase(std::remove(untangled.begin(), untangled.end(), std::get<0>(tangle)), untangled.end());
 								tangled.push_back(std::get<0>(tangle));
 							}
+
+							// add habitants
+							room_bsp.enumerate_bounds([&](auto const& room) {
+
+								result.placeables.emplace_back(random_rectangle_point(room, rng), build_placeable::mobile);
+								room.enumerate_border([&](auto const& location)
+								{
+									if (std::uniform_int_distribution<unsigned int>{1, 100}(rng) <= 15 && !result.exists(location))
+									{
+										result.placeables.emplace_back(location, build_placeable::furniture);
+									}
+								});
+								auto center = room.start() + room.range() / 2;
+								if (!result.exists(center))
+								{
+									result.placeables.emplace_back(center, build_placeable::table);
+								}
+							});
 						}
 						break;
 					case farm_sector::barn:

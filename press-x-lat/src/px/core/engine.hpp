@@ -46,7 +46,7 @@ namespace px
 		{
 		public:
 			engine(shell::opengl* gl)
-				: control_chain(m_ui, m_game_adapter, [this](point2 pixel) { return translate_canvas(pixel); }, [this](point2 pixel) { return translate_world(pixel); })
+				: control_chain(m_ui, m_game_adapter, [this](point2 const& pixel) { return translate_canvas(pixel); }, [this](point2 const& pixel) { return translate_world(pixel); })
 				, m_game(m_environment)
 				, m_game_adapter(m_game)
 				, m_last_turn(0)
@@ -88,11 +88,8 @@ namespace px
 			{
 				auto pos = translate_canvas(pixel) - (m_canvas.range() / 2);
 				pos.mirror<1>(); // flip Y axis, ui grid grows down
-				if (auto camera = m_environment.player())
-				{
-					pos += camera->current();
-				}
-				return pos;
+				auto camera = m_environment.player();
+				return pos + (camera ? camera->current() : point2(0, 0));
 			}
 
 		protected:

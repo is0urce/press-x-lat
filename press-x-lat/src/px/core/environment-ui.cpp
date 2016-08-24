@@ -28,6 +28,8 @@ namespace px
 	{
 		void environment::compose_ui()
 		{
+			// fps counter
+			auto fps = m_ui->emplace<ui::performance_panel>("performance", { { 0.0, 0.0 },{ 1,0 },{ -2, 1 },{ 1.0, 0.0 } }, m_fps);
 			auto title = m_ui->emplace<title_panel>("title", ui::alignment::fill());
 			auto ingame = m_ui->emplace<ingame_panel>("ingame", ui::alignment::fill());
 
@@ -44,8 +46,8 @@ namespace px
 			m_container->deactivate();
 			m_map->deactivate();
 
-			// fps counter
-			m_ui->emplace<ui::performance_panel>("performance", { { 0.0, 0.0 },{ 1,0 },{ -2, 1 },{ 1.0, 0.0 } }, m_fps);
+			title->activate();
+			ingame->deactivate();
 		}
 
 		void environment::target(point2 location)

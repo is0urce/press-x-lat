@@ -48,6 +48,8 @@ namespace px
 			map.splice_into(list);
 
 			std::for_each(list.begin(), list.end(), [&](unit_record &record) {
+				if (!record.location) throw std::runtime_error("px::terrain::splice(..) unit location is null");
+
 				record.location->move(cell_range * cell + record.location->current());
 				add(record.unit);
 			});
@@ -139,6 +141,8 @@ namespace px
 
 		void terrain::add(unit_ptr unit)
 		{
+			if (!unit) throw std::runtime_error("px::terrain::add(unit) - unit is null");
+
 			unit->activate();
 			m_units.push_back(unit);
 		}

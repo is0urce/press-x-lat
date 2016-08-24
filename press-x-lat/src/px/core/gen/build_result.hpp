@@ -47,6 +47,7 @@ namespace px
 
 			max_value = door_ark
 		};
+
 		enum build_placeable : unsigned int
 		{
 			animal,
@@ -88,17 +89,28 @@ namespace px
 			unsigned int group;
 			tile_entry(build_tile t, unsigned int g) : tile(t), group(g) {}
 		};
+
 		struct placeable_entry
 		{
 			point2 location;
 			build_placeable placeable;
-			placeable_entry(point2 l, build_placeable p) : location(l), placeable(p) {}
+			unsigned int group;
+			placeable_entry(point2 l, build_placeable p) : location(l), placeable(p), group(0) {}
+			placeable_entry(point2 l, build_placeable p, unsigned int group_index) : location(l), placeable(p), group(group_index) {}
 		};
 
 		struct build_result
 		{
 			px::matrix2<build_tile> tiles;
 			std::list<placeable_entry> placeables;
+			bool exists(point2 const& location) const
+			{
+				for (auto const& placeable : placeables)
+				{
+					if (placeable.location == location) return true;
+				}
+				return false;
+			}
 		};
 	}
 }
