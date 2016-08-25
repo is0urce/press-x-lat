@@ -74,7 +74,7 @@ namespace px
 		}
 		std::shared_ptr<image_component> product::add_appearance(unsigned int glyph)
 		{
-			product::add_appearance(glyph, 0xffffff);
+			return product::add_appearance(glyph, 0xffffff);
 		}
 		std::shared_ptr<image_component> product::add_appearance(unsigned int glyph, color tint)
 		{

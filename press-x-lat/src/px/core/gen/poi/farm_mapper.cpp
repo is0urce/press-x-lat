@@ -106,7 +106,7 @@ namespace px
 					{
 						// composition
 						auto task = m_factory->produce();
-						auto img = task->add_appearance('n', { 1, 1, 1 });
+						auto img = task->add_appearance('%', { 0.5, 0.5, 0.5 });
 						auto pawn = task->add_location(placeable.location);
 						auto body = task->add_body();
 
@@ -121,7 +121,7 @@ namespace px
 					{
 						// composition
 						auto task = m_factory->produce();
-						auto img = task->add_appearance('t', { 1, 1, 1 });
+						auto img = task->add_appearance('t', { 0.5, 0.5, 0.5 });
 						auto pawn = task->add_location(placeable.location);
 						auto body = task->add_body();
 

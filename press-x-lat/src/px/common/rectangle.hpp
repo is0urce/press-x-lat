@@ -49,7 +49,7 @@ namespace px
 		}
 		unsigned int size() const noexcept
 		{
-			return m_range.x() * m_range.y();
+			return empty() ? 0 : m_range.x() * m_range.y();
 		}
 		bool empty() const noexcept
 		{
