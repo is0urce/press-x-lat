@@ -75,11 +75,11 @@ namespace px
 				auto magnitude = noise.sample(mx * location.x(), my * location.y(), perlin_samples);
 
 				auto &img = t.appearance();
-				if (magnitude > 0)
+				if (magnitude > 0 || true)
 				{
 					img.glyph = '.';
 					img.tint = { 1, 1, 1 };
-					img.bg = { 0, 0.25, 0 };
+					img.bg = 0x006600;
 					t.make_traversable();
 				}
 				else

@@ -24,6 +24,7 @@ namespace px
 		private:
 			void build_house(unsigned int seed, rectangle const& bounds, build_result &result) const;
 			void build_field(unsigned int seed, rectangle const& bounds, build_result &result) const;
+			void build_barn(unsigned int seed, rectangle const& bounds, build_result &result) const;
 		};
 	}
 }

@@ -86,7 +86,7 @@ namespace px
 
 					// composition
 					auto task = m_factory->produce();
-					auto img = task->add_appearance('f', { 1, 1, 0 });
+					auto img = task->add_appearance('f', 0xccccff);
 					auto pawn = task->add_location(placeable.location);
 					auto body = task->add_body(100, 100);
 					auto character = task->add_character();
@@ -102,11 +102,37 @@ namespace px
 					units.emplace_back(task->assemble(persistency::serialized), task->location());
 					}
 					break;
+				case build_placeable::animal_domestic:
+				{
+					// items
+					auto weapon = std::make_shared<body_component::item_type>();
+					weapon->add({ rl::effect::weapon_damage, 0x00, 1 });
+					weapon->set_name("Copper Sword");
+					weapon->set_tag("copper_sword");
+
+					// composition
+					auto task = m_factory->produce();
+					auto img = task->add_appearance('m', { 1, 1, 0 });
+					auto pawn = task->add_location(placeable.location);
+					auto body = task->add_body(100, 100);
+					auto character = task->add_character();
+					auto npc = task->add_npc_behavior();
+
+					// setup
+					body->join_faction(1);
+					body->equip_weapon(weapon);
+					character->add_skill("melee");
+					character->set_tag("domestic_animal");
+
+					// add
+					units.emplace_back(task->assemble(persistency::serialized), task->location());
+				}
+				break;
 				case build_placeable::furniture:
 					{
 						// composition
 						auto task = m_factory->produce();
-						auto img = task->add_appearance('%', { 0.5, 0.5, 0.5 });
+						auto img = task->add_appearance('h', { 0.5, 0.5, 0.5 });
 						auto pawn = task->add_location(placeable.location);
 						auto body = task->add_body();
 
@@ -117,11 +143,26 @@ namespace px
 						units.emplace_back(task->assemble(persistency::serialized), task->location());
 					}
 					break;
-				case build_placeable::table:
+				case build_placeable::furniture_table:
 					{
 						// composition
 						auto task = m_factory->produce();
 						auto img = task->add_appearance('t', { 0.5, 0.5, 0.5 });
+						auto pawn = task->add_location(placeable.location);
+						auto body = task->add_body();
+
+						// setup
+						body->join_faction(0);
+
+						// add
+						units.emplace_back(task->assemble(persistency::serialized), task->location());
+					}
+					break;
+				case build_placeable::furniture_barrel:
+					{
+						// composition
+						auto task = m_factory->produce();
+						auto img = task->add_appearance('%', { 0.5, 0.5, 0.5 });
 						auto pawn = task->add_location(placeable.location);
 						auto body = task->add_body();
 

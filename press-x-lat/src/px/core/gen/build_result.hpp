@@ -51,6 +51,7 @@ namespace px
 		enum build_placeable : unsigned int
 		{
 			animal,
+			animal_domestic,
 			animal_hunter,
 			animal_prey,
 
@@ -64,10 +65,11 @@ namespace px
 			door_locked,
 
 			furniture,
-			table,
-			chair,
-			bed,
-			shelf,
+			furniture_table,
+			furniture_chair,
+			furniture_bed,
+			furniture_shelf,
+			furniture_barrel,
 
 			chest,
 			chest_loot,
@@ -75,8 +77,9 @@ namespace px
 
 			flora_bloom,
 
-			torch,
-			braiser,
+			light_candle,
+			light_torch,
+			light_braiser,
 
 			statue,
 

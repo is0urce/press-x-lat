@@ -27,10 +27,10 @@ namespace px
 
 			enum class farm_sector : int
 			{
-				house = 0,
-				field = 1,
-				barn = 2,
-				garden = 3,
+				house,
+				field,
+				barn,
+				garden,
 
 				min_value = house,
 				max_value = garden
@@ -73,6 +73,13 @@ namespace px
 			{
 				return rect.start() + point2(std::uniform_int_distribution<int>(0, rect.range().x() - 1)(rng), std::uniform_int_distribution<int>(0, rect.range().y() - 1)(rng));
 			}
+			template <unsigned int Divisor, typename Generator>
+			rectangle random_rectangle(rectangle const& rect, Generator &rng)
+			{
+				static_assert(Divisor > 0, "Divisor == 0");
+				point2 shrink = random_range(rect.range() / Divisor, rng);
+				return rectangle(rect.start() + random_range(shrink, rng), rect.range() - shrink);
+			}
 
 			rng_type generator(unsigned int seed)
 			{
@@ -82,9 +89,7 @@ namespace px
 			template <typename E, typename Generator>
 			E random_enum(Generator &rng)
 			{
-				int min = static_cast<int>(E::min_value);
-				int max = static_cast<int>(E::max_value);
-				return static_cast<E>(std::uniform_int_distribution<int>{min, max}(rng));
+				return static_cast<E>(std::uniform_int_distribution<int>{static_cast<int>(E::min_value), static_cast<int>(E::max_value)}(rng));
 			}
 		}
 
@@ -100,20 +105,16 @@ namespace px
 				result.tiles[location] = build_tile::no_change;
 			});
 
-			fn::bsp<rng_type>::enumerate(rng, bounds, sector_size, [&](auto const& sector) {
+			fn::bsp<rng_type>(rng, bounds, sector_size).enumerate([&](auto const& sector) {
 				auto sector_bounds = sector.bounds.deflated(1); // some space between "districts"
 				farm_sector index = random_enum<farm_sector>(rng);
 				switch (index)
 				{
 				case farm_sector::house:
-					{
-						point2 shrink = random_range(sector_bounds.range() / 4, rng);
-						auto house_bounds = rectangle(sector_bounds.start() + random_range(shrink, rng), sector_bounds.range() - shrink);
-						build_house(rng(), house_bounds, result);
-					}
+					build_house(rng(), random_rectangle<4>(sector_bounds, rng), result);
 					break;
 				case farm_sector::barn:
-					build_field(rng(), sector_bounds, result);
+					build_barn(rng(), sector_bounds, result);
 					break;
 				case farm_sector::field:
 					build_field(rng(), sector_bounds, result);
@@ -121,8 +122,9 @@ namespace px
 				case farm_sector::garden: // no change, keep trees
 					break;
 				}
+				rng.discard(10);
 			});
-		} // build()
+		}
 
 		void farm_builder::build_field(unsigned int seed, rectangle const& sector_bounds, build_result &result) const
 		{
@@ -136,14 +138,10 @@ namespace px
 				});
 				break;
 			case field_variant::unaligned:
-			{
-				point2 shrink = random_range(sector_bounds.range() / 4, rng);
-				auto field_bounds = rectangle(sector_bounds.start() + random_range(shrink, rng), sector_bounds.range() - shrink);
-				field_bounds.enumerate([&](auto const& location) {
+				random_rectangle<4>(sector_bounds, rng).enumerate([&](auto const& location) {
 					result.tiles[location] = build_tile::soil;
 				});
-			}
-			break;
+				break;
 			case field_variant::fenced:
 			{
 				bool fence = std::uniform_int_distribution<int>{ 0, 1 }(rng) == 0;
@@ -164,6 +162,97 @@ namespace px
 			}
 			break;
 			}
+		}
+
+		void farm_builder::build_barn(unsigned int seed, rectangle const& bounds, build_result &result) const
+		{
+			auto rng = generator(seed);
+
+			auto barn_bounds = random_rectangle<4>(bounds, rng);
+			barn_bounds.enumerate([&](auto const& location) {
+				result.tiles[location] = build_tile::wall;
+			});
+			auto inside_bounds = barn_bounds.deflated(wall_size);		
+
+			// select axis to split
+			bool horisontal = std::uniform_int_distribution<int>{ 0, 1 }(rng) == 0;
+			int w = inside_bounds.range().x();
+			int h = inside_bounds.range().y();
+			if (w * 3 >= h * 4)
+			{
+				horisontal = true;
+			}
+			else if (h * 3 > w * 4)
+			{
+				horisontal = false;
+			}
+
+			int min = (horisontal ? w / 4 : h / 4);
+			int max = (horisontal ? w : h) - min - wall_size;
+
+			rectangle inside;
+			rectangle outside;
+
+			int c = std::uniform_int_distribution<int>{ min, max }(rng);
+
+			if (horisontal)
+			{
+				inside = { inside_bounds.start(),{ c , h } };
+				outside = { inside_bounds.start().moved(point2(c + wall_size, 0)), point2(w - c - wall_size, h) };
+			}
+			else
+			{
+				inside = { inside_bounds.start(),{ w , c } };
+				outside = { inside_bounds.start().moved(point2(0, c + wall_size)), point2(w, h - c - wall_size) };
+			}
+
+			if (std::uniform_int_distribution<int>{ 0, 1 }(rng) == 0)
+			{
+				std::swap(inside, outside);
+			}
+
+			inside.enumerate([&](auto const& location) {
+				result.tiles[location] = build_tile::floor;
+			});
+			outside.enumerate([&](auto const& location) {
+				result.tiles[location] = build_tile::no_change;
+			});
+
+			// inside door
+			auto doorway = shrink_line(inside.inflated(wall_size) & outside.inflated(wall_size));
+			result.tiles[random_rectangle_point(doorway, rng)] = build_tile::door_ark;
+
+			// outside door
+			std::vector<point2> entrance_door_candidates;
+			entrance_door_candidates.reserve(outside.perimeter());
+			outside.inflated(wall_size).enumerate_border([&](auto const& location) {
+				if (barn_bounds.is_border(location) && !barn_bounds.is_corner(location))
+				{
+					entrance_door_candidates.push_back(location);
+				}
+			});
+			auto entrance_door = random_item(entrance_door_candidates, rng);
+			result.tiles[entrance_door] = build_tile::door_ark;
+
+			// placeables
+			inside.enumerate_border([&](auto const& location)
+			{
+				if (std::uniform_int_distribution<unsigned int>{1, 100}(rng) <= 10 && !result.exists(location))
+				{
+					result.placeables.emplace_back(location, build_placeable::furniture_barrel);
+				}
+			});
+			outside.enumerate_border([&](auto const& location)
+			{
+				if (std::uniform_int_distribution<unsigned int>{1, 100}(rng) <= 5 && !result.exists(location))
+				{
+					result.placeables.emplace_back(location, build_placeable::furniture_barrel);
+				}
+			});
+
+			// add habitants
+			result.placeables.emplace_back(random_rectangle_point(inside, rng), build_placeable::animal_domestic);
+			result.placeables.emplace_back(random_rectangle_point(outside, rng), build_placeable::animal_domestic);
 		}
 
 		void farm_builder::build_house(unsigned int seed, rectangle const& house_bounds, build_result &result) const
@@ -219,7 +308,6 @@ namespace px
 					untangled.push_back(room);
 				}
 			});
-
 			while (!untangled.empty())
 			{
 				std::vector<std::tuple<rectangle, rectangle>> tangle_candidates;
@@ -266,9 +354,9 @@ namespace px
 				auto center = room.start() + room.range() / 2;
 				if (!result.exists(center))
 				{
-					result.placeables.emplace_back(center, build_placeable::table);
+					result.placeables.emplace_back(center, build_placeable::furniture_table);
 				}
-			}); // build_house()
+			});
 		}
 	}
 }
