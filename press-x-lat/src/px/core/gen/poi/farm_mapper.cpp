@@ -65,6 +65,12 @@ namespace px
 					img.tint = { 0, 0, 1 };
 					img.bg = { 0.0, 0.0, 0.25 };
 					break;
+				case build_tile::background_doodad:
+					tile.make_blocking();
+					tile.make_transparent();
+					img.glyph = 0x253c; // cross
+					img.tint = { 1, 1, 1 };
+					break;
 				case build_tile::no_change:
 					break;
 				default:
@@ -128,6 +134,9 @@ namespace px
 					units.emplace_back(task->assemble(persistency::serialized), task->location());
 				}
 				break;
+				case build_placeable::furniture_bed:
+				case build_placeable::furniture_chair:
+				case build_placeable::furniture_shelf:
 				case build_placeable::furniture:
 					{
 						// composition

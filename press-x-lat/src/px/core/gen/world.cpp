@@ -14,6 +14,7 @@
 
 #include <px/core/gen/poi/farm_builder.hpp>
 #include <px/core/gen/poi/farm_mapper.hpp>
+#include <px/core/gen/poi/graveyard_builder.hpp>
 
 #include <random>
 #include <numeric>
@@ -229,6 +230,7 @@ namespace px
 					cell.landmark->set_name(std::string("point-of-interest#") + std::to_string(++count));
 
 					cell.landmark->set_pipeline(std::make_unique<farm_builder>(), std::make_unique<farm_mapper>(*m_factory));
+					cell.landmark->set_pipeline(std::make_unique<graveyard_builder>(), std::make_unique<farm_mapper>(*m_factory));
 				}
 			});
 		}

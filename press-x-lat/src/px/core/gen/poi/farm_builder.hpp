@@ -15,11 +15,11 @@ namespace px
 		class farm_builder : public builder
 		{
 		public:
-			farm_builder();
+			farm_builder() = default;
 			virtual ~farm_builder();
 
 		public:
-			void build(unsigned int seed, rectangle const& bounds, build_result &result) const override;
+			virtual void run_builder(unsigned int seed, rectangle const& bounds, build_result &result) const override;
 
 		private:
 			void build_house(unsigned int seed, rectangle const& bounds, build_result &result) const;

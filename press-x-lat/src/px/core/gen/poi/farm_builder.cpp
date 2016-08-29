@@ -93,10 +93,9 @@ namespace px
 			}
 		}
 
-		farm_builder::farm_builder() {}
 		farm_builder::~farm_builder() {}
 
-		void farm_builder::build(unsigned int seed, rectangle const& bounds, build_result &result) const
+		void farm_builder::run_builder(unsigned int seed, rectangle const& bounds, build_result &result) const
 		{
 			rng_type rng(seed);
 			rng.discard(rng_type::state_size);

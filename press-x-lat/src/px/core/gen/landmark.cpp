@@ -26,9 +26,15 @@ namespace px
 				build_result result;
 				result.tiles.resize(map.range());
 
-				m_builder->build(seed, map.range(), result);
+				m_builder->run(seed, map.range(), result);
 				m_mapper->map(result, map, units, generate_placeables);
 			}
+		}
+
+		void landmark::set_pipeline(std::unique_ptr<builder> && b, std::unique_ptr<mapper> && m)
+		{
+			std::swap(m_builder, b);
+			std::swap(m_mapper, m);
 		}
 	}
 }

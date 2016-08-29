@@ -20,7 +20,7 @@ namespace px
 			virtual ~farm_mapper();
 
 		protected:
-			void apply_mapping(build_result &build, map_type &terrain, units_list &units, bool generate_placeables) const override;
+			virtual void apply_mapping(build_result &build, map_type &terrain, units_list &units, bool generate_placeables) const override;
 
 		private:
 			factory* m_factory;
