@@ -3,6 +3,9 @@
 // desc: auxilary template functions
 // auth: is0urce
 
+#ifndef PX_FN_BUILD_AUX
+#define PX_FN_BUILD_AUX
+
 #include <px/common/rectangle.hpp>
 
 #include <random>
@@ -68,3 +71,5 @@ namespace px
 		}
 	}
 }
+
+#endif // !PX_FN_BUILD_AUX

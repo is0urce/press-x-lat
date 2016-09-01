@@ -28,13 +28,14 @@ namespace px
 			std::function<void()> m_fn;
 
 		public:
-			program() : m_init(false), m_id(0)
+			program() noexcept
+				: m_init(false), m_id(0)
 			{
 			}
-			program(const std::string& path)
+			program(std::string const& path)
+				: m_init(true)
 			{
 				m_id = glsl::link(path);
-				m_init = true;
 			}
 			~program()
 			{
@@ -43,12 +44,12 @@ namespace px
 					glDeleteProgram(m_id);
 				}
 			}
-			program(const program&) = delete;
+			program(program const&) = delete;
 			program(program&& other) : program()
 			{
 				swap(other);
 			}
-			program& operator=(const program&) = delete;
+			program& operator=(program const&) = delete;
 			program& operator=(program&& other)
 			{
 				swap(other);
@@ -86,7 +87,7 @@ namespace px
 			{
 				m_fn = fn;
 			}
-			GLint id() const
+			GLint id() const noexcept
 			{
 				return m_id;
 			}
