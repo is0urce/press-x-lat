@@ -9,6 +9,8 @@
 #include <px/common/matrix.hpp>
 
 #include <px/rl/tile.hpp>
+#include <px/fn/build_result.hpp>
+
 
 #include <px/core/image.hpp>
 #include <px/core/settings.hpp>
@@ -20,7 +22,6 @@ namespace px
 	namespace core
 	{
 		struct unit_record;
-		struct build_result;
 
 		class mapper
 		{
@@ -29,7 +30,7 @@ namespace px
 			typedef std::list<unit_record> units_list;
 
 		public:
-			void map(build_result &build, map_type &terrain, units_list &units, bool generate_placeables) const
+			void map(fn::build_result &build, map_type &terrain, units_list &units, bool generate_placeables) const
 			{
 				apply_mapping(build, terrain, units, generate_placeables);
 			}
@@ -39,7 +40,7 @@ namespace px
 			virtual ~mapper() = 0 {}
 
 		protected:
-			virtual void apply_mapping(build_result &build, map_type &terrain, units_list &units, bool generate_placeables) const = 0;
+			virtual void apply_mapping(fn::build_result &build, map_type &terrain, units_list &units, bool generate_placeables) const = 0;
 		};
 	}
 }

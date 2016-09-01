@@ -19,7 +19,7 @@ namespace px
 			virtual ~graveyard_builder();
 
 		public:
-			virtual void run_builder(unsigned int seed, rectangle const& bounds, build_result &result) const override;
+			virtual void run_builder(unsigned int seed, rectangle const& bounds, fn::build_result &result) const override;
 		};
 	}
 }

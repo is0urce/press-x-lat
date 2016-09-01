@@ -5,8 +5,6 @@
 
 #include "farm_mapper.hpp"
 
-#include <px/core/gen/build_result.hpp>
-
 #include <px/core/unit_record.hpp>
 #include <px/core/data/factory.hpp>
 
@@ -20,58 +18,58 @@ namespace px
 		farm_mapper::farm_mapper(factory &unit_builder) : m_factory(&unit_builder) {}
 		farm_mapper::~farm_mapper() {}
 
-		void farm_mapper::apply_mapping(build_result &build, map_type &terrain, units_list &units, bool generate_placeables) const
+		void farm_mapper::apply_mapping(fn::build_result &build, map_type &terrain, units_list &units, bool generate_placeables) const
 		{
 			build.tiles.enumerate([&](auto const& location, auto const& blueprint_tile) {
 				auto &tile = terrain[location];
 				auto &img = tile.appearance();
 
-				switch (blueprint_tile)
+				switch (blueprint_tile.tile)
 				{
-				case build_tile::wall:
-				case build_tile::wall_inside:
-				case build_tile::wall_outside:
+				case fn::build_tile::wall:
+				case fn::build_tile::wall_inside:
+				case fn::build_tile::wall_outside:
 					tile.make_blocking();
 					tile.make_opaque();
 					img.glyph = 0x2317; // '#'
 					img.tint = { 1, 1, 1 };
 					img.bg = { 0, 0, 0 };
 					break;
-				case build_tile::floor:
+				case fn::build_tile::floor:
 					tile.make_traversable();
 					tile.make_transparent();
 					img.glyph = '.';
 					img.tint = { 1, 1, 1 };
 					img.bg = { 0, 0, 0 };
 					break;
-				case build_tile::door_ark:
+				case fn::build_tile::door_ark:
 					tile.make_traversable();
 					tile.make_transparent();
 					img.glyph = '-';
 					img.tint = { 1, 1, 1 };
 					img.bg = { 0, 0, 0 };
 					break;
-				case build_tile::soil:
+				case fn::build_tile::soil:
 					tile.make_traversable();
 					tile.make_transparent();
 					img.glyph = '"';
 					img.tint = { 0, 1, 0 };
 					img.bg = { 0.25, 0.25, 0.0 };
 					break;
-				case build_tile::water:
+				case fn::build_tile::water:
 					tile.make_blocking();
 					tile.make_transparent();
 					img.glyph = '~';
 					img.tint = { 0, 0, 1 };
 					img.bg = { 0.0, 0.0, 0.25 };
 					break;
-				case build_tile::background_doodad:
+				case fn::build_tile::doodad_tombstone:
 					tile.make_blocking();
 					tile.make_transparent();
-					img.glyph = 0x253c; // cross
-					img.tint = { 1, 1, 1 };
+					img.glyph = 't'; // cross
+					img.tint = 0x999999;
 					break;
-				case build_tile::no_change:
+				case fn::build_tile::no_change:
 					break;
 				default:
 					break;
@@ -82,7 +80,7 @@ namespace px
 			{
 				switch (placeable.placeable)
 				{
-				case build_placeable::mobile:
+				case fn::build_placeable::mobile:
 					{
 					// items
 					auto weapon = std::make_shared<body_component::item_type>();
@@ -108,7 +106,7 @@ namespace px
 					units.emplace_back(task->assemble(persistency::serialized), task->location());
 					}
 					break;
-				case build_placeable::animal_domestic:
+				case fn::build_placeable::animal_domestic:
 				{
 					// items
 					auto weapon = std::make_shared<body_component::item_type>();
@@ -134,10 +132,10 @@ namespace px
 					units.emplace_back(task->assemble(persistency::serialized), task->location());
 				}
 				break;
-				case build_placeable::furniture_bed:
-				case build_placeable::furniture_chair:
-				case build_placeable::furniture_shelf:
-				case build_placeable::furniture:
+				case fn::build_placeable::furniture_bed:
+				case fn::build_placeable::furniture_chair:
+				case fn::build_placeable::furniture_shelf:
+				case fn::build_placeable::furniture:
 					{
 						// composition
 						auto task = m_factory->produce();
@@ -152,7 +150,7 @@ namespace px
 						units.emplace_back(task->assemble(persistency::serialized), task->location());
 					}
 					break;
-				case build_placeable::furniture_table:
+				case fn::build_placeable::furniture_table:
 					{
 						// composition
 						auto task = m_factory->produce();
@@ -167,7 +165,7 @@ namespace px
 						units.emplace_back(task->assemble(persistency::serialized), task->location());
 					}
 					break;
-				case build_placeable::furniture_barrel:
+				case fn::build_placeable::furniture_barrel:
 					{
 						// composition
 						auto task = m_factory->produce();
@@ -185,7 +183,6 @@ namespace px
 				default:
 					break;
 				}
-
 			}
 		}
 	}

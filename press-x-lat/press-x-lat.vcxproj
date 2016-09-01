@@ -184,7 +184,6 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\common\toggle.hpp" />
     <ClInclude Include="src\px\common\vector.hpp" />
     <ClInclude Include="src\px\core\gen\builder.hpp" />
-    <ClInclude Include="src\px\core\gen\build_result.hpp" />
     <ClInclude Include="src\px\core\gen\city.hpp" />
     <ClInclude Include="src\px\core\gen\poi\farm_builder.hpp" />
     <ClInclude Include="src\px\core\gen\landmark.hpp" />
@@ -224,6 +223,9 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\core\gen\world.hpp" />
     <ClInclude Include="src\px\core\unit_record.hpp" />
     <ClInclude Include="src\px\fn\bsp.hpp" />
+    <ClInclude Include="src\px\fn\build_placeable.hpp" />
+    <ClInclude Include="src\px\fn\build_result.hpp" />
+    <ClInclude Include="src\px\fn\build_tile.hpp" />
     <ClInclude Include="src\px\rl\i_ability.hpp" />
     <ClInclude Include="src\px\rl\astar.hpp" />
     <ClInclude Include="src\px\rl\body.hpp" />

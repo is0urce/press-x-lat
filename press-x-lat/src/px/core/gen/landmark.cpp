@@ -7,10 +7,10 @@
 
 #include <px/common/rectangle.hpp>
 
+#include <px/fn/build_result.hpp>
+
 #include <px/core/gen/builder.hpp>
 #include <px/core/gen/mapper.hpp>
-
-#include <px/core/gen/build_result.hpp>
 
 namespace px
 {
@@ -23,7 +23,7 @@ namespace px
 		{
 			if (m_builder && m_mapper)
 			{
-				build_result result;
+				fn::build_result result;
 				result.tiles.resize(map.range());
 
 				m_builder->run(seed, map.range(), result);

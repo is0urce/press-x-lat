@@ -19,12 +19,12 @@ namespace px
 			virtual ~farm_builder();
 
 		public:
-			virtual void run_builder(unsigned int seed, rectangle const& bounds, build_result &result) const override;
+			virtual void run_builder(unsigned int seed, rectangle const& bounds, fn::build_result &result) const override;
 
 		private:
-			void build_house(unsigned int seed, rectangle const& bounds, build_result &result) const;
-			void build_field(unsigned int seed, rectangle const& bounds, build_result &result) const;
-			void build_barn(unsigned int seed, rectangle const& bounds, build_result &result) const;
+			void build_house(unsigned int seed, rectangle const& bounds, fn::build_result &result) const;
+			void build_field(unsigned int seed, rectangle const& bounds, fn::build_result &result) const;
+			void build_barn(unsigned int seed, rectangle const& bounds, fn::build_result &result) const;
 		};
 	}
 }

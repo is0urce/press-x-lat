@@ -8,22 +8,22 @@
 
 #include <px/common/rectangle.hpp>
 
+#include <px/fn/build_result.hpp>
+
 namespace px
 {
 	namespace core
 	{
-		struct build_result;
-
 		class builder
 		{
 		public:
-			virtual void run(unsigned int seed, rectangle const& bounds, build_result &result) const
+			virtual void run(unsigned int seed, rectangle const& bounds, fn::build_result &result) const
 			{
 				run_builder(seed, bounds, result);
 			}
 
 		public:
-			virtual void run_builder(unsigned int seed, rectangle const& bounds, build_result &result) const = 0;
+			virtual void run_builder(unsigned int seed, rectangle const& bounds, fn::build_result &result) const = 0;
 
 		public:
 			virtual ~builder() = 0 {}

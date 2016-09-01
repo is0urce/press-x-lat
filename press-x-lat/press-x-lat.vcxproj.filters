@@ -366,9 +366,6 @@
     <ClInclude Include="src\px\core\gen\builder.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\px\core\gen\build_result.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\px\core\gen\poi\farm_builder.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -382,6 +379,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\px\core\gen\poi\graveyard_builder.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\fn\build_tile.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\fn\build_placeable.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\fn\build_result.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
