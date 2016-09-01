@@ -49,8 +49,10 @@ namespace px
 
 		struct build_result
 		{
+		public:
+			typedef std::list<placeable_entry> placeable_list;
 			matrix2<tile_entry> tiles;
-			std::list<placeable_entry> placeables;
+			placeable_list placeables;
 
 			bool exists(point2 const& location) const noexcept
 			{
@@ -59,6 +61,10 @@ namespace px
 					if (placeable.location == location) return true;
 				}
 				return false;
+			}
+			void splice(placeable_list& list)
+			{
+				placeables.splice(list.begin(), list);
 			}
 		};
 	}

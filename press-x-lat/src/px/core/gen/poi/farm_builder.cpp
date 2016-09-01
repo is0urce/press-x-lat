@@ -10,6 +10,8 @@
 #include <px/fn/bsp.hpp>
 #include <px/fn/build_result.hpp>
 
+#include <px/fn/build_aux.hpp>
+
 #include <px/core/gen/builder.hpp>
 
 #include <random>
@@ -47,50 +49,9 @@ namespace px
 				max_value = fenced
 			};
 
-			rectangle shrink_line(rectangle const& line)
-			{
-				if (line.range().x() > line.range().y())
-				{
-					return rectangle(line.start().moved_axis<0>(1), line.range().moved_axis<0>(-2));
-				}
-				else
-				{
-					return rectangle(line.start().moved_axis<1>(1), line.range().moved_axis<1>(-2));
-				}
-			}
-			template <typename Generator, typename Item>
-			Item const& random_item(std::vector<Item> const& vec, Generator &rng)
-			{
-				if (vec.empty()) throw std::runtime_error("px::random_item(vector<i> v, generator rng) - vector size = 0");
-				return vec[std::uniform_int_distribution<std::vector<Item>::size_type>(0, vec.size() - 1)(rng)];
-			}
-			template <typename Generator>
-			point2 random_range(point2 const& range, Generator &rng)
-			{
-				return point2(std::uniform_int_distribution<int>(0, range.x())(rng), std::uniform_int_distribution<int>(0, range.y())(rng));
-			}
-			template <typename Generator>
-			point2 random_rectangle_point(rectangle const& rect, Generator &rng)
-			{
-				return rect.start() + point2(std::uniform_int_distribution<int>(0, rect.range().x() - 1)(rng), std::uniform_int_distribution<int>(0, rect.range().y() - 1)(rng));
-			}
-			template <unsigned int Divisor, typename Generator>
-			rectangle random_rectangle(rectangle const& rect, Generator &rng)
-			{
-				static_assert(Divisor > 0, "Divisor == 0");
-				point2 shrink = random_range(rect.range() / Divisor, rng);
-				return rectangle(rect.start() + random_range(shrink, rng), rect.range() - shrink);
-			}
-
 			rng_type generator(unsigned int seed)
 			{
 				return rng_type(seed);
-			}
-
-			template <typename E, typename Generator>
-			E random_enum(Generator &rng)
-			{
-				return static_cast<E>(std::uniform_int_distribution<int>{static_cast<int>(E::min_value), static_cast<int>(E::max_value)}(rng));
 			}
 		}
 
@@ -107,11 +68,11 @@ namespace px
 
 			fn::bsp<rng_type>(rng, bounds, sector_size).enumerate([&](auto const& sector) {
 				auto sector_bounds = sector.bounds.deflated(1); // some space between "districts"
-				farm_sector index = random_enum<farm_sector>(rng);
+				farm_sector index = fn::random_enum<farm_sector>(rng);
 				switch (index)
 				{
 				case farm_sector::house:
-					build_house(rng(), random_rectangle<4>(sector_bounds, rng), result);
+					build_house(rng(), fn::random_rectangle<4>(sector_bounds, rng), result);
 					break;
 				case farm_sector::barn:
 					build_barn(rng(), sector_bounds, result);
@@ -130,7 +91,7 @@ namespace px
 		{
 			auto rng = generator(seed);
 
-			switch (random_enum<field_variant>(rng))
+			switch (fn::random_enum<field_variant>(rng))
 			{
 			case field_variant::aligned:
 				sector_bounds.enumerate([&](auto const& location) {
@@ -138,7 +99,7 @@ namespace px
 				});
 				break;
 			case field_variant::unaligned:
-				random_rectangle<4>(sector_bounds, rng).enumerate([&](auto const& location) {
+				fn::random_rectangle<4>(sector_bounds, rng).enumerate([&](auto const& location) {
 					result.tiles[location] = fn::build_tile::soil;
 				});
 				break;
@@ -168,11 +129,11 @@ namespace px
 		{
 			auto rng = generator(seed);
 
-			auto barn_bounds = random_rectangle<4>(bounds, rng);
+			auto barn_bounds = fn::random_rectangle<4>(bounds, rng);
 			barn_bounds.enumerate([&](auto const& location) {
 				result.tiles[location] = fn::build_tile::wall;
 			});
-			auto inside_bounds = barn_bounds.deflated(wall_size);		
+			auto inside_bounds = barn_bounds.deflated(wall_size);
 
 			// select axis to split
 			bool horisontal = std::uniform_int_distribution<int>{ 0, 1 }(rng) == 0;
@@ -219,8 +180,8 @@ namespace px
 			});
 
 			// inside door
-			auto doorway = shrink_line(inside.inflated(wall_size) & outside.inflated(wall_size));
-			result.tiles[random_rectangle_point(doorway, rng)] = fn::build_tile::door_ark;
+			auto doorway = fn::shrink_ark(inside.inflated(wall_size) & outside.inflated(wall_size));
+			result.tiles[fn::random_point(doorway, rng)] = fn::build_tile::door_ark;
 
 			// outside door
 			std::vector<point2> entrance_door_candidates;
@@ -231,7 +192,7 @@ namespace px
 					entrance_door_candidates.push_back(location);
 				}
 			});
-			auto entrance_door = random_item(entrance_door_candidates, rng);
+			auto entrance_door = fn::random_item(entrance_door_candidates, rng);
 			result.tiles[entrance_door] = fn::build_tile::door_ark;
 
 			// placeables
@@ -251,8 +212,8 @@ namespace px
 			});
 
 			// add habitants
-			result.placeables.emplace_back(random_rectangle_point(inside, rng), fn::build_placeable::animal_domestic);
-			result.placeables.emplace_back(random_rectangle_point(outside, rng), fn::build_placeable::animal_domestic);
+			result.placeables.emplace_back(fn::random_point(inside, rng), fn::build_placeable::animal_domestic);
+			result.placeables.emplace_back(fn::random_point(outside, rng), fn::build_placeable::animal_domestic);
 		}
 
 		void farm_builder::build_house(unsigned int seed, rectangle const& house_bounds, fn::build_result &result) const
@@ -282,7 +243,7 @@ namespace px
 			});
 
 			// select entrance door
-			auto entrance_room = random_item(entrance_room_candidates, rng);
+			auto entrance_room = fn::random_item(entrance_room_candidates, rng);
 			std::vector<point2> entrance_door_candidates;
 			entrance_door_candidates.reserve(entrance_room.perimeter());
 			auto room_inflated = entrance_room.inflated(wall_size);
@@ -290,7 +251,7 @@ namespace px
 			{
 				if (house_bounds.is_border(location) && !room_inflated.is_corner(location)) entrance_door_candidates.push_back(location);
 			});
-			auto entrance_door = random_item(entrance_door_candidates, rng);
+			auto entrance_door = fn::random_item(entrance_door_candidates, rng);
 			result.tiles[entrance_door] = fn::build_tile::door_ark;
 
 			// interconnect rooms
@@ -323,8 +284,8 @@ namespace px
 					}
 				}
 
-				auto tangle = random_item(tangle_candidates, rng);
-				auto doorway = shrink_line(std::get<0>(tangle).inflated(wall_size) & std::get<1>(tangle).inflated(wall_size));
+				auto tangle = fn::random_item(tangle_candidates, rng);
+				auto doorway = fn::shrink_ark(std::get<0>(tangle).inflated(wall_size) & std::get<1>(tangle).inflated(wall_size));
 				bool last = untangled.size() == 1;
 
 				switch (last ? 0 : std::uniform_int_distribution<int>(0, 1)(rng)) // 0 - door, 1 - random size gap
@@ -332,7 +293,7 @@ namespace px
 				case 0:
 				case 1:
 				default:
-					result.tiles[random_rectangle_point(doorway, rng)] = fn::build_tile::door_ark;
+					result.tiles[fn::random_point(doorway, rng)] = fn::build_tile::door_ark;
 					break;
 				}
 
@@ -343,7 +304,7 @@ namespace px
 			// add habitants
 			room_bsp.enumerate_bounds([&](auto const& room) {
 
-				result.placeables.emplace_back(random_rectangle_point(room, rng), fn::build_placeable::mobile);
+				result.placeables.emplace_back(fn::random_point(room, rng), fn::build_placeable::mobile);
 				room.enumerate_border([&](auto const& location)
 				{
 					if (std::uniform_int_distribution<unsigned int>{1, 100}(rng) <= 15 && !result.exists(location))

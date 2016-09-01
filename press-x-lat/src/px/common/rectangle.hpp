@@ -35,6 +35,10 @@ namespace px
 		{
 			return m_range.y();
 		}
+		point2::component perimeter() const noexcept
+		{
+			return empty() ? 0 : (m_range.x() + m_range.y()) * 2;
+		}
 		point2 range() const noexcept
 		{
 			return m_range;
@@ -47,7 +51,7 @@ namespace px
 		{
 			return m_corner;
 		}
-		unsigned int size() const noexcept
+		int size() const noexcept
 		{
 			return empty() ? 0 : m_range.x() * m_range.y();
 		}
@@ -55,9 +59,13 @@ namespace px
 		{
 			return m_range.x() <= 0 || m_range.y() <= 0;
 		}
-		unsigned int perimeter() const noexcept
+		bool touch_border(rectangle const& rect) const noexcept
 		{
-			return empty() ? 0 : (m_range.x() + m_range.y()) * 2;
+			return m_start.x() == rect.m_start.x() || m_corner.x() == rect.m_corner.x() || m_start.y() == rect.m_start.y() ||  m_corner.y() == rect.m_corner.y();
+		}
+		bool touch_corner(rectangle const& rect) const noexcept
+		{
+			return (m_start.x() == rect.m_start.x() || m_corner.x() == rect.m_corner.x()) && (m_start.y() == rect.m_start.y() || m_corner.y() == rect.m_corner.y());
 		}
 
 		bool contains(point2 const& point) const noexcept
@@ -80,14 +88,6 @@ namespace px
 		{
 			if (m_range.x() <= 0 || m_range.y() <= 0) return false;
 			return (point.x() == m_start.x() || point.x() == m_corner.x() - 1) && (point.y() == m_start.y() || point.y() == m_corner.y() - 1);
-		}
-		rectangle intersection(rectangle const& with) const noexcept
-		{
-			auto start_x = (std::max)(m_start.x(), with.m_start.x());
-			auto start_y = (std::max)(m_start.y(), with.m_start.y());
-			auto corner_x = (std::min)(m_corner.x(), with.m_corner.x());
-			auto corner_y = (std::min)(m_corner.y(), with.m_corner.y());
-			return rectangle({ start_x, start_y }, { corner_x - start_x, corner_y - start_y });
 		}
 
 		// enumerate rectangle points from start to start + range
@@ -138,6 +138,17 @@ namespace px
 					std::forward<Operator>(fn)(point2(i, j - 1));
 				}
 			}
+		}
+
+		// mutations
+
+		rectangle intersection(rectangle const& with) const noexcept
+		{
+			auto start_x = (std::max)(m_start.x(), with.m_start.x());
+			auto start_y = (std::max)(m_start.y(), with.m_start.y());
+			auto corner_x = (std::min)(m_corner.x(), with.m_corner.x());
+			auto corner_y = (std::min)(m_corner.y(), with.m_corner.y());
+			return rectangle({ start_x, start_y }, { corner_x - start_x, corner_y - start_y });
 		}
 
 		void inflate(int size) noexcept

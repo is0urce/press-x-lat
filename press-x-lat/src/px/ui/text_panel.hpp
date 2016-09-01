@@ -20,7 +20,7 @@ namespace px
 		{
 			struct white_color_provider
 			{
-				color operator()() const { return color(1, 1, 1); }
+				color operator()() const { return color::white(); }
 			};
 		}
 		template <typename TextProvider, typename ColorProvider = white_color_provider>

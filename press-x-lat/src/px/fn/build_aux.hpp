@@ -1,0 +1,70 @@
+// name: build_aux.hpp
+// type: c++
+// desc: auxilary template functions
+// auth: is0urce
+
+#include <px/common/rectangle.hpp>
+
+#include <random>
+#include <type_traits>
+
+namespace px
+{
+	namespace fn
+	{
+		namespace
+		{
+			// deflate horisontaly or verticaly (wichever is longer)
+			rectangle shrink_ark(rectangle const& line)
+			{
+				if (line.range().x() > line.range().y())
+				{
+					return rectangle(line.start().moved_axis<0>(1), line.range().moved_axis<0>(-2));
+				}
+				else
+				{
+					return rectangle(line.start().moved_axis<1>(1), line.range().moved_axis<1>(-2));
+				}
+			}
+
+			// get random item from vector
+			template <typename Generator, typename Item>
+			Item const& random_item(std::vector<Item> const& vec, Generator &rng)
+			{
+				if (vec.empty()) throw std::runtime_error("px::fn::random_item(vector<i> v, generator rng) - vector size = 0");
+				return vec[std::uniform_int_distribution<std::vector<Item>::size_type>(0, vec.size() - 1)(rng)];
+			}
+
+			// ger random range in bigger range (inclusive, both 0 and max)
+			template <typename Generator>
+			point2 random_range(point2 const& range, Generator &rng)
+			{
+				return point2(std::uniform_int_distribution<point2::component>(0, range.x())(rng), std::uniform_int_distribution<point2::component>(0, range.y())(rng));
+			}
+
+			// get random point in rectangle
+			template <typename Generator>
+			point2 random_point(rectangle const& rect, Generator &rng)
+			{
+				return rect.start() + point2(std::uniform_int_distribution<point2::component>(0, rect.range().x() - 1)(rng), std::uniform_int_distribution<point2::component>(0, rect.range().y() - 1)(rng));
+			}
+
+			// select random rectangle int bigger rectangle, cropped by max 1 / x, where x is Divisor template argument
+			template <unsigned int Divisor = 1, typename Generator>
+			rectangle random_rectangle(rectangle const& rect, Generator &rng)
+			{
+				static_assert(Divisor > 0, "Divisor == 0");
+				point2 shrink = random_range(rect.range() / Divisor, rng);
+				return rectangle(rect.start() + random_range(shrink, rng), rect.range() - shrink);
+			}
+
+			// get random item in enum class (if it has min_value and max_value)
+			template <typename E, typename Generator>
+			E random_enum(Generator &rng)
+			{
+				typedef std::underlying_type<E>::type u_type;
+				return static_cast<E>(std::uniform_int_distribution<u_type>(static_cast<u_type>(E::min_value), static_cast<u_type>(E::max_value))(rng));
+			}
+		}
+	}
+}

@@ -1,8 +1,9 @@
-#pragma once
 // name: performance_panel.hpp
 // type: c++
 // desc: base class declaration
 // auth: is0urce
+
+// ui panel for displaying fps
 
 #ifndef PX_UI_PERFORMANCE_PANEL_HPP
 #define PX_UI_PERFORMANCE_PANEL_HPP
@@ -18,8 +19,6 @@ namespace px
 	{
 		class performance_panel : public stack_panel
 		{
-		private:
-			fps_counter* m_fps;
 		public:
 			performance_panel(fps_counter& fps) : m_fps(&fps) {}
 			virtual ~performance_panel() {}
@@ -33,6 +32,9 @@ namespace px
 
 				cnv.write(start(), std::string("fps:") + std::to_string(m_fps->fps()));
 			}
+
+		private:
+			fps_counter* m_fps;
 		};
 	}
 }

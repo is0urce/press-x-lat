@@ -22,7 +22,7 @@ namespace px
 			struct nop_callback
 			{
 				template <typename E>
-				bool operator()(const E&) const
+				bool operator()(E const&) const
 				{
 					return true;
 				}
@@ -30,7 +30,7 @@ namespace px
 			struct white_color_provider
 			{
 				template <typename E>
-				color operator()(const E&) const
+				color operator()(E const&) const
 				{
 					return color(1, 1, 1);
 				}
@@ -116,7 +116,7 @@ namespace px
 				}
 				return result;
 			}
-			virtual bool click_control(const point2 &position, unsigned int vbutton) override
+			virtual bool click_control(point2 const& position, unsigned int vbutton) override
 			{
 				bool result = stack_panel::click_control(position, vbutton);
 
@@ -135,7 +135,7 @@ namespace px
 
 						std::function<void()> click_call; // erasure of generic element type
 
-						shared->enumerate([&](const auto &element) {
+						shared->enumerate([&](auto const& element) {
 							if (m_filter(element))
 							{
 								if (rectangle(pen, record_range).contains(position))
@@ -163,7 +163,7 @@ namespace px
 				auto shared = m_list.lock();
 				if (shared)
 				{
-					shared->enumerate([&](const auto &element) {
+					shared->enumerate([&](auto const& element) {
 						if (m_filter(element))
 						{
 							++result;
@@ -176,7 +176,7 @@ namespace px
 			{
 				return bounds().range().y() / m_line_size;
 			}
-			bool scrollable_up() const
+			bool scrollable_up() const noexcept
 			{
 				return m_skip > 0;
 			}
@@ -184,7 +184,7 @@ namespace px
 			{
 				return m_skip + lines < count;
 			}
-			void reset()
+			void reset() noexcept
 			{
 				m_skip = 0;
 				m_counted = 0;
