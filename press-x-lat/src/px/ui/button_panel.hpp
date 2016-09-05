@@ -31,12 +31,17 @@ namespace px
 			{
 				m_front = c;
 			}
+			static_text_panel* text()
+			{
+				return m_text;
+			}
+
 
 		public:
 			button_panel(color front, color hover, std::string text, color text_color, const Press &button = Press())
 				: m_front_color(front), m_hover_color(hover), m_hover(false)
 			{
-				emplace<static_text_panel>(alignment::fill(), text, text_color);
+				m_text = emplace<static_text_panel>(alignment::fill(), text, text_color).get();
 				emplace<press_panel<Press>>(alignment::fill(), button);
 			}
 			virtual ~button_panel() {}
@@ -55,6 +60,7 @@ namespace px
 			}
 
 		private:
+			static_text_panel* m_text;
 			bool m_hover;
 			color m_front_color;
 			color m_hover_color;
