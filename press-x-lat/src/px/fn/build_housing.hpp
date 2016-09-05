@@ -163,20 +163,13 @@ namespace px
 		template<typename Generator>
 		void build_house(unsigned int room_size, rectangle const& house_bounds, build_result &result, Generator &rng)
 		{
-			bsp<Generator> room_bsp(rng, house_bounds, room_size, wall_size); // room_zise rooms with 1-tile wall
-
 			std::vector<rectangle> rooms;
-			rooms.reserve(room_bsp.count());
-			room_bsp.enumerate_bounds([&](auto const& room) {
-				rooms.push_back(room);
-			});
-
-			exclude_rooms(room_bsp, rooms, rng); // remove random corners to make house less square
+			build_house_rooms(house_bounds, room_size, rooms, rng); // remove random corners to make house less square
 
 			// initial fill with walls and floor
 			for (auto &room : rooms)
 			{
-				room.inflated(wall_size).enumerate([&](point2 const& location) {
+				room.inflated(wall_size).enumerate_border([&](point2 const& location) {
 					result.tiles[location] = build_tile::wall;
 				});
 				room.enumerate([&](point2 const& location) {
@@ -184,35 +177,91 @@ namespace px
 				});
 			}
 
+			rectangle entrance_room;
+			build_house_entrance(rooms, house_bounds, entrance_room, result, rng); // select room for entrance and place outside door
+			build_house_doors(rooms, entrance_room, result, rng); // interconnect rooms and place doors
+			build_house_placeables(rooms, result, rng); // add placeables and habitants
+		}
+
+		// select excluded rooms
+		template<typename Generator>
+		void build_house_rooms(rectangle const& house_bounds, unsigned int room_size, std::vector<rectangle> &rooms, Generator &rng)
+		{
+			bsp<Generator> room_bsp(rng, house_bounds, room_size, wall_size); // room_zise rooms with 1-tile wall
+
+			rooms.reserve(room_bsp.count());
+			room_bsp.enumerate_bounds([&](auto const& room) {
+				rooms.push_back(room);
+			});
+
+			unsigned int count = room_bsp.count();
+
+			if (count >= 9) // 3x3 - can cut corners
+			{
+				room_bsp.enumerate_bounds([&](auto const& room) {
+					if (room.inflated(wall_size).touch_corner(house_bounds) && std::uniform_int_distribution<int>{0, 1}(rng) == 0)
+					{
+						rooms.erase(std::remove(rooms.begin(), rooms.end(), room));
+					}
+				});
+			}
+			else if (count >= 4) // 2x2 - at least can cut one corner
+			{
+				if (std::uniform_int_distribution<int>{0, 1}(rng) == 0)
+				{
+					std::vector<rectangle> cut_candidates;
+					cut_candidates.reserve(3); // not >= 4
+
+					room_bsp.enumerate_bounds([&](auto const& room) {
+						if (room.inflated(wall_size).touch_corner(house_bounds))
+						{
+							cut_candidates.push_back(room);
+						}
+					});
+
+					rooms.erase(std::remove(rooms.begin(), rooms.end(), random_item(cut_candidates, rng)));
+				}
+			}
+		}
+
+		// secect entry room in house
+		template<typename Generator>
+		void build_house_entrance(std::vector<rectangle> &rooms, rectangle const& bounds, rectangle & entrance_room, build_result &result, Generator &rng)
+		{
 			// detect entrance door candidates
 			std::vector<rectangle> entrance_room_candidates;
-			entrance_room_candidates.reserve(room_bsp.count()); // most rooms at border anyway
+			entrance_room_candidates.reserve(rooms.size()); // most rooms at border anyway
 			for (auto &room : rooms)
 			{
 				rectangle room_inflated = room.inflated(wall_size + 1);
-				if ((room_inflated & house_bounds) != room_inflated) // touching outside wall
+				if ((room_inflated & bounds) != room_inflated) // touching outside wall
 				{
 					entrance_room_candidates.push_back(room);
 				}
 			}
 
 			// select entrance door
-			auto entrance_room = random_item(entrance_room_candidates, rng);
+			entrance_room = random_item(entrance_room_candidates, rng);
 			std::vector<point2> entrance_door_candidates;
 			entrance_door_candidates.reserve(entrance_room.perimeter());
 			auto room_inflated = entrance_room.inflated(wall_size);
 			room_inflated.enumerate_border([&](auto const& location)
 			{
-				if (house_bounds.is_border(location) && !room_inflated.is_corner(location)) entrance_door_candidates.push_back(location);
+				if (bounds.is_border(location) && !room_inflated.is_corner(location)) entrance_door_candidates.push_back(location);
 			});
 			auto entrance_door = random_item(entrance_door_candidates, rng);
 			result.tiles[entrance_door] = build_tile::door_ark;
+		}
 
-			// interconnect rooms
+		// interconnect rooms in house
+		template<typename Generator>
+		void build_house_doors(std::vector<rectangle> &rooms, rectangle const& entrance_room, build_result &result, Generator &rng)
+		{
 			std::vector<rectangle> untangled;
 			std::vector<rectangle> tangled;
-			untangled.reserve(room_bsp.count());
-			tangled.reserve(room_bsp.count());
+			untangled.reserve(rooms.size());
+			tangled.reserve(rooms.size());
+
 			for (auto &room : rooms)
 			{
 				(room == entrance_room ? tangled : untangled).push_back(room);
@@ -251,44 +300,6 @@ namespace px
 
 				untangled.erase(std::remove(untangled.begin(), untangled.end(), std::get<0>(tangle)), untangled.end());
 				tangled.push_back(std::get<0>(tangle));
-			}
-
-			// placeables
-			build_house_placeables(rooms, result, rng);
-		}
-
-		// select excluded rooms
-		template<typename Generator>
-		void exclude_rooms(bsp<Generator> const& bsp, std::vector<rectangle> &rooms, Generator &rng)
-		{
-			rectangle bounds = bsp.bounds();
-			unsigned int count = bsp.count();
-
-			if (count >= 9) // 3x3 - at least can cut corners
-			{
-				bsp.enumerate_bounds([&](auto const& room) {
-					if (room.inflated(wall_size).touch_corner(bounds) && std::uniform_int_distribution<int>{0, 1}(rng) == 0)
-					{
-						rooms.erase(std::remove(rooms.begin(), rooms.end(), room));
-					}
-				});
-			}
-			else if (count >= 4) // 2x2 - at least can cut one corner
-			{
-				if (std::uniform_int_distribution<int>{0, 1}(rng) == 0)
-				{
-					std::vector<rectangle> cut_candidates;
-					cut_candidates.reserve(8); // not >= 9
-
-					bsp.enumerate_bounds([&](auto const& room) {
-						if (room.inflated(wall_size).touch_corner(bounds))
-						{
-							cut_candidates.push_back(room);
-						}
-					});
-
-					rooms.erase(std::remove(rooms.begin(), rooms.end(), random_item(cut_candidates, rng)));
-				}
 			}
 		}
 
