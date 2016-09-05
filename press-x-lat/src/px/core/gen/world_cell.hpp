@@ -11,6 +11,7 @@
 #include <px/common/vector.hpp>
 #include <px/core/image.hpp>
 #include <px/core/gen/river.hpp>
+#include <px/core/gen/biome.hpp>
 
 #include <memory>
 #include <random>
@@ -26,9 +27,11 @@ namespace px
 			unsigned int seed;
 			point2 location;
 			image img;
+			biome biome;
 			double level;
 			bool generated;
 
+			// numerical attributes
 			double altitude;
 			vector2 gradient; // dx, dy of altitude
 			double temperature;

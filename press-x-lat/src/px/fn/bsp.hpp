@@ -160,8 +160,9 @@ namespace px
 		public:
 			bsp(rng_type &rng, rectangle bounds, int min, int margin)
 			{
-				m_root.bounds = bounds;
-				m_root.bounds.deflate(margin);
+				m_bounds = bounds;
+				m_margin = margin;
+				m_root.bounds = bounds.deflated(margin);
 				m_root.split(rng, min, margin);
 			}
 			bsp(rng_type &rng, rectangle bounds, int min) : bsp(rng, bounds, min, 0)
@@ -195,6 +196,10 @@ namespace px
 			{
 				return m_root.count;
 			}
+			rectangle bounds() const noexcept
+			{
+				return m_bounds;
+			}
 
 			template <typename Operator>
 			static void enumerate(rng_type &rng, rectangle bounds, int min, Operator &fn)
@@ -205,6 +210,8 @@ namespace px
 
 		private:
 			node m_root;
+			int m_margin;
+			rectangle m_bounds;
 		};
 	}
 }

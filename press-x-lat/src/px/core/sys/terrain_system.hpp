@@ -43,15 +43,16 @@ namespace px
 				{
 					if (terrain const* scene = m_environment->scene())
 					{
-						int w = static_cast<int>(m_canvas->width());
-						int h = static_cast<int>(m_canvas->height());
-						point2 start = m_camera->current() - point2(w / 2, h / 2);
+						m_canvas->enumerate([&, camera = m_camera->current(), center = m_canvas->range() / 2](point2 const& location, auto &symbol) {
 
-						m_canvas->enumerate([&](point2 const& location, auto const& symbol) {
-							auto &img = scene->select(start.moved(location)).appearance();
-							point2 position(location.x(), h - location.y() - 1);
-							m_canvas->write(position, img.glyph, img.tint);
-							m_canvas->pset(position, img.bg);
+							auto relative = location - center;
+							relative.mirror<1>();
+
+							auto &img = scene->select(camera + relative).appearance();
+
+							symbol.code = img.glyph;
+							symbol.front = img.tint;
+							symbol.back = img.bg;
 						});
 					}
 				}

@@ -41,21 +41,22 @@ namespace px
 			}
 			virtual void update_system() override
 			{
-				auto center = m_canvas->range() / 2;
-				auto camera = m_camera ? m_camera->current() : point2(0, 0);
-				enumerate([this, camera, center](auto const& img)
+				if (m_camera)
 				{
-					if (img.active())
+					enumerate([this, camera = m_camera->current(), center = m_canvas->range() / 2](auto const& img)
 					{
-						if (location_component* location = img)
+						if (img.active())
 						{
-							auto relative = location->current() - camera;
-							relative.mirror<1>();
+							if (location_component* location = img)
+							{
+								auto relative = location->current() - camera;
+								relative.mirror<1>();
 
-							m_canvas->write(center + relative, img.glyph, img.tint);
+								m_canvas->write(center + relative, img.glyph, img.tint);
+							}
 						}
-					}
-				});
+					});
+				}
 			}
 
 		public:

@@ -60,7 +60,7 @@ namespace px
 					build_house(room_size, fn::random_rectangle<4>(sector_bounds, rng), result, rng);
 					break;
 				case farm_sector::barn:
-					build_barn(fn::random_rectangle<4>(sector_bounds, rng), result, rng);
+					build_barn(fn::random_rectangle<2>(sector_bounds, rng), result, rng);
 					break;
 				case farm_sector::field:
 					build_field(sector_bounds, result, rng);

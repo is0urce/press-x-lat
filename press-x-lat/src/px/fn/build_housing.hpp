@@ -165,26 +165,36 @@ namespace px
 		{
 			bsp<Generator> room_bsp(rng, house_bounds, room_size, wall_size); // room_zise rooms with 1-tile wall
 
-			// initial fill with walls and floor
-			house_bounds.enumerate([&](auto const& location) {
-				result.tiles[location] = build_tile::wall;
-			});
+			std::vector<rectangle> rooms;
+			rooms.reserve(room_bsp.count());
 			room_bsp.enumerate_bounds([&](auto const& room) {
+				rooms.push_back(room);
+			});
+
+			exclude_rooms(room_bsp, rooms, rng); // remove random corners to make house less square
+
+			// initial fill with walls and floor
+			for (auto &room : rooms)
+			{
+				room.inflated(wall_size).enumerate([&](point2 const& location) {
+					result.tiles[location] = build_tile::wall;
+				});
 				room.enumerate([&](point2 const& location) {
 					result.tiles[location] = build_tile::floor;
 				});
-			});
+			}
 
 			// detect entrance door candidates
 			std::vector<rectangle> entrance_room_candidates;
 			entrance_room_candidates.reserve(room_bsp.count()); // most rooms at border anyway
-			room_bsp.enumerate_bounds([&](auto const& room) {
+			for (auto &room : rooms)
+			{
 				rectangle room_inflated = room.inflated(wall_size + 1);
 				if ((room_inflated & house_bounds) != room_inflated) // touching outside wall
 				{
 					entrance_room_candidates.push_back(room);
 				}
-			});
+			}
 
 			// select entrance door
 			auto entrance_room = random_item(entrance_room_candidates, rng);
@@ -203,16 +213,11 @@ namespace px
 			std::vector<rectangle> tangled;
 			untangled.reserve(room_bsp.count());
 			tangled.reserve(room_bsp.count());
-			room_bsp.enumerate_bounds([&](auto const& room) {
-				if (room == entrance_room)
-				{
-					tangled.push_back(room);
-				}
-				else
-				{
-					untangled.push_back(room);
-				}
-			});
+			for (auto &room : rooms)
+			{
+				(room == entrance_room ? tangled : untangled).push_back(room);
+			}
+
 			while (!untangled.empty())
 			{
 				std::vector<std::tuple<rectangle, rectangle>> tangle_candidates;
@@ -232,12 +237,15 @@ namespace px
 				auto doorway = shrink_ark(std::get<0>(tangle).inflated(wall_size) & std::get<1>(tangle).inflated(wall_size));
 				bool last = untangled.size() == 1;
 
-				switch (last ? 0 : std::uniform_int_distribution<int>(0, 1)(rng)) // 0 - door, 1 - random size gap
+				switch (last ? 0 : std::uniform_int_distribution<int>(0, 3)(rng)) // 0 , 1, 2 - door (opened, closed, locked), 3, 4, 5 - gap (1 tile, random size, full)
 				{
 				case 0:
 				case 1:
-				default:
+				case 2:
 					result.tiles[random_point(doorway, rng)] = build_tile::door_ark;
+					break;
+				case 3:
+					result.tiles[random_point(doorway, rng)] = build_tile::floor;
 					break;
 				}
 
@@ -245,9 +253,51 @@ namespace px
 				tangled.push_back(std::get<0>(tangle));
 			}
 
-			// add habitants
-			room_bsp.enumerate_bounds([&](auto const& room) {
+			// placeables
+			build_house_placeables(rooms, result, rng);
+		}
 
+		// select excluded rooms
+		template<typename Generator>
+		void exclude_rooms(bsp<Generator> const& bsp, std::vector<rectangle> &rooms, Generator &rng)
+		{
+			rectangle bounds = bsp.bounds();
+			unsigned int count = bsp.count();
+
+			if (count >= 9) // 3x3 - at least can cut corners
+			{
+				bsp.enumerate_bounds([&](auto const& room) {
+					if (room.inflated(wall_size).touch_corner(bounds) && std::uniform_int_distribution<int>{0, 1}(rng) == 0)
+					{
+						rooms.erase(std::remove(rooms.begin(), rooms.end(), room));
+					}
+				});
+			}
+			else if (count >= 4) // 2x2 - at least can cut one corner
+			{
+				if (std::uniform_int_distribution<int>{0, 1}(rng) == 0)
+				{
+					std::vector<rectangle> cut_candidates;
+					cut_candidates.reserve(8); // not >= 9
+
+					bsp.enumerate_bounds([&](auto const& room) {
+						if (room.inflated(wall_size).touch_corner(bounds))
+						{
+							cut_candidates.push_back(room);
+						}
+					});
+
+					rooms.erase(std::remove(rooms.begin(), rooms.end(), random_item(cut_candidates, rng)));
+				}
+			}
+		}
+
+		// add habitants and furniture
+		template<typename Generator>
+		void build_house_placeables(std::vector<rectangle> &rooms, build_result &result, Generator &rng)
+		{
+			for (auto &room : rooms)
+			{
 				result.placeables.emplace_back(random_point(room, rng), build_placeable::mobile);
 				room.enumerate_border([&](auto const& location)
 				{
@@ -261,7 +311,7 @@ namespace px
 				{
 					result.placeables.emplace_back(center, build_placeable::furniture_table);
 				}
-			});
+			}
 		}
 	}
 }
