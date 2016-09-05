@@ -1,6 +1,6 @@
-// name: button_panel.hpp
+// name: press_panel.hpp
 // type: c++
-// desc: base class declaration
+// desc: template class
 // auth: is0urce
 
 #ifndef PX_UI_PRESS_PANEL_HPP
@@ -17,10 +17,20 @@ namespace px
 			bool operator()(unsigned int) { return false; }
 		};
 
-		// Button = bool operator()(unsigned int virtual_button)
+		// Press : bool(unsigned int)
 		template <typename Press = nop_press>
 		class press_panel : public stack_panel
 		{
+		public:
+			void set_press(Press fn)
+			{
+				m_press = fn;
+			}
+
+		public:
+			press_panel(const Press &button = Press()) : m_press(button) {}
+			virtual ~press_panel() {}
+
 		protected:
 			virtual bool click_control(point2 const& position, unsigned int v_button) override
 			{
@@ -30,10 +40,6 @@ namespace px
 				}
 				return stack_panel::click_control(position, v_button);
 			}
-
-		public:
-			press_panel(const Press &button = Press()) : m_press(button) {}
-			virtual ~press_panel() {}
 
 		private:
 			Press m_press;

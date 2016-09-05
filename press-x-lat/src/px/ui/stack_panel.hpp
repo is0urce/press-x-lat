@@ -62,6 +62,7 @@ namespace px
 			rectangle bounds() const;
 			point2 start() const;
 			void layout();
+			template<typename Op> bool panel_action(Op&& act);
 
 		private:
 			struct stacked_panel
@@ -88,20 +89,6 @@ namespace px
 				auto result = std::make_shared<SubPanel>(std::forward<Args>(args)...);
 				add(name, result, align);
 				return result;
-			}
-		private:
-			template<typename Op>
-			bool panel_action(Op&& act)
-			{
-				for (auto &p : m_stack)
-				{
-					if (p.second.panel && p.second.panel->active() && std::forward<Op>(act)(p.second)) return true;
-				}
-				for (auto &p : m_unnamed)
-				{
-					if (p.panel && p.panel->active() && std::forward<Op>(act)(p)) return true;
-				}
-				return false;
 			}
 		};
 	}

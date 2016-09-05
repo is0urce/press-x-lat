@@ -18,9 +18,20 @@ namespace px
 	{
 		class static_text_panel : public stack_panel
 		{
-		private:
-			std::string m_text;
-			color m_color;
+		public:
+			void set_text(std::string text)
+			{
+				m_text = text;
+			}
+			void set_text(std::string text, color c)
+			{
+				m_text = text;
+				m_color = c;
+			}
+			void set_text_color(color c)
+			{
+				m_color = c;
+			}
 
 		public:
 			static_text_panel(std::string text, color c) : m_text(text), m_color(c) {}
@@ -32,6 +43,10 @@ namespace px
 				stack_panel::draw_panel(cnv);
 				cnv.write(start(), m_text, m_color);
 			}
+
+		private:
+			std::string m_text;
+			color m_color;
 		};
 	}
 }

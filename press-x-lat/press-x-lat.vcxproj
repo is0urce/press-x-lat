@@ -287,6 +287,7 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\ui\board_panel.hpp" />
     <ClInclude Include="src\px\core\ui\inventory_panel.hpp" />
     <ClInclude Include="src\px\core\ui\start_panel.hpp" />
+    <ClInclude Include="src\px\ui\button_panel.hpp" />
     <ClInclude Include="src\px\ui\press_panel.hpp" />
     <ClInclude Include="src\px\ui\list_panel.hpp" />
     <ClInclude Include="src\px\ui\panel.hpp" />

@@ -8,7 +8,8 @@
 #include <px/common/fps_counter.hpp>
 
 #include <px/ui/stack_panel.hpp>
-
+#include <px/ui/performance_panel.hpp>
+#include <px/ui/button_panel.hpp>
 
 #include <px/core/ui/title_panel.hpp>
 #include <px/core/ui/ingame_panel.hpp>
@@ -22,8 +23,6 @@
 #include <px/core/ui/anvil_panel.hpp>
 #include <px/core/ui/map_panel.hpp>
 
-#include <px/ui/performance_panel.hpp>
-
 #include <px/core/sys/body_component.hpp>
 
 namespace px
@@ -32,12 +31,19 @@ namespace px
 	{
 		void environment::compose_ui()
 		{
+			// lambdas
+			auto exit = [&](auto const& location) { deactivate(); return true; };
+
 			// fps counter
-			auto fps = m_ui->emplace<ui::performance_panel>("performance", { { 0.0, 0.0 },{ 1,0 },{ -2, 1 },{ 1.0, 0.0 } }, m_fps);
+			//auto fps = m_ui->emplace<ui::performance_panel>("performance", { { 0.0, 0.0 },{ 1,0 },{ -2, 1 },{ 1.0, 0.0 } }, m_fps);
 			auto title = m_ui->emplace<title_panel>("title", ui::alignment::fill());
 			auto ingame = m_ui->emplace<ingame_panel>("ingame", ui::alignment::fill());
 
 			auto menu = title->emplace<start_panel>("menu", ui::alignment::fill());
+
+			auto label = menu->emplace<ui::button_panel<>>({ { 0.5, 0.5 },{ -8, -3 },{ 16, 1 },{ 0.0, 0.0 } }, 0x000000, 0x333333, "Light-@-Torch", color::white(), ui::nop_press());
+			auto start_button = menu->emplace<ui::button_panel<>>("create", { {0.5, 0.5}, {-8, 0}, {16, 1}, {0.0, 0.0} }, 0x000000, 0x333333, "create", color::white(), ui::nop_press());
+			auto exit_button = menu->emplace<ui::button_panel<decltype(exit)>>("exit", { { 0.5, 0.5 },{ -8, 2 },{ 16, 1 },{ 0.0, 0.0 } }, 0x000000, 0x333333, "exit", color::white(), exit);
 
 			auto status = ingame->emplace<status_panel>("status", { { 0.0, 0.0 },{ 1, 2 },{ -2, 1 },{ 1.0, 0.0 } }, *this);
 			auto target = ingame->emplace<target_panel>("target", { { 1.0, 0.0 },{ -12, 2 },{ -2, 1 },{ 1.0, 0.0 } }, *this);

@@ -46,32 +46,34 @@ namespace px
 
 				if (m_world)
 				{
-					auto m = m_world->map();
-					int w = static_cast<int>(m->width());
-					int h = static_cast<int>(m->height());
-
-					point2 center = bounds().start() + bounds().range() / 2;
-					point2 start = center.moved(point2(-w / 2, -h / 2));
-					rectangle map = { start, {w, h} };
-					point2 pen = start.moved({ 0, h - 1 });
-
-					cnv.rectangle(map.inflated(1), { 1, 1, 1 });
-					m->enumerate([&](auto const& location, auto &cell) {
-						point2 pos = pen + point2(location.x(), -location.y());
-
-						cnv.write(pos, cell.img.glyph, cell.img.tint);
-						cnv.pset(pos, cell.img.bg);
-					});
-
-					point2 hover_location = m_hover - pen;
-					hover_location.mirror<1>();
-					if (m->contains(hover_location))
+					if (auto m = m_world->map())
 					{
-						const auto &hover_cell = m->at(hover_location);
-						cnv.write(start, to_string(hover_cell.location), color(1, 1, 0));
-						if (hover_cell.landmark)
+						int w = static_cast<int>(m->width());
+						int h = static_cast<int>(m->height());
+
+						point2 center = bounds().start() + bounds().range() / 2;
+						point2 start = center.moved(point2(-w / 2, -h / 2));
+						rectangle map = { start, {w, h} };
+						point2 pen = start.moved({ 0, h - 1 });
+
+						cnv.rectangle(map.inflated(1), { 1, 1, 1 });
+						m->enumerate([&](auto const& location, auto &cell) {
+							point2 pos = pen + point2(location.x(), -location.y());
+
+							cnv.write(pos, cell.img.glyph, cell.img.tint);
+							cnv.pset(pos, cell.img.bg);
+						});
+
+						point2 hover_location = m_hover - pen;
+						hover_location.mirror<1>();
+						if (m->contains(hover_location))
 						{
-							cnv.write(start, hover_cell.landmark->name(), color(1, 1, 0));
+							const auto &hover_cell = m->at(hover_location);
+							cnv.write(start, to_string(hover_cell.location), color(1, 1, 0));
+							if (hover_cell.landmark)
+							{
+								cnv.write(start, hover_cell.landmark->name(), color(1, 1, 0));
+							}
 						}
 					}
 				}

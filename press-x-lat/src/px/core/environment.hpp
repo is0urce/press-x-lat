@@ -10,6 +10,7 @@
 
 #include <px/common/fps_counter.hpp>
 #include <px/common/qtree.hpp>
+#include <px/common/toggle.hpp>
 
 #include <px/ui/stack_panel.hpp>
 
@@ -35,7 +36,7 @@ namespace px
 		class anvil_panel;
 		class map_panel;
 
-		class environment
+		class environment : public toggle<true>
 		{
 		public:
 			typedef unsigned int time_type;

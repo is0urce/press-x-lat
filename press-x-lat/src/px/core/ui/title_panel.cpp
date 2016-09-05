@@ -19,6 +19,7 @@ namespace px
 		}
 		void title_panel::draw_panel(shell::canvas& cnv) const
 		{
+			stack_panel::draw_panel(cnv);
 		}
 	}
 }

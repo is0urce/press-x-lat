@@ -74,7 +74,7 @@ namespace px
 				add(&m_sprite_system);
 				add(&m_ui_system);
 
-				m_environment.start();
+				//m_environment.start();
 			}
 			virtual ~engine() {}
 			engine(engine const&) = delete;
@@ -112,6 +112,8 @@ namespace px
 			virtual void post_update_engine() override
 			{
 				m_renderer.render(0, m_canvas);
+
+				if (!m_environment.active()) deactivate();
 			}
 			virtual bool require_fixed() override
 			{

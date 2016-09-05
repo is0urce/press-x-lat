@@ -28,15 +28,15 @@ namespace px
 					deactivate("craft");
 					deactivate("map");
 					reverse_toggle("inventory");
-					break;
+					return true;
 				case key::panel_map:
 					deactivate("craft");
 					deactivate("inventory");
 					reverse_toggle("map");
+					return true;
 				default:
-					break;
+					return stack_panel::key_control(code);
 				}
-				return stack_panel::key_control(code);
 			}
 		};
 	}

@@ -17,20 +17,34 @@ namespace px
 		stack_panel::stack_panel() {}
 		stack_panel::~stack_panel() {}
 
-		void stack_panel::draw_panel(shell::canvas& cnv) const
+		template<typename Op>
+		bool stack_panel::panel_action(Op&& act)
 		{
+			for (auto &p : m_stack)
+			{
+				if (p.second.panel && p.second.panel->active() && std::forward<Op>(act)(p.second)) return true;
+			}
 			for (auto &p : m_unnamed)
 			{
-				if (p.panel && p.panel->active())
-				{
-					p.panel->draw(cnv);
-				}
+				if (p.panel && p.panel->active() && std::forward<Op>(act)(p)) return true;
 			}
+			return false;
+		}
+
+		void stack_panel::draw_panel(shell::canvas& cnv) const
+		{
 			for (auto &p : m_stack)
 			{
 				if (p.second.panel && p.second.panel->active())
 				{
 					p.second.panel->draw(cnv);
+				}
+			}
+			for (auto &p : m_unnamed)
+			{
+				if (p.panel && p.panel->active())
+				{
+					p.panel->draw(cnv);
 				}
 			}
 		}
@@ -52,13 +66,13 @@ namespace px
 			return panel_action([&](stacked_panel& p) { return p.panel->scroll(delta); });
 		}
 
-		void stack_panel::add(tag name_tag, panel_ptr panel, alignment align)
+		void stack_panel::add(tag name, panel_ptr panel, alignment align)
 		{
-			if (!panel) throw std::runtime_error("px::ui::stack_panel::add(tag, panel, align) - panel is null, tag = " + name_tag);
+			if (!panel) throw std::runtime_error("px::ui::stack_panel::add(tag, panel, align) - panel is null, tag = " + name);
+			if ((*this)[name]) throw std::runtime_error("px::ui::stack_panel::add(tag, panel, align) - panel name already occupied, tag = " + name);
 
-			remove(name_tag);
 			panel->layout(m_bounds);
-			m_stack.emplace(name_tag, stacked_panel(panel, align));
+			m_stack.emplace(name, stacked_panel(panel, align));
 		}
 		void stack_panel::add(panel_ptr panel, alignment align)
 		{

@@ -17,7 +17,6 @@ namespace px
 		class panel : public shell::control, public toggle<true>
 		{
 		public:
-			panel() {}
 			virtual ~panel() = 0 {}
 
 		protected:
