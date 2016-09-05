@@ -93,6 +93,8 @@ namespace px
 
 		private:
 			void focus();
+			void tie_map();
+			void untie_map();
 
 		private:
 			space_type* m_space;

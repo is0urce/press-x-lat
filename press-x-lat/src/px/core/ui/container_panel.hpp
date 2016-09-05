@@ -11,7 +11,7 @@
 #include <px/ui/board_panel.hpp>
 #include <px/ui/static_text_panel.hpp>
 #include <px/ui/list_panel.hpp>
-#include <px/ui/button_panel.hpp>
+#include <px/ui/press_panel.hpp>
 
 #include <px/rl/inventory.hpp>
 #include <px/rl/effect.hpp>
@@ -94,7 +94,7 @@ namespace px
 				add(m_container_list, { { 0.5, 0.0 },{ 0, 1 },{ 0, -2 },{ 0.5, 1.0 } });
 
 				emplace<ui::static_text_panel>("take_all", { { 1.0, 1.0 },{ -10, -1 },{ 10, 1 },{ 0.0, 0.0 } }, "[take all]", color(1, 1, 1));
-				emplace<ui::button_panel<take_all_operator>>({ { 1.0, 1.0 },{ -10, -1 },{ 10, 1 },{ 0.0, 0.0 } }, this);
+				emplace<ui::press_panel<take_all_operator>>({ { 1.0, 1.0 },{ -10, -1 },{ 10, 1 },{ 0.0, 0.0 } }, this);
 
 				m_user_list->set_click(move_item_operator(&m_user, &m_container));
 				m_container_list->set_click(move_item_operator(&m_container, &m_user));

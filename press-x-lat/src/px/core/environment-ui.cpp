@@ -9,14 +9,18 @@
 
 #include <px/ui/stack_panel.hpp>
 
+
+#include <px/core/ui/title_panel.hpp>
+#include <px/core/ui/ingame_panel.hpp>
+
+#include <px/core/ui/start_panel.hpp>
+
 #include <px/core/ui/status_panel.hpp>
 #include <px/core/ui/target_panel.hpp>
 #include <px/core/ui/inventory_panel.hpp>
 #include <px/core/ui/container_panel.hpp>
 #include <px/core/ui/anvil_panel.hpp>
 #include <px/core/ui/map_panel.hpp>
-#include <px/core/ui/title_panel.hpp>
-#include <px/core/ui/ingame_panel.hpp>
 
 #include <px/ui/performance_panel.hpp>
 
@@ -32,6 +36,8 @@ namespace px
 			auto fps = m_ui->emplace<ui::performance_panel>("performance", { { 0.0, 0.0 },{ 1,0 },{ -2, 1 },{ 1.0, 0.0 } }, m_fps);
 			auto title = m_ui->emplace<title_panel>("title", ui::alignment::fill());
 			auto ingame = m_ui->emplace<ingame_panel>("ingame", ui::alignment::fill());
+
+			auto menu = title->emplace<start_panel>("menu", ui::alignment::fill());
 
 			auto status = ingame->emplace<status_panel>("status", { { 0.0, 0.0 },{ 1, 2 },{ -2, 1 },{ 1.0, 0.0 } }, *this);
 			auto target = ingame->emplace<target_panel>("target", { { 1.0, 0.0 },{ -12, 2 },{ -2, 1 },{ 1.0, 0.0 } }, *this);
@@ -80,6 +86,14 @@ namespace px
 			m_craft->deactivate();
 
 			m_container->activate();
+		}
+		void environment::tie_map()
+		{
+			m_map->bind(m_world);
+		}
+		void environment::untie_map()
+		{
+			m_map->tear();
 		}
 	}
 }

@@ -8,7 +8,6 @@
 #include <px/core/terrain.hpp>
 
 #include <px/core/gen/world.hpp>
-#include <px/core/ui/map_panel.hpp>
 #include <px/core/data/factory.hpp>
 
 #include <px/core/unit.hpp>
@@ -32,7 +31,7 @@ namespace px
 			// ui
 			m_ui->deactivate("title");
 			m_ui->activate("ingame");
-			m_map->bind(m_world);
+			tie_map();
 
 			m_world.resize(settings::world_width, settings::world_height);
 			m_world.generate(0);
@@ -75,7 +74,7 @@ namespace px
 
 			m_running = false;
 
-			m_map->tear();
+			untie_map();
 
 			m_world.clear();
 		}

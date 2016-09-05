@@ -300,9 +300,6 @@
     <ClInclude Include="src\px\core\ui\inventory_panel.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\px\core\ui\main_panel.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\px\ui\list_panel.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -310,9 +307,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\px\core\ui\container_panel.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\px\ui\button_panel.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\px\core\sys\loot_component.hpp">
@@ -397,6 +391,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\px\core\gen\biome.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\ui\press_panel.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\core\ui\start_panel.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
