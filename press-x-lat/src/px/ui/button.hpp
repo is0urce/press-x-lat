@@ -3,8 +3,8 @@
 // desc: template class
 // auth: is0urce
 
-#ifndef PX_UI_BUTTON_PANEL_HPP
-#define PX_UI_BUTTON_PANEL_HPP
+#ifndef PX_UI_BUTTON_HPP
+#define PX_UI_BUTTON_HPP
 
 #include <px/common/color.hpp>
 
@@ -20,7 +20,7 @@ namespace px
 	namespace ui
 	{
 		template <typename Press = nop_press>
-		class button_panel : public stack_panel
+		class button : public stack_panel
 		{
 		public:
 			void set_hover_color(color c)
@@ -38,13 +38,13 @@ namespace px
 
 
 		public:
-			button_panel(color front, color hover, std::string text, color text_color, const Press &button = Press())
+			button(color front, color hover, std::string text, color text_color, const Press &button = Press())
 				: m_front_color(front), m_hover_color(hover), m_hover(false)
 			{
 				m_text = emplace<ui::text>(alignment::fill(), text, text_color).get();
 				emplace<press_panel<Press>>(alignment::fill(), button);
 			}
-			virtual ~button_panel() {}
+			virtual ~button() {}
 
 		protected:
 			virtual bool hover_control(point2 const& position) override

@@ -8,8 +8,8 @@
 
 #include <px/ui/stack_panel.hpp>
 
-#include <px/ui/board_panel.hpp>
-#include <px/ui/static_text_panel.hpp>
+#include <px/ui/board.hpp>
+#include <px/ui/text.hpp>
 
 #include <px/core/gen/world.hpp>
 #include <px/core/gen/landmark.hpp>

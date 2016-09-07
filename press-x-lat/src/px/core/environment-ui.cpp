@@ -9,7 +9,7 @@
 
 #include <px/ui/stack_panel.hpp>
 #include <px/ui/performance_panel.hpp>
-#include <px/ui/button_panel.hpp>
+#include <px/ui/button.hpp>
 
 #include <px/core/ui/title_panel.hpp>
 #include <px/core/ui/ingame_panel.hpp>
@@ -35,12 +35,12 @@ namespace px
 			auto fps = m_ui->emplace<ui::performance_panel>("performance", { { 0.0, 0.0 },{ 1,0 },{ -2, 1 },{ 1.0, 0.0 } }, m_fps);
 			auto title = m_ui->emplace<title_panel>("title", ui::alignment::fill());
 			{
-				auto exit = [&](auto const& location) { deactivate(); return true; };
+				auto exit = [&](auto const& location, unsigned int vk) { deactivate(); return true; };
 				auto menu = title->emplace<start_panel>("menu", ui::alignment::fill());
 				{
 					auto label = menu->emplace<ui::text>({ { 0.5, 0.0 },{ -8, 1 },{ 15, 1 },{ 0.0, 0.0 } }, "Light-a-Torch", color::white());
-					auto start_button = menu->emplace<ui::button_panel<>>("create", { {0.5, 0.5}, {-8, 0}, {15, 1}, {0.0, 0.0} }, 0x000000, 0x333333, "create", color::white(), ui::nop_press());
-					auto exit_button = menu->emplace<ui::button_panel<decltype(exit)>>("exit", { { 0.5, 0.5 },{ -8, 2 },{ 15, 1 },{ 0.0, 0.0 } }, 0x000000, 0x333333, "exit", color::white(), exit);
+					auto start_button = menu->emplace<ui::button<>>("create", { {0.5, 0.5}, {-8, 0}, {15, 1}, {0.0, 0.0} }, 0x000000, 0x333333, "create", color::white(), ui::nop_press());
+					auto exit_button = menu->emplace<ui::button<decltype(exit)>>("exit", { { 0.5, 0.5 },{ -8, 2 },{ 15, 1 },{ 0.0, 0.0 } }, 0x000000, 0x333333, "exit", color::white(), exit);
 
 					label->set_alignment(ui::text_alignment::center);
 					start_button->text()->set_alignment(ui::text_alignment::center);

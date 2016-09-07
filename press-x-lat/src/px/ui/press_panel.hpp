@@ -14,7 +14,7 @@ namespace px
 	{
 		struct nop_press
 		{
-			bool operator()(unsigned int) { return false; }
+			bool operator()(point2 const&, unsigned int) { return false; }
 		};
 
 		// Press : bool(unsigned int)
@@ -36,7 +36,7 @@ namespace px
 			{
 				if (bounds().contains(position))
 				{
-					return m_press(v_button);
+					return m_press(position, v_button);
 				}
 				return stack_panel::click_control(position, v_button);
 			}

@@ -3,15 +3,13 @@
 // desc: base class declaration
 // auth: is0urce
 
-#ifndef PX_UI_TEXT_PANEL_HPP
-#define PX_UI_TEXT_PANEL_HPP
+#ifndef PX_UI_TEXT_HPP
+#define PX_UI_TEXT_HPP
 
 #include <px/ui/stack_panel.hpp>
-
-#include <px/common/color.hpp>
-
 #include <px/ui/text_alignment.hpp>
 
+#include <px/common/color.hpp>
 #include <functional>
 #include <string>
 

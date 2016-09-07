@@ -8,8 +8,8 @@
 
 #include <px/ui/stack_panel.hpp>
 
-#include <px/ui/board_panel.hpp>
-#include <px/ui/static_text_panel.hpp>
+#include <px/ui/board.hpp>
+#include <px/ui/text.hpp>
 #include <px/ui/list_panel.hpp>
 #include <px/ui/press_panel.hpp>
 
@@ -39,7 +39,7 @@ namespace px
 
 			struct take_all_operator
 			{
-				bool operator()(unsigned int v_button)
+				bool operator()(point2 const&, unsigned int v_button)
 				{
 					panel->take_all();
 					return true;
@@ -82,8 +82,8 @@ namespace px
 		public:
 			container_panel()
 			{
-				emplace<ui::board_panel>({ { 0.0, 0.0 },{ 0, 0 },{ 0, 1 },{ 1.0, 0.0 } }, color(0, 0, 1));
-				emplace<ui::board_panel>({ { 0.0, 0.0 },{ 0, 1 },{ 0, -1 },{ 1.0, 1.0 } }, color(0, 0, 0.5));
+				emplace<ui::board>({ { 0.0, 0.0 },{ 0, 0 },{ 0, 1 },{ 1.0, 0.0 } }, color(0, 0, 1));
+				emplace<ui::board>({ { 0.0, 0.0 },{ 0, 1 },{ 0, -1 },{ 1.0, 1.0 } }, color(0, 0, 0.5));
 				emplace<ui::text>({ { 0.0, 0.0 },{ 0, 0 },{ 0, 1 },{ 0.5, 0.0 } }, "[YOU]", color(1, 1, 1));
 				emplace<ui::text>({ { 0.5, 0.0 },{ 0, 0 },{ 0, 1 },{ 0.5, 0.0 } }, "[NOT YOU]", color(1, 1, 1));
 
