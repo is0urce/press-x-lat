@@ -8,19 +8,19 @@
 #ifndef PX_CORE_ENVIRONMENT_HPP
 #define PX_CORE_ENVIRONMENT_HPP
 
-#include <px/common/fps_counter.hpp>
-#include <px/common/qtree.hpp>
-#include <px/common/toggle.hpp>
-
 #include <px/ui/stack_panel.hpp>
 
-#include <px/rl/faction_relation.hpp>
-#include <px/rl/traverse.hpp>
-
+#include <px/core/world_settings.hpp>
 #include <px/core/gen/world.hpp>
 #include <px/core/terrain_director.hpp>
 #include <px/core/terrain.hpp>
 
+#include <px/rl/faction_relation.hpp>
+#include <px/rl/traverse.hpp>
+
+#include <px/common/fps_counter.hpp>
+#include <px/common/qtree.hpp>
+#include <px/common/toggle.hpp>
 #include <memory>
 
 namespace px
@@ -100,6 +100,7 @@ namespace px
 		private:
 			space_type* m_space;
 			factory* m_factory;
+			world_settings m_settings;
 			world m_world;
 			terrain_director m_terrain_director;
 			terrain m_terrain;

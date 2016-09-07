@@ -7,7 +7,6 @@
 
 namespace px
 {
-	using shell::key;
 	namespace core
 	{
 		title_panel::title_panel() {}

@@ -13,36 +13,41 @@
 #include <px/ui/press_panel.hpp>
 #include <px/ui/text.hpp>
 
+#include <functional>
 #include <string>
 
 namespace px
 {
 	namespace ui
 	{
-		template <typename Press = nop_press>
 		class button : public stack_panel
 		{
 		public:
+			typedef std::function<bool(point2 const&, unsigned int)> press_fn;
+
+		public:
 			void set_hover_color(color c)
 			{
-				m_hover = c;
+				m_hover_color = c;
 			}
 			void set_front_color(color c)
 			{
-				m_front = c;
+				m_front_color = c;
 			}
-			text* text()
+			ui::text* text()
 			{
 				return m_text;
 			}
 
 
 		public:
-			button(color front, color hover, std::string text, color text_color, const Press &button = Press())
+			button(color front, color hover, std::string text, color text_color, press_fn button)
 				: m_front_color(front), m_hover_color(hover), m_hover(false)
 			{
+				if (!button) throw std::runtime_error("px::ui::button::button(..) press function is null");
+
 				m_text = emplace<ui::text>(alignment::fill(), text, text_color).get();
-				emplace<press_panel<Press>>(alignment::fill(), button);
+				emplace<press_panel<press_fn>>(alignment::fill(), button);
 			}
 			virtual ~button() {}
 

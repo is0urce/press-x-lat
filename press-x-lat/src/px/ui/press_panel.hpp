@@ -8,6 +8,8 @@
 
 #include <px/ui/stack_panel.hpp>
 
+#include <functional>
+
 namespace px
 {
 	namespace ui
@@ -18,7 +20,7 @@ namespace px
 		};
 
 		// Press : bool(unsigned int)
-		template <typename Press = nop_press>
+		template <typename Press>
 		class press_panel : public stack_panel
 		{
 		public:
