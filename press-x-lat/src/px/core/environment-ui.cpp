@@ -38,13 +38,13 @@ namespace px
 				auto exit = [&](auto const& location) { deactivate(); return true; };
 				auto menu = title->emplace<start_panel>("menu", ui::alignment::fill());
 				{
-					auto label = menu->emplace<ui::static_text_panel>({ { 0.5, 0.0 },{ -8, 1 },{ 15, 1 },{ 0.0, 0.0 } }, "Light-a-Torch", color::white());
+					auto label = menu->emplace<ui::text>({ { 0.5, 0.0 },{ -8, 1 },{ 15, 1 },{ 0.0, 0.0 } }, "Light-a-Torch", color::white());
 					auto start_button = menu->emplace<ui::button_panel<>>("create", { {0.5, 0.5}, {-8, 0}, {15, 1}, {0.0, 0.0} }, 0x000000, 0x333333, "create", color::white(), ui::nop_press());
 					auto exit_button = menu->emplace<ui::button_panel<decltype(exit)>>("exit", { { 0.5, 0.5 },{ -8, 2 },{ 15, 1 },{ 0.0, 0.0 } }, 0x000000, 0x333333, "exit", color::white(), exit);
 
-					label->set_text_alignment(ui::text_alignment::center);
-					start_button->text()->set_text_alignment(ui::text_alignment::center);
-					exit_button->text()->set_text_alignment(ui::text_alignment::center);
+					label->set_alignment(ui::text_alignment::center);
+					start_button->text()->set_alignment(ui::text_alignment::center);
+					exit_button->text()->set_alignment(ui::text_alignment::center);
 				}
 			}
 			auto ingame = m_ui->emplace<ingame_panel>("ingame", ui::alignment::fill());

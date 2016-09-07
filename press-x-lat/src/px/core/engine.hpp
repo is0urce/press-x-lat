@@ -78,6 +78,7 @@ namespace px
 			}
 			virtual ~engine() {}
 			engine(engine const&) = delete;
+			engine& operator=(engine const&) = delete;
 
 		private:
 			point2 translate_canvas(point2 const& pixel) const
@@ -113,7 +114,10 @@ namespace px
 			{
 				m_renderer.render(0, m_canvas);
 
-				if (!m_environment.active()) deactivate();
+				if (!m_environment.active())
+				{
+					deactivate();
+				}
 			}
 			virtual bool require_fixed() override
 			{

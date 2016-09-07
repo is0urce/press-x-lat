@@ -86,7 +86,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		MessageBox(NULL, L"unknown exception", NULL, NULL);
 	}
 
-	return (int)msg.wParam;
+	return static_cast<int>(msg.wParam);
 }
 
 
@@ -165,12 +165,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_LBUTTONDOWN:
 		if (g_control)
 		{
+			g_control->hover({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
 			g_control->click({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) }, 1);
 		}
 		break;
 	case WM_RBUTTONDOWN:
 		if (g_control)
 		{
+			g_control->hover({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
 			g_control->click({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) }, 2);
 		}
 		break;

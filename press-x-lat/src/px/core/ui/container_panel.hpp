@@ -84,8 +84,8 @@ namespace px
 			{
 				emplace<ui::board_panel>({ { 0.0, 0.0 },{ 0, 0 },{ 0, 1 },{ 1.0, 0.0 } }, color(0, 0, 1));
 				emplace<ui::board_panel>({ { 0.0, 0.0 },{ 0, 1 },{ 0, -1 },{ 1.0, 1.0 } }, color(0, 0, 0.5));
-				emplace<ui::static_text_panel>({ { 0.0, 0.0 },{ 0, 0 },{ 0, 1 },{ 0.5, 0.0 } }, "[YOU]", color(1, 1, 1));
-				emplace<ui::static_text_panel>({ { 0.5, 0.0 },{ 0, 0 },{ 0, 1 },{ 0.5, 0.0 } }, "[NOT YOU]", color(1, 1, 1));
+				emplace<ui::text>({ { 0.0, 0.0 },{ 0, 0 },{ 0, 1 },{ 0.5, 0.0 } }, "[YOU]", color(1, 1, 1));
+				emplace<ui::text>({ { 0.5, 0.0 },{ 0, 0 },{ 0, 1 },{ 0.5, 0.0 } }, "[NOT YOU]", color(1, 1, 1));
 
 				m_user_list = std::make_shared<list_type>();
 				add(m_user_list, { { 0.0, 0.0 },{ 0, 1 },{ 0, -2 },{ 0.5, 1.0 } });
@@ -93,7 +93,7 @@ namespace px
 				m_container_list = std::make_shared<list_type>();
 				add(m_container_list, { { 0.5, 0.0 },{ 0, 1 },{ 0, -2 },{ 0.5, 1.0 } });
 
-				emplace<ui::static_text_panel>("take_all", { { 1.0, 1.0 },{ -10, -1 },{ 10, 1 },{ 0.0, 0.0 } }, "[take all]", color(1, 1, 1));
+				emplace<ui::text>("take_all", { { 1.0, 1.0 },{ -10, -1 },{ 10, 1 },{ 0.0, 0.0 } }, "[take all]", color(1, 1, 1));
 				emplace<ui::press_panel<take_all_operator>>({ { 1.0, 1.0 },{ -10, -1 },{ 10, 1 },{ 0.0, 0.0 } }, this);
 
 				m_user_list->set_click(move_item_operator(&m_user, &m_container));

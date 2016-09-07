@@ -11,7 +11,7 @@
 #include <px/ui/stack_panel.hpp>
 
 #include <px/ui/press_panel.hpp>
-#include <px/ui/static_text_panel.hpp>
+#include <px/ui/text.hpp>
 
 #include <string>
 
@@ -31,7 +31,7 @@ namespace px
 			{
 				m_front = c;
 			}
-			static_text_panel* text()
+			text* text()
 			{
 				return m_text;
 			}
@@ -41,7 +41,7 @@ namespace px
 			button_panel(color front, color hover, std::string text, color text_color, const Press &button = Press())
 				: m_front_color(front), m_hover_color(hover), m_hover(false)
 			{
-				m_text = emplace<static_text_panel>(alignment::fill(), text, text_color).get();
+				m_text = emplace<ui::text>(alignment::fill(), text, text_color).get();
 				emplace<press_panel<Press>>(alignment::fill(), button);
 			}
 			virtual ~button_panel() {}
@@ -60,7 +60,7 @@ namespace px
 			}
 
 		private:
-			static_text_panel* m_text;
+			ui::text* m_text;
 			bool m_hover;
 			color m_front_color;
 			color m_hover_color;

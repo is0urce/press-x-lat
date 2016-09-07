@@ -292,12 +292,12 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\ui\list_panel.hpp" />
     <ClInclude Include="src\px\ui\panel.hpp" />
     <ClInclude Include="src\px\ui\performance_panel.hpp" />
+    <ClInclude Include="src\px\ui\progress_bar.hpp" />
     <ClInclude Include="src\px\ui\stack_panel.hpp" />
     <ClInclude Include="src\px\core\ui\status_panel.hpp" />
     <ClInclude Include="src\px\core\ui\target_panel.hpp" />
-    <ClInclude Include="src\px\ui\static_text_panel.hpp" />
     <ClInclude Include="src\px\ui\text_alignment.hpp" />
-    <ClInclude Include="src\px\ui\text_panel.hpp" />
+    <ClInclude Include="src\px\ui\text.hpp" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
