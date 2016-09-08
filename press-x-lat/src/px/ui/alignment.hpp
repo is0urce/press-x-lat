@@ -32,6 +32,17 @@ namespace px
 				, size_relative(s_relative)
 			{
 			}
+			alignment(
+				vector2::component a_percent_x, vector2::component a_percent_y,
+				point2::component a_offset_x, point2::component a_offset_y,
+				point2::component s_absolute_x, point2::component s_absolute_y,
+				vector2::component s_relative_x, vector2::component s_relative_y)
+				: anchor_percent(a_percent_x, a_percent_y)
+				, anchor_offset(a_offset_x, a_offset_y)
+				, size_absolute(s_absolute_x, s_absolute_y)
+				, size_relative(s_relative_x, s_relative_y)
+			{
+			}
 			static alignment fill()
 			{
 				return{ { 0.0, 0.0 },{ 0, 0 },{ 0, 0 },{ 1.0, 1.0 } };

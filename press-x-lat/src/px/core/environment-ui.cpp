@@ -57,9 +57,29 @@ namespace px
 					auto label = create->emplace<ui::text>({ { 0.0, 0.0 },{ 0, 1 },{ 0, 0 },{ 1.0, 1.0 } }, "Create your world...", color::white());
 					label->set_alignment(ui::text_alignment::center);
 
-					create->emplace<ui::progress_bar>({ {0.5, 0.5}, { -5, 0 }, { 10, 1 }, { 0.0, 0.0 } }, 0x333333, 0x999999, [this]() { return std::pair<int, int>(m_settings[0], world_settings::max_value); });
-					create->emplace<ui::button>({ { 0.5, 0.5 },{ -12, 0 },{ 1, 1 },{ 0.0, 0.0 } }, 0x000000, 0x333333, "+", color::white(), [this](auto const& location, unsigned int vk) { m_settings.increment(0); return true; });
-					create->emplace<ui::button>({ { 0.5, 0.5 },{ 20, 0 },{ 1, 1 },{ 0.0, 0.0 } }, 0x000000, 0x333333, "-", color::white(), [this](auto const& location, unsigned int vk) { m_settings.decrement(0); return true; });
+					std::vector<std::pair<world_aspect, std::string>> aspects{
+						{ world_aspect::inertia,  "Inertia:" },
+						{ world_aspect::knowledge,  "Knowledge:" },
+						{ world_aspect::sentience,  "Sentience:" },
+						{ world_aspect::entropy,  "Entropy:" },
+						{ world_aspect::existence,  "Existence:" } };
+
+					int i = 0;
+					for (auto& aspect : aspects)
+					{
+						create->emplace<ui::progress_bar>({ {0.5, 0.5}, {-5, i * 2}, {10, 1}, {0.0, 0.0} },
+							0xcccccc, 0x999999,
+							[aspect = std::get<0>(aspect), this]() { return std::pair<int, int>(m_settings[aspect], world_settings::max_value); });
+						create->emplace<ui::button>({ { 0.5, 0.5 },{ -12, i * 2 },{ 1, 1 },{ 0.0, 0.0 } },
+							color::black(), 0x333333, "-", color::white(),
+							[aspect = std::get<0>(aspect), this](auto const&, auto) { m_settings.decrement(aspect); return true; });
+						create->emplace<ui::button>({ { 0.5, 0.5 },{ 12, i * 2 },{ 1, 1 },{ 0.0, 0.0 } },
+							color::black(), 0x333333, "+", color::white(),
+							[aspect = std::get<0>(aspect), this](auto const&, auto) { m_settings.increment(aspect); return true; });
+						create->emplace<ui::text>({ { 0.5, 0.5 },{ -30, i * 2 },{ 1, 1 },{ 0.0, 0.0 } }, std::get<1>(aspect), color::white());
+
+						++i;
+					}
 				}
 
 				menu->activate();

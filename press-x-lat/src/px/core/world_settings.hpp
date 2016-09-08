@@ -6,6 +6,8 @@
 #ifndef PX_CORE_WORLD_SETTINGS_HPP
 #define PX_CORE_WORLD_SETTINGS_HPP
 
+#include <px/core/world_aspect.hpp>
+
 #include <array>
 
 namespace px
@@ -15,41 +17,59 @@ namespace px
 		class world_settings
 		{
 		public:
-			static const size_t attribute_count = 5;
+			static const size_t attribute_count = static_cast<size_t>(world_aspect::max_value) + 1;
 			static const int min_value = 0;
 			static const int max_value = 10;
 			static const int median_value = (min_value + max_value) / 2;
 
+
 		public:
-			template <size_t Attribute>
+			template <world_aspect Attribute>
 			int get() const noexcept
 			{
-				static_assert(Attribute < attribute_count, "Attribute < attribute_count");
-				return m_attributes[Attribute];
+				return m_attributes[static_cast<size_t>(Attribute)];
 			}
-			template <size_t Attribute>
+			template <world_aspect Attribute>
 			int& set(int n) noexcept
 			{
-				static_assert(Attribute < attribute_count, "Attribute < attribute_count");
-				return m_attributes[Attribute] = n;
+				return m_attributes[static_cast<size_t>(Attribute)] = n;
 			}
 
-			int& increment(size_t attribute) noexcept
+			int& increment(world_aspect attribute) noexcept
 			{
-				return m_attributes[attribute] = (std::min)(m_attributes[attribute] + 1, max_value);
+				size_t index = static_cast<size_t>(attribute);
+				return m_attributes[index] = (std::min)(m_attributes[index] + 1, max_value);
 			}
-			int& decrement(size_t attribute) noexcept
+			int& decrement(world_aspect attribute) noexcept
 			{
-				return m_attributes[attribute] = (std::max)(m_attributes[attribute] - 1, min_value);
+				size_t index = static_cast<size_t>(attribute);
+				return m_attributes[index] = (std::max)(m_attributes[index] - 1, min_value);
+			}
+			template <world_aspect Attribute>
+			int& increment() noexcept
+			{
+				size_t index = static_cast<size_t>(Attribute);
+				return m_attributes[index] = (std::min)(m_attributes[index] + 1, max_value);
+			}
+			template <world_aspect Attribute>
+			int& decrement() noexcept
+			{
+				size_t index = static_cast<size_t>(Attribute);
+				return m_attributes[index] = (std::max)(m_attributes[index] - 1, min_value);
+			}
+			int& mod(world_aspect attribute, int val) noexcept
+			{
+				size_t index = static_cast<size_t>(attribute);
+				return m_attributes[index] = (std::min)((std::max)(m_attributes[index] + val, min_value), max_value);
 			}
 
-			int& operator[](size_t attribute) noexcept
+			int& operator[](world_aspect attribute) noexcept
 			{
-				return m_attributes[attribute];
+				return m_attributes[static_cast<size_t>(attribute)];
 			}
-			const int& operator[](size_t attribute) const noexcept
+			const int& operator[](world_aspect attribute) const noexcept
 			{
-				return m_attributes[attribute];
+				return m_attributes[static_cast<size_t>(attribute)];
 			}
 
 		public:
