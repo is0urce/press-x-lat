@@ -31,22 +31,23 @@ namespace px
 		void environment::compose_ui()
 		{
 			// fps counter
-			auto fps = m_ui->emplace<ui::performance_panel>("performance", { { 0.0, 0.0 },{ 1,0 },{ -2, 1 },{ 1.0, 0.0 } }, m_fps);
+			auto fps = m_ui->emplace<ui::performance_panel>({ { 0.0, 0.0 },{ 1,0 },{ -2, 1 },{ 1.0, 0.0 } }, m_fps);
 			auto title = m_ui->emplace<title_panel>("title", ui::alignment::fill());
 			{
-				auto menu = title->emplace<ui::stack_panel>("menu", ui::alignment::fill());
-				auto create = title->emplace<ui::stack_panel>("create", ui::alignment::fill());
-
-				auto exit = [this](auto const& location, unsigned int vk) { deactivate(); return true; };
-				auto start = [menu = menu.get(), create = create.get()](auto const& location, unsigned int vk) { menu->deactivate(); create->activate(); return true; };
+				auto menu = title->emplace<ui::stack_panel>("menu", ui::alignment::fill()).get();
+				auto create = title->emplace<ui::stack_panel>("create", ui::alignment::fill()).get();
 
 				// menu
 				{
 					auto label = menu->emplace<ui::text>({ { 0.0, 0.0 },{ 0, 1 },{ 0, 0 },{ 1.0, 1.0 } }, "Light-a-Torch", color::white());
 					label->set_alignment(ui::text_alignment::center);
 
-					auto start_button = menu->emplace<ui::button>("create", { {0.5, 0.5}, {-8, 0}, {15, 1}, {0.0, 0.0} }, 0x000000, 0x333333, "create", color::white(), start);
-					auto exit_button = menu->emplace<ui::button>("exit", { { 0.5, 0.5 },{ -8, 2 },{ 15, 1 },{ 0.0, 0.0 } }, 0x000000, 0x333333, "exit", color::white(), exit);
+					auto start_button = menu->emplace<ui::button>({ { 0.5, 0.5 }, { -8, 0 }, { 15, 1 }, { 0.0, 0.0 } },
+						color::black(), 0x333333, "create", color::white(),
+						[menu, create](auto const& location, auto) { menu->deactivate(); create->activate(); return true; });
+					auto exit_button = menu->emplace<ui::button>({ { 0.5, 0.5 }, { -8, 2 }, { 15, 1 }, { 0.0, 0.0 } },
+						color::black(), 0x333333, "exit", color::white(),
+						[this](auto const& location, auto) { deactivate(); return true; });
 
 					start_button->text()->set_alignment(ui::text_alignment::center);
 					exit_button->text()->set_alignment(ui::text_alignment::center);
@@ -57,26 +58,24 @@ namespace px
 					auto label = create->emplace<ui::text>({ { 0.0, 0.0 },{ 0, 1 },{ 0, 0 },{ 1.0, 1.0 } }, "Create your world...", color::white());
 					label->set_alignment(ui::text_alignment::center);
 
-					std::vector<std::pair<world_aspect, std::string>> aspects{
+					int i = 0;
+					for (auto const& aspect : std::vector<std::pair<world_aspect, std::string>>{
 						{ world_aspect::inertia,  "Inertia:" },
 						{ world_aspect::knowledge,  "Knowledge:" },
 						{ world_aspect::sentience,  "Sentience:" },
 						{ world_aspect::entropy,  "Entropy:" },
-						{ world_aspect::existence,  "Existence:" } };
-
-					int i = 0;
-					for (auto& aspect : aspects)
+						{ world_aspect::existence,  "Existence:" } })
 					{
+						create->emplace<ui::text>({ { 0.5, 0.5 },{ -30, i * 2 },{ 1, 1 },{ 0.0, 0.0 } }, std::get<1>(aspect), color::white());
 						create->emplace<ui::progress_bar>({ {0.5, 0.5}, {-5, i * 2}, {10, 1}, {0.0, 0.0} },
 							0xcccccc, 0x999999,
 							[aspect = std::get<0>(aspect), this]() { return std::pair<int, int>(m_settings[aspect], world_settings::max_value); });
-						create->emplace<ui::button>({ { 0.5, 0.5 },{ -12, i * 2 },{ 1, 1 },{ 0.0, 0.0 } },
+						create->emplace<ui::button>({ { 0.5, 0.5 }, { -12, i * 2 }, { 1, 1 }, { 0.0, 0.0 } },
 							color::black(), 0x333333, "-", color::white(),
 							[aspect = std::get<0>(aspect), this](auto const&, auto) { m_settings.decrement(aspect); return true; });
-						create->emplace<ui::button>({ { 0.5, 0.5 },{ 12, i * 2 },{ 1, 1 },{ 0.0, 0.0 } },
+						create->emplace<ui::button>({ { 0.5, 0.5 }, { 12, i * 2 }, { 1, 1 }, { 0.0, 0.0 } },
 							color::black(), 0x333333, "+", color::white(),
 							[aspect = std::get<0>(aspect), this](auto const&, auto) { m_settings.increment(aspect); return true; });
-						create->emplace<ui::text>({ { 0.5, 0.5 },{ -30, i * 2 },{ 1, 1 },{ 0.0, 0.0 } }, std::get<1>(aspect), color::white());
 
 						++i;
 					}
@@ -87,12 +86,12 @@ namespace px
 			}
 			auto ingame = m_ui->emplace<ingame_panel>("ingame", ui::alignment::fill());
 			{
-				auto status = ingame->emplace<status_panel>("status", { { 0.0, 0.0 },{ 1, 2 },{ -2, 1 },{ 1.0, 0.0 } }, *this);
-				auto target = ingame->emplace<target_panel>("target", { { 1.0, 0.0 },{ -12, 2 },{ -2, 1 },{ 1.0, 0.0 } }, *this);
-				m_inventory = ingame->emplace<inventory_panel>("inventory", { { 0.3, 0.1 },{ 0, 0 },{ 0, 0 },{ 0.4, 0.8 } });
-				m_craft = ingame->emplace<anvil_panel>("craft", { { 0.1, 0.1 },{ 0, 0 },{ 0, 0 },{ 0.8, 0.8 } });
-				m_container = ingame->emplace<container_panel>("container", { { 0.2, 0.1 },{ 0, 0 },{ 0, 0 },{ 0.6, 0.8 } });
-				m_map = ingame->emplace<map_panel>("map", { { 0.1, 0.1 },{ 0, 0 },{ 0, 0 },{ 0.8, 0.8 } });
+				ingame->emplace<status_panel>("status", { { 0.0, 0.0 },{ 1, 2 },{ -2, 1 },{ 1.0, 0.0 } }, *this);
+				ingame->emplace<target_panel>("target", { { 1.0, 0.0 },{ -12, 2 },{ -2, 1 },{ 1.0, 0.0 } }, *this);
+				m_inventory = ingame->emplace<inventory_panel>("inventory", { { 0.3, 0.1 },{ 0, 0 },{ 0, 0 },{ 0.4, 0.8 } }).get();
+				m_craft = ingame->emplace<anvil_panel>("craft", { { 0.1, 0.1 },{ 0, 0 },{ 0, 0 },{ 0.8, 0.8 } }).get();
+				m_container = ingame->emplace<container_panel>("container", { { 0.2, 0.1 },{ 0, 0 },{ 0, 0 },{ 0.6, 0.8 } }).get();
+				m_map = ingame->emplace<map_panel>("map", { { 0.1, 0.1 },{ 0, 0 },{ 0, 0 },{ 0.8, 0.8 } }).get();
 
 				// start with ingame panels closed
 				m_inventory->deactivate();

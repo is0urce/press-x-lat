@@ -115,10 +115,10 @@ namespace px
 			ui::stack_panel* m_ui;
 			point2 m_target;
 			fps_counter m_fps;
-			std::shared_ptr<inventory_panel> m_inventory;
-			std::shared_ptr<anvil_panel> m_craft;
-			std::shared_ptr<container_panel> m_container;
-			std::shared_ptr<map_panel> m_map;
+			inventory_panel* m_inventory;
+			anvil_panel* m_craft;
+			container_panel* m_container;
+			map_panel* m_map;
 		};
 	}
 }
