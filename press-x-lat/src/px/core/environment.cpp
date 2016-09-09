@@ -39,9 +39,13 @@ namespace px
 		{
 			return a.king_distance(b);
 		}
-		int environment::reputation(body_component& a, body_component& b)
+		int environment::reputation(body_component& a, body_component& b) const
 		{
 			return m_factions.reputation(a.faction(), b.faction());
+		}
+		int environment::aspect(world_aspect aspect) const
+		{
+			return m_settings[aspect];
 		}
 
 		// space and actors querry

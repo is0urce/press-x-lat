@@ -82,14 +82,14 @@ namespace px
 
 						create->emplace<ui::progress_bar>({ {0.5, 0.5}, {-5, i * 2}, {10, 1} },
 							0xcccccc, 0x999999,
-							[aspect = std::get<aspect_index>(aspect), this]() { return ui::progress_bar::progress(m_settings[aspect], static_cast<int>(world_settings::max_value)); });
+							[aspect = std::get<aspect_index>(aspect), this]() { return ui::progress(m_settings[aspect], static_cast<int>(world_settings::max_value)); });
 
 						create->emplace<ui::button>({ { 0.5, 0.5 }, { -7, i * 2 }, { 1, 1 } },
 							color::black(), 0x333333, "-", color::white(),
-							[aspect = std::get<0>(aspect), this](auto const&, auto) { m_settings.decrement(aspect); return true; });
+							[aspect = std::get<aspect_index>(aspect), this](auto const&, auto) { m_settings.decrement(aspect); return true; });
 						create->emplace<ui::button>({ { 0.5, 0.5 }, { 7, i * 2 }, { 1, 1 } },
 							color::black(), 0x333333, "+", color::white(),
-							[aspect = std::get<0>(aspect), this](auto const&, auto) { m_settings.increment(aspect); return true; });
+							[aspect = std::get<aspect_index>(aspect), this](auto const&, auto) { m_settings.increment(aspect); return true; });
 
 						++i;
 					}

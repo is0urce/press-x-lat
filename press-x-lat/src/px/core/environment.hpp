@@ -57,12 +57,14 @@ namespace px
 			terrain const* scene() const;
 			terrain* scene();
 			int distance(point2 const& a, point2 const& b) const;
-			int reputation(body_component& a, body_component& b);
+			int reputation(body_component& a, body_component& b) const;
+			int aspect(world_aspect aspect) const;
 
 			// player
 
 			player_type player();
 			const player_type player() const;
+			void spawn_player(point2 location);
 			void impersonate(player_type unit);
 
 			// actions

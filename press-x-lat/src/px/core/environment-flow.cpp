@@ -28,19 +28,15 @@ namespace px
 			m_time = 0;
 			m_running = true;
 
+			m_world.resize(settings::world_width, settings::world_height);
+			m_world.generate(m_settings.seed());
+
+			spawn_player({ 1, 1 });
+
 			// ui
 			m_ui->deactivate("title");
 			m_ui->activate("ingame");
 			tie_map();
-
-			m_world.resize(settings::world_width, settings::world_height);
-			m_world.generate(m_settings.seed());
-
-			// player props
-			auto weapon = std::make_shared<body_component::item_type>();
-			weapon->add({ rl::effect::weapon_damage, 0x00, 50 });
-			weapon->set_name("Copper Sword");
-			weapon->set_tag("copper_sword");
 
 			// make chest
 			auto chest = m_factory->produce();
@@ -48,25 +44,7 @@ namespace px
 			chest->add_location({ 2, 2 });
 			chest->add_body(100, 100);
 			chest->add_container();
-			// add
 			m_terrain.add(chest->assemble(persistency::serialized));
-
-			// make player
-			auto task = m_factory->produce();
-			auto img = task->add_appearance('@', { 1, 1, 1 });
-			auto pawn = task->add_location({ -1, -1 });
-			auto body = task->add_body(100, 100);
-			auto character = task->add_character();
-			// setup
-			body->join_faction(1);
-			body->equip_weapon(weapon);
-			character->add_skill("melee");
-			character->set_tag("player");
-			// add
-			auto player = task->assemble(persistency::permanent);
-			m_terrain.add(player);
-
-			impersonate(pawn);
 		}
 		void environment::end()
 		{
@@ -113,6 +91,31 @@ namespace px
 		const environment::player_type environment::player() const
 		{
 			return m_player;
+		}
+		void environment::spawn_player(point2 location)
+		{
+			// player props
+			auto weapon = std::make_shared<body_component::item_type>();
+			weapon->add({ rl::effect::weapon_damage, 0x00, 50 });
+			weapon->set_name("Copper Sword");
+			weapon->set_tag("copper_sword");
+
+			// make player
+			auto task = m_factory->produce();
+			auto img = task->add_appearance('@', { 1, 1, 1 });
+			auto pawn = task->add_location(location);
+			auto body = task->add_body(100, 100);
+			auto character = task->add_character();
+			// setup
+			body->join_faction(1);
+			body->equip_weapon(weapon);
+			character->add_skill("melee");
+			character->set_tag("player");
+			// add
+			auto player = task->assemble(persistency::permanent);
+			m_terrain.add(player);
+
+			impersonate(pawn);
 		}
 		void environment::impersonate(environment::player_type unit)
 		{

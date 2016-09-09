@@ -17,17 +17,17 @@ namespace px
 {
 	namespace ui
 	{
+		struct progress
+		{
+		public:
+			int current;
+			int maximum;
+			progress() = default;
+			progress(int val, int max) : current(val), maximum(max) {}
+		};
 		class progress_bar : public stack_panel
 		{
 		public:
-			struct progress
-			{
-			public:
-				int current;
-				int maximum;
-				progress() = default;
-				progress(int val, int max) : current(val), maximum(max) {}
-			};
 			typedef std::function<progress()> progress_fn;
 
 		public:
