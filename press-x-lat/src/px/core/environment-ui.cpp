@@ -24,6 +24,8 @@
 
 #include <px/core/sys/body_component.hpp>
 
+#include <tuple>
+
 namespace px
 {
 	namespace core
@@ -40,7 +42,7 @@ namespace px
 				// menu
 				{
 					auto label = menu->emplace<ui::text>({ { 0.0, 0.0 },{ 0, 1 },{ 0, 0 },{ 1.0, 1.0 } }, "Light-a-Torch", color::white());
-					label->set_alignment(ui::text_alignment::center);
+					label->align(ui::text_alignment::center);
 
 					auto start_button = menu->emplace<ui::button>({ { 0.5, 0.5 }, { -8, 0 }, { 15, 1 }, { 0.0, 0.0 } },
 						color::black(), 0x333333, "create", color::white(),
@@ -49,36 +51,48 @@ namespace px
 						color::black(), 0x333333, "exit", color::white(),
 						[this](auto const& location, auto) { deactivate(); return true; });
 
-					start_button->text()->set_alignment(ui::text_alignment::center);
-					exit_button->text()->set_alignment(ui::text_alignment::center);
+					start_button->text()->align(ui::text_alignment::center);
+					exit_button->text()->align(ui::text_alignment::center);
 				}
 
 				// create
 				{
 					auto label = create->emplace<ui::text>({ { 0.0, 0.0 },{ 0, 1 },{ 0, 0 },{ 1.0, 1.0 } }, "Create your world...", color::white());
-					label->set_alignment(ui::text_alignment::center);
+					label->align(ui::text_alignment::center);
+
+					std::vector<std::tuple<world_aspect, std::string, std::string, std::string>> aspects;
+					aspects.emplace_back(world_aspect::inertia, "Inertia", "Material", "Etheral");
+					aspects.emplace_back(world_aspect::knowledge, "Knowledge", "Arcane", "Mastery");
+					aspects.emplace_back(world_aspect::sentience, "Sentience", "Will", "Mind");
+					aspects.emplace_back(world_aspect::entropy, "Entropy", "Chaos", "Law");
+					aspects.emplace_back(world_aspect::existence, "Existence", "Death", "Life");
 
 					int i = 0;
-					for (auto const& aspect : std::vector<std::pair<world_aspect, std::string>>{
-						{ world_aspect::inertia,  "Inertia:" },
-						{ world_aspect::knowledge,  "Knowledge:" },
-						{ world_aspect::sentience,  "Sentience:" },
-						{ world_aspect::entropy,  "Entropy:" },
-						{ world_aspect::existence,  "Existence:" } })
+					for (auto const& aspect : aspects)
 					{
-						create->emplace<ui::text>({ { 0.5, 0.5 },{ -30, i * 2 },{ 1, 1 },{ 0.0, 0.0 } }, std::get<1>(aspect), color::white());
-						create->emplace<ui::progress_bar>({ {0.5, 0.5}, {-5, i * 2}, {10, 1}, {0.0, 0.0} },
+						create->emplace<ui::text>({ { 0.5, 0.5 }, { -30, i * 2 }, { 0, 0 } }, std::get<1>(aspect) + ":", color::white());
+						auto less_text = create->emplace<ui::text>({ { 0.5, 0.5 }, { -9, i * 2 }, { 0, 0 } }, std::get<2>(aspect), color::white());
+						auto more_text = create->emplace<ui::text>({ { 0.5, 0.5 }, { 9, i * 2 }, { 0, 0 } }, std::get<3>(aspect), color::white());
+						less_text->align(ui::text_alignment::right);
+						more_text->align(ui::text_alignment::left);
+
+						create->emplace<ui::progress_bar>({ {0.5, 0.5}, {-5, i * 2}, {10, 1} },
 							0xcccccc, 0x999999,
 							[aspect = std::get<0>(aspect), this]() { return std::pair<int, int>(m_settings[aspect], world_settings::max_value); });
-						create->emplace<ui::button>({ { 0.5, 0.5 }, { -12, i * 2 }, { 1, 1 }, { 0.0, 0.0 } },
+
+						create->emplace<ui::button>({ { 0.5, 0.5 }, { -7, i * 2 }, { 1, 1 } },
 							color::black(), 0x333333, "-", color::white(),
 							[aspect = std::get<0>(aspect), this](auto const&, auto) { m_settings.decrement(aspect); return true; });
-						create->emplace<ui::button>({ { 0.5, 0.5 }, { 12, i * 2 }, { 1, 1 }, { 0.0, 0.0 } },
+						create->emplace<ui::button>({ { 0.5, 0.5 }, { 7, i * 2 }, { 1, 1 } },
 							color::black(), 0x333333, "+", color::white(),
 							[aspect = std::get<0>(aspect), this](auto const&, auto) { m_settings.increment(aspect); return true; });
 
 						++i;
 					}
+
+					create->emplace<ui::button>({ { 0.5, 1.0 }, { -5, -2 }, { 10, 1 } },
+						color::black(), 0x333333, "Incarnate", color::white(),
+						[this](auto const&, auto) { start(); return true; });
 				}
 
 				menu->activate();

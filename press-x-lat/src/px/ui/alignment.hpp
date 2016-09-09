@@ -32,6 +32,13 @@ namespace px
 				, size_relative(s_relative)
 			{
 			}
+			alignment(vector2 a_percent, point2 a_offset, point2 s_absolute)
+				: anchor_percent(a_percent)
+				, anchor_offset(a_offset)
+				, size_absolute(s_absolute)
+				, size_relative(0, 0)
+			{
+			}
 			alignment(
 				vector2::component a_percent_x, vector2::component a_percent_y,
 				point2::component a_offset_x, point2::component a_offset_y,

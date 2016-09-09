@@ -23,7 +23,7 @@ namespace px
 			typedef std::function<std::string()> string_fn;
 
 		public:
-			void set_alignment(text_alignment align)
+			void align(text_alignment align)
 			{
 				m_align = align;
 			}
