@@ -34,7 +34,7 @@ namespace px
 			tie_map();
 
 			m_world.resize(settings::world_width, settings::world_height);
-			m_world.generate(0);
+			m_world.generate(m_settings.seed());
 
 			// player props
 			auto weapon = std::make_shared<body_component::item_type>();

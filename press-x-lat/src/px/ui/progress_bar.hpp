@@ -20,7 +20,15 @@ namespace px
 		class progress_bar : public stack_panel
 		{
 		public:
-			typedef std::function<std::pair<int, int>()> progress_fn;
+			struct progress
+			{
+			public:
+				int current;
+				int maximum;
+				progress() = default;
+				progress(int val, int max) : current(val), maximum(max) {}
+			};
+			typedef std::function<progress()> progress_fn;
 
 		public:
 			void set_empty_color(color c) noexcept
@@ -52,10 +60,10 @@ namespace px
 
 				int length = bounds().range().x();
 
-				auto pair = m_progress();
+				auto progress = m_progress();
 
-				int current = std::get<0>(pair);
-				int max = std::get<1>(pair);
+				int current = progress.current;
+				int max = progress.maximum;
 
 				max = (max == 0) ? 1 : max;
 

@@ -57,9 +57,10 @@ namespace px
 
 				// create
 				{
-					auto label = create->emplace<ui::text>({ { 0.0, 0.0 },{ 0, 1 },{ 0, 0 },{ 1.0, 1.0 } }, "Create your world...", color::white());
-					label->align(ui::text_alignment::center);
-
+					static const size_t aspect_index = 0;
+					static const size_t aspect_name = 1;
+					static const size_t aspect_less = 2;
+					static const size_t aspect_more = 3;
 					std::vector<std::tuple<world_aspect, std::string, std::string, std::string>> aspects;
 					aspects.emplace_back(world_aspect::inertia, "Inertia", "Material", "Etheral");
 					aspects.emplace_back(world_aspect::knowledge, "Knowledge", "Arcane", "Mastery");
@@ -67,18 +68,21 @@ namespace px
 					aspects.emplace_back(world_aspect::entropy, "Entropy", "Chaos", "Law");
 					aspects.emplace_back(world_aspect::existence, "Existence", "Death", "Life");
 
+					auto label = create->emplace<ui::text>({ { 0.0, 0.0 },{ 0, 1 },{ 0, 0 },{ 1.0, 1.0 } }, "Create your world...", color::white());
+					label->align(ui::text_alignment::center);
+
 					int i = 0;
 					for (auto const& aspect : aspects)
 					{
-						create->emplace<ui::text>({ { 0.5, 0.5 }, { -30, i * 2 }, { 0, 0 } }, std::get<1>(aspect) + ":", color::white());
-						auto less_text = create->emplace<ui::text>({ { 0.5, 0.5 }, { -9, i * 2 }, { 0, 0 } }, std::get<2>(aspect), color::white());
-						auto more_text = create->emplace<ui::text>({ { 0.5, 0.5 }, { 9, i * 2 }, { 0, 0 } }, std::get<3>(aspect), color::white());
+						create->emplace<ui::text>({ { 0.5, 0.5 }, { -30, i * 2 }, { 0, 0 } }, std::get<aspect_name>(aspect) + ":", color::white());
+						auto less_text = create->emplace<ui::text>({ { 0.5, 0.5 }, { -9, i * 2 }, { 0, 0 } }, std::get<aspect_less>(aspect), color::white());
+						auto more_text = create->emplace<ui::text>({ { 0.5, 0.5 }, { 9, i * 2 }, { 0, 0 } }, std::get<aspect_more>(aspect), color::white());
 						less_text->align(ui::text_alignment::right);
 						more_text->align(ui::text_alignment::left);
 
 						create->emplace<ui::progress_bar>({ {0.5, 0.5}, {-5, i * 2}, {10, 1} },
 							0xcccccc, 0x999999,
-							[aspect = std::get<0>(aspect), this]() { return std::pair<int, int>(m_settings[aspect], world_settings::max_value); });
+							[aspect = std::get<aspect_index>(aspect), this]() { return ui::progress_bar::progress(m_settings[aspect], static_cast<int>(world_settings::max_value)); });
 
 						create->emplace<ui::button>({ { 0.5, 0.5 }, { -7, i * 2 }, { 1, 1 } },
 							color::black(), 0x333333, "-", color::white(),

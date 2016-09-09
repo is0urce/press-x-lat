@@ -72,6 +72,18 @@ namespace px
 				return m_attributes[static_cast<size_t>(attribute)];
 			}
 
+			unsigned int seed() const
+			{
+				unsigned int seed = 0;
+				int mult = 1;
+				for (auto attribute : m_attributes)
+				{
+					seed += attribute * mult;
+					mult *= static_cast<int>(attribute_count);
+				}
+				return seed;
+			}
+
 		public:
 			world_settings() { m_attributes.fill(median_value); }
 
