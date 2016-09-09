@@ -34,7 +34,10 @@ namespace px
 		{
 			// fps counter
 			auto fps = m_ui->emplace<ui::performance_panel>({ { 0.0, 0.0 },{ 1,0 },{ -2, 1 },{ 1.0, 0.0 } }, m_fps);
-			auto title = m_ui->emplace<title_panel>("title", ui::alignment::fill());
+			auto title = m_ui->emplace<title_panel>("title", ui::alignment::fill()).get();
+			auto ingame = m_ui->emplace<ingame_panel>("ingame", ui::alignment::fill()).get();
+
+			// title
 			{
 				auto menu = title->emplace<ui::stack_panel>("menu", ui::alignment::fill()).get();
 				auto create = title->emplace<ui::stack_panel>("create", ui::alignment::fill()).get();
@@ -96,13 +99,14 @@ namespace px
 
 					create->emplace<ui::button>({ { 0.5, 1.0 }, { -5, -2 }, { 10, 1 } },
 						color::black(), 0x333333, "Incarnate", color::white(),
-						[this](auto const&, auto) { start(); return true; });
+						[this, title, ingame](auto const&, auto) {	start(); title->deactivate(); ingame->activate(); return true; });
 				}
 
 				menu->activate();
 				create->deactivate();
 			}
-			auto ingame = m_ui->emplace<ingame_panel>("ingame", ui::alignment::fill());
+
+			// ingame
 			{
 				ingame->emplace<status_panel>("status", { { 0.0, 0.0 },{ 1, 2 },{ -2, 1 },{ 1.0, 0.0 } }, *this);
 				ingame->emplace<target_panel>("target", { { 1.0, 0.0 },{ -12, 2 },{ -2, 1 },{ 1.0, 0.0 } }, *this);

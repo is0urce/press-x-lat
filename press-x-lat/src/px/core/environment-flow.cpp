@@ -34,8 +34,6 @@ namespace px
 			spawn_player({ 1, 1 });
 
 			// ui
-			m_ui->deactivate("title");
-			m_ui->activate("ingame");
 			tie_map();
 
 			// make chest
