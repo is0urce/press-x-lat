@@ -54,10 +54,8 @@ namespace px
 			virtual ~progress_bar() {}
 
 		protected:
-			virtual void draw_panel(shell::canvas& cnv) const override
+			virtual void draw_stacked(shell::canvas& cnv) const override
 			{
-				stack_panel::draw_panel(cnv);
-
 				int length = bounds().range().x();
 
 				auto progress = m_progress();

@@ -33,8 +33,11 @@ namespace px
 			typedef ui::list_panel<inventory_type, item_formatter, item_color, item_filter> list_type;
 			typedef std::weak_ptr<inventory_type> inventory_ptr;
 
-		private:
-			std::shared_ptr<list_type> m_list;
+		public:
+			void show(inventory_ptr inventory)
+			{
+				m_list->bind_data(inventory);
+			}
 
 		public:
 			anvil_panel()
@@ -43,16 +46,13 @@ namespace px
 				emplace<ui::board>({ { 0, 0 },{ 0, 1 },{ 0, -1 },{ 1, 1 } }, color(0, 0, 0.5));
 				emplace<ui::text>({ { 0, 0 },{ 0, 0 },{ 0, 0 },{ 0, 0 } }, "[K IS FOR KRAFT]", color(1, 1, 1));
 
-				m_list = std::make_shared<list_type>();
-				add(m_list, { { 0.3, 0 },{ 0, 1 },{ 0, -1 },{ 0.3, 1 } });
+				m_list = emplace<list_type>({ { 0.3, 0 },{ 0, 1 },{ 0, -1 },{ 0.3, 1 } }).get();
 			}
 			virtual ~anvil_panel() {}
 
 		protected:
-			virtual void draw_panel(shell::canvas& cnv) const override
+			virtual void draw_stacked(shell::canvas& cnv) const override
 			{
-				stack_panel::draw_panel(cnv);
-
 				auto pen = start();
 
 				pen.move_axis<1>(1);
@@ -64,7 +64,7 @@ namespace px
 				cnv.write(pen, "Helmet");
 				pen.move_axis<1>(1);
 			}
-			virtual bool key_control(shell::key code) override
+			virtual bool key_stacked(shell::key code) override
 			{
 				bool close = code == shell::key::command_cancel || code == shell::key::move_none;
 				if (close)
@@ -73,22 +73,18 @@ namespace px
 				}
 				return close;
 			}
-			virtual bool click_control(const point2 &position, unsigned int button) override
+			virtual bool click_stacked(const point2 &position, unsigned int button) override
 			{
-				bool result = stack_panel::click_control(position, button);
-				if (!result && !bounds().contains(position))
+				bool close = !bounds().contains(position);
+				if (close)
 				{
 					deactivate();
-					result = true;
 				}
-				return result;
+				return close;
 			}
 
-		public:
-			void show(inventory_ptr inventory)
-			{
-				m_list->bind_data(inventory);
-			}
+		private:
+			list_type* m_list;
 		};
 	}
 }

@@ -73,10 +73,8 @@ namespace px
 			virtual ~list_panel() {}
 
 		protected:
-			virtual void draw_panel(shell::canvas& cnv) const override
+			virtual void draw_stacked(shell::canvas& cnv) const override
 			{
-				stack_panel::draw_panel(cnv); // call base
-
 				auto total_bounds = bounds();
 				int text_width = total_bounds.range().x();
 				auto shared = m_list.lock();
@@ -98,61 +96,55 @@ namespace px
 					});
 				}
 			}
-			virtual bool scroll_control(int scroll) override
+			virtual bool scroll_stacked(int scroll) override
 			{
-				bool result = stack_panel::scroll_control(scroll);
-
-				if (!result)
+				if (scroll > 0 && scrollable_up())
 				{
-					if (scroll > 0 && scrollable_up())
-					{
-						--m_skip;
-					}
-					else if (scroll < 0 && scrollable_down(lines(), count()))
-					{
-						++m_skip;
-					}
-					result = true;
+					--m_skip;
 				}
-				return result;
+				else if (scroll < 0 && scrollable_down(lines(), count()))
+				{
+					++m_skip;
+				}
+				return true;
 			}
-			virtual bool click_control(point2 const& position, unsigned int vbutton) override
+			virtual bool click_stacked(point2 const& position, unsigned int vbutton) override
 			{
-				bool result = stack_panel::click_control(position, vbutton);
+				auto shared = m_list.lock();
+				auto total_bounds = bounds();
 
-				if (!result)
+				bool result = false;
+
+				if (total_bounds.contains(position) && shared)
 				{
-					auto shared = m_list.lock();
-					auto total_bounds = bounds();
+					point2 pen = total_bounds.start();
+					point2 record_range(total_bounds.range().x(), m_line_size);
 
-					if (total_bounds.contains(position) && shared)
-					{
-						point2 pen = total_bounds.start();
-						point2 record_range(total_bounds.range().x(), m_line_size);
+					unsigned int item_index = m_skip;
+					pen.move_axis<1>(-m_skip * m_line_size);
 
-						unsigned int item_index = m_skip;
-						pen.move_axis<1>(-m_skip * m_line_size);
+					std::function<void()> click_call; // erasure of generic element type, stored for future call for safe iteration
 
-						std::function<void()> click_call; // erasure of generic element type
-
-						shared->enumerate([&](auto const& element) {
-							if (m_filter(element))
+					shared->enumerate([&](auto const& element) {
+						if (m_filter(element))
+						{
+							if (rectangle(pen, record_range).contains(position))
 							{
-								if (rectangle(pen, record_range).contains(position))
-								{
-									click_call = [element,this]() { m_click(element); };
-									result = true;
-								}
-								
-								pen.move_axis<1>(m_line_size);
-								++item_index;
+								click_call = [element, this]() { m_click(element); };
+								result = true;
 							}
-						});
 
-						if (click_call) click_call(); // stored for future call for safe iteration
+							pen.move_axis<1>(m_line_size);
+							++item_index;
+						}
+					});
+
+					if (click_call)
+					{
+						click_call();
+						result = true;
 					}
 				}
-
 				return result;
 			}
 

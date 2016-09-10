@@ -74,7 +74,7 @@ namespace px
 				add(&m_sprite_system);
 				add(&m_ui_system);
 
-				//m_environment.start();
+				m_environment.start();
 			}
 			virtual ~engine() {}
 			engine(engine const&) = delete;

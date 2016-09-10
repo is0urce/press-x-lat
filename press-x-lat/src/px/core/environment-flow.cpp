@@ -35,12 +35,14 @@ namespace px
 
 			// ui
 			tie_map();
+			m_ui->deactivate("title");
+			m_ui->activate("ingame");
 
 			// make chest
 			auto chest = m_factory->produce();
 			chest->add_appearance('$', { 1, 1, 1 });
 			chest->add_location({ 2, 2 });
-			chest->add_body(100, 100);
+			chest->add_body();
 			chest->add_container();
 			m_terrain.add(chest->assemble(persistency::serialized));
 		}

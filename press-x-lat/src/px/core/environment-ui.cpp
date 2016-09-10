@@ -12,7 +12,6 @@
 #include <px/ui/button.hpp>
 #include <px/ui/progress_bar.hpp>
 
-#include <px/core/ui/title_panel.hpp>
 #include <px/core/ui/ingame_panel.hpp>
 
 #include <px/core/ui/status_panel.hpp>
@@ -34,7 +33,7 @@ namespace px
 		{
 			// fps counter
 			auto fps = m_ui->emplace<ui::performance_panel>({ { 0.0, 0.0 },{ 1,0 },{ -2, 1 },{ 1.0, 0.0 } }, m_fps);
-			auto title = m_ui->emplace<title_panel>("title", ui::alignment::fill()).get();
+			auto title = m_ui->emplace<ui::stack_panel>("title", ui::alignment::fill()).get();
 			auto ingame = m_ui->emplace<ingame_panel>("ingame", ui::alignment::fill()).get();
 
 			// title

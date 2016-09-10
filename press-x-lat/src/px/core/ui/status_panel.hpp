@@ -26,7 +26,7 @@ namespace px
 			status_panel(const status_panel&) = delete;
 
 		protected:
-			virtual void draw_panel(shell::canvas& cnv) const override;
+			virtual void draw_stacked(shell::canvas& cnv) const override;
 		};
 	}
 }

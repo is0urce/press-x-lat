@@ -23,7 +23,7 @@ namespace px
 		{
 		}
 
-		void target_panel::draw_panel(shell::canvas& cnv) const
+		void target_panel::draw_stacked(shell::canvas& cnv) const
 		{
 			auto pen = start();
 			auto target = m_environment->targeted();

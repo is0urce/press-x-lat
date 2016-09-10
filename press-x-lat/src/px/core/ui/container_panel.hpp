@@ -10,8 +10,8 @@
 
 #include <px/ui/board.hpp>
 #include <px/ui/text.hpp>
+#include <px/ui/button.hpp>
 #include <px/ui/list_panel.hpp>
-#include <px/ui/press_panel.hpp>
 
 #include <px/rl/inventory.hpp>
 #include <px/rl/effect.hpp>
@@ -37,18 +37,6 @@ namespace px
 			typedef ui::list_panel<inventory_type, item_formatter, item_color, move_item_operator> list_type;
 			typedef std::weak_ptr<inventory_type> inventory_observer;
 
-			struct take_all_operator
-			{
-				bool operator()(point2 const&, unsigned int v_button)
-				{
-					panel->take_all();
-					return true;
-				};
-
-				take_all_operator(container_panel* cp) : panel(cp) {}
-
-				container_panel* panel;
-			};
 			struct move_item_operator
 			{
 				template <typename I>
@@ -56,12 +44,12 @@ namespace px
 				{
 					if (from && to)
 					{
-						auto s = from->lock();
-						auto d = to->lock();
-						if (s && d)
+						auto source = from->lock();
+						auto destination = to->lock();
+						if (source && destination)
 						{
-							s->remove(item);
-							d->add(item);
+							source->remove(item);
+							destination->add(item);
 						}
 					}
 					return true;
@@ -73,11 +61,17 @@ namespace px
 				inventory_observer* from;
 				inventory_observer* to;
 			};
-		private:
-			inventory_observer m_user;
-			inventory_observer m_container;
-			std::shared_ptr<list_type> m_user_list;
-			std::shared_ptr<list_type> m_container_list;
+
+		public:
+			void examine_container(inventory_observer user, inventory_observer container)
+			{
+				m_user = user;
+				m_container = container;
+				m_user_list->bind_data(user);
+				m_container_list->bind_data(container);
+
+				update();
+			}
 
 		public:
 			container_panel()
@@ -87,14 +81,10 @@ namespace px
 				emplace<ui::text>({ { 0.0, 0.0 },{ 0, 0 },{ 0, 1 },{ 0.5, 0.0 } }, "[YOU]", color(1, 1, 1));
 				emplace<ui::text>({ { 0.5, 0.0 },{ 0, 0 },{ 0, 1 },{ 0.5, 0.0 } }, "[NOT YOU]", color(1, 1, 1));
 
-				m_user_list = std::make_shared<list_type>();
-				add(m_user_list, { { 0.0, 0.0 },{ 0, 1 },{ 0, -2 },{ 0.5, 1.0 } });
+				m_user_list = emplace<list_type>({ { 0.0, 0.0 }, { 0, 1 }, { 0, -2 }, { 0.5, 1.0 } }).get();
+				m_container_list = emplace<list_type>({ { 0.5, 0.0 },{ 0, 1 },{ 0, -2 },{ 0.5, 1.0 } }).get();
 
-				m_container_list = std::make_shared<list_type>();
-				add(m_container_list, { { 0.5, 0.0 },{ 0, 1 },{ 0, -2 },{ 0.5, 1.0 } });
-
-				emplace<ui::text>("take_all", { { 1.0, 1.0 },{ -10, -1 },{ 10, 1 },{ 0.0, 0.0 } }, "[take all]", color(1, 1, 1));
-				emplace<ui::press_panel<take_all_operator>>({ { 1.0, 1.0 },{ -10, -1 },{ 10, 1 },{ 0.0, 0.0 } }, this);
+				m_take_all = emplace<ui::button>("take_all", { { 1.0, 1.0 },{ -10, -1 },{ 10, 1 },{ 0.0, 0.0 } }, color::black(), color::black(), "take all", color::white(), [this](auto const&, auto) { take_all(); return true; }).get();
 
 				m_user_list->set_click(move_item_operator(&m_user, &m_container));
 				m_container_list->set_click(move_item_operator(&m_container, &m_user));
@@ -102,25 +92,19 @@ namespace px
 			virtual ~container_panel() {}
 
 		protected:
-			virtual void draw_panel(shell::canvas& cnv) const override
+			virtual bool click_stacked(const point2 &position, unsigned int button) override
 			{
-				stack_panel::draw_panel(cnv);
-			}
-			virtual bool click_control(const point2 &position, unsigned int button) override
-			{
-				bool result = stack_panel::click_control(position, button);
-
-				if (!result && !bounds().contains(position))
+				bool close = !bounds().contains(position);
+				if (close)
 				{
 					deactivate();
-					result = true;
 				}
 
 				update();
 
-				return result;
+				return close;
 			}
-			virtual bool key_control(shell::key code) override
+			virtual bool key_stacked(shell::key code) override
 			{
 				bool close = code == shell::key::command_cancel || code == shell::key::move_none;
 				if (close)
@@ -136,29 +120,25 @@ namespace px
 		private:
 			void update()
 			{
-				if (auto cont = m_container.lock())
-				{
-					activate("take_all", !cont->empty());
-				}
+				auto loot = m_container.lock();
+				m_take_all->set_toggle(loot && !loot->empty());
 			}
 			void take_all()
 			{
-				auto inv = m_user.lock();
-				auto cont = m_container.lock();
-				if (inv && cont)
+				auto user = m_user.lock();
+				auto loot = m_container.lock();
+				if (user && loot)
 				{
-					inv->take_all(*cont);
+					user->take_all(*loot);
 				}
 			}
 
-		public:
-			void examine_container(inventory_observer user, inventory_observer container)
-			{
-				m_user = user;
-				m_container = container;
-				m_user_list->bind_data(user);
-				m_container_list->bind_data(container);
-			}
+		private:
+			inventory_observer m_user;
+			inventory_observer m_container;
+			list_type* m_user_list;
+			list_type* m_container_list;
+			ui::button* m_take_all;
 		};
 	}
 }

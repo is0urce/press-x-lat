@@ -47,23 +47,44 @@ namespace px
 					p.panel->draw(cnv);
 				}
 			}
+			draw_stacked(cnv);
 		}
 
 		bool stack_panel::key_control(shell::key code)
 		{
-			return panel_action([&](stacked_panel& p) { return p.panel->key(code); });
+			return panel_action([&](stacked_panel& p) { return p.panel->key(code); }) || key_stacked(code);
 		}
 		bool stack_panel::hover_control(const point2 &position)
 		{
-			return panel_action([&](stacked_panel& p) { return p.panel->hover(position); });
+			return panel_action([&](stacked_panel& p) { return p.panel->hover(position); }) || hover_stacked(position);
 		}
 		bool stack_panel::click_control(const point2 &position, unsigned int button)
 		{
-			return panel_action([&](stacked_panel& p) { return p.panel->click(position, button); });
+			return panel_action([&](stacked_panel& p) { return p.panel->click(position, button); }) || click_stacked(position, button);
 		}
 		bool stack_panel::scroll_control(int delta)
 		{
-			return panel_action([&](stacked_panel& p) { return p.panel->scroll(delta); });
+			return panel_action([&](stacked_panel& p) { return p.panel->scroll(delta); }) || scroll_stacked(delta);
+		}
+
+		void stack_panel::draw_stacked(shell::canvas& cnv) const
+		{
+		}
+		bool stack_panel::key_stacked(shell::key code)
+		{
+			return false;
+		}
+		bool stack_panel::hover_stacked(const point2 &position)
+		{
+			return false;
+		}
+		bool stack_panel::click_stacked(const point2 &position, unsigned int button)
+		{
+			return false;
+		}
+		bool stack_panel::scroll_stacked(int delta)
+		{
+			return false;
 		}
 
 		void stack_panel::add(tag name, panel_ptr panel, alignment align)

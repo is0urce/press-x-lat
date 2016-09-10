@@ -17,15 +17,15 @@ namespace px
 		class environment;
 		class target_panel : public ui::stack_panel
 		{
-		private:
-			environment* m_environment;
-
 		public:
 			target_panel(environment& e);
 			virtual ~target_panel();
 
 		protected:
-			virtual void draw_panel(shell::canvas& cnv) const override;
+			virtual void draw_stacked(shell::canvas& cnv) const override;
+
+		private:
+			environment* m_environment;
 		};
 	}
 }

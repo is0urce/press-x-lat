@@ -20,7 +20,7 @@ namespace px
 			virtual ~ingame_panel() {}
 
 		protected:
-			virtual bool key_control(shell::key code) override
+			virtual bool key_stacked(shell::key code) override
 			{
 				switch (code)
 				{
@@ -35,7 +35,7 @@ namespace px
 					reverse_toggle("map");
 					return true;
 				default:
-					return stack_panel::key_control(code);
+					return false;
 				}
 			}
 		};

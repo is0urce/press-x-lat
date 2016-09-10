@@ -23,15 +23,11 @@ namespace px
 		{
 		}
 
-		void status_panel::draw_panel(shell::canvas& cnv) const
+		void status_panel::draw_stacked(shell::canvas& cnv) const
 		{
-			stack_panel::draw_panel(cnv);
-
-			auto pen = start();
-
-			auto player = m_environment->player();
-			if (player)
+			if (auto player = m_environment->player())
 			{
+				auto pen = start();
 				cnv.write(pen, to_string(player->current()));
 				pen.move_axis<1>(1);
 				cnv.write(pen, "[PLAYER]");

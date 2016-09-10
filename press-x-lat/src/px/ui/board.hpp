@@ -27,10 +27,8 @@ namespace px
 			virtual ~board() {}
 
 		protected:
-			virtual void draw_panel(shell::canvas& cnv) const override
+			virtual void draw_stacked(shell::canvas& cnv) const override
 			{
-				stack_panel::draw_panel(cnv);
-
 				cnv.rectangle(bounds(), m_color);
 			}
 

@@ -357,9 +357,6 @@
     <ClInclude Include="src\px\core\gen\poi\farm_mapper.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\px\core\ui\title_panel.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\px\core\ui\ingame_panel.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -400,9 +397,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\px\ui\board.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\px\core\ui\create_panel.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\px\core\world_settings.hpp">
@@ -486,9 +480,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\px\core\data\factory.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\px\core\ui\title_panel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\px\core\gen\poi\farm_mapper.cpp">

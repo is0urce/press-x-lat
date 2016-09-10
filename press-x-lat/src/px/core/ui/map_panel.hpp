@@ -40,10 +40,8 @@ namespace px
 			virtual ~map_panel() {}
 
 		protected:
-			virtual void draw_panel(shell::canvas& cnv) const override
+			virtual void draw_stacked(shell::canvas& cnv) const override
 			{
-				stack_panel::draw_panel(cnv);
-
 				if (m_world)
 				{
 					if (auto m = m_world->map())
@@ -78,30 +76,28 @@ namespace px
 					}
 				}
 			}
-			virtual bool hover_control(const point2 &position) override
+			virtual bool hover_stacked(const point2 &position) override
 			{
 				m_hover = position;
-				return stack_panel::hover_control(position);
+				return false;
 			}
-			virtual bool key_control(shell::key code) override
+			virtual bool key_stacked(shell::key code) override
 			{
-				bool result = stack_panel::key_control(code);
-
-				if (!result)
+				bool close = code == shell::key::command_cancel || code == shell::key::move_none;
+				if (close)
 				{
-					bool result = code == shell::key::command_cancel || code == shell::key::move_none;
-					if (result)
-					{
-						deactivate();
-					}
+					deactivate();
 				}
-				return result;
+				return close;
 			}
-			virtual bool click_control(const point2 &position, unsigned int button) override
+			virtual bool click_stacked(const point2 &position, unsigned int button) override
 			{
-				bool result = stack_panel::click_control(position, button);
-
-				return result;
+				bool close = !bounds().contains(position);
+				if (close)
+				{
+					deactivate();
+				}
+				return close;
 			}
 
 		private:

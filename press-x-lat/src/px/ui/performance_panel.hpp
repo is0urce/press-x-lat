@@ -24,10 +24,8 @@ namespace px
 			virtual ~performance_panel() {}
 
 		protected:
-			virtual void draw_panel(shell::canvas& cnv) const override
+			virtual void draw_stacked(shell::canvas& cnv) const override
 			{
-				stack_panel::draw_panel(cnv);
-
 				m_fps->frame_processed();
 
 				cnv.write(start(), std::string("fps:") + std::to_string(m_fps->fps()));

@@ -58,6 +58,12 @@ namespace px
 			virtual bool click_control(const point2 &position, unsigned int button) override;
 			virtual bool scroll_control(int delta) override;
 
+			virtual void draw_stacked(shell::canvas& cnv) const;
+			virtual bool key_stacked(shell::key code);
+			virtual bool hover_stacked(const point2 &position);
+			virtual bool click_stacked(const point2 &position, unsigned int button);
+			virtual bool scroll_stacked(int delta);
+
 		protected:
 			rectangle bounds() const;
 			point2 start() const;

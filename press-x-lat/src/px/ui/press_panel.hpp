@@ -14,12 +14,6 @@ namespace px
 {
 	namespace ui
 	{
-		struct nop_press
-		{
-			bool operator()(point2 const&, unsigned int) { return false; }
-		};
-
-		// Press : bool(unsigned int)
 		template <typename Press>
 		class press_panel : public stack_panel
 		{
@@ -28,19 +22,19 @@ namespace px
 			{
 				m_press = fn;
 			}
+			bool call(point2 const& position, unsigned int v_button)
+			{
+				return m_press(position, v_button);
+			}
 
 		public:
 			press_panel(const Press &button = Press()) : m_press(button) {}
 			virtual ~press_panel() {}
 
 		protected:
-			virtual bool click_control(point2 const& position, unsigned int v_button) override
+			virtual bool click_stacked(point2 const& position, unsigned int v_button) override
 			{
-				if (bounds().contains(position))
-				{
-					return m_press(position, v_button);
-				}
-				return stack_panel::click_control(position, v_button);
+				return bounds().contains(position) && m_press(position, v_button);
 			}
 
 		private:

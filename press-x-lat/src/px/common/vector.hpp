@@ -5,8 +5,8 @@
 #ifndef PX_VECTOR_HPP
 #define PX_VECTOR_HPP
 
-#include "coordinate.hpp"
-#include "point.hpp"
+#include <px/common/coordinate.hpp>
+#include <px/common/point.hpp>
 
 #include <string>
 
