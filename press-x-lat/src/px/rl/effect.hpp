@@ -23,8 +23,8 @@ namespace px
 			weapon_damage,
 			armor_resist,
 
-			weight_increase,
-			value_increase,
+			weight,
+			value,
 
 			ore_power,
 

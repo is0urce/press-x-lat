@@ -21,8 +21,21 @@ namespace px
 		{
 		public:
 			typedef body_component::item_ptr item_ptr;
-		private:
-			body_component::item_ptr m_item;
+
+		public:
+			void deposit(item_ptr resource)
+			{
+				m_item = resource;
+			}
+			bool empty() const
+			{
+				return !m_item;
+			}
+			item_ptr collect()
+			{
+				auto result = std::move(m_item);
+				return result;
+			}
 
 		public:
 			resource_component() {}
@@ -41,20 +54,8 @@ namespace px
 				}
 			}
 
-		public:
-			void deposit(item_ptr resource)
-			{
-				m_item = resource;
-			}
-			bool empty() const
-			{
-				return !m_item;
-			}
-			item_ptr collect()
-			{
-				auto result = std::move(m_item);
-				return result;
-			}
+		private:
+			body_component::item_ptr m_item;
 		};
 	}
 }

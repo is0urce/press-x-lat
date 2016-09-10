@@ -62,7 +62,7 @@ namespace px
 				{
 					if (body->dead())
 					{
-						env.open_container(user_pawn->linked(), location->linked());
+						env.open_container(user_pawn->linked().lock(), location->linked().lock());
 					}
 				}
 			}

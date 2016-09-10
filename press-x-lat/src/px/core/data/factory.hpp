@@ -73,6 +73,9 @@ namespace px
 			std::shared_ptr<resource_component> add_resource();
 			std::shared_ptr<container_component> add_container();
 			std::shared_ptr<unit> assemble(persistency status);
+			std::shared_ptr<unit> assemble();
+			operator std::shared_ptr<unit>();
+
 		public:
 			product(factory &builder);
 			virtual ~product();

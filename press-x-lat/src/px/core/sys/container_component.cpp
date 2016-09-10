@@ -23,7 +23,7 @@ namespace px
 		}
 		void container_component::use_component(location_component* user_pawn, environment& env)
 		{
-			env.open_container(user_pawn->linked(), linked());
+			env.open_container(user_pawn->linked().lock(), linked().lock());
 		}
 	}
 }

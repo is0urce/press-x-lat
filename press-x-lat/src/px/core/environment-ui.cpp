@@ -147,14 +147,16 @@ namespace px
 
 			m_craft->activate();
 		}
-		void environment::open_container(std::weak_ptr<body_component> user, std::weak_ptr<body_component> container)
+		void environment::open_container(std::shared_ptr<body_component> user, std::shared_ptr<body_component> container)
 		{
-			m_container->examine_container(user, container);
-
 			m_inventory->deactivate();
 			m_craft->deactivate();
 
-			m_container->activate();
+			if (user && container)
+			{
+				m_container->examine(user, container, user->name(), container->name());
+				m_container->activate();
+			}
 		}
 		void environment::tie_map()
 		{

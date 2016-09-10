@@ -63,12 +63,15 @@ namespace px
 			};
 
 		public:
-			void examine_container(inventory_observer user, inventory_observer container)
+			void examine(inventory_observer user, inventory_observer container, std::string user_name, std::string container_name)
 			{
 				m_user = user;
 				m_container = container;
 				m_user_list->bind_data(user);
 				m_container_list->bind_data(container);
+
+				m_user_name = user_name;
+				m_container_name = container_name;
 
 				update();
 			}
@@ -78,16 +81,15 @@ namespace px
 			{
 				emplace<ui::board>({ { 0.0, 0.0 },{ 0, 0 },{ 0, 1 },{ 1.0, 0.0 } }, color(0, 0, 1));
 				emplace<ui::board>({ { 0.0, 0.0 },{ 0, 1 },{ 0, -1 },{ 1.0, 1.0 } }, color(0, 0, 0.5));
-				emplace<ui::text>({ { 0.0, 0.0 },{ 0, 0 },{ 0, 1 },{ 0.5, 0.0 } }, "[YOU]", color(1, 1, 1));
-				emplace<ui::text>({ { 0.5, 0.0 },{ 0, 0 },{ 0, 1 },{ 0.5, 0.0 } }, "[NOT YOU]", color(1, 1, 1));
+				emplace<ui::text>({ { 0.0, 0.0 },{ 0, 0 },{ 0, 1 },{ 0.5, 0.0 } }, [this]() { return m_user_name; }, color(1, 1, 1));
+				emplace<ui::text>({ { 0.5, 0.0 },{ 0, 0 },{ 0, 1 },{ 0.5, 0.0 } }, [this]() { return m_container_name; }, color(1, 1, 1));
 
 				m_user_list = emplace<list_type>({ { 0.0, 0.0 }, { 0, 1 }, { 0, -2 }, { 0.5, 1.0 } }).get();
 				m_container_list = emplace<list_type>({ { 0.5, 0.0 },{ 0, 1 },{ 0, -2 },{ 0.5, 1.0 } }).get();
-
-				m_take_all = emplace<ui::button>("take_all", { { 1.0, 1.0 },{ -10, -1 },{ 10, 1 },{ 0.0, 0.0 } }, color::black(), color::black(), "take all", color::white(), [this](auto const&, auto) { take_all(); return true; }).get();
-
 				m_user_list->set_click(move_item_operator(&m_user, &m_container));
 				m_container_list->set_click(move_item_operator(&m_container, &m_user));
+
+				m_take_all = emplace<ui::button>("take_all", { { 1.0, 1.0 },{ -10, -1 },{ 10, 1 },{ 0.0, 0.0 } }, color::black(), color::black(), "take all", color::white(), [this](auto const&, auto) { take_all(); return true; }).get();
 			}
 			virtual ~container_panel() {}
 
@@ -138,6 +140,10 @@ namespace px
 			inventory_observer m_container;
 			list_type* m_user_list;
 			list_type* m_container_list;
+
+			std::string m_user_name;
+			std::string m_container_name;
+
 			ui::button* m_take_all;
 		};
 	}

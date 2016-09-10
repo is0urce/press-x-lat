@@ -14,6 +14,7 @@
 #include <px/core/sys/location_component.hpp>
 #include <px/core/sys/body_component.hpp>
 #include <px/core/sys/character_component.hpp>
+#include <px/core/sys/resource_component.hpp>
 
 #include <px/core/terrain_director.hpp>
 
@@ -42,9 +43,32 @@ namespace px
 			auto chest = m_factory->produce();
 			chest->add_appearance('$', { 1, 1, 1 });
 			chest->add_location({ 2, 2 });
-			chest->add_body();
+			auto body = chest->add_body();
+			body->set_name("Iron chest");
 			chest->add_container();
-			m_terrain.add(chest->assemble(persistency::serialized));
+			m_terrain.add(*chest);
+
+			auto ore = std::make_shared<body_component::item_type>();
+			ore->add({ rl::effect::ore_power, 0x00, 10 });
+			ore->add({ rl::effect::value, 0x00, 5 });
+			ore->add({ rl::effect::weight, 0x00, 1 });
+			ore->set_name("Copper ore");
+			ore->set_tag("ore_copper");
+			auto vein = m_factory->produce();
+			vein->add_appearance('0');
+			vein->add_location({ 3, 3 });
+			vein->add_body();
+			auto v = vein->add_resource();
+			v->deposit(ore);
+			m_terrain.add(*vein);
+
+
+			auto anvil = m_factory->produce();
+			anvil->add_appearance('t');
+			anvil->add_location({ 3, 0 });
+			anvil->add_body();
+			anvil->add_container();
+			m_terrain.add(*anvil);
 		}
 		void environment::end()
 		{
@@ -106,14 +130,15 @@ namespace px
 			auto pawn = task->add_location(location);
 			auto body = task->add_body(100, 100);
 			auto character = task->add_character();
+
 			// setup
+			body->set_name("You");
+			body->set_tag("player");
 			body->join_faction(1);
 			body->equip_weapon(weapon);
 			character->add_skill("melee");
-			character->set_tag("player");
-			// add
-			auto player = task->assemble(persistency::permanent);
-			m_terrain.add(player);
+
+			m_terrain.add(task->assemble(persistency::permanent));
 
 			impersonate(pawn);
 		}

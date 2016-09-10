@@ -31,6 +31,24 @@ namespace px
 			{
 				m_color = c;
 			}
+			void set_text(string_fn text, color c)
+			{
+				m_text = text;
+				m_color = c;
+			}
+			void set_text(string_fn text)
+			{
+				m_text = text;
+			}
+			void set_text(std::string str, color c)
+			{
+				m_text = [str]() { return str; };
+				m_color = c;
+			}
+			void set_text(std::string str)
+			{
+				m_text = [str]() { return str; };
+			}
 
 		public:
 			text(string_fn fn, color c) : m_color(c), m_text(fn), m_align(text_alignment::left)

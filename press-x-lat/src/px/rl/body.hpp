@@ -7,6 +7,7 @@
 #define PX_RL_BODY_HPP
 
 #include <px/rl/bar.hpp>
+#include <px/rl/entity.hpp>
 
 #include <memory>
 
@@ -14,7 +15,7 @@ namespace px
 {
 	namespace rl
 	{
-		class body
+		class body : public entity
 		{
 		public:
 			typedef bar<int> bar;

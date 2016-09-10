@@ -86,7 +86,7 @@ namespace px
 			void target(point2 location);
 			point2 targeted() const;
 			void open_workshop(std::weak_ptr<body_component> user);
-			void open_container(std::weak_ptr<body_component> user, std::weak_ptr<body_component> container);
+			void open_container(std::shared_ptr<body_component> user, std::shared_ptr<body_component> container);
 			void assign_inventory(std::weak_ptr<body_component> body);
 
 		public:

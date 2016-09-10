@@ -100,7 +100,6 @@ namespace px
 					body->join_faction(1);
 					body->equip_weapon(weapon);
 					character->add_skill("melee");
-					character->set_tag("farm_dweller");
 
 					// add
 					units.emplace_back(task->assemble(persistency::serialized), task->location());
@@ -126,7 +125,6 @@ namespace px
 					body->join_faction(1);
 					body->equip_weapon(weapon);
 					character->add_skill("melee");
-					character->set_tag("domestic_animal");
 
 					// add
 					units.emplace_back(task->assemble(persistency::serialized), task->location());

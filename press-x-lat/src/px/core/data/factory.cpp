@@ -15,6 +15,8 @@
 #include <px/core/sys/resource_component.hpp>
 #include <px/core/sys/container_component.hpp>
 
+#include <px/core/persistency.hpp>
+
 #include <memory>
 #include <mutex>
 
@@ -74,7 +76,7 @@ namespace px
 		}
 		std::shared_ptr<image_component> product::add_appearance(unsigned int glyph)
 		{
-			return product::add_appearance(glyph, 0xffffff);
+			return product::add_appearance(glyph, color::white());
 		}
 		std::shared_ptr<image_component> product::add_appearance(unsigned int glyph, color tint)
 		{
@@ -140,6 +142,14 @@ namespace px
 
 			unit_composer::assemble(*unit);
 			return unit;
+		}
+		std::shared_ptr<core::unit> product::assemble()
+		{
+			return assemble(persistency::serialized);
+		}
+		product::operator std::shared_ptr<unit>()
+		{
+			return assemble();
 		}
 	}
 }
