@@ -6,8 +6,6 @@
 #ifndef PX_RL_ENHANCEMENT_HPP
 #define PX_RL_ENHANCEMENT_HPP
 
-#include <cstring>
-
 namespace px
 {
 	namespace rl

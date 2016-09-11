@@ -43,7 +43,7 @@ namespace px
 			auto chest = m_factory->produce();
 			chest->add_appearance('$', { 1, 1, 1 });
 			chest->add_location({ 2, 2 });
-			auto body = chest->add_body();
+			auto body = chest->add_body(250, 150);
 			body->set_name("Iron chest");
 			chest->add_container();
 			m_terrain.add(*chest);
@@ -93,11 +93,13 @@ namespace px
 			focus();
 			++m_time;
 
-			m_terrain.enumerate([](auto &unit) {
+			m_terrain.enumerate([this](auto &unit) {
 				if (location_component* pawn = unit->location())
 				{
 					if (body_component* body = *pawn)
 					{
+						body->tick(*this);
+
 						if (body->dead() && body->empty() && unit->get_persistency() != persistency::destroying)
 						{
 							unit->destroy(5);
@@ -148,7 +150,7 @@ namespace px
 			focus();
 			if (unit)
 			{
-				assign_inventory(unit->linked());
+				assign_inventory(unit->linked().lock());
 			}
 		}
 		void environment::focus()

@@ -42,11 +42,11 @@ namespace px
 		public:
 			anvil_panel()
 			{
-				emplace<ui::board>({ { 0, 0 },{ 0, 0 },{ 0, 1 },{ 1, 0 } }, color(0, 0, 1));
-				emplace<ui::board>({ { 0, 0 },{ 0, 1 },{ 0, -1 },{ 1, 1 } }, color(0, 0, 0.5));
-				emplace<ui::text>({ { 0, 0 },{ 0, 0 },{ 0, 0 },{ 0, 0 } }, "[K IS FOR KRAFT]", color(1, 1, 1));
+				emplace<ui::board>({ { 0.0, 0.0 },{ 0, 0 },{ 0, 1 },{ 1, 0 } }, color(0, 0, 1));
+				emplace<ui::board>({ { 0.0, 0.0 },{ 0, 1 },{ 0, -1 },{ 1, 1 } }, color(0, 0, 0.5));
+				emplace<ui::text>({ { 0.0, 0.0 },{ 0, 0 },{ 0, 0 } }, "[WORKSHOP]", color::white());
 
-				m_list = emplace<list_type>({ { 0.3, 0 },{ 0, 1 },{ 0, -1 },{ 0.3, 1 } }).get();
+				m_list = emplace<list_type>({ { 0.3, 0.0 },{ 0, 1 },{ 0, -1 },{ 0.3, 1.0 } }).get();
 			}
 			virtual ~anvil_panel() {}
 

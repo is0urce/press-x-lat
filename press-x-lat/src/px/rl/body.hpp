@@ -23,7 +23,7 @@ namespace px
 
 		private:
 			bar_ptr m_hp;
-			bar_ptr m_ep;
+			bar_ptr m_mp;
 			unsigned int m_faction;
 
 		public:
@@ -36,7 +36,7 @@ namespace px
 			}
 			void set_energy(bar::value_t amount)
 			{
-				m_hp = std::make_unique<bar>(amount);
+				m_mp = std::make_unique<bar>(amount);
 			}
 			void remove_health()
 			{
@@ -44,7 +44,7 @@ namespace px
 			}
 			void remove_energy()
 			{
-				m_hp.release();
+				m_mp.release();
 			}
 			const bar* health() const
 			{
@@ -56,11 +56,11 @@ namespace px
 			}
 			const bar* energy() const
 			{
-				return m_ep.get();
+				return m_mp.get();
 			}
 			bar* energy()
 			{
-				return m_ep.get();
+				return m_mp.get();
 			}
 
 			// reputation

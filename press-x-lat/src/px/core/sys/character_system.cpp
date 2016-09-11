@@ -42,7 +42,7 @@ namespace px
 					{
 						if (auto hp = target_body->health())
 						{
-							auto dmg = user_body->weapon()->accumulate<rl::effect::weapon_damage>();
+							auto dmg = user_body->accumulate<rl::effect::weapon_damage>();
 							hp->damage(dmg.value0);
 						}
 					}

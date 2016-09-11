@@ -85,7 +85,7 @@ namespace px
 			}
 
 			template <typename T, typename BinaryOperation>
-			T accumulate(T start, BinaryOperation fold) const
+			T accumulate(T start, BinaryOperation&& fold) const
 			{
 				for (auto it = m_effects.cbegin(), last = m_effects.cend(); it != last; ++it)
 				{

@@ -15,11 +15,15 @@ namespace px
 {
 	namespace rl
 	{
-		template <typename E>
+		template <typename Effect>
 		class item
 			: public entity
-			, public enhancement_collection<E>
+			, public enhancement_collection<Effect>
 		{
+		public:
+			typedef Effect effect_type;
+			typedef enhancement_collection<Effect> collection_type;
+
 		private:
 			unsigned int m_stack;
 			unsigned int m_max_stack; // default is 1, if max_stack is 0, allow unlimited stacking
@@ -70,7 +74,7 @@ namespace px
 				if (m_stack == m_max_stack) return false;
 				if (name() != i.name() || tag() != i.tag()) return false;
 
-				return static_cast<enhancement_collection<E>>(*this) == static_cast<enhancement_collection<E>>(i);
+				return static_cast<collection_type>(*this) == static_cast<collection_type>(i);
 			}
 
 			// unlimited max size

@@ -85,9 +85,9 @@ namespace px
 			void compose_ui();
 			void target(point2 location);
 			point2 targeted() const;
-			void open_workshop(std::weak_ptr<body_component> user);
+			void open_workshop(std::shared_ptr<body_component> user);
 			void open_container(std::shared_ptr<body_component> user, std::shared_ptr<body_component> container);
-			void assign_inventory(std::weak_ptr<body_component> body);
+			void assign_inventory(std::shared_ptr<body_component> body);
 
 		public:
 			environment(ui::stack_panel &ui, factory &builder, space_type &space);

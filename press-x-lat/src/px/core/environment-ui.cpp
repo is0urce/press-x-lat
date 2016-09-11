@@ -134,18 +134,20 @@ namespace px
 			return m_target;
 		}
 
-		void environment::assign_inventory(std::weak_ptr<body_component> body)
+		void environment::assign_inventory(std::shared_ptr<body_component> body)
 		{
 			m_inventory->show(body);
 		}
-		void environment::open_workshop(std::weak_ptr<body_component> user)
+		void environment::open_workshop(std::shared_ptr<body_component> user)
 		{
-			m_craft->show(user);
-
 			m_inventory->deactivate();
 			m_container->deactivate();
 
-			m_craft->activate();
+			if (user)
+			{
+				m_craft->show(user);
+				m_craft->activate();
+			}
 		}
 		void environment::open_container(std::shared_ptr<body_component> user, std::shared_ptr<body_component> container)
 		{
