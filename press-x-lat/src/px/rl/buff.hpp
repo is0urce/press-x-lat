@@ -26,7 +26,7 @@ namespace px
 				return !m_permanent && m_time == 0;
 			}
 			template <typename... Args>
-			bool apply(Args &&... args)
+			void apply(Args &&... args)
 			{
 				if (m_apply)
 				{
@@ -34,7 +34,7 @@ namespace px
 				}
 			}
 			template <typename... Args>
-			bool expire(Args &&... args)
+			void expire(Args &&... args)
 			{
 				if (m_expire)
 				{
@@ -42,7 +42,7 @@ namespace px
 				}
 			}
 			template <typename... Args>
-			bool tick(Args &&... args)
+			void tick(Args &&... args)
 			{
 				if (!m_permanent)
 				{

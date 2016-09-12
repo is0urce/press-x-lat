@@ -74,10 +74,10 @@ namespace px
 				switch (m_align)
 				{
 				case text_alignment::right:
-					pen.move_axis<0>(bounds().range().x() - str.length());
+					pen.move_axis<0>(bounds().range().x() - static_cast<int>(str.length()));
 					break;
 				case text_alignment::center:
-					pen.move_axis<0>((bounds().range().x() - str.length()) / 2);
+					pen.move_axis<0>((bounds().range().x() - static_cast<int>(str.length()) / 2));
 					break;
 				case text_alignment::left:
 					break;

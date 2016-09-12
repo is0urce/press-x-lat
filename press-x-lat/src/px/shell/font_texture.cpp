@@ -31,7 +31,7 @@ namespace px
 		}
 		font_texture::font_texture(font* font_ptr)
 		{
-			init(std::shared_ptr<font>(font_ptr, [](font* f){}));
+			init(std::shared_ptr<font>(font_ptr, [](font*){}));
 		}
 
 		// copy constructor

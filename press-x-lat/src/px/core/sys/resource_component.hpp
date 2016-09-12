@@ -42,11 +42,11 @@ namespace px
 			virtual ~resource_component() {}
 
 		protected:
-			virtual bool useable_component(location_component* user_pos, environment& env) const override
+			virtual bool useable_component(location_component*, environment&) const override
 			{
 				return !empty();
 			}
-			virtual void use_component(location_component* user_pos, environment& env) override
+			virtual void use_component(location_component* user_pos, environment&) override
 			{
 				if (body_component* user_body = *user_pos)
 				{

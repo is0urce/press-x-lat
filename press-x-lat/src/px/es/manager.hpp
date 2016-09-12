@@ -153,8 +153,8 @@ namespace px
 			manager(const manager&) = delete;
 
 		protected:
-			virtual void element_allocated(element &e) {}
-			virtual void element_released(element &e) {}
+			virtual void element_allocated(element &) {}
+			virtual void element_released(element &) {}
 
 		public:
 			// count created objects

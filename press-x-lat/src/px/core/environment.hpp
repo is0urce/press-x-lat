@@ -89,6 +89,9 @@ namespace px
 			void open_container(std::shared_ptr<body_component> user, std::shared_ptr<body_component> container);
 			void assign_inventory(std::shared_ptr<body_component> body);
 
+			// script
+			void damage(body_component &x) {; }
+
 		public:
 			environment(ui::stack_panel &ui, factory &builder, space_type &space);
 			virtual ~environment();

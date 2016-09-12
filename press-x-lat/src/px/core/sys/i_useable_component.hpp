@@ -18,10 +18,10 @@ namespace px
 			virtual ~i_useable_component() {}
 
 		protected:
-			virtual void use_component(location_component* l, environment& env)
+			virtual void use_component(location_component*, environment&)
 			{
 			}
-			virtual bool useable_component(location_component* l, environment& env) const
+			virtual bool useable_component(location_component*, environment&) const
 			{
 				return false;
 			}

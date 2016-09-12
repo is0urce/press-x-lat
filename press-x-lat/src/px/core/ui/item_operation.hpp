@@ -29,7 +29,7 @@ namespace px
 		struct item_color
 		{
 			template <typename I>
-			color operator()(const I& item) const
+			color operator()(I const&) const
 			{
 				return color(1, 1, 1);
 			}
@@ -37,7 +37,7 @@ namespace px
 		struct item_filter
 		{
 			template <typename I>
-			bool operator()(const I& item) const
+			bool operator()(I const& item) const
 			{
 				return item ? true : false;
 			}

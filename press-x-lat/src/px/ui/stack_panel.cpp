@@ -67,22 +67,22 @@ namespace px
 			return panel_action([&](stacked_panel& p) { return p.panel->scroll(delta); }) || scroll_stacked(delta);
 		}
 
-		void stack_panel::draw_stacked(shell::canvas& cnv) const
+		void stack_panel::draw_stacked(shell::canvas&) const
 		{
 		}
-		bool stack_panel::key_stacked(shell::key code)
-		{
-			return false;
-		}
-		bool stack_panel::hover_stacked(const point2 &position)
+		bool stack_panel::key_stacked(shell::key)
 		{
 			return false;
 		}
-		bool stack_panel::click_stacked(const point2 &position, unsigned int button)
+		bool stack_panel::hover_stacked(point2 const&)
 		{
 			return false;
 		}
-		bool stack_panel::scroll_stacked(int delta)
+		bool stack_panel::click_stacked(point2 const&, unsigned int)
+		{
+			return false;
+		}
+		bool stack_panel::scroll_stacked(int)
 		{
 			return false;
 		}

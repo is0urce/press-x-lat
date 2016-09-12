@@ -19,9 +19,9 @@ namespace px
 			virtual ~i_game_control() {}
 
 		protected:
-			virtual bool player_use(unsigned int ability_slot, point2 target) { return false; }
-			virtual bool player_activate(point2 target) { return false; }
-			virtual bool player_step(point2 direction) { return false; }
+			virtual bool player_use(unsigned int, point2) { return false; }
+			virtual bool player_activate(point2) { return false; }
+			virtual bool player_step(point2) { return false; }
 			virtual bool player_hover(point2 target) = 0;
 
 		public:

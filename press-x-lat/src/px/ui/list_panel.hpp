@@ -64,7 +64,7 @@ namespace px
 
 		public:
 			list_panel(const Formatter &formatter = Formatter(), const Color& c = Color(), const Click &click = Click(), const Hover &hover = Hover(), const Filter& filter = Filter())
-				: m_formatter(formatter), m_color(c)
+				: m_formatter(formatter), m_color(c), m_filter(filter)
 				, m_hover(hover), m_click(click)
 				, m_line_size(1)
 			{
@@ -108,7 +108,7 @@ namespace px
 				}
 				return true;
 			}
-			virtual bool click_stacked(point2 const& position, unsigned int vbutton) override
+			virtual bool click_stacked(point2 const& position, unsigned int) override
 			{
 				auto shared = m_list.lock();
 				auto total_bounds = bounds();

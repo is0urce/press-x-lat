@@ -24,7 +24,7 @@ namespace px
 			build_tile tile;
 			unsigned int group;
 			tile_entry(build_tile t, unsigned int g) noexcept
-				: tile(t), group(0)
+				: tile(t), group(g)
 			{}
 			tile_entry(build_tile t) noexcept
 				: tile_entry(t, 0)

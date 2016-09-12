@@ -48,10 +48,10 @@ namespace px
 
 					auto start_button = menu->emplace<ui::button>({ { 0.5, 0.5 }, { -8, 0 }, { 15, 1 }, { 0.0, 0.0 } },
 						color::black(), 0x333333, "create", color::white(),
-						[menu, create](auto const& location, auto) { menu->deactivate(); create->activate(); return true; });
+						[menu, create](auto const&, auto) { menu->deactivate(); create->activate(); return true; });
 					auto exit_button = menu->emplace<ui::button>({ { 0.5, 0.5 }, { -8, 2 }, { 15, 1 }, { 0.0, 0.0 } },
 						color::black(), 0x333333, "exit", color::white(),
-						[this](auto const& location, auto) { deactivate(); return true; });
+						[this](auto const&, auto) { deactivate(); return true; });
 
 					start_button->text()->align(ui::text_alignment::center);
 					exit_button->text()->align(ui::text_alignment::center);

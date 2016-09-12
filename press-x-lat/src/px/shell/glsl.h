@@ -74,7 +74,7 @@ namespace px
 			{
 				try
 				{
-					GLenum t = has_suffix(name, ".vert") ? GL_VERTEX_SHADER : GL_FRAGMENT_SHADER;
+					GLenum t = static_cast<GLenum>(has_suffix(name, ".vert") ? GL_VERTEX_SHADER : GL_FRAGMENT_SHADER);
 					return compile(t, read(name.c_str()));
 				}
 				catch (std::runtime_error& exc)

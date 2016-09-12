@@ -512,7 +512,8 @@
     <None Include="config\shared\console_bg.vert" />
     <None Include="config\shared\console_bg.frag" />
     <None Include="src\px\core\sys\rendering_system.hpp" />
-    <None Include="doc\skills.json" />
+    <None Include="config\shared\bash.lua" />
+    <None Include="config\shared\skills.json" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="I:\projects\PressX\font\DejaVuSansMono.ttf" />

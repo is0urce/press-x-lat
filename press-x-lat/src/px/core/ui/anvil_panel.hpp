@@ -73,7 +73,7 @@ namespace px
 				}
 				return close;
 			}
-			virtual bool click_stacked(const point2 &position, unsigned int button) override
+			virtual bool click_stacked(const point2 &position, unsigned int) override
 			{
 				bool close = !bounds().contains(position);
 				if (close)

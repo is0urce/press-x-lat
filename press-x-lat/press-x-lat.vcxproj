@@ -90,7 +90,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
@@ -101,9 +101,13 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+    <PreBuildEvent>
       <Command>xcopy /deyvq "config/x32" "$(TargetDir)"
 xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
-    </PostBuildEvent>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -119,9 +123,13 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+    <PreBuildEvent>
       <Command>xcopy /deyvq "config/x64" "$(TargetDir)"
 xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
-    </PostBuildEvent>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -133,6 +141,7 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
       <AdditionalIncludeDirectories>src;include;</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -141,9 +150,13 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+    <PreBuildEvent>
       <Command>xcopy /deyvq "config/x32" "$(TargetDir)"
 xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
-    </PostBuildEvent>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -163,9 +176,13 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+    <PreBuildEvent>
       <Command>xcopy /deyvq "config/x64" "$(TargetDir)"
 xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
-    </PostBuildEvent>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -348,8 +365,9 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <None Include="config\shared\console_bg.vert" />
     <None Include="config\shared\console_text.frag" />
     <None Include="config\shared\console_text.vert" />
+    <None Include="config\shared\bash.lua" />
     <None Include="doc\ores.json" />
-    <None Include="doc\skills.json" />
+    <None Include="config\shared\skills.json" />
     <None Include="src\px\core\sys\rendering_system.hpp" />
   </ItemGroup>
   <ItemGroup>

@@ -157,7 +157,7 @@ namespace px
 		{
 		}
 
-		void renderer::render(time_t time, const canvas& cnv)
+		void renderer::render(time_t, const canvas& cnv)
 		{
 			m_opengl->update(m_width, m_height);
 

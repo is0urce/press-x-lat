@@ -78,7 +78,7 @@ namespace px
 						{
 							// select target from location
 							location_component* target_pawn = nullptr;
-							m_space->find(target.x(), target.y(), [&](int x, int y, location_component* component)
+							m_space->find(target.x(), target.y(), [&](int, int, location_component* component)
 							{
 								if (body_component* b = *component) // should have body
 								{
@@ -106,7 +106,7 @@ namespace px
 			bool done = false;
 			if (distance(source.current(), position) <= max_use_distance)
 			{
-				m_space->find(position.x(), position.y(), [&](int x, int y, location_component* component)
+				m_space->find(position.x(), position.y(), [&](int, int, location_component* component)
 				{
 					if (body_component* body = *component)
 					{

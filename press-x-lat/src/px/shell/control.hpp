@@ -22,10 +22,10 @@ namespace px
 			typedef key key_type;
 
 		protected:
-			virtual bool key_control(key_type code) { return false; }
-			virtual bool hover_control(const point2 &position) { return false; }
-			virtual bool click_control(const point2 &position, unsigned int button) { return false; }
-			virtual bool scroll_control(int delta) { return false; }
+			virtual bool key_control(key_type) { return false; }
+			virtual bool hover_control(point2 const&) { return false; }
+			virtual bool click_control(point2 const&, unsigned int) { return false; }
+			virtual bool scroll_control(int) { return false; }
 
 		public:
 			bool key(key_type code) { return key_control(code); }

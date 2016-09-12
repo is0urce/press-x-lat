@@ -96,12 +96,12 @@ namespace px
 				m_hover = position;
 				return m_game->hover(position);
 			}
-			virtual bool click_control(const point2 &position, unsigned int button) override
+			virtual bool click_control(const point2 &position, unsigned int) override
 			{
 				m_hover = position;
 				return m_game->activate(m_hover);
 			}
-			virtual bool scroll_control(int delta) override
+			virtual bool scroll_control(int) override
 			{
 				return false;
 			}

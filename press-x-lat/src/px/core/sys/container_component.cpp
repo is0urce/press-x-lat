@@ -17,7 +17,7 @@ namespace px
 		container_component::container_component() {}
 		container_component::~container_component() {}
 
-		bool container_component::useable_component(location_component* user_pawn, environment& env) const
+		bool container_component::useable_component(location_component*, environment&) const
 		{
 			return true;
 		}

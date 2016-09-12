@@ -1,0 +1,28 @@
+{
+  "skills": [
+    {
+      "name": "Bash",
+      "tag": "sk_bash",
+      "description": "Do 100% damage.",
+      "script": "bash.lua",
+      "hostile": "true",
+      "distance": {
+        "min": "0",
+        "max": "1"
+      },
+      "const" : "50"
+    },
+    {
+      "name": "Curse of Pain",
+      "tag": "sk_bash",
+      "description": "Do 100% damage.",
+      "script": "bash.lua"
+    },
+    {
+      "name": "Ambush",
+      "tag": "sk_bash",
+      "description": "Do 100% damage or 300% damage if target at full health.",
+      "script": "bash.lua"
+    }
+  ]
+}
