@@ -1,0 +1,12 @@
+{
+  "skills": [
+    {
+      "name": "Bash",
+      "tag": "sk_bash",
+      "description": "Do 100% damage.",
+      "condition": "if (x == 3)\nprint(\"Hello World\");"
+    },
+    {},
+    {}
+  ]
+}
