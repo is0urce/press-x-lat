@@ -10,11 +10,13 @@
 
 #include <tuple>
 
+#include <px/rl/entity.hpp>
+
 namespace px
 {
 	namespace rl
 	{
-		class skill_base
+		class skill_base : public entity
 		{
 		public:
 			typedef unsigned int time_type;

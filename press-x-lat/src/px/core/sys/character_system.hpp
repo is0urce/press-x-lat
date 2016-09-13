@@ -44,8 +44,8 @@ namespace px
 			virtual void element_allocated(character_component &l) override;
 
 		private:
-			skillbook_type m_spellbook;
-			sel::State m_lua;
+			skillbook_type m_book;
+			sel::State m_script;
 		};
 	}
 }

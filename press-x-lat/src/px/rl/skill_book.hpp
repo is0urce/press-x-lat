@@ -31,14 +31,16 @@ namespace px
 
 				if (!pair.second) throw std::runtime_error("px::rl::skill_book::add_target(..) - can't insert new skill (same tag exists)");
 
+				pair.first->second.set_tag(name);
 				return pair.first->second; // value of an iterator
 			}
 			skill_type& add_ground(Tag name, gf f, gfc c)
 			{
-				auto pair = emplace(name, skill_type{ gf, gfc }).first;
+				auto pair = emplace(name, skill_type{ gf, gfc });
 
 				if (!pair.second) throw std::runtime_error("px::rl::skill_book::add_target(..) - can't insert new skill (same tag exists)");
 
+				pair.first->second.set_tag(name);
 				return pair.first->second; // value of an iterator
 			}
 		};

@@ -27,6 +27,17 @@ namespace px
 					}
 				}
 			}
+			void drain(int dmg)
+			{
+				update();
+				if (m_body)
+				{
+					if (auto mp = m_body->energy())
+					{
+						mp->damage(dmg);
+					}
+				}
+			}
 			int weapon_damage()
 			{
 				update();

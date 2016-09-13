@@ -138,7 +138,7 @@ namespace px
 			body->set_tag("player");
 			body->join_faction(1);
 			body->equip_weapon(weapon);
-			character->add_skill("melee");
+			character->add_skill("sk_bash");
 
 			m_terrain.add(task->assemble(persistency::permanent));
 
