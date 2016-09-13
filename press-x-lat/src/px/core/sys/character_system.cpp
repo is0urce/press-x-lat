@@ -10,7 +10,7 @@
 #include <px/core/sys/location_component.hpp>
 #include <px/core/sys/body_component.hpp>
 
-#include <selene.h>
+#include <px/core/wrap_unit.hpp>
 
 #ifdef WIN64
 #pragma comment(lib, "lib/x64/lua53.lib")
@@ -18,17 +18,29 @@
 #pragma comment(lib, "lib/x32/lua53.lib")
 #endif
 
-sel::State state{ true };
-
 namespace px
 {
 	namespace core
 	{
-		character_system::character_system(environment &env)
+		character_system::character_system(environment &env) : m_lua{ true }
 		{
+			m_lua.HandleExceptionsWith([](int code, std::string message, std::exception_ptr exc_ptr) {
+				throw std::runtime_error("Lua error: code =" + std::to_string(code) + ", message=" + message);
+			});
+
+			m_lua["unit"].SetClass<wrap_unit, location_component*>(
+				"energy", &wrap_unit::energy,
+				"health", &wrap_unit::health,
+				"damage", &wrap_unit::damage,
+				"dead", &wrap_unit::dead,
+				"weapon_damage", &wrap_unit::weapon_damage);
+
 			fill(env);
 		}
-		character_system::~character_system() {}
+		character_system::~character_system()
+		{
+			m_spellbook.clear(); // clear closures with references first
+		}
 
 		void character_system::element_allocated(character_component &element)
 		{
@@ -43,50 +55,33 @@ namespace px
 
 		void character_system::fill(environment &env)
 		{
-			state.HandleExceptionsWith([](int code, std::string message, std::exception_ptr exc_ptr) {
-				throw std::runtime_error("Lua error: code =" + std::to_string(code) + ", message=" + message);
-			});
-			state.Load("bash.lua");
-			state["do_damage"] = [&](body_component* body, int dmg) {
-				if (body)
-				{
-					auto hp = body->health();
-					if (hp)
+			auto action = [this](std::string name) {
+				return [selector = m_lua[name.c_str()]["action"]](location_component* user, location_component* target) {
+					try
 					{
-						hp->damage(dmg);
+						selector(wrap_unit(user), wrap_unit(target));
 					}
-				}
+					catch (std::exception &exc)
+					{
+						throw std::runtime_error(std::string("Lua exception, what=") + exc.what());
+					}
+				};
 			};
-			state["weapon_damage"] = [&](body_component* body) ->int {
-				return body ? body->accumulate<rl::effect::weapon_damage>().value0 : 0;
+			auto condition = [this](std::string name) {
+				return [selector = m_lua[name.c_str()]["condition"]](location_component* user, location_component* target) {
+					try
+					{
+						return static_cast<bool>(selector(wrap_unit(user), wrap_unit(target)));
+					}
+					catch (std::exception &exc)
+					{
+						throw std::runtime_error(std::string("Lua exception, what=") + exc.what());
+					}
+				};
 			};
-			state["game"].SetObj(env, "damage", &environment::damage);
 
-			m_spellbook.add_target("melee", [](location_component* user, location_component* target) {
-				try
-				{
-					state["action"](static_cast<body_component*>(*user), static_cast<body_component*>(*target));
-				}
-				catch (std::exception &exc)
-				{
-					throw std::runtime_error(std::string("Lua exception, what=") + exc.what());
-				}
-			}, [&](location_component* user, location_component* target) {
-				try
-				{
-					auto condition = state["condition"](static_cast<body_component*>(*user), static_cast<body_component*>(*target));
-					return static_cast<bool>(condition);
-				}
-				catch (std::exception &exc)
-				{
-					throw std::runtime_error(std::string("Lua exception, what=") + exc.what());
-				}
-
-				//return body && target_body && body != target_body
-				//	&& target_body->health() && !target_body->health()->empty() // should have positive hit points
-				//	&& env.reputation(*body, *target_body) < 0 // friend-or-foe
-				//	&& env.distance(user->current(), target->current()) == 1; // 1 tile melee distance
-			});
+			m_lua.Load("bash.lua");
+			m_spellbook.add_target("melee", action("bash"), condition("bash"));
 		}
 	}
 }

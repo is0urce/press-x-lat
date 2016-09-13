@@ -90,7 +90,7 @@ namespace px
 			void assign_inventory(std::shared_ptr<body_component> body);
 
 			// script
-			void damage(body_component &x) {; }
+			void damage(location_component* x) {}
 
 		public:
 			environment(ui::stack_panel &ui, factory &builder, space_type &space);

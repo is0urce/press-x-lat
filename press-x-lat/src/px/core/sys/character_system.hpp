@@ -14,6 +14,8 @@
 #include <px/rl/skill.hpp>
 #include <px/rl/skill_book.hpp>
 
+#include <selene.h>
+
 namespace px
 {
 	namespace core
@@ -36,12 +38,14 @@ namespace px
 			character_system(environment &e);
 			virtual ~character_system();
 			character_system(character_system const&) = delete;
+			character_system& operator=(character_system&) = delete;
 
 		protected:
 			virtual void element_allocated(character_component &l) override;
 
 		private:
 			skillbook_type m_spellbook;
+			sel::State m_lua;
 		};
 	}
 }
