@@ -99,7 +99,7 @@ namespace px
 					// setup
 					body->join_faction(1);
 					body->equip_weapon(weapon);
-					character->add_skill("melee");
+					character->add_skill("sk_melee");
 
 					// add
 					units.emplace_back(task->assemble(persistency::serialized), task->location());
@@ -124,7 +124,7 @@ namespace px
 					// setup
 					body->join_faction(1);
 					body->equip_weapon(weapon);
-					character->add_skill("melee");
+					character->add_skill("sk_melee");
 
 					// add
 					units.emplace_back(task->assemble(persistency::serialized), task->location());

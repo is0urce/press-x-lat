@@ -366,9 +366,9 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <None Include="config\shared\console_bg.vert" />
     <None Include="config\shared\console_text.frag" />
     <None Include="config\shared\console_text.vert" />
-    <None Include="config\shared\bash.lua" />
-    <None Include="config\shared\skills.json" />
-    <None Include="config\shared\skills.lua" />
+    <None Include="config\shared\script\bash.lua" />
+    <None Include="config\shared\script\melee.lua" />
+    <None Include="config\shared\data\skills.json" />
     <None Include="doc\ores.json" />
     <None Include="src\px\core\sys\rendering_system.hpp" />
   </ItemGroup>

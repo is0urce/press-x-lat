@@ -12,11 +12,17 @@
 
 #include <px/core/wrap_unit.hpp>
 
+#include <json.hpp>
+
+#include <fstream>
+
 #ifdef WIN64
 #pragma comment(lib, "lib/x64/lua53.lib")
 #else
 #pragma comment(lib, "lib/x32/lua53.lib")
 #endif
+
+using json = nlohmann::json;
 
 namespace px
 {
@@ -59,8 +65,8 @@ namespace px
 
 		void character_system::fill(environment &env)
 		{
-			auto action = [this](const char *c_name) {
-				return [selector = m_script[c_name]["action"]](location_component* user, location_component* target) {
+			auto target_action = [this](auto selector) {
+				return [selector = selector["action"]](location_component* user, location_component* target) {
 					try
 					{
 						selector(wrap_unit(user), wrap_unit(target));
@@ -71,8 +77,8 @@ namespace px
 					}
 				};
 			};
-			auto condition = [this](const char *c_name) {
-				return [selector = m_script[c_name]["condition"]](location_component* user, location_component* target) -> bool {
+			auto target_condition = [this](auto selector) {
+				return [selector = selector["condition"]](location_component* user, location_component* target) -> bool {
 					try
 					{
 						return selector(wrap_unit(user), wrap_unit(target));
@@ -84,45 +90,23 @@ namespace px
 				};
 			};
 
-			m_script.Load("bash.lua");
-			m_script.Load("skills.lua");
+			std::fstream fs;
+			fs.open("data/skills.json", std::fstream::in);
+			json js(fs);
 
-			const char * name = "bash";
-			auto skills = m_script["skills"];
-
-			unsigned int i = 0;
-			bool exist = true;
-			do
+			for (auto skill : js["skills"])
 			{
-				++i;
-				auto skill = m_script["x"];// skills["one"];
-				exist = static_cast<bool>(i <= 1);
-
 				std::string name = skill;
-				auto c_name = name.c_str();
-
-
-				if (exist)
+				m_script.Load(std::string("script/") + name + ".lua");
+				auto selector = m_script[name.c_str()];
+				if (selector["targeted"])
 				{
-					if (m_script[c_name]["targeted"])
-					{
-						auto& skill = m_book.add_target(m_script[c_name]["tag"], action(c_name), condition(c_name));
+					auto& skill = m_book.add_target(selector["tag"], target_action(selector), target_condition(selector));
 
-						skill.set_name(m_script[c_name]["name"]);
-						skill.set_description(m_script[c_name]["description"]);
-						skill.set_hostile(m_script[c_name]["hostile"]);
-					}
+					skill.set_name(selector["name"]);
+					skill.set_description(selector["description"]);
+					skill.set_hostile(selector["hostile"]);
 				}
-			}
-			while (exist);
-
-			if (m_script[name]["targeted"])
-			{
-				auto& skill = m_book.add_target("melee", action(name), condition(name));
-
-				skill.set_name(m_script[name]["name"]);
-				skill.set_description(m_script[name]["description"]);
-				skill.set_hostile(m_script[name]["hostile"]);
 			}
 		}
 	}
