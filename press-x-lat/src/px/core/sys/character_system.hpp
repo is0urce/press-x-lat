@@ -42,6 +42,7 @@ namespace px
 
 		protected:
 			virtual void element_allocated(character_component &l) override;
+			virtual void element_released(character_component &l) override;
 
 		private:
 			skillbook_type m_book;

@@ -65,6 +65,10 @@ namespace px
 			{
 				return add_skill(tag, m_skills.size());
 			}
+			void clear_skills()
+			{
+				m_skills.clear();
+			}
 			size_t skils_total() const
 			{
 				return m_skills.size();

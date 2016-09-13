@@ -57,13 +57,17 @@ namespace px
 			element.deactivate();
 			element.provide(&m_book);
 		}
+		void character_system::element_released(character_component &element)
+		{
+			element.clear_skills(); // clear closures with references
+		}
 
 		character_system::skillbook_type* character_system::skill_book()
 		{
 			return &m_book;
 		}
 
-		void character_system::fill(environment &env)
+		void character_system::fill(environment &)
 		{
 			auto target_action = [this](auto selector) {
 				return [selector = selector["action"]](location_component* user, location_component* target) {
@@ -89,24 +93,49 @@ namespace px
 					}
 				};
 			};
+			auto ground_action = [this](auto selector) {
+				return[selector = selector["action"]](location_component* user, point2 target) {
+					try
+					{
+						selector(wrap_unit(user), target);
+					}
+					catch (std::exception &exc)
+					{
+						throw std::runtime_error(std::string("Lua exception, what=") + exc.what());
+					}
+				};
+			};
+			auto ground_condition = [this](auto selector) {
+				return[selector = selector["condition"]](location_component* user, point2 target) -> bool {
+					try
+					{
+						return selector(wrap_unit(user), target);
+					}
+					catch (std::exception &exc)
+					{
+						throw std::runtime_error(std::string("Lua exception, what=") + exc.what());
+					}
+				};
+			};
 
-			std::fstream fs;
-			fs.open("data/skills.json", std::fstream::in);
-			json js(fs);
+			std::fstream file;
+			file.open("data/skills.json", std::fstream::in);
+			json js;
+			js << file;
 
-			for (auto skill : js["skills"])
+			for (auto s : js["skills"])
 			{
-				std::string name = skill;
+				std::string name = s;
 				m_script.Load(std::string("script/") + name + ".lua");
 				auto selector = m_script[name.c_str()];
-				if (selector["targeted"])
-				{
-					auto& skill = m_book.add_target(selector["tag"], target_action(selector), target_condition(selector));
 
-					skill.set_name(selector["name"]);
-					skill.set_description(selector["description"]);
-					skill.set_hostile(selector["hostile"]);
-				}
+				auto skill = selector["targeted"] ? 
+					m_book.add_target(selector["tag"], target_action(selector), target_condition(selector))	:
+					m_book.add_ground(selector["tag"], ground_action(selector), ground_condition(selector));
+
+				skill.set_name(selector["name"]);
+				skill.set_description(selector["description"]);
+				skill.set_hostile(selector["hostile"]);
 			}
 		}
 	}
