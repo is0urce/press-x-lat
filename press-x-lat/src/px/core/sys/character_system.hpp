@@ -35,8 +35,8 @@ namespace px
 			void fill(environment &e);
 
 		public:
-			character_system(environment &e);
 			virtual ~character_system();
+			character_system(environment &e);
 			character_system(character_system const&) = delete;
 			character_system& operator=(character_system&) = delete;
 

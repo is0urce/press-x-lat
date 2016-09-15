@@ -30,11 +30,11 @@ namespace px
 
 			// resources
 
-			void set_health(bar::value_t amount)
+			void set_health(bar::value_type amount)
 			{
 				m_hp = std::make_unique<bar>(amount);
 			}
-			void set_energy(bar::value_t amount)
+			void set_energy(bar::value_type amount)
 			{
 				m_mp = std::make_unique<bar>(amount);
 			}

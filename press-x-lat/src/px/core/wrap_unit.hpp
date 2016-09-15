@@ -27,6 +27,17 @@ namespace px
 					}
 				}
 			}
+			void restore(int val)
+			{
+				update();
+				if (m_body)
+				{
+					if (auto hp = m_body->health())
+					{
+						hp->restore(val);
+					}
+				}
+			}
 			void drain(int dmg)
 			{
 				update();

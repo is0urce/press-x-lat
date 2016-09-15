@@ -81,7 +81,7 @@ namespace px
 
 				m_target(u, t);
 			}
-			virtual void use_ability(user_type u, const point2 &t) override
+			virtual void use_ability(user_type u, point2 const& t) override
 			{
 				if (!m_ground) throw std::logic_error("px::targeted_ability::use_abitity(..) - m_ground function is null");
 
@@ -91,7 +91,7 @@ namespace px
 			{
 				return !(is_cooldown() || (m_target_check && !m_target_check(u, t)));
 			}
-			virtual bool useable_ability(user_type u, const point2 &t) const override
+			virtual bool useable_ability(user_type u, point2 const& t) const override
 			{
 				return !(is_cooldown() || (m_ground_check && !m_ground_check(u, t)));
 			}

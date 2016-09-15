@@ -12,73 +12,73 @@ namespace px
 {
 	namespace rl
 	{
-		template <typename _T>
+		template <typename T>
 		struct bar
 		{
 		public:
-			typedef _T value_t;
+			typedef T value_type;
 
 		private:
-			_T m_current;
-			_T m_max;
+			T m_current;
+			T m_max;
 
 			// ctor & dtor
 		public:
 			bar() : m_current{}, m_max{}
 			{
 			}
-			bar(_T max) : m_current(max), m_max(max)
+			bar(T max) : m_current(max), m_max(max)
 			{
 			}
-			bar(_T current, _T max)
+			bar(T current, T max)
 			{
 				init(max, max);
 			}
 		private:
-			void init(_T current, _T max)
+			void init(T current, T max)
 			{
 				m_max = max;
-				m_current = std::min<_T>(current, m_max);
+				m_current = std::min<T>(current, m_max);
 			}
 
 			// methods
 		public:
-			void set(_T current_and_max)
+			void set(T current_and_max)
 			{
 				init(current_and_max, current_and_max);
 			}
-			void set(_T current, _T max)
+			void set(T current, T max)
 			{
 				init(current, max);
 			}
-			_T current() const
+			T current() const
 			{
 				return m_current;
 			}
-			_T maximum() const
+			T maximum() const
 			{
 				return m_max;
 			}
-			void modify(_T magnitude)
+			void modify(T magnitude)
 			{
-				m_current = std::min<_T>(_current + magnitude, m_max);
+				m_current = std::min<T>(m_current + magnitude, m_max);
 			}
-			void restore(_T magnitude)
+			void restore(T magnitude)
 			{
-				m_current = std::min<_T>(_current + magnitude, m_max);
+				m_current = std::min<T>(m_current + magnitude, m_max);
 			}
-			void damage(_T magnitude)
+			void damage(T magnitude)
 			{
 				m_current -= magnitude;
 			}
-			void current(_T current)
+			void current(T current)
 			{
-				m_current = std::min<_T>(current, _max);
+				m_current = std::min<T>(current, m_max);
 			}
-			void maximum(_T max)
+			void maximum(T max)
 			{
-				_max = max;
-				_current = std::min<_T>(_current, _max);
+				m_max = max;
+				m_current = std::min<T>(m_current, m_max);
 			}
 			bool empty() const
 			{
@@ -88,22 +88,22 @@ namespace px
 			{
 				return m_current == m_max;
 			}
-			bar& operator=(_T c)
+			bar& operator=(T c)
 			{
 				set(c);
 				return *this;
 			}
-			bar& operator+=(_T c)
+			bar& operator+=(T c)
 			{
 				modify(c);
 				return *this;
 			}
-			bar& operator-=(_T c)
+			bar& operator-=(T c)
 			{
 				modify(-c);
 				return *this;
 			}
-			operator value_t() const
+			operator value_type() const
 			{
 				return m_current;
 			}

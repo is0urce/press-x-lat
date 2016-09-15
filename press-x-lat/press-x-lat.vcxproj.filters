@@ -411,6 +411,9 @@
     <ClInclude Include="src\px\core\wrap_unit.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\px\core\ui\skill_panel.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -494,6 +497,9 @@
     <ClCompile Include="src\px\core\gen\poi\graveyard_builder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\px\core\ui\skill_panel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="press-x-lat.rc">
@@ -518,6 +524,7 @@
     <None Include="config\shared\script\bash.lua" />
     <None Include="config\shared\script\melee.lua" />
     <None Include="config\shared\data\skills.json" />
+    <None Include="config\shared\script\panacea.lua" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="I:\projects\PressX\font\DejaVuSansMono.ttf" />

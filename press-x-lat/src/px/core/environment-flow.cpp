@@ -62,7 +62,6 @@ namespace px
 			v->deposit(ore);
 			m_terrain.add(*vein);
 
-
 			auto anvil = m_factory->produce();
 			anvil->add_appearance('t');
 			anvil->add_location({ 3, 0 });
@@ -139,6 +138,7 @@ namespace px
 			body->join_faction(1);
 			body->equip_weapon(weapon);
 			character->add_skill("sk_bash");
+			character->add_skill("sk_panacea");
 
 			m_terrain.add(task->assemble(persistency::permanent));
 

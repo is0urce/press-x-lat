@@ -16,6 +16,8 @@
 
 #include <px/core/ui/status_panel.hpp>
 #include <px/core/ui/target_panel.hpp>
+#include <px/core/ui/skill_panel.hpp>
+
 #include <px/core/ui/inventory_panel.hpp>
 #include <px/core/ui/container_panel.hpp>
 #include <px/core/ui/anvil_panel.hpp>
@@ -109,6 +111,8 @@ namespace px
 			{
 				ingame->emplace<status_panel>("status", { { 0.0, 0.0 },{ 1, 2 },{ -2, 1 },{ 1.0, 0.0 } }, *this);
 				ingame->emplace<target_panel>("target", { { 1.0, 0.0 },{ -12, 2 },{ -2, 1 },{ 1.0, 0.0 } }, *this);
+				ingame->emplace<skill_panel>("skill", { { 0.0, 1.0 },{ 1, -2 },{ -2, 1 },{ 1.0, 0.0 } }, *this);
+
 				m_inventory = ingame->emplace<inventory_panel>("inventory", { { 0.3, 0.1 },{ 0, 0 },{ 0, 0 },{ 0.4, 0.8 } }).get();
 				m_craft = ingame->emplace<anvil_panel>("craft", { { 0.1, 0.1 },{ 0, 0 },{ 0, 0 },{ 0.8, 0.8 } }).get();
 				m_container = ingame->emplace<container_panel>("container", { { 0.2, 0.1 },{ 0, 0 },{ 0, 0 },{ 0.6, 0.8 } }).get();

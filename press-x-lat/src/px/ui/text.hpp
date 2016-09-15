@@ -49,6 +49,15 @@ namespace px
 			{
 				m_text = [str]() { return str; };
 			}
+			void set_text(const char* c_str, color c)
+			{
+				m_text = [str = std::string(c_str)]() { return str; };
+				m_color = c;
+			}
+			void set_text(const char* c_str)
+			{
+				m_text = [str = std::string(c_str)]() { return str; };
+			}
 
 		public:
 			text(string_fn fn, color c) : m_color(c), m_text(fn), m_align(text_alignment::left)
@@ -77,7 +86,7 @@ namespace px
 					pen.move_axis<0>(bounds().range().x() - static_cast<int>(str.length()));
 					break;
 				case text_alignment::center:
-					pen.move_axis<0>((bounds().range().x() - static_cast<int>(str.length()) / 2));
+					pen.move_axis<0>((bounds().range().x() - static_cast<int>(str.length())) / 2);
 					break;
 				case text_alignment::left:
 					break;

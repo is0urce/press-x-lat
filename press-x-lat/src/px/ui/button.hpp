@@ -35,6 +35,11 @@ namespace px
 			{
 				m_front_color = c;
 			}
+			void set_color(color c)
+			{
+				set_front_color(c);
+				set_hover_color(c);
+			}
 			ui::text* text()
 			{
 				return m_text;
@@ -70,6 +75,10 @@ namespace px
 			}
 			button(press_fn button)
 				: button(color(), color(), "", color(), button)
+			{
+			}
+			button()
+				: button(color(), color(), "", color(), [](point2 const&, unsigned int) { return false; })
 			{
 			}
 			virtual ~button() {}

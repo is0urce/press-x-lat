@@ -39,6 +39,7 @@ namespace px
 				"energy", &wrap_unit::energy,
 				"health", &wrap_unit::health,
 				"damage", &wrap_unit::damage,
+				"restore", &wrap_unit::restore,
 				"drain", &wrap_unit::drain,
 				"dead", &wrap_unit::dead,
 				"weapon_damage", &wrap_unit::weapon_damage);
@@ -118,17 +119,13 @@ namespace px
 				};
 			};
 
-			std::fstream file;
-			file.open("data/skills.json", std::fstream::in);
-			json js;
-			js << file;
-
+			json js(std::fstream("data/skills.json", std::fstream::in));
 			for (auto s : js["skills"])
 			{
 				std::string name = s;
 				m_script.Load(std::string("script/") + name + ".lua");
-				auto selector = m_script[name.c_str()];
 
+				auto selector = m_script[name.c_str()];
 				auto skill = selector["targeted"] ? 
 					m_book.add_target(selector["tag"], target_action(selector), target_condition(selector))	:
 					m_book.add_ground(selector["tag"], ground_action(selector), ground_condition(selector));

@@ -150,7 +150,8 @@ namespace px
 		public:
 			virtual ~manager() {}
 			manager() {}
-			manager(const manager&) = delete;
+			manager(manager const&) = delete;
+			manager& operator=(manager const&) = delete;
 
 		protected:
 			virtual void element_allocated(element &) {}

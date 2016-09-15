@@ -33,6 +33,7 @@ namespace px
 
 		void stack_panel::draw_panel(shell::canvas& cnv) const
 		{
+			draw_stacked(cnv);
 			for (auto &p : m_stack)
 			{
 				if (p.second.panel && p.second.panel->active())
@@ -47,24 +48,27 @@ namespace px
 					p.panel->draw(cnv);
 				}
 			}
-			draw_stacked(cnv);
 		}
 
 		bool stack_panel::key_control(shell::key code)
 		{
-			return panel_action([&](stacked_panel& p) { return p.panel->key(code); }) || key_stacked(code);
+			return key_stacked(code)
+				|| panel_action([&](stacked_panel& p) { return p.panel->key(code); });
 		}
 		bool stack_panel::hover_control(const point2 &position)
 		{
-			return panel_action([&](stacked_panel& p) { return p.panel->hover(position); }) || hover_stacked(position);
+			return hover_stacked(position)
+				|| panel_action([&](stacked_panel& p) { return p.panel->hover(position); });
 		}
 		bool stack_panel::click_control(const point2 &position, unsigned int button)
 		{
-			return panel_action([&](stacked_panel& p) { return p.panel->click(position, button); }) || click_stacked(position, button);
+			return click_stacked(position, button)
+				|| panel_action([&](stacked_panel& p) { return p.panel->click(position, button); }) ;
 		}
 		bool stack_panel::scroll_control(int delta)
 		{
-			return panel_action([&](stacked_panel& p) { return p.panel->scroll(delta); }) || scroll_stacked(delta);
+			return scroll_stacked(delta)
+				|| panel_action([&](stacked_panel& p) { return p.panel->scroll(delta); });
 		}
 
 		void stack_panel::draw_stacked(shell::canvas&) const

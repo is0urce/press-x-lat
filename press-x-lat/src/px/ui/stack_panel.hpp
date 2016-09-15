@@ -50,6 +50,7 @@ namespace px
 			stack_panel();
 			virtual ~stack_panel();
 			stack_panel(stack_panel const&) = delete;
+			stack_panel& operator=(stack_panel const&) = delete;
 
 		protected:
 			virtual void draw_panel(shell::canvas& cnv) const override;

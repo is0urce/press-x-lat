@@ -10,6 +10,7 @@ melee = {
 
 	hostile = true,
 	targeted = true,
+	cooldown = 0,
 
 	cost = function(user, target)
 		return 0

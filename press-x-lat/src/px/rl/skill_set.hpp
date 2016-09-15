@@ -9,6 +9,7 @@
 #include <px/rl/skill_book.hpp>
 
 #include <vector>
+#include <memory>
 
 namespace px
 {
@@ -25,8 +26,14 @@ namespace px
 			struct record
 			{
 				tag_type tag;
-				skill_type ability;
-				record(tag_type t, skill_type s) : tag(t), ability(s) {}
+				std::unique_ptr<skill_type> ability;
+				void assign(skill_type skill)
+				{
+					*ability = skill;
+				}
+				record(tag_type t, skill_type skill) : tag(t), ability(std::make_unique<skill_type>(skill))
+				{
+				}
 			};
 
 
@@ -39,13 +46,13 @@ namespace px
 			{
 				if (!m_provider) throw std::runtime_error("px::rl::skill_set::invalidate() - book provider is null");
 
-				for (auto it = m_skills.begin(), last = m_skills.end(); it != last; ++it)
+				for (auto &slot : m_skills)
 				{
 					auto s = m_provider->find(it->tag);
 
 					if (s == m_provider->end()) throw std::runtime_error("px::rl::skill_set::invalidate - book has no skill with name " + it->tag);
 
-					it->ability = s->second;
+					slot.assign(s->second);
 				}
 			}
 			auto add_skill(tag_type tag, size_t slot)
@@ -76,18 +83,23 @@ namespace px
 
 			skill_type* skill(size_t slot)
 			{
-				return (slot < m_skills.size()) ? &(m_skills[slot].ability) : nullptr;
+				return (slot < m_skills.size()) ? m_skills[slot].ability.get() : nullptr;
 			}
 			template <size_t Slot>
 			skill_type* skill()
 			{
-				return (Slot < m_skills.size()) ? &(m_skills[Slot].ability) : nullptr;
+				return (Slot < m_skills.size()) ? m_skills[Slot].ability.get() : nullptr;
 			}
 
 		public:
 			skill_set() : m_provider(nullptr)
 			{
 			}
+			skill_set(skillbook_type& book) : m_provider(&book)
+			{
+			}
+			skill_set(skill_set const&) = delete;
+			skill_set& operator=(skill_set const&) = delete;
 
 		private:
 			std::vector<record> m_skills;

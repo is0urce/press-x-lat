@@ -208,6 +208,7 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\core\gen\mapper.hpp" />
     <ClInclude Include="src\px\core\gen\poi\farm_mapper.hpp" />
     <ClInclude Include="src\px\core\gen\poi\graveyard_builder.hpp" />
+    <ClInclude Include="src\px\core\ui\skill_panel.hpp" />
     <ClInclude Include="src\px\core\wrap_unit.hpp" />
     <ClInclude Include="src\px\core\settings.hpp" />
     <ClInclude Include="src\px\core\gen\river.hpp" />
@@ -338,6 +339,7 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClCompile Include="src\px\core\terrain.cpp" />
     <ClCompile Include="src\px\core\terrain_director.cpp" />
     <ClCompile Include="src\px\core\gen\world.cpp" />
+    <ClCompile Include="src\px\core\ui\skill_panel.cpp" />
     <ClCompile Include="src\px\shell\canvas.cpp" />
     <ClCompile Include="src\px\shell\font.cpp" />
     <ClCompile Include="src\px\shell\font_texture.cpp" />
@@ -369,6 +371,7 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <None Include="config\shared\script\bash.lua" />
     <None Include="config\shared\script\melee.lua" />
     <None Include="config\shared\data\skills.json" />
+    <None Include="config\shared\script\panacea.lua" />
     <None Include="doc\ores.json" />
     <None Include="src\px\core\sys\rendering_system.hpp" />
   </ItemGroup>
