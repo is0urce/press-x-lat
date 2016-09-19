@@ -87,6 +87,13 @@ namespace px
 				}
 				return health;
 			}
+			void move(point2 destination)
+			{
+				if (m_location)
+				{
+					m_location->move(destination);
+				}
+			}
 
 		public:
 			wrap_unit(location_component* pawn) : m_location(pawn), m_body(nullptr)	{}

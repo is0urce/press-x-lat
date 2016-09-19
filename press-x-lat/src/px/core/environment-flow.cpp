@@ -140,6 +140,8 @@ namespace px
 			character->add_skill("sk_bash");
 			character->add_skill("sk_panacea");
 
+			character->add_skill("sk_teleport");
+
 			m_terrain.add(task->assemble(persistency::permanent));
 
 			impersonate(pawn);

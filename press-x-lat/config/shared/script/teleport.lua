@@ -1,16 +1,16 @@
--- name: melee.lua
+-- name: teleport.lua
 -- type: lua script
 -- auth: is0urce
 -- desc: skill script
 
-panacea = {
-	tag = "sk_panacea",
-	name = "Panacea",
-	short = "Pncea"
-	description = "Quaff...",
+teleport = {
+	tag = "sk_teleport",
+	name = "Teleport",
+	short = "Tport",
+	description = "Teleports you to target location",
 
 	hostile = false,
-	targeted = false,
+	targeted = false, -- target location, not units
 	cooldown = 20,
 
 	cost = function(user, target)
@@ -26,8 +26,6 @@ panacea = {
 	end,
 
 	action = function(user, target)
-		local restore = user:health() * 0.6
-		--user:restore(math.floor(restore))
-		user:damage(1)
+		user:move(target)
 	end
 }

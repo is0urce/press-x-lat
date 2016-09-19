@@ -17,7 +17,7 @@ namespace px
 	{
 		namespace
 		{
-			static const int slot_width = 5;
+			static const int slot_width = 9;
 			static const int slot_gap = 1;
 		}
 		skill_panel::skill_panel(core::environment& e) : m_environment(&e)
@@ -51,16 +51,28 @@ namespace px
 				{
 					if (character_component* character = *body)
 					{
-						auto total = character->skils_total();
-						while (m_skills.size() < total)
+						//auto total = character->skils_total();
+						//while (m_skills.size() < total)
+						//{
+						//	int index = m_skills.size();
+						//	auto button = emplace<ui::button>({ {0.0, 0.0}, { index * (slot_width + slot_gap), 0}, { slot_width, 1} });
+
+						//	button->set_color({ 1, 1, 0});
+						//	button->text()->set_text("skill#", 0x000000);
+
+						//	m_skills.push_back(button);
+						//}
+
+						clear();
+						m_skills.clear();
+						for (size_t index = 1, total = character->skils_total(); index < total; ++index)
 						{
-							int index = m_skills.size();
-							auto button = emplace<ui::button>({ {0.0, 0.0}, { index * (slot_width + slot_gap), 0}, { slot_width, 1} });
-
-							button->set_color({ 1, 1, 0});
-							button->text()->set_text("skill#", 0x000000);
-
-							m_skills.push_back(button);
+							if (auto skill = character->skill(index))
+							{
+								auto button = emplace<ui::button>({ { 0.0, 0.0 },{ static_cast<int>(index - 1) * (slot_width + slot_gap), 0 },{ slot_width, 1 } });
+								button->text()->set_text([str = std::to_string(index) + " " + skill->name()]() { return str; }, 0x000000);
+								button->set_color({ 1, 1, 0 });
+							}
 						}
 					}
 				}

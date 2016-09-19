@@ -96,6 +96,7 @@ namespace px
 			environment(ui::stack_panel &ui, factory &builder, space_type &space);
 			virtual ~environment();
 			environment(environment const&) = delete;
+			environment& operator=(environment const&) = delete;
 
 		private:
 			void focus();

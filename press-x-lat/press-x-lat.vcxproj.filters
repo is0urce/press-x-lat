@@ -525,6 +525,7 @@
     <None Include="config\shared\script\melee.lua" />
     <None Include="config\shared\data\skills.json" />
     <None Include="config\shared\script\panacea.lua" />
+    <None Include="config\shared\script\teleport.lua" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="I:\projects\PressX\font\DejaVuSansMono.ttf" />

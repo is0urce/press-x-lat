@@ -372,6 +372,7 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <None Include="config\shared\script\melee.lua" />
     <None Include="config\shared\data\skills.json" />
     <None Include="config\shared\script\panacea.lua" />
+    <None Include="config\shared\script\teleport.lua" />
     <None Include="doc\ores.json" />
     <None Include="src\px\core\sys\rendering_system.hpp" />
   </ItemGroup>

@@ -6,6 +6,7 @@
 melee = {
 	tag = "sk_melee",
 	name = "Melee",
+	short = "Melee",
 	description = "Do 100% weapon damage",
 
 	hostile = true,

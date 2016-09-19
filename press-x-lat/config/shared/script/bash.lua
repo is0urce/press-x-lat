@@ -6,6 +6,7 @@
 bash = {
 	tag = "sk_bash",
 	name = "Bash",
+	short = "Bash",
 	description = "Do 100% weapon damage, plus 100% blunt damage",
 
 	hostile = true,

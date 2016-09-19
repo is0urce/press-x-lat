@@ -1,1 +1,3 @@
-{ "skills": [ "bash", "melee", "panacea" ] }
+{
+	"skills": ["bash", "melee", "panacea", "teleport"]
+}

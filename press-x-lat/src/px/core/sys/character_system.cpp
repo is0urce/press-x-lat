@@ -36,6 +36,7 @@ namespace px
 			});
 
 			m_script["unit"].SetClass<wrap_unit, location_component*>(
+				"move", &wrap_unit::move,
 				"energy", &wrap_unit::energy,
 				"health", &wrap_unit::health,
 				"damage", &wrap_unit::damage,
@@ -126,7 +127,7 @@ namespace px
 				m_script.Load(std::string("script/") + name + ".lua");
 
 				auto selector = m_script[name.c_str()];
-				auto skill = selector["targeted"] ? 
+				auto &skill = selector["targeted"] ? 
 					m_book.add_target(selector["tag"], target_action(selector), target_condition(selector))	:
 					m_book.add_ground(selector["tag"], ground_action(selector), ground_condition(selector));
 
