@@ -89,11 +89,11 @@ namespace px
 			}
 			virtual bool useable_ability(user_type u, target_type t) const override
 			{
-				return !(is_cooldown() || (m_target_check && !m_target_check(u, t)));
+				return !(on_cooldown() || (m_target_check && !m_target_check(u, t)));
 			}
 			virtual bool useable_ability(user_type u, point2 const& t) const override
 			{
-				return !(is_cooldown() || (m_ground_check && !m_ground_check(u, t)));
+				return !(on_cooldown() || (m_ground_check && !m_ground_check(u, t)));
 			}
 		};
 	}

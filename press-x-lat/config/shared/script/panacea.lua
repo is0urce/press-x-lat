@@ -6,7 +6,7 @@
 panacea = {
 	tag = "sk_panacea",
 	name = "Panacea",
-	short = "Pncea"
+	short = "Pncea",
 	description = "Quaff...",
 
 	hostile = false,

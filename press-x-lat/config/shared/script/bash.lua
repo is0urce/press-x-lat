@@ -31,10 +31,12 @@ bash = {
 	end,
 
 	action = function(user, target)
-		local dmg = user:weapon_damage()
+		local dmg, type, hit, crit = game.hit(user, target)
 
-		target:damage(math.floor(dmg * 1.0))
-		target:damage(math.floor(dmg * 1.0))
-		user:drain(bash.cost(user, target))
+		if hit then
+			target:damage(math.floor(dmg * 1.0))
+			target:damage(math.floor(dmg * 1.0))
+			user:drain(bash.cost(user, target))
+		end
 	end
 }

@@ -90,6 +90,16 @@ namespace px
 			{
 				return (Slot < m_skills.size()) ? m_skills[Slot].ability.get() : nullptr;
 			}
+			void cooldown(unsigned int time)
+			{
+				for (auto &skill : m_skills)
+				{
+					if (skill.ability)
+					{
+						skill.ability->cooldown(time);
+					}
+				}
+			}
 
 		public:
 			skill_set() : m_provider(nullptr)

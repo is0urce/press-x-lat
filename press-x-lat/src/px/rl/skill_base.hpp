@@ -26,9 +26,12 @@ namespace px
 			time_type m_cooldown;
 			time_type m_timer;
 			bool m_hostile;
+			std::string m_alias; // short name;
 
 		public:
-			skill_base() : m_cooldown(0), m_timer(0) {}
+			skill_base()
+				: m_cooldown(0), m_timer(0), m_hostile(false)
+			{}
 			virtual ~skill_base() {}
 
 		public:
@@ -48,7 +51,7 @@ namespace px
 			{
 				return m_timer;
 			}
-			bool is_cooldown() const
+			bool on_cooldown() const
 			{
 				return m_timer > 0;
 			}
@@ -72,6 +75,15 @@ namespace px
 			void set_hostile(bool flag)
 			{
 				m_hostile = flag;
+			}
+
+			auto alias() const
+			{
+				return m_alias;
+			}
+			void set_alias(std::string short_name)
+			{
+				m_alias = short_name;
 			}
 		};
 	}

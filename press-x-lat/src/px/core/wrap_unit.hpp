@@ -94,11 +94,16 @@ namespace px
 					m_location->move(destination);
 				}
 			}
+			body_component* body()
+			{
+				update();
+				return m_body;
+			}
 
 		public:
 			wrap_unit(location_component* pawn) : m_location(pawn), m_body(nullptr)	{}
 			wrap_unit(wrap_unit const&) = default;
-			wrap_unit& operator=(wrap_unit&) = default;
+			wrap_unit& operator=(wrap_unit const&) = default;
 			wrap_unit(wrap_unit&& other) : wrap_unit(nullptr)
 			{
 				std::swap(m_location, other.m_location);

@@ -70,7 +70,7 @@ namespace px
 							if (auto skill = character->skill(index))
 							{
 								auto button = emplace<ui::button>({ { 0.0, 0.0 },{ static_cast<int>(index - 1) * (slot_width + slot_gap), 0 },{ slot_width, 1 } });
-								button->text()->set_text([str = std::to_string(index) + " " + skill->name()]() { return str; }, 0x000000);
+								button->text()->set_text([str = std::to_string(index) + " " + skill->alias()]() { return str; }, 0x000000);
 								button->set_color({ 1, 1, 0 });
 							}
 						}

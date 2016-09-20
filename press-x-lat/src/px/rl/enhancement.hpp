@@ -41,6 +41,7 @@ namespace px
 				value1 += rhs.value1;
 				magnitude0 += rhs.magnitude0;
 				magnitude1 += rhs.magnitude1;
+				subtype = rhs.subtype;
 				return *this;
 			}
 			enhancement& operator*=(const enhancement &rhs)
@@ -49,6 +50,7 @@ namespace px
 				value1 *= rhs.value1;
 				magnitude0 *= rhs.magnitude0;
 				magnitude1 *= rhs.magnitude1;
+				subtype = rhs.subtype;
 				return *this;
 			}
 		};

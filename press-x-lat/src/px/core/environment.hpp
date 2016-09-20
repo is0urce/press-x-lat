@@ -21,7 +21,9 @@
 #include <px/common/fps_counter.hpp>
 #include <px/common/qtree.hpp>
 #include <px/common/toggle.hpp>
+
 #include <memory>
+#include <tuple>
 
 namespace px
 {
@@ -35,6 +37,7 @@ namespace px
 		class container_panel;
 		class anvil_panel;
 		class map_panel;
+		class wrap_unit;
 
 		class environment : public toggle<true>
 		{
@@ -90,7 +93,9 @@ namespace px
 			void assign_inventory(std::shared_ptr<body_component> body);
 
 			// script
-			void damage(location_component*) {}
+
+			// damage, damage_type, is_hit, is_critical
+			std::tuple<int, unsigned int, bool, bool> hit(wrap_unit &attacker, wrap_unit &target);
 
 		public:
 			environment(ui::stack_panel &ui, factory &builder, space_type &space);

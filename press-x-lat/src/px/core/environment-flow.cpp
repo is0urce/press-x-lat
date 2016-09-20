@@ -139,7 +139,6 @@ namespace px
 			body->equip_weapon(weapon);
 			character->add_skill("sk_bash");
 			character->add_skill("sk_panacea");
-
 			character->add_skill("sk_teleport");
 
 			m_terrain.add(task->assemble(persistency::permanent));

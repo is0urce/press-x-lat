@@ -31,22 +31,7 @@ namespace px
 		character_system::character_system(environment &env)
 			: m_script{ true }
 		{
-			m_script.HandleExceptionsWith([](int code, std::string message, std::exception_ptr exc_ptr) {
-				throw std::runtime_error("Lua error: code#" + std::to_string(code) + ", message=" + message);
-			});
-
-			m_script["unit"].SetClass<wrap_unit, location_component*>(
-				"move", &wrap_unit::move,
-				"energy", &wrap_unit::energy,
-				"health", &wrap_unit::health,
-				"damage", &wrap_unit::damage,
-				"restore", &wrap_unit::restore,
-				"drain", &wrap_unit::drain,
-				"dead", &wrap_unit::dead,
-				"weapon_damage", &wrap_unit::weapon_damage);
-
-			m_script["point"].SetClass<point2, int, int>();
-
+			setup_scripts(env);
 			fill(env);
 		}
 		character_system::~character_system()
@@ -63,8 +48,43 @@ namespace px
 		{
 			element.clear_skills(); // clear closures with references
 		}
+		void character_system::fixed_update_system()
+		{
+			enumerate([this](auto &character)
+			{
+				if (character.active())
+				{
+					character.cooldown(1);
+				}
+			});
+		}
 
-		character_system::skillbook_type* character_system::skill_book()
+		void character_system::setup_scripts(environment &env)
+		{
+			// error handling
+			m_script.HandleExceptionsWith([](int code, std::string message, std::exception_ptr exc_ptr) {
+				throw std::runtime_error("Lua error: code#" + std::to_string(code) + ", message=" + message);
+			});
+
+			// 'unit' script object
+			m_script["unit"].SetClass<wrap_unit, location_component*>(
+				"move", &wrap_unit::move,
+				"energy", &wrap_unit::energy,
+				"health", &wrap_unit::health,
+				"damage", &wrap_unit::damage,
+				"restore", &wrap_unit::restore,
+				"drain", &wrap_unit::drain,
+				"dead", &wrap_unit::dead,
+				"weapon_damage", &wrap_unit::weapon_damage);
+
+			// 'point' script object
+			m_script["point"].SetClass<point2, int, int>();
+
+			// 'game' script object
+			m_script["game"].SetObj(env, "hit", &environment::hit);
+		}
+
+		character_system::book_type* character_system::book()
 		{
 			return &m_book;
 		}
@@ -132,6 +152,7 @@ namespace px
 					m_book.add_ground(selector["tag"], ground_action(selector), ground_condition(selector));
 
 				skill.set_name(selector["name"]);
+				skill.set_alias(selector["short"]);
 				skill.set_description(selector["description"]);
 				skill.set_hostile(selector["hostile"]);
 			}

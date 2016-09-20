@@ -250,6 +250,7 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\fn\build_result.hpp" />
     <ClInclude Include="src\px\fn\build_tile.hpp" />
     <ClInclude Include="src\px\rl\buff.hpp" />
+    <ClInclude Include="src\px\rl\damage_type.hpp" />
     <ClInclude Include="src\px\rl\i_ability.hpp" />
     <ClInclude Include="src\px\rl\astar.hpp" />
     <ClInclude Include="src\px\rl\body.hpp" />
@@ -325,6 +326,7 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClCompile Include="src\press-x-lat.cpp" />
     <ClCompile Include="src\px\core\data\factory.cpp" />
     <ClCompile Include="src\px\core\environment-act.cpp" />
+    <ClCompile Include="src\px\core\environment-bind.cpp" />
     <ClCompile Include="src\px\core\environment-ui.cpp" />
     <ClCompile Include="src\px\core\environment.cpp" />
     <ClCompile Include="src\px\core\gen\landmark.cpp" />
