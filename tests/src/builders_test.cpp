@@ -3,7 +3,7 @@
 #include "catch.hpp"
 
 #include <px/core/gen/poi/farm_builder.hpp>
-#include <px/core/gen/poi/farm_mapper.hpp>
+#include <px/core/gen/poi/rural_mapper.hpp>
 
 #include <random>
 

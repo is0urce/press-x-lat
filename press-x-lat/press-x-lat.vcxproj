@@ -206,7 +206,7 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\core\gen\poi\farm_builder.hpp" />
     <ClInclude Include="src\px\core\gen\landmark.hpp" />
     <ClInclude Include="src\px\core\gen\mapper.hpp" />
-    <ClInclude Include="src\px\core\gen\poi\farm_mapper.hpp" />
+    <ClInclude Include="src\px\core\gen\poi\rural_mapper.hpp" />
     <ClInclude Include="src\px\core\gen\poi\graveyard_builder.hpp" />
     <ClInclude Include="src\px\core\ui\skill_panel.hpp" />
     <ClInclude Include="src\px\core\wrap_unit.hpp" />
@@ -331,7 +331,7 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClCompile Include="src\px\core\environment.cpp" />
     <ClCompile Include="src\px\core\gen\landmark.cpp" />
     <ClCompile Include="src\px\core\gen\poi\farm_builder.cpp" />
-    <ClCompile Include="src\px\core\gen\poi\farm_mapper.cpp" />
+    <ClCompile Include="src\px\core\gen\poi\rural_mapper.cpp" />
     <ClCompile Include="src\px\core\gen\poi\graveyard_builder.cpp" />
     <ClCompile Include="src\px\core\sys\character_system.cpp" />
     <ClCompile Include="src\px\core\sys\container_component.cpp" />

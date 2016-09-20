@@ -96,12 +96,12 @@ namespace px
 
 			// damage, damage_type, is_hit, is_critical
 			std::tuple<int, unsigned int, bool, bool> hit(wrap_unit &attacker, wrap_unit &target);
-			int distance_bind(wrap_unit &from, wrap_unit &to);
+			int distance_wrap(wrap_unit &from, wrap_unit &to);
 			void message(wrap_unit &target, std::string text);
 
 		public:
-			environment(ui::stack_panel &ui, factory &builder, space_type &space);
 			virtual ~environment();
+			environment(ui::stack_panel &ui, factory &builder, space_type &space);
 			environment(environment const&) = delete;
 			environment& operator=(environment const&) = delete;
 

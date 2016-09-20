@@ -7,6 +7,7 @@
 
 #include <px/common/rectangle.hpp>
 #include <px/fn/bsp.hpp>
+#include <px/fn/build_housing.hpp>
 
 #include <px/core/gen/builder.hpp>
 
@@ -35,17 +36,38 @@ namespace px
 			rng_type rng(seed);
 			rng.discard(rng_type::state_size);
 
-			bounds.enumerate([&](point2 const& location) {
-				result.tiles[location] = fn::build_tile::no_change;
-			});
+			fn::bsp<> sectors(rng, bounds, 20, 1);
 
-			bounds.enumerate([&](point2 const& location) {
-				if (location.x() % 4 == 0 && location.y() % 4 == 0)
+			sectors.enumerate_bounds([&](rectangle sector) {
+
+				if (std::uniform_int_distribution<int>(0, 1)(rng) == 0)
 				{
-					result.tiles[location] = fn::build_tile::doodad_tombstone;
+					fn::build_fence(sector, fn::build_tile::wall, result, rng);
+					sector.deflate(2);
 				}
-			});
 
+				sector.enumerate([&](point2 const& location) {
+					result.tiles[location] = fn::build_tile::no_change;
+				});
+
+				point2 start = sector.start();
+				sector.enumerate([&](point2 const& location) {
+					auto d = location - start;
+					int dx = d.x() % 4;
+					int dy = d.y() % 4;
+					if (dx == 1)
+					{
+						if (dy == 2)
+						{
+							result.tiles[location] = fn::build_tile::doodad_tombstone;
+						}
+						else if (dy == 1)
+						{
+							result.tiles[location] = fn::build_tile::gravel;
+						}
+					}
+				});
+			});
 		}
 	}
 }

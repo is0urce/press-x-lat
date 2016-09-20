@@ -32,6 +32,26 @@ namespace px
 
 		// crops field
 		template<typename Generator>
+		void build_fence(rectangle const& sector_bounds, build_tile tile, build_result &result, Generator &rng)
+		{
+			bool fence = std::uniform_int_distribution<int>{ 0, 1 }(rng) == 0;
+			int i = 0;
+			sector_bounds.enumerate_border([&](point2 const& location) {
+				if (i == 0)
+				{
+					i = std::uniform_int_distribution<int>{ 3, 9 }(rng);
+					fence = !fence;
+				}
+				--i;
+				if (fence)
+				{
+					result.tiles[location] = tile;
+				}
+			});
+		}
+
+		// crops field
+		template<typename Generator>
 		void build_field(rectangle const& sector_bounds, build_result &result, Generator &rng)
 		{
 			switch (random_enum<field_variant>(rng))
@@ -47,24 +67,11 @@ namespace px
 				});
 				break;
 			case field_variant::fenced:
-			{
-				bool fence = std::uniform_int_distribution<int>{ 0, 1 }(rng) == 0;
-				int i = 0;
-				sector_bounds.enumerate_border([&](auto const& location) {
-					if (i == 0)
-					{
-						i = std::uniform_int_distribution<int>{ 3, 9 }(rng);
-						fence = !fence;
-					}
-					--i;
-					result.tiles[location] = fence ? build_tile::wall : build_tile::no_change;
-				});
-
+				build_fence(sector_bounds, build_tile::wall, result, rng);
 				sector_bounds.deflated(2).enumerate([&](auto const& location) {
 					result.tiles[location] = build_tile::soil;
 				});
-			}
-			break;
+				break;
 			}
 		}
 

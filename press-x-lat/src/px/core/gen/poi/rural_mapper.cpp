@@ -1,9 +1,9 @@
-// name: farm_mapper.cpp
+// name: rural_mapper.cpp
 // type: c++ header
 // desc: class methods implementation
 // auth: is0urce
 
-#include "farm_mapper.hpp"
+#include "rural_mapper.hpp"
 
 #include <px/core/unit_record.hpp>
 #include <px/core/data/factory.hpp>
@@ -15,10 +15,10 @@ namespace px
 {
 	namespace core
 	{
-		farm_mapper::farm_mapper(factory &unit_builder) : m_factory(&unit_builder) {}
-		farm_mapper::~farm_mapper() {}
+		rural_mapper::rural_mapper(factory &unit_builder) : m_factory(&unit_builder) {}
+		rural_mapper::~rural_mapper() {}
 
-		void farm_mapper::apply_mapping(fn::build_result &build, map_type &terrain, units_list &units, bool generate_placeables) const
+		void rural_mapper::apply_mapping(fn::build_result &build, map_type &terrain, units_list &units, bool generate_placeables) const
 		{
 			build.tiles.enumerate([&](auto const& location, auto const& blueprint_tile) {
 				auto &tile = terrain[location];
@@ -56,6 +56,13 @@ namespace px
 					img.tint = { 0, 1, 0 };
 					img.bg = { 0.25, 0.25, 0.0 };
 					break;
+				case fn::build_tile::gravel:
+					tile.make_traversable();
+					tile.make_transparent();
+					img.glyph = '.';
+					img.tint = { 0, 1, 0 };
+					img.bg = { 0.25, 0.25, 0.0 };
+					break;
 				case fn::build_tile::water:
 					tile.make_blocking();
 					tile.make_transparent();
@@ -66,7 +73,7 @@ namespace px
 				case fn::build_tile::doodad_tombstone:
 					tile.make_blocking();
 					tile.make_transparent();
-					img.glyph = 't'; // cross
+					img.glyph = '+'; // cross
 					img.tint = 0x999999;
 					break;
 				case fn::build_tile::no_change:

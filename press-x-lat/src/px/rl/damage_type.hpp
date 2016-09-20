@@ -29,15 +29,15 @@ namespace px
 			magnetic,
 			mental,
 
-			ice,
-			acid,
-			shock,
 			fire,
+			shock,
+			acid,
+			ice,
 
-			light,
-			poison,
-			disease,
 			darkness,
+			disease,
+			poison,
+			light,
 
 			not_valid,
 			min_value = pure,

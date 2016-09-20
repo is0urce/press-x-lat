@@ -74,18 +74,19 @@ namespace px
 				"damage", &wrap_unit::damage,
 				"restore", &wrap_unit::restore,
 				"drain", &wrap_unit::drain,
-				"dead", &wrap_unit::dead,
-				"weapon_damage", &wrap_unit::weapon_damage);
+				"dead", &wrap_unit::dead);
 
 			// 'point' script object
 			m_script["point"].SetClass<point2, int, int>();
 
 			// 'game' script object
 			m_script["game"].SetObj(env,
-				"distance", &environment::distance_bind,
-
+				"distance", &environment::distance_wrap,
 				"message", &environment::message,
 				"hit", &environment::hit);
+
+			// load enums
+			m_script.Load("script/damage.lua");
 		}
 
 		character_system::book_type* character_system::book()

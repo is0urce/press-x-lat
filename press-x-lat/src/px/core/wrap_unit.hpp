@@ -13,7 +13,7 @@ namespace px
 {
 	namespace core
 	{
-		class wrap_unit
+		class wrap_unit final
 		{
 		public:
 			void damage(int dmg)
@@ -49,11 +49,6 @@ namespace px
 					}
 				}
 			}
-			int weapon_damage()
-			{
-				update();
-				return m_body ? m_body->accumulate<rl::effect::weapon_damage>().value0 : 0;
-			}
 			bool dead()
 			{
 				update();
@@ -66,10 +61,7 @@ namespace px
 				if (m_body)
 				{
 					auto mp = m_body->energy();
-					if (mp)
-					{
-						energy = mp->current();
-					}
+					energy += mp ? mp->current() : 0;
 				}
 				return energy;
 			}
@@ -80,10 +72,7 @@ namespace px
 				if (m_body)
 				{
 					auto hp = m_body->health();
-					if (hp)
-					{
-						health = hp->current();
-					}
+					health += hp ? hp->current() : 0;
 				}
 				return health;
 			}
@@ -105,6 +94,7 @@ namespace px
 			}
 
 		public:
+			~wrap_unit() {}
 			wrap_unit(location_component* pawn) : m_location(pawn), m_body(nullptr)	{}
 			wrap_unit(wrap_unit const&) = default;
 			wrap_unit& operator=(wrap_unit const&) = default;
@@ -113,7 +103,6 @@ namespace px
 				std::swap(m_location, other.m_location);
 				std::swap(m_body, other.m_body);
 			}
-			~wrap_unit() {}
 
 		private:
 			void update()

@@ -17,7 +17,7 @@ namespace px
 {
 	namespace core
 	{
-		// damage, damage_type, is_hit, is_critical
+		// returns tuple : damage, damage_type, is_hit, is_critical
 		std::tuple<int, unsigned int, bool, bool> environment::hit(wrap_unit &attacker, wrap_unit &target)
 		{
 			int damage = 0;
@@ -40,6 +40,7 @@ namespace px
 				hit = true;
 			}
 
+			// critical hits do double damage
 			if (critical)
 			{
 				damage *= 2;
@@ -48,7 +49,7 @@ namespace px
 			return std::tuple<int, unsigned int, bool, bool>{ damage, static_cast<unsigned int>(damage_type), hit, critical };
 		}
 
-		int environment::distance_bind(wrap_unit &from, wrap_unit &to)
+		int environment::distance_wrap(wrap_unit &from, wrap_unit &to)
 		{
 			auto a = from.location();
 			auto b = to.location();

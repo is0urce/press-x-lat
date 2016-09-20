@@ -25,14 +25,16 @@ damage = {
 	mental = 12, -- psionic
 
 	-- Chaos / Law
-	ice = 13,
-	acid = 14,
-	shock = 15, -- lighting
-	fire = 16,
+	fire = 13,
+	shock = 14, -- lighting
+	acid = 15,
+	ice = 16,
 
 	-- Death / Life
-	light = 17,
-	poison = 18,
-	disease = 19,
-	darkness 20
+	darkness = 17,
+	disease = 18,
+	poison = 19,
+	light = 20,
+
+	not_valid = 21
 }
