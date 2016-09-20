@@ -99,6 +99,10 @@ namespace px
 				update();
 				return m_body;
 			}
+			location_component* location()
+			{
+				return m_location;
+			}
 
 		public:
 			wrap_unit(location_component* pawn) : m_location(pawn), m_body(nullptr)	{}

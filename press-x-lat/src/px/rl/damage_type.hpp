@@ -24,8 +24,10 @@ namespace px
 			anomaly,
 			disintegration,
 
+			inexplicable,
 			sonic,
-			psionic,
+			magnetic,
+			mental,
 
 			ice,
 			acid,

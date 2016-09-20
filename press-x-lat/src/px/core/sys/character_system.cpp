@@ -81,7 +81,11 @@ namespace px
 			m_script["point"].SetClass<point2, int, int>();
 
 			// 'game' script object
-			m_script["game"].SetObj(env, "hit", &environment::hit);
+			m_script["game"].SetObj(env,
+				"distance", &environment::distance_bind,
+
+				"message", &environment::message,
+				"hit", &environment::hit);
 		}
 
 		character_system::book_type* character_system::book()

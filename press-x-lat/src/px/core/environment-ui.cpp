@@ -66,7 +66,7 @@ namespace px
 					static const size_t aspect_less = 2;
 					static const size_t aspect_more = 3;
 					std::vector<std::tuple<world_aspect, std::string, std::string, std::string>> aspects;
-					aspects.emplace_back(world_aspect::inertia, "Inertia", "Material", "Etheral");
+					aspects.emplace_back(world_aspect::inertia, "Inertia", "Etheral", "Material");
 					aspects.emplace_back(world_aspect::knowledge, "Knowledge", "Arcane", "Mastery");
 					aspects.emplace_back(world_aspect::sentience, "Sentience", "Will", "Mind");
 					aspects.emplace_back(world_aspect::entropy, "Entropy", "Chaos", "Law");

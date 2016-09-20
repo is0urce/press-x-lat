@@ -532,6 +532,7 @@
     <None Include="config\shared\data\skills.json" />
     <None Include="config\shared\script\panacea.lua" />
     <None Include="config\shared\script\teleport.lua" />
+    <None Include="config\shared\script\damage.lua" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="I:\projects\PressX\font\DejaVuSansMono.ttf" />
