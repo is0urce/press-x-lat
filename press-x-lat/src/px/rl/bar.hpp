@@ -67,6 +67,10 @@ namespace px
 			{
 				m_current = std::min<T>(m_current + magnitude, m_max);
 			}
+			void restore()
+			{
+				m_current = m_max;
+			}
 			void damage(T magnitude)
 			{
 				m_current -= magnitude;
