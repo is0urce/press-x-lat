@@ -99,6 +99,8 @@ namespace px
 			int distance_wrap(point2 const& from, point2 const& to);
 			int reputation_wrap(wrap_unit &unit, wrap_unit &target);
 			void message(wrap_unit &target, std::string text);
+			wrap_unit first_in_area(point2 const& location, int radius, bool require_fov);
+			wrap_unit next();
 
 		public:
 			virtual ~environment();
@@ -133,6 +135,10 @@ namespace px
 			anvil_panel* m_craft;
 			container_panel* m_container;
 			map_panel* m_map;
+
+			// binding helpers
+			std::list<location_component*> m_query;
+			std::list<location_component*>::iterator m_cursor;
 		};
 	}
 }

@@ -377,6 +377,7 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <None Include="config\shared\script\bash.lua" />
     <None Include="config\shared\script\blink.lua" />
     <None Include="config\shared\script\damage.lua" />
+    <None Include="config\shared\script\fireball.lua" />
     <None Include="config\shared\script\melee.lua" />
     <None Include="config\shared\data\skills.json" />
     <None Include="config\shared\script\panacea.lua" />

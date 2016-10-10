@@ -66,9 +66,13 @@ namespace px
 				throw std::runtime_error("Lua error: code#" + std::to_string(code) + ", message=" + message);
 			});
 
+			// 'point' script object
+			m_script["point"].SetClass<point2, int, int>("x", &point2::x, "y", &point2::y);
+
 			// 'unit' script object
 			m_script["unit"].SetClass<wrap_unit, location_component*>(
 				// props
+				"valid", &wrap_unit::valid,
 				"position", &wrap_unit::position,
 				// actions
 				"move", &wrap_unit::move,
@@ -83,13 +87,12 @@ namespace px
 				"replenish", &wrap_unit::replenish,
 				"dead", &wrap_unit::dead);
 
-			// 'point' script object
-			m_script["point"].SetClass<point2, int, int>();
-
 			// 'game' script object
 			m_script["game"].SetObj(env,
 				"distance", &environment::distance_wrap,
 				"reputation", &environment::reputation_wrap,
+				"first_in_area", &environment::first_in_area,
+				"next", &environment::next,
 				"message", &environment::message,
 				"hit", &environment::hit);
 

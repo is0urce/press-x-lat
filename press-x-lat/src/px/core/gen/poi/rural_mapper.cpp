@@ -47,8 +47,6 @@ namespace px
 					img.glyph = '+'; // cross
 					img.tint = 0x999999;
 					break;
-				case fn::build_tile::no_change:
-					break;
 				default:
 					break;
 				}

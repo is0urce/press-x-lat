@@ -141,7 +141,8 @@ namespace px
 			character->add_skill("sk_bash");
 			character->add_skill("sk_panacea");
 			character->add_skill("sk_teleport");
-			character->add_skill("sk_blink");
+			character->add_skill("sk_fireball");
+
 			character->add_skill("sk_indigo");
 
 			m_terrain.add(task->assemble(persistency::permanent));

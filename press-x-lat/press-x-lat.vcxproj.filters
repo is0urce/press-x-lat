@@ -545,6 +545,7 @@
     <None Include="config\shared\script\blink.lua" />
     <None Include="config\shared\script\ambush.lua" />
     <None Include="config\shared\script\indigo.lua" />
+    <None Include="config\shared\script\fireball.lua" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="I:\projects\PressX\font\DejaVuSansMono.ttf" />

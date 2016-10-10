@@ -64,5 +64,30 @@ namespace px
 		void environment::message(wrap_unit &unit, std::string text)
 		{
 		}
+
+		wrap_unit environment::first_in_area(point2 const& location, int radius, bool require_fov)
+		{
+			m_query.clear();
+
+			m_space->find(location.x(), location.y(), radius, [&](int, int, location_component* component)
+			{
+				m_query.push_back(component);
+			});
+
+			m_cursor = std::begin(m_query);
+			return next();
+		}
+		wrap_unit environment::next()
+		{
+			wrap_unit current(nullptr);
+
+			if (m_cursor != m_query.end())
+			{
+				current = wrap_unit(*m_cursor);
+				++m_cursor;
+			}
+
+			return current;
+		}
 	}
 }
