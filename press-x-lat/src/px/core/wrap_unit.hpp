@@ -117,6 +117,10 @@ namespace px
 				}
 			}
 
+			bool valid() const
+			{
+				return m_location != nullptr;
+			}
 			point2 position() const
 			{
 				return m_location ? m_location->current() : point2(0, 0);
@@ -134,14 +138,17 @@ namespace px
 
 		public:
 			~wrap_unit() {}
-			wrap_unit(location_component* pawn) : m_location(pawn), m_body(nullptr)	{}
-			wrap_unit(wrap_unit const&) = default;
-			wrap_unit& operator=(wrap_unit const&) = default;
+			wrap_unit(location_component* pawn)
+				: m_location(pawn), m_body(nullptr)
+			{
+			}
 			wrap_unit(wrap_unit&& other) : wrap_unit(nullptr)
 			{
 				std::swap(m_location, other.m_location);
 				std::swap(m_body, other.m_body);
 			}
+			wrap_unit(wrap_unit const&) = default;
+			wrap_unit& operator=(wrap_unit const&) = default;
 
 		private:
 			void update()

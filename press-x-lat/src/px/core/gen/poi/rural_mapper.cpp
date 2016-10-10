@@ -15,61 +15,32 @@ namespace px
 {
 	namespace core
 	{
-		rural_mapper::rural_mapper(factory &unit_builder) : m_factory(&unit_builder) {}
+		rural_mapper::rural_mapper(factory &unit_builder) : m_factory(&unit_builder)
+		{
+			map_type::element wall({ false }, { '#',{ 1.0, 1.0, 1.0 },{ 0.0, 0.0, 0.0 } });
+
+			add_rule(fn::build_tile::soil, { { true, true }, { '"', { 0.0, 1.0, 0.0 }, { 0.25, 0.25, 0.0 } } });
+			add_rule(fn::build_tile::wall, wall);
+			add_rule(fn::build_tile::wall_inside, wall);
+			add_rule(fn::build_tile::wall_outside, wall);
+			add_rule(fn::build_tile::floor, { { true, true }, { '.',{ 1.0, 1.0, 1.0 },{ 0.0, 0.0, 0.0 } } });
+			add_rule(fn::build_tile::door_ark, { { true, true }, { '-',{ 1.0, 1.0, 1.0 },{ 0.0, 0.0, 0.0 } } });
+			add_rule(fn::build_tile::gravel, { { true, true },{ '.',{ 0.0, 1.0, 0.0 },{ 0.25, 0.25, 0.0 } } });
+			add_rule(fn::build_tile::water, { { true },{ '.',{ 0.0, 1.0, 0.0 },{ 0.25, 0.25, 0.0 } } });
+			//add_rule(fn::build_tile::doodad_tombstone, { { true },{ '+',{ 0.0, 1.0, 0.0 },{ 0.25, 0.25, 0.0 } } });
+		}
 		rural_mapper::~rural_mapper() {}
 
 		void rural_mapper::apply_mapping(fn::build_result &build, map_type &terrain, units_list &units, bool generate_placeables) const
 		{
+			map_mapper::apply_mapping(build, terrain, units, generate_placeables);
+
 			build.tiles.enumerate([&](auto const& location, auto const& blueprint_tile) {
 				auto &tile = terrain[location];
 				auto &img = tile.appearance();
 
 				switch (blueprint_tile.tile)
 				{
-				case fn::build_tile::wall:
-				case fn::build_tile::wall_inside:
-				case fn::build_tile::wall_outside:
-					tile.make_blocking();
-					tile.make_opaque();
-					img.glyph = 0x2317; // '#'
-					img.tint = { 1, 1, 1 };
-					img.bg = { 0, 0, 0 };
-					break;
-				case fn::build_tile::floor:
-					tile.make_traversable();
-					tile.make_transparent();
-					img.glyph = '.';
-					img.tint = { 1, 1, 1 };
-					img.bg = { 0, 0, 0 };
-					break;
-				case fn::build_tile::door_ark:
-					tile.make_traversable();
-					tile.make_transparent();
-					img.glyph = '-';
-					img.tint = { 1, 1, 1 };
-					img.bg = { 0, 0, 0 };
-					break;
-				case fn::build_tile::soil:
-					tile.make_traversable();
-					tile.make_transparent();
-					img.glyph = '"';
-					img.tint = { 0, 1, 0 };
-					img.bg = { 0.25, 0.25, 0.0 };
-					break;
-				case fn::build_tile::gravel:
-					tile.make_traversable();
-					tile.make_transparent();
-					img.glyph = '.';
-					img.tint = { 0, 1, 0 };
-					img.bg = { 0.25, 0.25, 0.0 };
-					break;
-				case fn::build_tile::water:
-					tile.make_blocking();
-					tile.make_transparent();
-					img.glyph = '~';
-					img.tint = { 0, 0, 1 };
-					img.bg = { 0.0, 0.0, 0.25 };
-					break;
 				case fn::build_tile::doodad_tombstone:
 					tile.make_blocking();
 					tile.make_transparent();

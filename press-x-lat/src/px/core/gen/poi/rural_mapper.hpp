@@ -6,14 +6,14 @@
 #ifndef PX_CORE_GEN_POI_RURAL_MAPPER_HPP
 #define PX_CORE_GEN_POI_RURAL_MAPPER_HPP
 
-#include <px/core/gen/mapper.hpp>
+#include <px/core/gen/map_mapper.hpp>
 
 namespace px
 {
 	namespace core
 	{
 		class factory;
-		class rural_mapper : public mapper
+		class rural_mapper : public map_mapper
 		{
 		public:
 			virtual ~rural_mapper();

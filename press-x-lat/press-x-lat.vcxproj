@@ -203,6 +203,7 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\core\gen\biome.hpp" />
     <ClInclude Include="src\px\core\gen\builder.hpp" />
     <ClInclude Include="src\px\core\gen\city.hpp" />
+    <ClInclude Include="src\px\core\gen\map_mapper.hpp" />
     <ClInclude Include="src\px\core\gen\poi\farm_builder.hpp" />
     <ClInclude Include="src\px\core\gen\landmark.hpp" />
     <ClInclude Include="src\px\core\gen\mapper.hpp" />

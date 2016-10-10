@@ -48,6 +48,7 @@ namespace px
 			world(factory &unit_builder);
 			virtual ~world();
 			world(const world&) = delete;
+			world& operator=(const world&) = delete;
 
 		private:
 			void clear_cell(cell_type &cell);
