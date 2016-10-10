@@ -70,54 +70,18 @@ namespace px
 			double mx = static_cast<double>(perlin_width - 1) / terrain.width();
 			double my = static_cast<double>(perlin_height - 1) / terrain.height();
 
+			auto const& biome = m_world->select(world_position).biome;
+
 			terrain.enumerate([&](auto const& location, auto& t)
 			{
 				auto magnitude = noise.sample(mx * location.x(), my * location.y(), perlin_samples);
 
-				auto &img = t.appearance();
-				if (magnitude > 0 || true)
-				{
-					img.glyph = '.';
-					img.tint = { 1, 1, 1 };
-					img.bg = 0x006600;
-					t.make_traversable();
-				}
-				else
-				{
-					img.glyph = '^';
-					img.tint = { 0.5, 0.5, 0.5 };
-					img.bg = { 0, 0, 0 };
-					t.make_traversable();
-				}
+				t = biome.ground;
 
 				//if (location.x() == 0) terrain[location].appearance().glyph = '|';
 				//if (location.y() == 0) terrain[location].appearance().glyph = '-';
 				//if (location.empty()) terrain[location].appearance().glyph = '+';
 			});
-
-			//if (static_mobiles)
-			//{
-			//	for (point2 spawn : room_center)
-			//	{
-			//		auto task = m_factory->produce();
-
-			//		auto sprite = task->add_appearance('f', { 1, 0, 0 });
-			//		auto pawn = task->add_location(spawn);
-			//		auto body = task->add_body(100, 100);
-			//		auto character = task->add_character();
-			//		auto ai = task->add_npc_behavior();
-
-			//		auto weapon = std::make_shared<body_component::item_type>();
-			//		weapon->add({ rl::effect::weapon_damage, 0x00, 1 });
-
-			//		body->equip_weapon(weapon);
-			//		body->join_faction(1);
-			//		character->add_skill("melee");
-			//		character->set_tag("mob");
-
-			//		units.emplace_back(task->assemble(persistency::serialized), task->location());
-			//	}
-			//}
 		}
 
 		terrain_director::terrain_director(world &w, factory &factory)

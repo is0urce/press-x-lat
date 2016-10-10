@@ -1,13 +1,13 @@
--- name: melee.lua
+-- name: indigo.lua
 -- type: lua script
 -- auth: is0urce
 -- desc: skill script
 
-panacea = {
-	tag = "sk_panacea",
-	name = "Panacea",
-	short = "Pncea",
-	description = "Quaff...",
+indigo = {
+	tag = "sk_indigo",
+	name = "Indigo Vial",
+	short = "IndigoV",
+	description = "Restore 40% of maximum energy",
 
 	hostile = false,
 	targeted = false,
@@ -26,7 +26,7 @@ panacea = {
 	end,
 
 	action = function(user, target)
-		local restore = user:health() * 0.6
-		user:restore(math.floor(restore))
+		local mana = math.floor(user:energy_max() * 0.4)
+		user:replenish(mana)
 	end
 }

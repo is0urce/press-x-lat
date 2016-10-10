@@ -18,6 +18,8 @@ namespace px
 		namespace
 		{
 			static const unsigned int wall_size = 1; // sugar for formulaes
+			static const unsigned int passage_size = wall_size + 1; // require empty tiles without furniture in front of doors
+			static const double placeables_density = 0.15;
 
 			enum class field_variant : int
 			{
@@ -28,6 +30,35 @@ namespace px
 				min_value = aligned,
 				max_value = fenced
 			};
+
+			// deflate horisontaly or verticaly (wichever is longer)
+			rectangle shrink_ark(rectangle const& line, int size) noexcept
+			{
+				if (line.horisontal())
+				{
+					return line.deflated_axis<0>(size);
+				}
+				else
+				{
+					return line.deflated_axis<1>(size);
+				}
+			}
+			// inflate horisontaly or verticaly (wichever corresponding 'line' argument is shorter)
+			rectangle inflate_passage(rectangle const& door, rectangle const& line, int size) noexcept
+			{
+				if (line.horisontal())
+				{
+					return door.inflated_axis<1>(size);
+				}
+				else
+				{
+					return door.inflated_axis<0>(size);
+				}
+			}
+			bool place_available(std::vector<rectangle> const& rectangles, build_result &result, point2 point)
+			{
+				return !result.exists(point) && !std::any_of(std::begin(rectangles), std::end(rectangles), [point](auto const& rect) { return rect.contains(point); });
+			}
 		}
 
 		// crops field
@@ -130,7 +161,7 @@ namespace px
 			});
 
 			// inside door
-			auto doorway = shrink_ark(inside.inflated(wall_size) & outside.inflated(wall_size));
+			auto doorway = shrink_ark(inside.inflated(wall_size) & outside.inflated(wall_size), wall_size);
 			result.tiles[random_point(doorway, rng)] = build_tile::door_ark;
 
 			// outside door
@@ -162,8 +193,17 @@ namespace px
 			});
 
 			// add habitants
-			result.placeables.emplace_back(random_point(inside, rng), build_placeable::animal_domestic);
-			result.placeables.emplace_back(random_point(outside, rng), build_placeable::animal_domestic);
+			point2 spawn;
+			spawn = random_point(inside, rng);
+			if (!result.exists(spawn))
+			{
+				result.placeables.emplace_back(spawn, build_placeable::animal_domestic);
+			}
+			spawn = random_point(outside, rng);
+			if (!result.exists(spawn))
+			{
+				result.placeables.emplace_back(spawn, build_placeable::animal_domestic);
+			}
 		}
 
 		// housing
@@ -171,6 +211,8 @@ namespace px
 		void build_house(unsigned int room_size, rectangle const& house_bounds, build_result &result, Generator &rng)
 		{
 			std::vector<rectangle> rooms;
+			std::vector<rectangle> passages; // room for movement
+
 			build_house_rooms(house_bounds, room_size, rooms, rng); // remove random corners to make house less square
 
 			// initial fill with walls and floor
@@ -184,10 +226,9 @@ namespace px
 				});
 			}
 
-			rectangle entrance_room;
-			build_house_entrance(rooms, house_bounds, entrance_room, result, rng); // select room for entrance and place outside door
-			build_house_doors(rooms, entrance_room, result, rng); // interconnect rooms and place doors
-			build_house_placeables(rooms, result, rng); // add placeables and habitants
+			build_house_entrance(rooms, house_bounds, passages, result, rng); // select room for entrance and place outside door
+			build_house_doors(rooms, passages, result, rng); // interconnect rooms and place doors
+			build_house_placeables(rooms, passages, placeables_density, result, rng); // add placeables and habitants
 		}
 
 		// select excluded rooms
@@ -231,9 +272,9 @@ namespace px
 			}
 		}
 
-		// secect entry room in house
+		// select entry room in house
 		template<typename Generator>
-		void build_house_entrance(std::vector<rectangle> &rooms, rectangle const& bounds, rectangle & entrance_room, build_result &result, Generator &rng)
+		rectangle build_house_entrance(std::vector<rectangle> const& rooms, rectangle const& bounds, std::vector<rectangle> & passages, build_result &result, Generator &rng)
 		{
 			// detect entrance door candidates
 			std::vector<rectangle> entrance_room_candidates;
@@ -248,7 +289,7 @@ namespace px
 			}
 
 			// select entrance door
-			entrance_room = random_item(entrance_room_candidates, rng);
+			rectangle entrance_room = random_item(entrance_room_candidates, rng);
 			std::vector<point2> entrance_door_candidates;
 			entrance_door_candidates.reserve(entrance_room.perimeter());
 			auto room_inflated = entrance_room.inflated(wall_size);
@@ -256,13 +297,30 @@ namespace px
 			{
 				if (bounds.is_border(location) && !room_inflated.is_corner(location)) entrance_door_candidates.push_back(location);
 			});
-			auto entrance_door = random_item(entrance_door_candidates, rng);
-			result.tiles[entrance_door] = build_tile::door_ark;
+			auto door = random_item(entrance_door_candidates, rng);
+
+			passages.push_back(rectangle(door, point2(wall_size, wall_size)).inflated(passage_size));
+
+			result.tiles[door] = build_tile::door_ark;
+
+			return entrance_room;
 		}
 
 		// interconnect rooms in house
+		// - rooms - array of room rectangles
+		// - passage - space near doors required for movement throught merged into this array
 		template<typename Generator>
-		void build_house_doors(std::vector<rectangle> &rooms, rectangle const& entrance_room, build_result &result, Generator &rng)
+		void build_house_doors(std::vector<rectangle> const& rooms, std::vector<rectangle> &passage, build_result &result, Generator &rng)
+		{
+			build_house_doors(rooms, random_item(rooms, rng), passage, result, rng);
+		}
+
+		// interconnect rooms in house starting from specified room
+		// - rooms - array of room rectangles
+		// - entrance_room - room to start from
+		// - passage - space near doors required for movement throught merged into this array
+		template<typename Generator>
+		void build_house_doors(std::vector<rectangle> const& rooms, rectangle const& entrance_room, std::vector<rectangle> &passages, build_result &result, Generator &rng)
 		{
 			std::vector<rectangle> untangled;
 			std::vector<rectangle> tangled;
@@ -276,7 +334,7 @@ namespace px
 
 			while (!untangled.empty())
 			{
-				std::vector<std::tuple<rectangle, rectangle>> tangle_candidates;
+				std::vector<std::tuple<rectangle, rectangle>> tangle_candidates; // (untangled, tangled) pair
 				for (auto const& untangled_room : untangled)
 				{
 					for (auto const& tangled_room : tangled)
@@ -289,43 +347,60 @@ namespace px
 					}
 				}
 
-				auto tangle = random_item(tangle_candidates, rng);
-				auto doorway = shrink_ark(std::get<0>(tangle).inflated(wall_size) & std::get<1>(tangle).inflated(wall_size));
+				auto tangle = random_item(tangle_candidates, rng); // (untangled, tangled) tuple
+				auto doorway = shrink_ark(std::get<0>(tangle).inflated(wall_size) & std::get<1>(tangle).inflated(wall_size), wall_size);
 				bool last = untangled.size() == 1;
 
-				switch (last ? 0 : std::uniform_int_distribution<int>(0, 3)(rng)) // 0 , 1, 2 - door (opened, closed, locked), 3, 4, 5 - gap (1 tile, random size, full)
+				point2 door;
+				switch (last ? 0 : std::uniform_int_distribution<int>(0, 3)(rng)) // 0, 1, 2 - door (opened, closed, locked), 3, 4, 5 - gap (1 tile, random size, full)
 				{
 				case 0:
 				case 1:
 				case 2:
-					result.tiles[random_point(doorway, rng)] = build_tile::door_ark;
+					door = random_point(doorway, rng);
+					passages.push_back(inflate_passage(rectangle(door, point2(wall_size, wall_size)), doorway, passage_size));
+					result.tiles[door] = build_tile::door_ark;
 					break;
 				case 3:
-					result.tiles[random_point(doorway, rng)] = build_tile::floor;
+					door = random_point(doorway, rng);
+					passages.push_back(inflate_passage(rectangle(door, point2(wall_size, wall_size)), doorway, passage_size));
+					result.tiles[door] = build_tile::floor;
 					break;
 				}
 
-				untangled.erase(std::remove(untangled.begin(), untangled.end(), std::get<0>(tangle)), untangled.end());
+				untangled.erase(std::remove(std::begin(untangled), std::end(untangled), std::get<0>(tangle)), std::end(untangled));
 				tangled.push_back(std::get<0>(tangle));
 			}
 		}
 
 		// add habitants and furniture
-		template<typename Generator>
-		void build_house_placeables(std::vector<rectangle> &rooms, build_result &result, Generator &rng)
+		// - rooms - array of rooms
+		// - passage - space to be empty (i.e reserve place for movement or/and extra object)
+		// - density [0, 1] - chance of spawn
+		template<typename Real, typename Generator>
+		void build_house_placeables(std::vector<rectangle> const& rooms, std::vector<rectangle> const& passage, Real density, build_result &result, Generator &rng)
 		{
-			for (auto &room : rooms)
+			for (auto const& room : rooms)
 			{
-				result.placeables.emplace_back(random_point(room, rng), build_placeable::mobile);
+				// habitants
+
+				point2 spawn = random_point(room, rng);
+				if (!result.exists(spawn))
+				{
+					result.placeables.emplace_back(spawn, build_placeable::mobile);
+				}
+
+				// furniture
+
 				room.enumerate_border([&](auto const& location)
 				{
-					if (std::uniform_int_distribution<unsigned int>{1, 100}(rng) <= 15 && !result.exists(location))
+					if (std::uniform_real_distribution<Real>{}(rng) < density && place_available(passage, result, location))
 					{
 						result.placeables.emplace_back(location, build_placeable::furniture);
 					}
 				});
 				auto center = room.start() + room.range() / 2;
-				if (!result.exists(center))
+				if (std::uniform_real_distribution<Real>{}(rng) < density && place_available(passage, result, center))
 				{
 					result.placeables.emplace_back(center, build_placeable::furniture_table);
 				}

@@ -38,14 +38,25 @@ namespace px
 					}
 				}
 			}
-			void drain(int dmg)
+			void drain(int mana)
 			{
 				update();
 				if (m_body)
 				{
 					if (auto mp = m_body->energy())
 					{
-						mp->damage(dmg);
+						mp->damage(mana);
+					}
+				}
+			}
+			void replenish(int mana)
+			{
+				update();
+				if (m_body)
+				{
+					if (auto mp = m_body->energy())
+					{
+						mp->restore(mana);
 					}
 				}
 			}
@@ -65,6 +76,17 @@ namespace px
 				}
 				return energy;
 			}
+			int energy_max()
+			{
+				update();
+				int energy = 0;
+				if (m_body)
+				{
+					auto mp = m_body->energy();
+					energy += mp ? mp->maximum() : 0;
+				}
+				return energy;
+			}
 			int health()
 			{
 				update();
@@ -76,6 +98,17 @@ namespace px
 				}
 				return health;
 			}
+			int health_max()
+			{
+				update();
+				int health = 0;
+				if (m_body)
+				{
+					auto hp = m_body->health();
+					health = hp ? hp->maximum() : 0;
+				}
+				return health;
+			}
 			void move(point2 destination)
 			{
 				if (m_location)
@@ -83,6 +116,12 @@ namespace px
 					m_location->move(destination);
 				}
 			}
+
+			point2 position() const
+			{
+				return m_location ? m_location->current() : point2(0, 0);
+			}
+
 			body_component* body()
 			{
 				update();

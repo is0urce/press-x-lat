@@ -67,6 +67,11 @@ namespace px
 		{
 			return (m_start.x() == rect.m_start.x() || m_corner.x() == rect.m_corner.x()) && (m_start.y() == rect.m_start.y() || m_corner.y() == rect.m_corner.y());
 		}
+		// is horisontal > vertical
+		bool horisontal() const noexcept
+		{
+			return m_range.x() > m_range.y();
+		}
 
 		bool contains(point2 const& point) const noexcept
 		{
@@ -172,6 +177,19 @@ namespace px
 			inflate(-1);
 		}
 
+		template <size_t Axis>
+		void inflate_axis(int size) noexcept
+		{
+			m_start.move_axis<Axis>(-size);
+			m_range.move_axis<Axis>(size * 2);
+			m_corner.move_axis<Axis>(size);
+		}
+		template <size_t Axis>
+		void deflate_axis(int size) noexcept
+		{
+			inflate_axis<Axis>(-size);
+		}
+
 		rectangle inflated(int size) const noexcept
 		{
 			rectangle result = *this;
@@ -182,6 +200,21 @@ namespace px
 		{
 			rectangle result = *this;
 			result.deflate(size);
+			return result;
+		}
+
+		template <size_t Axis>
+		rectangle inflated_axis(int size) const noexcept
+		{
+			rectangle result = *this;
+			result.inflate_axis<Axis>(size);
+			return result;
+		}
+		template <size_t Axis>
+		rectangle deflated_axis(int size) const noexcept
+		{
+			rectangle result = *this;
+			result.deflate_axis<Axis>(size);
 			return result;
 		}
 	};

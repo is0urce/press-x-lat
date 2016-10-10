@@ -18,19 +18,36 @@ namespace px
 {
 	namespace core
 	{
-		class biome
+		struct biome
 		{
-			rl::tile<image> ground;
+			rl::tile<image> ground; // ground props
+			image appearance; // on the global map
 
-			std::list<image> trees;
-			double trees_density;
 			double flora_density;
+			double trees_density;
+			std::list<image> trees;
 
 			double predator_density;
 			double prey_density;
 
 			double rock_density;
 			double vein_density;
+
+			void clear()
+			{
+				ground.make_transparent();
+				ground.make_traversable();
+
+				trees_density = 0;
+				flora_density = 0;
+				trees.clear();
+
+				predator_density = 0;
+				prey_density = 0;
+
+				rock_density = 0;
+				vein_density = 0;
+			}
 		};
 	}
 }

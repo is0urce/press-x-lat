@@ -34,11 +34,15 @@ namespace px
 			void generate(unsigned int seed);
 			void generate_landmass();
 			void generate_climate(double rivers);
+			void generate_biomes();
 			void generate_civilisation(unsigned int cities);
 			void generate_appearance();
 
 			map_type* map();
 			const map_type* map() const;
+			point2 spawn() const noexcept;
+			cell_type& select(point2 const& location);
+			cell_type const& select(point2 const& location) const;
 
 		public:
 			world(factory &unit_builder);
@@ -48,7 +52,8 @@ namespace px
 		private:
 			void clear_cell(cell_type &cell);
 			void expand_moisture();
-			void generate_river(int x, int y, double size, river&);
+			void create_river(int x, int y, double size, river&);
+			void assign_biome(cell_type &cell);
 
 		private:
 			unsigned int m_seed; // world unique seed
@@ -58,8 +63,20 @@ namespace px
 			map_type m_map;
 			cell_type m_outer; // out-of-border cell props
 
+			biome m_ocean;
+			biome m_mountain_rock;
+			biome m_mountain_ice;
+			biome m_plains;
+			biome m_forest;
+			biome m_tundra;
+			biome m_taiga;
+			biome m_desert;
+			biome m_drylands;
+
 			std::list<river> m_rivers;
 			std::list<city> m_cities;
+
+			point2 m_spawn;
 		};
 	}
 }

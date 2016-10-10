@@ -417,6 +417,9 @@
     <ClInclude Include="src\px\core\gen\poi\rural_mapper.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\px\core\gen\poi\temple_builder.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -506,6 +509,9 @@
     <ClCompile Include="src\px\core\gen\poi\rural_mapper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\px\core\gen\poi\temple_builder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="press-x-lat.rc">
@@ -533,6 +539,9 @@
     <None Include="config\shared\script\panacea.lua" />
     <None Include="config\shared\script\teleport.lua" />
     <None Include="config\shared\script\damage.lua" />
+    <None Include="config\shared\script\blink.lua" />
+    <None Include="config\shared\script\ambush.lua" />
+    <None Include="config\shared\script\indigo.lua" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="I:\projects\PressX\font\DejaVuSansMono.ttf" />

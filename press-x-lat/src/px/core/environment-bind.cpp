@@ -49,11 +49,16 @@ namespace px
 			return std::tuple<int, unsigned int, bool, bool>{ damage, static_cast<unsigned int>(damage_type), hit, critical };
 		}
 
-		int environment::distance_wrap(wrap_unit &from, wrap_unit &to)
+		int environment::distance_wrap(point2 const& from, point2 const& to)
 		{
-			auto a = from.location();
-			auto b = to.location();
-			return a && b ? distance(a->current(), b->current()) : -1;
+			return distance(from, to);
+		}
+
+		int environment::reputation_wrap(wrap_unit &unit, wrap_unit &target)
+		{
+			body_component* body = unit.body();
+			body_component* target_body = target.body();
+			return (body && target_body) ? reputation(*body, *target_body) : 0;
 		}
 
 		void environment::message(wrap_unit &unit, std::string text)

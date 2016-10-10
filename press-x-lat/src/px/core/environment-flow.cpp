@@ -32,7 +32,7 @@ namespace px
 			m_world.resize(settings::world_width, settings::world_height);
 			m_world.generate(m_settings.seed());
 
-			spawn_player({ 1, 1 });
+			spawn_player(m_world.spawn() * point2(settings::cell_width, settings::cell_height));
 
 			// ui
 			tie_map();
@@ -137,9 +137,12 @@ namespace px
 			body->set_tag("player");
 			body->join_faction(1);
 			body->equip_weapon(weapon);
+
 			character->add_skill("sk_bash");
 			character->add_skill("sk_panacea");
 			character->add_skill("sk_teleport");
+			character->add_skill("sk_blink");
+			character->add_skill("sk_indigo");
 
 			m_terrain.add(task->assemble(persistency::permanent));
 

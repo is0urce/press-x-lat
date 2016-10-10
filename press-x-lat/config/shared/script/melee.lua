@@ -22,12 +22,14 @@ melee = {
 	end,
 
 	condition = function(user, target)
+		local distance = game.distance(user:position(), target:position())
+		local min, max = melee.range(user, target)
 		return user ~= target
 			and not user:dead()
 			and not target:dead()
 			and user:energy() >= melee.cost(user, target) -- have mana
-			-- and game.reputation(user, target) < 0 -- friend-or-foe check, negative is hostile
-			-- and game.distance(user, target) <= 1 -- melee distance
+			and game.reputation(user, target) < 0 -- friend-or-foe check, negative is hostile
+			and min <= distance and distance <= max -- in range
 	end,
 
 	action = function(user, target)

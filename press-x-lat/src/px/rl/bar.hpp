@@ -1,9 +1,11 @@
 // name: bar.hpp
 // type: c++ header
-// desc: template class declaration & implementation
+// desc: template struct
 // auth: is0urce
 
 // resource bar
+// value that have maximal cap
+// starting value is maximal
 
 #ifndef PX_RL_BAR_HPP
 #define PX_RL_BAR_HPP
@@ -24,96 +26,141 @@ namespace px
 
 			// ctor & dtor
 		public:
-			bar() : m_current{}, m_max{}
+			bar() noexcept 
+				: m_current{}, m_max{}
 			{
 			}
-			bar(T max) : m_current(max), m_max(max)
+			bar(T max) noexcept
+				: m_current(max), m_max(max)
 			{
 			}
-			bar(T current, T max)
-			{
-				init(max, max);
-			}
-		private:
-			void init(T current, T max)
-			{
-				m_max = max;
-				m_current = std::min<T>(current, m_max);
-			}
-
-			// methods
-		public:
-			void set(T current_and_max)
-			{
-				init(current_and_max, current_and_max);
-			}
-			void set(T current, T max)
+			bar(T current, T max) noexcept
 			{
 				init(current, max);
 			}
-			T current() const
+
+		private:
+			void init(T current, T max) noexcept
+			{
+				m_max = max;
+				m_current = cap(current);
+			}
+			T cap(T val) noexcept
+			{
+				return std::min<T>(val, m_max);
+			}
+
+
+		public:
+			// querry
+
+			T current() const noexcept
 			{
 				return m_current;
 			}
-			T maximum() const
+			T maximum() const noexcept
 			{
 				return m_max;
 			}
-			void modify(T magnitude)
+			bool empty() const noexcept
 			{
-				m_current = std::min<T>(m_current + magnitude, m_max);
+				return m_current <= T{};
 			}
-			void restore(T magnitude)
-			{
-				m_current = std::min<T>(m_current + magnitude, m_max);
-			}
-			void restore()
-			{
-				m_current = m_max;
-			}
-			void damage(T magnitude)
-			{
-				m_current -= magnitude;
-			}
-			void current(T current)
-			{
-				m_current = std::min<T>(current, m_max);
-			}
-			void maximum(T max)
-			{
-				m_max = max;
-				m_current = std::min<T>(m_current, m_max);
-			}
-			bool empty() const
-			{
-				return m_current <= 0;
-			}
-			bool full() const
+			bool full() const noexcept
 			{
 				return m_current == m_max;
 			}
-			bar& operator=(T c)
+
+			void current(T current) noexcept
+			{
+				m_current = cap(current);
+			}
+			void maximum(T max) noexcept
+			{
+				m_max = max;
+				m_current = cap(m_current);
+			}
+			void set(T current_and_max) noexcept
+			{
+				init(current_and_max, current_and_max);
+			}
+			void set(T current, T max) noexcept
+			{
+				init(current, max);
+			}
+			// restore value to maximum
+			void restore() noexcept
+			{
+				m_current = m_max;
+			}
+			void restore(T magnitude) noexcept
+			{
+				m_current = cap(m_current + magnitude);
+			}
+			void modify(T magnitude) noexcept
+			{
+				m_current = cap(m_current + magnitude);
+			}
+			void damage(T magnitude) noexcept
+			{
+				m_current -= magnitude;
+			}
+
+			// mutation operators
+
+			bar& operator=(bar&) noexcept = default;
+			bar& operator=(T c) noexcept
 			{
 				set(c);
 				return *this;
 			}
-			bar& operator+=(T c)
+			bar& operator+=(T c) noexcept
 			{
 				modify(c);
 				return *this;
 			}
-			bar& operator-=(T c)
+			bar& operator-=(T c) noexcept
 			{
 				modify(-c);
 				return *this;
 			}
-			operator value_type() const
+
+			// comparison operators
+
+			bool operator<(T c) const noexcept
+			{
+				return m_current < c;
+			}
+			bool operator==(T c) const noexcept
+			{
+				return m_current == c;
+			}
+			bool operator<=(T c) const noexcept
+			{
+				return operator<(*this, c) || operator==(this*, c);
+			}
+			bool operator>=(T c) const noexcept
+			{
+				return !operator<(*this, c);
+			}
+			bool operator!=(T c) const noexcept
+			{
+				return !operator==(*this, c);
+			}
+			bool operator>(T c) const noexcept
+			{
+				return !operator<=(*this, c);
+			}
+
+			// value cast operators
+
+			operator value_type() const noexcept
 			{
 				return m_current;
 			}
-			operator bool() const
+			operator bool() const noexcept
 			{
-				return m_current > 0;
+				return m_current > T{};
 			}
 		};
 	}

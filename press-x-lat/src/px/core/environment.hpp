@@ -96,7 +96,8 @@ namespace px
 
 			// damage, damage_type, is_hit, is_critical
 			std::tuple<int, unsigned int, bool, bool> hit(wrap_unit &attacker, wrap_unit &target);
-			int distance_wrap(wrap_unit &from, wrap_unit &to);
+			int distance_wrap(point2 const& from, point2 const& to);
+			int reputation_wrap(wrap_unit &unit, wrap_unit &target);
 			void message(wrap_unit &target, std::string text);
 
 		public:

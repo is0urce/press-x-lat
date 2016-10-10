@@ -14,7 +14,7 @@ namespace px
 	struct point2 : public coordinate<int, 2>
 	{
 	public:
-		point2()
+		point2() noexcept
 		{
 
 		}

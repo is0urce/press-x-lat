@@ -60,11 +60,13 @@ namespace px
 			});
 			m_rivers.clear();
 			m_cities.clear();
+			m_spawn = { 0, 0 };
 		}
 
 		void  world::clear_cell(cell_type &cell)
 		{
 			// out-of-border cell proprieties
+			m_outer.seed = 0;
 			m_outer.altitude = -1;
 			m_outer.gradient = { 0, 0 };
 			m_outer.moisture = 0;
@@ -94,6 +96,7 @@ namespace px
 			clear();
 			generate_landmass();
 			generate_climate(3);
+			generate_biomes();
 			generate_civilisation(2);
 			generate_appearance();
 		}
@@ -168,7 +171,7 @@ namespace px
 					r.set_tag(std::string("river") + std::to_string(n));
 
 					m_rivers.emplace_back(r);
-					generate_river(x, y, cell.moisture, m_rivers.back());
+					create_river(x, y, cell.moisture, m_rivers.back());
 					++n;
 				}
 			}
@@ -179,6 +182,48 @@ namespace px
 				cell.moisture = cell.river_size > 0 ? 1.0 : cell.altitude < 0 ? 0.0125 : 0.0;
 			});
 			expand_moisture();
+		}
+
+		void world::generate_biomes()
+		{
+			// ocean
+			m_ocean.clear();
+			m_ocean.appearance = { '~',{ 1.0, 1.0, 1.0 },{ 0.25, 0.25, 1.0 } };
+			m_ocean.ground.make_blocking();
+			m_ocean.ground.make_transparent();
+			m_ocean.ground.appearance() = m_ocean.appearance;
+
+			// mountain biomes
+			m_mountain_rock.clear();
+			m_mountain_rock.ground.make_blocking();
+			m_mountain_rock.ground.make_opaque();
+			m_mountain_rock.ground.appearance() = { '^', color::black(), { 0.5, 0.5, 0.5 } };
+
+			m_mountain_ice = m_mountain_rock;
+			m_mountain_ice.ground.appearance() = { '^', color::black(), color(0.9, 0.9, 0.9) };
+
+			// snow biomes
+			m_tundra.clear();
+			m_tundra.ground.appearance() = { '.', { 0.0, 0.0, 0.0 }, { 0.9, 0.9, 0.9 } };
+
+			m_taiga.clear();
+			m_taiga.ground.appearance() = { 9650, { 0.0, 0.25, 0.0 }, { 0.9, 0.9, 0.9 } };
+
+			// plain biomes
+			m_plains.clear();
+			m_plains.ground.appearance() = { '"', { 0.0, 0.25, 0.0 }, { 0.0, 0.5, 0.0 } };
+
+			m_forest.clear();
+			m_forest.ground.appearance() = { 9650, color(0.0, 0.0, 0.0), { 0.0, 0.5, 0.0 } };
+
+			// dry biomes
+			m_desert.clear();
+			m_desert.ground.appearance() = { '.', color(0.0, 0.0, 0.0), color(0.8, 0.8, 0.5) };
+
+			m_map.enumerate([this](auto const& location, auto& cell)
+			{
+				assign_biome(cell);
+			});
 		}
 
 		void world::generate_civilisation(unsigned int cities)
@@ -203,12 +248,13 @@ namespace px
 				point2 location = point2(x, y);
 				auto &cell = m_map[location];
 				int distance = static_cast<int>(m_map.width()) * 2 + static_cast<int>(m_map.height()) * 2 + 5; // something big
-				std::for_each(m_cities.begin(), m_cities.end(), [&distance, &location](auto& c)	{
+				std::for_each(m_cities.begin(), m_cities.end(), [&distance, &location](auto& c) {
 					distance = (std::min)(distance, location.king_distance(c.center_location));
 				});
 
 				if (cell.landmark == 0 && cell.altitude > 0 && cell.altitude < 0.5 && cell.moisture > 0 && distance > 5)
 				{
+					++n;
 					city capital;
 					capital.center_location = location;
 					capital.set_tag(std::string("city") + std::to_string(n));
@@ -216,7 +262,7 @@ namespace px
 
 					cell.landmark = std::make_unique<landmark>();
 					cell.landmark->set_name(std::string("landmark") + std::to_string(n));
-					++n;
+					m_spawn = location;
 				}
 			}
 
@@ -224,37 +270,31 @@ namespace px
 			int count = 0;
 			m_map.enumerate([&count, this](auto const& location, auto & cell)
 			{
-				//if (!cell.landmark && cell.altitude > 0)
+				if (!cell.landmark && cell.altitude > 0)
 				{
 					cell.landmark = std::make_unique<landmark>();
 					cell.landmark->set_name(std::string("point-of-interest#") + std::to_string(++count));
 
-					//cell.landmark->set_pipeline(std::make_unique<farm_builder>(), std::make_unique<rural_mapper>(*m_factory));
-					cell.landmark->set_pipeline(std::make_unique<graveyard_builder>(), std::make_unique<rural_mapper>(*m_factory));
+					int seed = cell.seed;
+					rng_type random(seed);
+					if (std::uniform_int_distribution<int>{0, 1}(random) == 0)
+					{
+						cell.landmark->set_pipeline(std::make_unique<farm_builder>(), std::make_unique<rural_mapper>(*m_factory));
+					}
+					else cell.landmark->set_pipeline(std::make_unique<graveyard_builder>(), std::make_unique<rural_mapper>(*m_factory));
 				}
 			});
 		}
 
 		void world::generate_appearance()
 		{
-			//if (temperature < 10.0)
-			//{
-			//	target = (moisture > 5) ? &taiga : &tundra;
-			//}
-			//else if (temperature < 25)
-			//{
-			//	target = (moisture > 5) ? &forest : &planes;
-			//}
-			//else
-			//{
-			//	target = (moisture > 5) ? &dryland : &desert;
-			//}
 			m_map.enumerate([w = m_map.width(), h = m_map.height(), this](auto const&, auto& cell)
 			{
+				cell.img = cell.biome.ground.appearance();
+
+				// some tweaks to map colors
 				if (cell.altitude <= 0)
 				{
-					cell.img.glyph = '~';
-					cell.img.tint = { 1, 1, 1 };
 					cell.img.bg = color(0.25 + cell.altitude / 4.0, 0.25 + cell.altitude / 4.0, 1 + cell.altitude / 4.0); // -1,0 - > [0, 0.5]
 				}
 				else
@@ -263,35 +303,23 @@ namespace px
 					{
 						if (cell.temperature < 0)
 						{
-							cell.img.glyph = cell.moisture < 0.0625 ? '.' : 9650;
-							cell.img.tint = cell.moisture < 0.0625 ? color(0, 0, 0) : color(0, 0.25, 0);
-							cell.img.bg = lerp(color(0.9, 0.9, 0.9), color(1, 1, 1), cell.altitude, 0.0, 1.0);
+							//cell.img.bg = lerp(color(0.9, 0.9, 0.9), color(1, 1, 1), cell.altitude, 0.0, 1.0);
 						}
 						else if (cell.temperature > 0.25 && cell.moisture < 0.0625)
 						{
-							cell.img.glyph = '.';
-							cell.img.tint = { 0, 0, 0 };
-							cell.img.bg = lerp(color(0.8, 0.8, 0.0), color(0.8, 0.8, 0.5), 1-cell.altitude, 0.5, 1.0);
+							//cell.img.bg = lerp(color(0.8, 0.8, 0.0), color(0.8, 0.8, 0.5), 1 - cell.altitude, 0.5, 1.0);
 						}
 						else
 						{
-							cell.img.glyph = cell.moisture < 0.0625 ? '"' : 9650;
-							cell.img.tint = { 0, 0.25, 0 };
-							cell.img.bg = lerp(color(0.0, 0.5, 0.0), color(0, 0.75, 0), cell.altitude, 0.0, 1.0);
+							//cell.img.bg = lerp(color(0.0, 0.5, 0.0), color(0, 0.75, 0), cell.altitude, 0.0, 1.0);
 						}
 					}
 					else // mountains
 					{
-						cell.img.glyph = '^';
-						if (cell.temperature > 0)
+						if (cell.temperature <= 0)
 						{
-							cell.img.tint = { 0, 0, 0 };
-							cell.img.bg = { 0.5, 0.5, 0.5 };// lerp(color(0.5, 0.5, 0.5), color(0.55, 0.55, 0.55), cell.altitude, 0.5, 1.0);
-						}
-						else
-						{
-							cell.img.tint = lerp(color(0, 0, 0), color(0.75, 0.75, 1), cell.altitude, 0.5, 1.0);
-							cell.img.bg = lerp(color(0.9, 0.9, 0.9), color(1, 1, 1), cell.altitude, 0.75, 1.0);
+							//cell.img.tint = lerp(color(0, 0, 0), color(0.75, 0.75, 1), cell.altitude, 0.5, 1.0);
+							//cell.img.bg = lerp(color(0.9, 0.9, 0.9), color(1, 1, 1), cell.altitude, 0.75, 1.0);
 						}
 					}
 
@@ -302,8 +330,8 @@ namespace px
 					}
 					if (cell.landmark)
 					{
-						cell.img.glyph = '*';
-						cell.img.tint = { 1, 0, 1 };
+						//cell.img.glyph = '*';
+						//cell.img.tint = { 1, 0, 1 };
 					}
 				}
 			});
@@ -333,7 +361,7 @@ namespace px
 			}
 		}
 
-		void world::generate_river(int x, int y, double size, river& current)
+		void world::create_river(int x, int y, double size, river& current)
 		{
 			if (!m_map.contains(x, y)) return;
 
@@ -419,8 +447,36 @@ namespace px
 
 				if (dx != 0 || dy != 0)
 				{
-					generate_river(x + dx, y + dy, size + 1.0, current);
+					create_river(x + dx, y + dy, size + 1.0, current);
 				}
+			}
+		}
+
+		// setup biome of cell, depending on other factors as moisture and temperature
+		void world::assign_biome(cell_type &cell)
+		{
+			if (cell.altitude <= 0)
+			{
+				cell.biome = m_ocean;
+			}
+			else if (cell.altitude < 0.5)
+			{
+				if (cell.temperature < 0)
+				{
+					cell.biome = cell.moisture < 0.0625 ? m_tundra : m_taiga;
+				}
+				else if (cell.temperature > 0.25 && cell.moisture < 0.0625)
+				{
+					cell.biome = m_desert;
+				}
+				else
+				{
+					cell.biome = cell.moisture < 0.0625 ? m_plains : m_forest;
+				}
+			}
+			else // mountains
+			{
+				cell.biome = cell.temperature > 0 ? m_mountain_rock : m_mountain_ice;
 			}
 		}
 
@@ -431,6 +487,18 @@ namespace px
 		const world::map_type* world::map() const
 		{
 			return &m_map;
+		}
+		point2 world::spawn() const noexcept
+		{
+			return m_spawn;
+		}
+		world::cell_type& world::select(point2 const& location)
+		{
+			return m_map.select(location, m_outer);
+		}
+		world::cell_type const& world::select(point2 const& location) const
+		{
+			return m_map.select(location, m_outer);
 		}
 	}
 }

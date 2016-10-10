@@ -22,7 +22,7 @@ bash = {
 	end,
 
 	condition = function(user, target)
-		local distance = game.distance(user, target)
+		local distance = game.distance(user:position(), target:position())
 		local min, max = bash.range(user, target)
 		return user ~= target
 			and not user:dead()

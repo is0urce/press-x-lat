@@ -8,6 +8,7 @@
 #include <px/common/rectangle.hpp>
 #include <px/fn/bsp.hpp>
 #include <px/fn/build_housing.hpp>
+#include <px/fn/build_aux.hpp>
 
 #include <px/core/gen/builder.hpp>
 
@@ -20,13 +21,8 @@ namespace px
 		namespace
 		{
 			static const unsigned int sector_size = 15;
-			static const unsigned int room_size = 4;
+			static const int margin_size = 2;
 			typedef std::mt19937 rng_type;
-
-			rng_type generator(unsigned int seed)
-			{
-				return rng_type(seed);
-			}
 		}
 
 		graveyard_builder::~graveyard_builder() {}
@@ -43,28 +39,25 @@ namespace px
 				if (std::uniform_int_distribution<int>(0, 1)(rng) == 0)
 				{
 					fn::build_fence(sector, fn::build_tile::wall, result, rng);
-					sector.deflate(2);
+					sector.deflate(margin_size);
 				}
 
 				sector.enumerate([&](point2 const& location) {
 					result.tiles[location] = fn::build_tile::no_change;
 				});
 
-				point2 start = sector.start();
+				point2 tomb_align = fn::random_block_direction(rng);
+				int mod_x = std::uniform_int_distribution<int>{ 3, 5 }(rng); // size of grave cell
+				int mod_y = mod_x;
+				int off_x = std::uniform_int_distribution<int>{ 0, mod_x - 1 }(rng);
+				int off_y = std::uniform_int_distribution<int>{ 0, mod_y - 1 }(rng);
+
 				sector.enumerate([&](point2 const& location) {
-					auto d = location - start;
-					int dx = d.x() % 4;
-					int dy = d.y() % 4;
-					if (dx == 1)
+					auto d = location - sector.start();
+					if (d.x() % mod_x == off_x && d.y() % mod_y == off_y)
 					{
-						if (dy == 2)
-						{
-							result.tiles[location] = fn::build_tile::doodad_tombstone;
-						}
-						else if (dy == 1)
-						{
-							result.tiles[location] = fn::build_tile::gravel;
-						}
+						result.tiles[location] = fn::build_tile::gravel;
+						result.tiles[location.moved(tomb_align)] = fn::build_tile::doodad_tombstone;
 					}
 				});
 			});

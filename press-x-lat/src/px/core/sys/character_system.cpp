@@ -68,12 +68,19 @@ namespace px
 
 			// 'unit' script object
 			m_script["unit"].SetClass<wrap_unit, location_component*>(
+				// props
+				"position", &wrap_unit::position,
+				// actions
 				"move", &wrap_unit::move,
+				// resources
 				"energy", &wrap_unit::energy,
+				"energy_max", &wrap_unit::energy_max,
 				"health", &wrap_unit::health,
+				"health_max", &wrap_unit::health_max,
 				"damage", &wrap_unit::damage,
 				"restore", &wrap_unit::restore,
 				"drain", &wrap_unit::drain,
+				"replenish", &wrap_unit::replenish,
 				"dead", &wrap_unit::dead);
 
 			// 'point' script object
@@ -82,6 +89,7 @@ namespace px
 			// 'game' script object
 			m_script["game"].SetObj(env,
 				"distance", &environment::distance_wrap,
+				"reputation", &environment::reputation_wrap,
 				"message", &environment::message,
 				"hit", &environment::hit);
 

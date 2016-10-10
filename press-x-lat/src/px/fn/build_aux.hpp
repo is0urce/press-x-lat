@@ -17,19 +17,6 @@ namespace px
 	{
 		namespace
 		{
-			// deflate horisontaly or verticaly (wichever is longer)
-			rectangle shrink_ark(rectangle const& line)
-			{
-				if (line.range().x() > line.range().y())
-				{
-					return rectangle(line.start().moved_axis<0>(1), line.range().moved_axis<0>(-2));
-				}
-				else
-				{
-					return rectangle(line.start().moved_axis<1>(1), line.range().moved_axis<1>(-2));
-				}
-			}
-
 			// get random item from vector
 			template <typename Generator, typename Item>
 			Item const& random_item(std::vector<Item> const& vec, Generator &rng)
@@ -38,14 +25,27 @@ namespace px
 				return vec[std::uniform_int_distribution<std::vector<Item>::size_type>(0, vec.size() - 1)(rng)];
 			}
 
-			// ger random range in bigger range (inclusive, both 0 and max)
+			// get random range in bigger range (inclusive, both 0 and max)
 			template <typename Generator>
 			point2 random_range(point2 const& range, Generator &rng)
 			{
 				return point2(std::uniform_int_distribution<point2::component>(0, range.x())(rng), std::uniform_int_distribution<point2::component>(0, range.y())(rng));
 			}
+			template <typename Generator>
+			point2 random_block_direction(Generator &rng)
+			{
+				point2 result;
+				switch (std::uniform_int_distribution<int>{0, 3}(rng))
+				{
+				case 0: return{ 0, 1 };
+				case 1: return{ 1, 0 };
+				case 2: return{ -1, 0 };
+				case 3: return{ 0, -1 };
+				}
+				throw std::logic_error("px::fn::random_block_direction - wrong rng logic");
+			}
 
-			// get random point in rectangle
+			// get random point in a rectangle
 			template <typename Generator>
 			point2 random_point(rectangle const& rect, Generator &rng)
 			{
@@ -61,7 +61,7 @@ namespace px
 				return rectangle(rect.start() + random_range(shrink, rng), rect.range() - shrink);
 			}
 
-			// get random item in enum class (if it has min_value and max_value)
+			// get random item in enum class (it has to have min_value and max_value)
 			template <typename E, typename Generator>
 			E random_enum(Generator &rng)
 			{
