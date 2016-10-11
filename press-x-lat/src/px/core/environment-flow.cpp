@@ -122,6 +122,7 @@ namespace px
 			// player props
 			auto weapon = std::make_shared<body_component::item_type>();
 			weapon->add({ rl::effect::weapon_damage, 0x00, 50 });
+			weapon->add({ rl::effect::equipment, static_cast<unsigned int>(rl::equipment_slot::hand_main) });
 			weapon->set_name("Copper Sword");
 			weapon->set_tag("copper_sword");
 
@@ -136,13 +137,13 @@ namespace px
 			body->set_name("You");
 			body->set_tag("player");
 			body->join_faction(1);
-			body->equip_weapon(weapon);
+			body->add(weapon);
+			body->equip(weapon);
 
 			character->add_skill("sk_bash");
 			character->add_skill("sk_panacea");
 			character->add_skill("sk_teleport");
 			character->add_skill("sk_fireball");
-
 			character->add_skill("sk_indigo");
 
 			m_terrain.add(task->assemble(persistency::permanent));

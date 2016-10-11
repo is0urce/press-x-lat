@@ -16,12 +16,14 @@
 #include <px/rl/buff.hpp>
 
 // enums
-#include <px/rl/traverse.hpp>
 #include <px/rl/effect.hpp>
+#include <px/rl/equipment_slot.hpp>
+#include <px/rl/traverse.hpp>
 
 #include <functional>
 #include <memory>
 #include <list>
+#include <vector>
 
 namespace px
 {
@@ -91,15 +93,18 @@ namespace px
 				rl::enhancement<rl::effect> start{};
 
 				// affect buffs
-				for (auto &buff : m_buffs)
+				for (auto const& buff : m_buffs)
 				{
 					start += buff.accumulate<TValue>();
 				}
 
 				// item buffs
-				if (m_hands)
+				for (auto const& item : m_equipment)
 				{
-					start += m_hands->accumulate<TValue>();
+					if (item)
+					{
+						start += item->accumulate<TValue>();
+					}
 				}
 
 				return start;
@@ -107,26 +112,46 @@ namespace px
 
 			// equipment
 
-			item_ptr weapon()
+			void equip(item_ptr item, rl::equipment_slot slot)
 			{
-				return m_hands;
+				m_equipment[static_cast<size_t>(slot)] = item;
 			}
-			void equip_weapon(item_ptr i)
+			void unequip(rl::equipment_slot slot)
 			{
-				if (m_hands) throw std::runtime_error("px::core::body_component::equip_weapon(..) weapon already presents");
-
-				m_hands = i;
+				m_equipment[static_cast<size_t>(slot)].reset();
 			}
 			void clear_equipment()
 			{
-				m_hands = nullptr;
+				for (auto& item : m_equipment)
+				{
+					item.reset();
+				}
+			}
+			void equip(item_ptr item)
+			{
+				auto pair = item->find<rl::effect::equipment>();
+				if (std::get<0>(pair))
+				{
+					equip(item, static_cast<rl::equipment_slot>(std::get<1>(pair).subtype));
+				}
+			}
+			item_ptr weapon()
+			{
+				return m_equipment[static_cast<size_t>(rl::equipment_slot::hand_main)];
+			}
+			void equip_weapon(item_ptr item)
+			{
+				equip(item, rl::equipment_slot::hand_main);
 			}
 
+
 		public:
+			body_component() : m_equipment(static_cast<size_t>(rl::equipment_slot::max_value) + 1)
+			{}
 			virtual ~body_component() {}
 
 		private:
-			item_ptr m_hands;
+			std::vector<item_ptr> m_equipment;
 			std::list<buff_type> m_buffs;
 		};
 	}

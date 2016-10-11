@@ -29,7 +29,13 @@ fireball = {
 	action = function(user, target)
 		local current = game.first_in_area(target, 6, true)
 		while current:valid() do
-			current:damage(1)
+			-- apply effects
+			local dmg, type, hit, crit = game.hit(user, current)
+			if hit then
+				current:damage(math.floor(dmg * 1.0))
+			end
+
+			-- to next target
 			current = game.next()
 		end
 		user:drain(fireball.cost(user, target))

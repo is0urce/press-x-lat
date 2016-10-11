@@ -20,11 +20,12 @@ namespace px
 
 			// item specific props
 
-			weapon_damage,
-			armor_resist,
-
+			equipment,
 			weight,
 			value,
+
+			weapon_damage,
+			armor_resist,
 
 			ore_power,
 

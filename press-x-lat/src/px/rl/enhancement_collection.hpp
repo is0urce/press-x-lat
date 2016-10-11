@@ -108,6 +108,19 @@ namespace px
 				return start;
 			}
 
+			template <effect_type TValue>
+			std::pair<bool, enhancement_type> find() const
+			{
+				for (auto const& e : m_effects)
+				{
+					if (e.main_type == TValue)
+					{
+						return{ true, e };
+					}
+				}
+				return{ false, {} };
+			}
+
 			// compare
 
 			bool compare(enhancement_collection vs) const
