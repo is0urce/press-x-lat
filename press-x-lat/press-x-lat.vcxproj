@@ -254,6 +254,7 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\rl\buff.hpp" />
     <ClInclude Include="src\px\rl\damage_type.hpp" />
     <ClInclude Include="src\px\rl\dialogue.hpp" />
+    <ClInclude Include="src\px\rl\dialogue_evaluator.hpp" />
     <ClInclude Include="src\px\rl\dialogue_reply.hpp" />
     <ClInclude Include="src\px\rl\dialogue_state.hpp" />
     <ClInclude Include="src\px\rl\equipment_slot.hpp" />

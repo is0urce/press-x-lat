@@ -34,9 +34,9 @@ namespace px
 				m_lines[n].link(links);
 			}
 			template <typename StateData = void*>
-			dialogue_state<StateData, Node> start(size_t root, StateData data = StateData())
+			dialogue_state<StateData, Node> start(size_t root, dialogue_evaluator<Node, StateData> evaluator = {}, StateData data = StateData())
 			{
-				dialogue_state<StateData, Node> state(data, &m_lines[root]);
+				dialogue_state<StateData, Node> state(&m_lines[root], data, evaluator);
 				return state;
 			}
 

@@ -25,7 +25,11 @@ namespace px
 			}
 			dialogue_reply const* select(size_t n) const
 			{
-				return m_answers[n];
+				return contains(n) ? m_answers[n] : nullptr;
+			}
+			bool contains(size_t index) const
+			{
+				return index < m_answers.size();
 			}
 			void link(dialogue_reply* answer)
 			{
@@ -50,7 +54,6 @@ namespace px
 		public:
 			dialogue_reply(Node node) : m_data(node)
 			{
-
 			}
 
 		private:

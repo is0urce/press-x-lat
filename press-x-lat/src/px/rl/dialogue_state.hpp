@@ -6,6 +6,8 @@
 #ifndef PX_RL_DIALOGUE_STATE_HPP
 #define PX_RL_DIALOGUE_STATE_HPP
 
+#include <px/rl/dialogue_evaluator.hpp>
+
 #include <vector>
 
 namespace px
@@ -22,24 +24,89 @@ namespace px
 			{
 				return m_current;
 			}
-			void select(size_t variant)
+			StateData const* data() const noexcept
 			{
-				m_current = m_current->select(variant);
-				//m_script.action(m_current, m_data);
-				// if (m_current.is_final() m_script.finish(m_current, m_data)
+				return m_data;
+			}
+			StateData* data() noexcept
+			{
+				return &m_data;
 			}
 
-			dialogue_state(StateData data, dialogue_reply<Node> const* start) : m_data(data), m_current(start)
+			// uses reply by visible #, skipping invisible variants
+			void select(size_t variant)
 			{
-				calculate_visible();
-			}
-		private:
-			void calculate_visible()
-			{
-				m_visible.assign(m_current->size(), false);
-				for (size_t i = 0, size = m_current->size(); i != size; ++i)
+				size_t index = 0;
+				size_t count = 0;
+				size_t size = m_visible.size();
+				bool visible = m_visible[index];
+				while ((!visible || count != variant) && index < size)
 				{
-					m_visible[i] = true; // m_script.conditional(next, m_data);
+					if (visible) ++count;
+					++index;
+					visible = m_visible[index];
+				}
+				select_absolute(index);
+			}
+			// uses first visible reply option (same as select(0))
+			void select_first()
+			{
+				for (size_t index = 0; index < m_current->size(); ++index)
+				{
+					if (m_visible[index])
+					{
+						select_absolute(index);
+						return;
+					}
+				}
+			}
+			bool is_final() const noexcept
+			{
+				return m_current->is_final();
+			}
+			bool is_visible(size_t index) const noexcept
+			{
+				return index < m_visible.size() ? m_visible[index] : false;
+			}
+			size_t total() const noexcept
+			{
+				return m_visible->size();
+			}
+			size_t visible() const noexcept
+			{
+				size_t n = 0;
+				for (auto v : m_visible)
+				{
+					if (v) ++n;
+				}
+				return n;
+			}
+			void recalculate_visible()
+			{
+				m_visible.resize(m_current->size(), false);
+				for (size_t i = 0, size = m_visible.size(); i != size; ++i)
+				{
+					m_visible[i] = m_script.conditional(*(m_current->select(i)), m_data);
+				}
+			}
+
+		public:
+			dialogue_state(dialogue_reply<Node> const* start, StateData data, dialogue_evaluator<Node, StateData> evaluator)
+				: m_data(data)
+				, m_current(start)
+				, m_script(evaluator)
+			{
+				recalculate_visible();
+			}
+
+		private:
+			void select_absolute(size_t index)
+			{
+				if (m_current->contains(index))
+				{
+					m_current = m_current->select(index);
+					m_script.action(*m_current, m_data);
+					recalculate_visible();
 				}
 			}
 
@@ -48,7 +115,7 @@ namespace px
 			std::vector<bool> m_visible;
 
 			StateData m_data;
-			//Evaluator m_script;
+			dialogue_evaluator<Node, StateData> m_script;
 		};
 	}
 }
