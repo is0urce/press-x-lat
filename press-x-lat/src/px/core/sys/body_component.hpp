@@ -80,9 +80,17 @@ namespace px
 			template <typename T, typename BinaryOperation>
 			T accumulate(T start, BinaryOperation fold) const
 			{
-				for (auto &buff : m_buffs)
+				for (auto const& buff : m_buffs)
 				{
 					start = buff.accumulate(start, fold);
+				}
+				// item buffs
+				for (auto const& item : m_equipment)
+				{
+					if (item)
+					{
+						start += item->accumulate(start, fold);
+					}
 				}
 				return start;
 			}
@@ -127,13 +135,16 @@ namespace px
 					item.reset();
 				}
 			}
-			void equip(item_ptr item)
+			// returns true if item equipped
+			bool equip(item_ptr item)
 			{
 				auto pair = item->find<rl::effect::equipment>();
-				if (std::get<0>(pair))
+				bool success = std::get<0>(pair);
+				if (success)
 				{
 					equip(item, static_cast<rl::equipment_slot>(std::get<1>(pair).subtype));
 				}
+				return success;
 			}
 			item_ptr weapon()
 			{

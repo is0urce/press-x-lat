@@ -12,6 +12,7 @@
 
 #include <px/rl/effect.hpp>
 #include <px/rl/damage_type.hpp>
+#include <px/rl/shadowcasting.hpp>
 
 namespace px
 {
@@ -73,6 +74,12 @@ namespace px
 			{
 				m_query.push_back(component);
 			});
+
+			if (require_fov)
+			{
+				rl::shadowcasting fov(radius, location, [this](point2 const& position) { return m_terrain.transparent(position); });
+				m_query.remove_if([&](auto location) { return !fov.in_fov(location->current()); });
+			}
 
 			m_cursor = std::begin(m_query);
 			return next();
