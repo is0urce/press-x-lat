@@ -74,7 +74,7 @@ namespace px
 
 					// setup
 					body->join_faction(1);
-					body->equip_weapon(weapon);
+					body->equip_slot<rl::equipment_slot::hand_main>(weapon);
 					character->add_skill("sk_melee");
 
 					// add
@@ -99,7 +99,7 @@ namespace px
 
 					// setup
 					body->join_faction(1);
-					body->equip_weapon(weapon);
+					body->equip_slot<rl::equipment_slot::hand_main>(weapon);
 					character->add_skill("sk_melee");
 
 					// add

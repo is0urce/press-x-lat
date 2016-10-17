@@ -251,6 +251,7 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\fn\build_placeable.hpp" />
     <ClInclude Include="src\px\fn\build_result.hpp" />
     <ClInclude Include="src\px\fn\build_tile.hpp" />
+    <ClInclude Include="src\px\rl\actor.hpp" />
     <ClInclude Include="src\px\rl\buff.hpp" />
     <ClInclude Include="src\px\rl\damage_type.hpp" />
     <ClInclude Include="src\px\rl\dialogue.hpp" />

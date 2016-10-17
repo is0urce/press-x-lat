@@ -6,7 +6,7 @@
 #ifndef PX_RL_BUFF_HPP
 #define PX_RL_BUFF_HPP
 
-#include <px/rl/enhancement.hpp>
+#include <px/rl/enhancement_collection.hpp>
 #include <px/rl/entity.hpp>
 
 namespace px
