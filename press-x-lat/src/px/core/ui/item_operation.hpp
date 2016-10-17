@@ -31,8 +31,17 @@ namespace px
 			template <typename I>
 			color operator()(I const&) const
 			{
-				return color(1, 1, 1);
+				return m_color;
 			}
+			item_color() : item_color({1, 1, 1})
+			{
+			}
+			item_color(color c) : m_color(c)
+			{
+
+			}
+		private:
+			color m_color;
 		};
 		struct item_filter
 		{

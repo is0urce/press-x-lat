@@ -70,6 +70,8 @@ namespace px
 		color average(color other) const noexcept { other += *this; other /= 2; return other; };
 		double luminance() const noexcept { return 0.2125 * R + 0.7154 * G + 0.0721 * B; };
 		color lerp(color b, component t) const noexcept { b *= t; b += *this * (t - 1); return b; }
+		void multiple_rgb(double multiplier) noexcept { R *= multiplier; G *= multiplier; B *= multiplier; }
+		color& multiplied_rgb(double multiplier) noexcept { auto result = *this; result.multiple_rgb(multiplier); return result; }
 
 		// hsv transformation
 		// hue - hue shift (in degrees) in hardcoded 'default' colorspace preset

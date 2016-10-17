@@ -77,8 +77,8 @@ namespace px
 			// uses reply by visible #, skipping invisible variants
 			void answer(size_t variant)
 			{
-				size_t index = 0;
-				size_t count = 0;
+				size_t index = 0; // current
+				size_t count = 0; // current visible
 				bool visible = m_visible[index];
 				while ((!visible || count != variant) && contains(index))
 				{
@@ -92,27 +92,12 @@ namespace px
 			// uses first visible reply option (same as select(0))
 			void answer_first()
 			{
-				for (size_t index = 0; index < m_current->size(); ++index)
+				for (size_t index = 0, size = m_current->size(); index != size; ++index)
 				{
 					if (m_visible[index])
 					{
 						answer_absolute(index);
 						return;
-					}
-				}
-			}
-
-			// enumerate by void(size_t visible_index, dialogue_reply<Node> const&)
-			template <typename Operator>
-			void enumerate(Operator &&fn)
-			{
-				size_t visible_index = 0; // visible index
-				for (size_t index = 0, size = m_visible.size(); index != size; ++index)
-				{
-					if (m_visible[index])
-					{
-						std::forward<Operator>(fn)(visible_index, *(*m_current)[index]);
-						++visible_index;
 					}
 				}
 			}
@@ -129,6 +114,21 @@ namespace px
 					if (m_visible[index] = m_script.conditional(*(*m_current)[index], m_data)) // store to array
 					{
 						++m_active; // increment cashed counter
+					}
+				}
+			}
+
+			// enumerate by void(size_t visible_index, dialogue_reply<Node> const&)
+			template <typename Operator>
+			void enumerate(Operator &&fn) const
+			{
+				size_t visible_index = 0; // visible index
+				for (size_t index = 0, size = m_visible.size(); index != size; ++index)
+				{
+					if (m_visible[index])
+					{
+						std::forward<Operator>(fn)(visible_index, *(*m_current)[index]);
+						++visible_index;
 					}
 				}
 			}

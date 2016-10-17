@@ -48,6 +48,9 @@ namespace px
 			light_torch,
 			light_braiser,
 
+			workshop_anvil,
+			workshop_alchemy,
+
 			statue,
 		};
 	}

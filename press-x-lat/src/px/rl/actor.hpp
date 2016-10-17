@@ -112,7 +112,7 @@ namespace px
 				}
 			}
 
-			bool is_equipped(item_ptr const& item) const
+			bool is_equipped(item_ptr const& item) const noexcept
 			{
 				for (auto const& equip : m_equipment)
 				{
@@ -120,11 +120,11 @@ namespace px
 				}
 				return false;
 			}
-			bool is_equipped(slot_type slot) const
+			bool is_equipped(slot_type slot) const noexcept
 			{
 				return m_equipment[static_cast<size_t>(slot)] != nullptr;
 			}
-			bool is_equipped(item_ptr const& item, slot_type slot) const
+			bool is_equipped(item_ptr const& item, slot_type slot) const noexcept
 			{
 				return m_equipment[static_cast<size_t>(slot)] == item;
 			}
@@ -163,6 +163,11 @@ namespace px
 				return false;
 			}
 
+			template <slot_type Slot>
+			bool is_equipped_slot() const noexcept
+			{
+				return m_equipment[static_cast<size_t>(Slot)] != null;
+			}
 			template <slot_type Slot>
 			item_ptr const& equipment()
 			{

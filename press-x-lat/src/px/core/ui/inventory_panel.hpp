@@ -41,11 +41,14 @@ namespace px
 		public:
 			inventory_panel()
 			{
-				emplace<ui::board>({ { 0, 0 }, { 0, 0 }, { 0, 1 }, { 1, 0 } }, color(0, 0, 1));
-				emplace<ui::board>({ { 0, 0 }, { 0, 1 }, { 0, -1 }, { 1, 1 } }, color(0, 0, 0.5));
-				emplace<ui::text>({ { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 } }, "[INVENTORY]", color(1, 1, 1));
+				// bg
+				emplace<ui::board>({ { 0.0, 0.0 },{ 0, 0 },{ 0, 0 },{ 1.0, 1.0 } }, 0x9FA8DA);
 
-				m_list = emplace<list_type>({ { 0, 0 },{ 0, 1 },{ 0, -1 },{ 1, 1 } }).get();
+				// header
+				emplace<ui::board>({ { 0.0, 0.0 }, { 0, 0 }, { 0, 1 }, { 1.0, 0.0 } }, 0x3F51B5);
+				emplace<ui::text>({ { 0.5, 0.0 },{ 0, 0 },{ 0, 0 },{ 0.0, 0.0 } }, "Inventory", color(0xFFFFFF))->align(ui::text_alignment::center);
+
+				m_list = emplace<list_type>({ { 0.0, 0.0 },{ 1, 1 },{ -2, -1 },{ 1.0, 1.0 } }, item_formatter(), item_color({ 0, 0, 0, 0.87 })).get();
 			}
 			virtual ~inventory_panel() {}
 
