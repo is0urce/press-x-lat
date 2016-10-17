@@ -35,14 +35,14 @@ TEST_CASE("dialogue", "[dialogue]")
 	REQUIRE(state.is_visible(0) == false);
 	REQUIRE(state.is_visible(1) == true);
 
-	state.select(0);
+	state.answer(0);
 	REQUIRE(run == 1);
 	REQUIRE(*(state.current()->node()) == "World");
 
-	state.select(0);
+	state.answer(0);
 	REQUIRE(run == 2);
 	REQUIRE(*(state.current()->node()) == "Hello");
 
-	state.select_first();
+	state.answer_first();
 	REQUIRE(*(state.current()->node()) == "World");
 }

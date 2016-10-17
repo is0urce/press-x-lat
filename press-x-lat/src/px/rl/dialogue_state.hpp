@@ -3,6 +3,19 @@
 // desc: template class
 // auth: is0urce
 
+// incapsulates current dialogue state
+// created by dialogue::start
+// works wery alike to state machine (except input uses visible answers index and shifted accordingly)
+// state contains current line-node of gialogue along with user data as StateData
+// current possible answers has cashed in visiblility array
+// answers availability determined by gialogue_evaluator std::function delegate passed on creation
+// answers array is cashed, so answers not flicker at runtime
+// to recalculate visibility if needed, recalculate_visibility provided as public method
+// to (mutate) move to next state call answer(n) or answer_first()
+// to pc-to-npc taks, flow is answer(n) for pc followed by answer_first() for npc
+// both methods can additionaly call action std::function delegate in gialogue_evaluator
+// all nodes returned are const qualified, as they can be shared by multiple running states of same dialogue
+
 #ifndef PX_RL_DIALOGUE_STATE_HPP
 #define PX_RL_DIALOGUE_STATE_HPP
 
@@ -20,6 +33,9 @@ namespace px
 		class dialogue_state
 		{
 		public:
+
+			// query data
+
 			dialogue_reply<Node> const* current() const noexcept
 			{
 				return m_current;
@@ -33,60 +49,87 @@ namespace px
 				return &m_data;
 			}
 
-			// uses reply by visible #, skipping invisible variants
-			void select(size_t variant)
+			// query props
+
+			bool contains(size_t index) const noexcept
 			{
-				size_t index = 0;
-				size_t count = 0;
-				size_t size = m_visible.size();
-				bool visible = m_visible[index];
-				while ((!visible || count != variant) && index < size)
-				{
-					if (visible) ++count;
-					++index;
-					visible = m_visible[index];
-				}
-				select_absolute(index);
+				return index < m_visible.size();
 			}
-			// uses first visible reply option (same as select(0))
-			void select_first()
+			bool is_visible(size_t index) const noexcept
 			{
-				for (size_t index = 0; index < m_current->size(); ++index)
-				{
-					if (m_visible[index])
-					{
-						select_absolute(index);
-						return;
-					}
-				}
+				return contains(index) ? m_visible[index] : false;
+			}
+			size_t total() const noexcept
+			{
+				return m_visible.size();
+			}
+			size_t visible() const noexcept
+			{
+				return m_active;
 			}
 			bool is_final() const noexcept
 			{
 				return m_current->is_final();
 			}
-			bool is_visible(size_t index) const noexcept
+
+			// mutate
+
+			// uses reply by visible #, skipping invisible variants
+			void answer(size_t variant)
 			{
-				return index < m_visible.size() ? m_visible[index] : false;
-			}
-			size_t total() const noexcept
-			{
-				return m_visible->size();
-			}
-			size_t visible() const noexcept
-			{
-				size_t n = 0;
-				for (auto v : m_visible)
+				size_t index = 0;
+				size_t count = 0;
+				bool visible = m_visible[index];
+				while ((!visible || count != variant) && contains(index))
 				{
-					if (v) ++n;
+					if (visible) ++count;
+					++index;
+					visible = m_visible[index];
 				}
-				return n;
+				answer_absolute(index);
 			}
+
+			// uses first visible reply option (same as select(0))
+			void answer_first()
+			{
+				for (size_t index = 0; index < m_current->size(); ++index)
+				{
+					if (m_visible[index])
+					{
+						answer_absolute(index);
+						return;
+					}
+				}
+			}
+
+			// enumerate by void(size_t visible_index, dialogue_reply<Node> const&)
+			template <typename Operator>
+			void enumerate(Operator &&fn)
+			{
+				size_t visible_index = 0; // visible index
+				for (size_t index = 0, size = m_visible.size(); index != size; ++index)
+				{
+					if (m_visible[index])
+					{
+						std::forward<Operator>(fn)(visible_index, *(*m_current)[index]);
+						++visible_index;
+					}
+				}
+			}
+
+			// aux
+
 			void recalculate_visible()
 			{
 				m_visible.resize(m_current->size(), false);
-				for (size_t i = 0, size = m_visible.size(); i != size; ++i)
+
+				m_active = 0;
+				for (size_t index = 0, size = m_visible.size(); index != size; ++index)
 				{
-					m_visible[i] = m_script.conditional(*(m_current->select(i)), m_data);
+					if (m_visible[index] = m_script.conditional(*(*m_current)[index], m_data)) // store to array
+					{
+						++m_active; // increment cashed counter
+					}
 				}
 			}
 
@@ -100,11 +143,11 @@ namespace px
 			}
 
 		private:
-			void select_absolute(size_t index)
+			void answer_absolute(size_t index)
 			{
-				if (m_current->contains(index))
+				if (contains(index))
 				{
-					m_current = m_current->select(index);
+					m_current = (*m_current)[index];
 					m_script.action(*m_current, m_data);
 					recalculate_visible();
 				}
@@ -112,7 +155,8 @@ namespace px
 
 		private:
 			dialogue_reply<Node> const* m_current;
-			std::vector<bool> m_visible;
+			std::vector<bool> m_visible; // visibility array
+			size_t m_active; // total visible answers
 
 			StateData m_data;
 			dialogue_evaluator<Node, StateData> m_script;

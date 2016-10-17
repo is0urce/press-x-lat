@@ -19,15 +19,7 @@ namespace px
 			typedef std::vector<dialogue_reply const*> container_type;
 
 		public:
-			Node const* node() const noexcept
-			{
-				return &m_data;
-			}
-			dialogue_reply const* select(size_t n) const
-			{
-				return contains(n) ? m_answers[n] : nullptr;
-			}
-			bool contains(size_t index) const
+			bool contains(size_t index) const noexcept
 			{
 				return index < m_answers.size();
 			}
@@ -35,7 +27,7 @@ namespace px
 			{
 				m_answers.push_back(answer);
 			}
-			void link(container_type answers)
+			void link(container_type const& answers)
 			{
 				auto current = m_answers.size();
 				m_answers.resize(answers.size() + current);
@@ -51,8 +43,21 @@ namespace px
 				return m_answers.size() == 0;
 			}
 
+			Node const* node() const noexcept
+			{
+				return &m_data;
+			}
+			dialogue_reply const* select(size_t n) const noexcept
+			{
+				return contains(n) ? m_answers[n] : nullptr;
+			}
+			dialogue_reply const* operator[](size_t n) const noexcept
+			{
+				return contains(n) ? m_answers[n] : nullptr;
+			}
+
 		public:
-			dialogue_reply(Node node) : m_data(node)
+			dialogue_reply(Node&& node) : m_data(std::forward<Node>(node))
 			{
 			}
 

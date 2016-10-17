@@ -24,8 +24,9 @@ namespace px
 		public:
 			void add_reply(Node&& node)
 			{
-				m_lines.emplace_back(node);
+				m_lines.emplace_back(std::forward<Node>(node));
 			}
+
 			void link_answers(size_t n, std::vector<size_t> answers)
 			{
 				std::vector<reply_type const*> links(answers.size());
@@ -33,8 +34,9 @@ namespace px
 
 				m_lines[n].link(links);
 			}
+
 			template <typename StateData = void*>
-			dialogue_state<StateData, Node> start(size_t root, dialogue_evaluator<Node, StateData> evaluator = {}, StateData data = StateData())
+			dialogue_state<StateData, Node> start(size_t root, dialogue_evaluator<Node, StateData> evaluator = {}, StateData data = {}) const
 			{
 				dialogue_state<StateData, Node> state(&m_lines[root], data, evaluator);
 				return state;
@@ -42,9 +44,9 @@ namespace px
 
 		public:
 			dialogue() {}
-			dialogue(size_t reserve) : dialogue_reply()
+			dialogue(size_t reserve_lines) : dialogue_reply()
 			{
-				m_lines.reserve(reserve);
+				m_lines.reserve(reserve_lines);
 			}
 
 		private:
