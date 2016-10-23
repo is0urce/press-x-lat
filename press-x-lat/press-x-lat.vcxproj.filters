@@ -447,6 +447,9 @@
     <ClInclude Include="src\px\core\gen\poi\city_builder.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\px\ui\list.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -537,6 +540,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\px\core\gen\poi\temple_builder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\px\core\sys\location_component.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

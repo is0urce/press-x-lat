@@ -15,6 +15,9 @@
 #include <px/core/terrain_director.hpp>
 #include <px/core/terrain.hpp>
 
+#include <px/core/sys/location_component.hpp>
+#include <px/core/sys/body_component.hpp>
+
 #include <px/rl/faction_relation.hpp>
 #include <px/rl/traverse.hpp>
 
@@ -29,14 +32,16 @@ namespace px
 {
 	namespace core
 	{
+		//class location_component;
+		//class body_component;
+
 		class factory;
-		class location_component;
-		class body_component;
 
 		class inventory_panel;
 		class container_panel;
 		class anvil_panel;
 		class map_panel;
+
 		class wrap_unit;
 
 		class environment : public toggle<true>
@@ -76,6 +81,8 @@ namespace px
 			bool cast(location_component& source, unsigned int slot, location_component& target_location);
 			bool cast(location_component& source, unsigned int slot, point2 target);
 			bool activate(location_component& source, point2 position);
+			bool equip(body_component& body, body_component::item_ptr item);
+			bool unequip(body_component& body, body_component::item_ptr item);
 
 			// space and actors querry
 

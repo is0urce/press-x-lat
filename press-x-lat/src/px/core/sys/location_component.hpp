@@ -22,68 +22,25 @@ namespace px
 			, protected location
 		{
 		public:
-			typedef qtree<location_component*>* space_ptr;
-
-		public:
-			location_component() : m_space(nullptr) {}
-			virtual ~location_component() {}
-
-		protected:
-			virtual void activate_component() override
-			{
-				if (m_space)
-				{
-					m_space->add(position, this);
-				}
-			}
-			virtual void deactivate_component() override
-			{
-				if (m_space)
-				{
-					m_space->remove(position, this);
-				}
-			}
+			typedef qtree<location_component*> space_type;
 
 		public:
 			// lame mnemonics > good names
-			void incarnate(space_ptr space)
-			{
-				if (m_space != space)
-				{
-					if (active())
-					{
-						if (m_space)
-						{
-							m_space->remove(position, this);
-						}
-						if (space)
-						{
-							space->add(position, this);
-						}
-					}
-					m_space = space;
-				}
-			}
-			const point2& current() const
-			{
-				return position;
-			}
-			void move(point2 destination)
-			{
-				if (active() && m_space)
-				{
-					m_space->move(position, this, destination);
-				}
-				position = destination;
-			}
-			space_ptr space() const
-			{
-				return m_space;
-			}
+			void incarnate(space_type* space);
+			const point2& current() const;
+			void move(point2 destination);
+			space_type *const space() const;
 
+		public:
+			location_component();
+			virtual ~location_component();
+
+		protected:
+			virtual void activate_component() override;
+			virtual void deactivate_component() override;
 
 		private:
-			space_ptr m_space;
+			space_type* m_space;
 		};
 	}
 }

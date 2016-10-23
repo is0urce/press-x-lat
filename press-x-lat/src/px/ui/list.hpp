@@ -1,10 +1,10 @@
-// name: list_panel.hpp
+// name: list.hpp
 // type: c++
-// desc: base class declaration
+// desc: class declaration
 // auth: is0urce
 
-#ifndef PX_UI_LIST_PANEL_HPP
-#define PX_UI_LIST_PANEL_HPP
+#ifndef PX_UI_LIST_HPP
+#define PX_UI_LIST_HPP
 
 #include <px/ui/stack_panel.hpp>
 
@@ -18,60 +18,61 @@ namespace px
 {
 	namespace ui
 	{
-		namespace
-		{
-			struct nop_callback
-			{
-				template <typename E>
-				bool operator()(E const&) const
-				{
-					return true;
-				}
-			};
-			struct white_color_provider
-			{
-				template <typename E>
-				color operator()(E const&) const
-				{
-					return color(1, 1, 1);
-				}
-			};
-			struct permissive_filter
-			{
-				template <typename E>
-				bool operator()(const E&) const
-				{
-					return true;
-				}
-			};
-		}
-		template <typename List, typename Formatter, typename Color = white_color_provider, typename Click = nop_callback, typename Hover = nop_callback, typename Filter = permissive_filter>
-		class list_panel : public stack_panel
+		template <typename List, typename Item>
+		class list : public stack_panel
 		{
 		public:
 			typedef List list_type;
+			typedef Item item_type;
+
+			typedef std::function<std::string(item_type const&)> formatter_fn;
+			typedef std::function<color(item_type const&)> color_fn;
+			typedef std::function<bool(item_type const&)> filter_fn;
+			typedef std::function<void(item_type&)> click_fn;
+			typedef std::function<void(item_type&)> hover_fn;
+
 			typedef std::weak_ptr<list_type> list_ptr;
-		private:
-			std::weak_ptr<list_type> m_list;
-			Formatter m_formatter;
-			Color m_color;
-			Filter m_filter;
-			Hover m_hover;
-			Click m_click;
-			unsigned int m_line_size;
-			int m_skip;
-			int m_counted;
-			int m_drawn;
 
 		public:
-			list_panel(const Formatter &formatter = Formatter(), const Color& c = Color(), const Click &click = Click(), const Hover &hover = Hover(), const Filter& filter = Filter())
-				: m_formatter(formatter), m_color(c), m_filter(filter)
-				, m_hover(hover), m_click(click)
-				, m_line_size(1)
+			list()
+				: m_line_size(1)
+				, m_color([](auto const& /*item*/) { return color(1.0, 1.0, 1.0); })
+				, m_formatter([](auto const& /*item*/) { return ""; })
 			{
 				reset();
 			}
-			virtual ~list_panel() {}
+			virtual ~list() {}
+
+		public:
+			void bind_data(list_ptr list)
+			{
+				m_list = list;
+				reset();
+			}
+			void set_filter(filter_fn filter)
+			{
+				m_filter = filter;
+			}
+			void set_format(formatter_fn format)
+			{
+				m_formatter = format;
+			}
+			void set_color(color_fn color_selector)
+			{
+				m_color = color_selector;
+			}
+			void set_color(color color_all)
+			{
+				m_color = [color_all](auto const& /*item*/) -> color { return color_all; };
+			}
+			void set_click(click_fn fn)
+			{
+				m_click = fn;
+			}
+			void set_hover(hover_fn fn)
+			{
+				m_hover = fn;
+			}
 
 		protected:
 			virtual void draw_stacked(shell::canvas& cnv) const override
@@ -85,8 +86,8 @@ namespace px
 
 					pen.move_axis<1>(-m_skip * m_line_size);
 
-					shared->enumerate([&](const auto &element) {
-						if (m_filter(element))
+					shared->enumerate([&](auto const& element) {
+						if (valid(element))
 						{
 							if (total_bounds.contains(pen))
 							{
@@ -124,14 +125,13 @@ namespace px
 					unsigned int item_index = m_skip;
 					pen.move_axis<1>(-m_skip * m_line_size);
 
-					std::function<void()> click_call; // erasure of generic element type, stored for future call for safe iteration
-
-					shared->enumerate([&](auto const& element) {
-						if (m_filter(element))
+					item_type * find;
+					shared->enumerate([&](auto element) {
+						if (valid(element))
 						{
 							if (rectangle(pen, record_range).contains(position))
 							{
-								click_call = [element, this]() { m_click(element); };
+								find = &element;
 								result = true;
 							}
 
@@ -140,10 +140,9 @@ namespace px
 						}
 					});
 
-					if (click_call)
+					if (find && m_click)
 					{
-						click_call();
-						result = true;
+						m_click(*find);
 					}
 				}
 				return result;
@@ -157,7 +156,7 @@ namespace px
 				if (shared)
 				{
 					shared->enumerate([&](auto const& element) {
-						if (m_filter(element))
+						if (valid(element))
 						{
 							++result;
 						}
@@ -173,7 +172,7 @@ namespace px
 			{
 				return m_skip > 0;
 			}
-			bool scrollable_down(unsigned int lines, unsigned int count) const
+			bool scrollable_down(unsigned int lines, unsigned int count) const noexcept
 			{
 				return m_skip + lines < count;
 			}
@@ -184,32 +183,23 @@ namespace px
 				m_drawn = 0;
 			}
 
-		public:
-			void bind_data(list_ptr list)
+			bool valid(item_type const& element) const
 			{
-				m_list = list;
-				reset();
+				return !m_filter || m_filter && m_filter(element);
 			}
-			void set_filter(Filter filter)
-			{
-				m_filter = filter;
-			}
-			void set_format(Formatter format)
-			{
-				m_formatter = format;
-			}
-			std::shared_ptr<list_type> lock_data()
-			{
-				return m_list.lock();
-			}
-			void set_click(Click fn)
-			{
-				m_click = fn;
-			}
-			void set_hover(Hover fn)
-			{
-				m_hover = fn;
-			}
+
+		private:
+			std::weak_ptr<list_type> m_list;
+			formatter_fn m_formatter;
+			color_fn m_color;
+			filter_fn m_filter;
+			hover_fn m_hover;
+			click_fn m_click;
+
+			unsigned int m_line_size;
+			int m_skip;
+			int m_counted;
+			int m_drawn;
 		};
 	}
 }

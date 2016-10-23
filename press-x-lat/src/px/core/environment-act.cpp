@@ -119,5 +119,14 @@ namespace px
 			}
 			return done;
 		}
+
+		bool environment::equip(body_component &body, body_component::item_ptr item)
+		{
+			body.equip(item);
+		}
+		bool environment::unequip(body_component &body, body_component::item_ptr item)
+		{
+			body.unequip(item);
+		}
 	}
 }

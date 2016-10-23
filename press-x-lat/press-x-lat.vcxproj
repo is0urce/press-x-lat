@@ -319,6 +319,7 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\ui\board.hpp" />
     <ClInclude Include="src\px\core\ui\inventory_panel.hpp" />
     <ClInclude Include="src\px\ui\button.hpp" />
+    <ClInclude Include="src\px\ui\list.hpp" />
     <ClInclude Include="src\px\ui\press_panel.hpp" />
     <ClInclude Include="src\px\ui\list_panel.hpp" />
     <ClInclude Include="src\px\ui\panel.hpp" />
@@ -346,6 +347,7 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClCompile Include="src\px\core\gen\poi\temple_builder.cpp" />
     <ClCompile Include="src\px\core\sys\character_system.cpp" />
     <ClCompile Include="src\px\core\sys\container_component.cpp" />
+    <ClCompile Include="src\px\core\sys\location_component.cpp" />
     <ClCompile Include="src\px\core\sys\npc_component.cpp" />
     <ClCompile Include="src\px\core\data\unit_composer.cpp" />
     <ClCompile Include="src\px\core\environment-flow.cpp" />
