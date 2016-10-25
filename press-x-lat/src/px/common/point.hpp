@@ -71,11 +71,6 @@ namespace px
 		point2 operator/(point2 lhs, point2 const& rhs) { lhs /= rhs; return lhs; }
 		point2 operator*(point2 lhs, point2::component c) { lhs *= c; return lhs; }
 		point2 operator/(point2 lhs, point2::component c) { lhs /= c; return lhs; }
-
-		std::string to_string(point2 const& p)
-		{
-			return "[" + std::to_string(p.get<0>()) + ":" + std::to_string(p.get<1>()) + "]";
-		}
 	}
 }
 

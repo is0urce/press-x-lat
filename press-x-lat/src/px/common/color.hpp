@@ -13,10 +13,6 @@
 
 namespace px
 {
-	namespace
-	{
-		const unsigned int depth = 4;
-	}
 	class color
 	{
 	public:
@@ -31,10 +27,10 @@ namespace px
 
 		// ctor & dtor
 	public:
-		constexpr color() noexcept : R{}, G{}, B{}, A(1) {};
-		constexpr color(component r, component g, component b) noexcept : R(r), G(g), B(b), A(1) {};
-		constexpr color(component r, component g, component b, component a) noexcept : R(r), G(g), B(b), A(a) {};
-		color(unsigned int hex) noexcept : A(1) { set_hex(hex); }
+		constexpr color() noexcept : R{}, G{}, B{}, A(1) {}
+		constexpr color(component r, component g, component b) noexcept : R(r), G(g), B(b), A(1) {}
+		constexpr color(component r, component g, component b, component a) noexcept : R(r), G(g), B(b), A(a) {}
+		constexpr color(unsigned int hex) noexcept : R(hex / 256 / 256 % 256), G(hex / 256 % 256), B(hex % 256), A(1) {}
 
 	public:
 		static constexpr color rgb(unsigned int r, unsigned int g, unsigned int b) noexcept { return color(r / 255.0, g / 255.0, b / 255.0); }
@@ -45,12 +41,12 @@ namespace px
 		// operators
 
 		color operator-() const noexcept { return color(-R, -G, -B, A); };
-		color& operator+=(const color &color) noexcept { R += color.R; G += color.G; B += color.B; A += color.A; return *this; };
-		color& operator-=(const color &color) noexcept { R -= color.R; G -= color.G; B -= color.B; A -= color.A; return *this; };
-		color& operator*=(const color &color) noexcept { R *= color.R, G *= color.G, B *= color.B, A *= color.A; return *this; };
+		color& operator+=(color const& rh) noexcept { R += rh.R; G += rh.G; B += rh.B; A += rh.A; return *this; };
+		color& operator-=(color const& rh) noexcept { R -= rh.R; G -= rh.G; B -= rh.B; A -= rh.A; return *this; };
+		color& operator*=(color const& rh) noexcept { R *= rh.R, G *= rh.G, B *= rh.B, A *= rh.A; return *this; };
 
-		bool operator==(const color &color) const noexcept { return R == color.R && G == color.G && B == color.B && A == color.A; }
-		bool operator!=(const color &color) const noexcept { return !(*this == color); }
+		bool operator==(color const& rh) const noexcept { return R == rh.R && G == rh.G && B == rh.B && A == rh.A; }
+		bool operator!=(color const& rh) const noexcept { return !(*this == rh); }
 		color operator+(color c) const noexcept { c += *this; return c; }
 		color operator-(color c) const noexcept { c -= *this; return c; }
 		color operator*(color c) const noexcept { c *= *this; return c; }
@@ -76,7 +72,7 @@ namespace px
 		// hsv transformation
 		// hue - hue shift (in degrees) in hardcoded 'default' colorspace preset
 		// saturation - saturation multiplier (scalar), v - value multiplier (scalar)
-		static color transform_hsv(const color &in, double hue, double saturation, double V)
+		static color transform_hsv(color const& in, double hue, double saturation, double V)
 		{
 			double VSU = V * saturation * std::cos(hue);
 			double VSW = V * saturation * std::sin(hue);
@@ -94,7 +90,7 @@ namespace px
 
 			return ret;
 		}
-		static color transform_hue(const color &in, double angle)
+		static color transform_hue(color const& in, double angle)
 		{
 			double U = std::cos(angle);
 			double W = std::sin(angle);
@@ -123,16 +119,33 @@ namespace px
 			memory[3] = static_cast<Memory>(A);
 		};
 		template <typename Memory>
-		void write(Memory *memory, unsigned int repeat) const
+		void write(Memory *memory, size_t repeat) const
 		{
-			for (unsigned int i = 0; i < repeat; ++i) { write(memory); memory += depth; }
-		};
-		void write(component *memory) const { memory[0] = R; memory[1] = G; memory[2] = B; memory[3] = A; };
-		void write(component *memory, unsigned int repeat) const { for (unsigned int i = 0; i < repeat; ++i) { write(memory); memory += depth; } };
+			for (size_t i = 0; i < repeat; ++i)
+			{
+				write(memory);
+				memory += sizeof(*this) / sizeof(component); // plus num of components
+			}
+		}
+		void write(component *memory) const
+		{
+			memory[0] = R;
+			memory[1] = G;
+			memory[2] = B;
+			memory[3] = A;
+		}
+		void write(component *memory, size_t repeat) const
+		{
+			for (size_t i = 0; i < repeat; ++i)
+			{
+				write(memory);
+				memory += sizeof(*this) / sizeof(component); // plus num of components
+			}
+		}
 
-		static color average(const color &a, const color &b) { return (a + b) / 2; };
-		static color average(const color &a, const color &b, const color &c) { return (a + b + c) / 3; };
-		static color average(const color &a, const color &b, const color &c, const color &d) { return (a + b + c + d) / 4; };
+		static color average(color const& a, color const& b) { return (a + b) / 2; }
+		static color average(color const& a, color const& b, color const& c) { return (a + b + c) / 3; }
+		static color average(color const& a, color const& b, color const& c, color const& d) { return (a + b + c + d) / 4; }
 	};
 }
 
