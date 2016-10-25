@@ -26,7 +26,7 @@ namespace px
 			: coordinate(static_cast<component>(p.x()), static_cast<component>(p.y()))
 		{
 		}
-		constexpr vector2(vector2 const& that) noexcept = default;
+		constexpr vector2(vector2 const&) noexcept = default;
 
 		constexpr component x() const noexcept
 		{
@@ -58,7 +58,7 @@ namespace px
 		point2 round() const
 		{
 			point2 result;
-			for (unsigned int i = 0; i < depth; ++i)
+			for (size_t i = 0; i < depth; ++i)
 			{
 				result[i] = (point2::component)std::round(m_array[i]);
 			}
@@ -83,14 +83,14 @@ namespace px
 
 		vector2 operator-() const { vector2 negated = *this; negated.negate(); return negated; }
 
-		template <typename _T>
-		vector2& operator+=(const coordinate<_T, depth> &rhs) { move(rhs); return *this; }
-		template <typename _T>
-		vector2& operator-=(const coordinate<_T, depth> &rhs) { reverse(rhs); return *this; }
-		template <typename _T>
-		vector2& operator*=(const coordinate<_T, depth> &rhs) { multiply(rhs); return *this; }
-		template <typename _T>
-		vector2& operator/=(const coordinate<_T, depth> &rhs) { divide(rhs); return *this; }
+		template <typename T>
+		vector2& operator+=(coordinate<T, depth> const& rhs) { move(rhs); return *this; }
+		template <typename T>
+		vector2& operator-=(coordinate<T, depth> const& rhs) { reverse(rhs); return *this; }
+		template <typename T>
+		vector2& operator*=(coordinate<T, depth> const& rhs) { multiply(rhs); return *this; }
+		template <typename T>
+		vector2& operator/=(coordinate<T, depth> const& rhs) { divide(rhs); return *this; }
 
 		vector2& operator*=(component c) { multiply(c); return *this; };
 		vector2& operator/=(component c) { divide(c); return *this; };
@@ -105,19 +105,12 @@ namespace px
 					m_array[i] /= len;
 				}
 			}
-			else
-			{
-				for (size_t i = 0; i < depth; ++i)
-				{
-					m_array[i] = 0;
-				}
-			}
 		}
 		vector2 normalized() { vector2 result(*this); result.normalize(); return result; }
-		vector2 clamped(const vector2 &min, const vector2 &max) const
+		vector2 clamped(vector2 const& min, vector2 const& max) const
 		{
 			vector2 result;
-			for (unsigned int i = 0; i < depth; ++i)
+			for (size_t i = 0; i < depth; ++i)
 			{
 				result[i] = (std::min)((std::max)(min[i], m_array[i]), max[i]);
 			}
@@ -131,14 +124,14 @@ namespace px
 		}
 	};
 
-	template <typename _T>
-	vector2 operator+(vector2 lhs, const coordinate<_T, 2> &rhs) { lhs += rhs; return lhs; }
-	template <typename _T>
-	vector2 operator-(vector2 lhs, const coordinate<_T, 2> &rhs) { lhs -= rhs; return lhs; }
-	template <typename _T>
-	vector2 operator*(vector2 lhs, const coordinate<_T, 2> &rhs) { lhs *= rhs; return lhs; }
-	template <typename _T>
-	vector2 operator/(vector2 lhs, const coordinate<_T, 2> &rhs) { lhs /= rhs; return lhs; }
+	template <typename T>
+	vector2 operator+(vector2 lhs, coordinate<T, 2> const& rhs) { lhs += rhs; return lhs; }
+	template <typename T>
+	vector2 operator-(vector2 lhs, coordinate<T, 2> const& rhs) { lhs -= rhs; return lhs; }
+	template <typename T>
+	vector2 operator*(vector2 lhs, coordinate<T, 2> const& rhs) { lhs *= rhs; return lhs; }
+	template <typename T>
+	vector2 operator/(vector2 lhs, coordinate<T, 2> const& rhs) { lhs /= rhs; return lhs; }
 
 	namespace
 	{

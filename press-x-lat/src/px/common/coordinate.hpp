@@ -31,19 +31,19 @@ namespace px
 			return m_array.at(i);
 		}
 		template <size_t Index>
-		constexpr component get() const
+		constexpr component get() const noexcept
 		{
 			static_assert(Index < Dim, "Index < Dim");
 			return m_array[Index];
 		}
 		template <size_t Index>
-		void set(component val)
+		void set(component val) noexcept
 		{
 			static_assert(Index < Dim, "Index < Dim");
 			m_array[Index] = val;
 		}
 
-		bool empty() const
+		bool empty() const noexcept
 		{
 			bool result = true;
 			for (size_t i = 0; i < Dim; ++i)
@@ -55,7 +55,7 @@ namespace px
 
 		// transforms
 
-		void negate()
+		void negate() noexcept
 		{
 			for (size_t i = 0; i < Dim; ++i)
 			{
@@ -63,7 +63,7 @@ namespace px
 			}
 		}
 		template <size_t Axis>
-		void mirror()
+		void mirror() noexcept
 		{
 			static_assert(Axis < Dim, "Axis < Dim");
 			m_array[Axis] = -m_array[Axis];
@@ -144,7 +144,7 @@ namespace px
 		// distances
 
 		// chebyshev distance to specified coordinate
-		component king_distance(const coordinate &target) const
+		component king_distance(coordinate const& target) const
 		{
 			component distance{};
 			for (size_t i = 0; i < Dim; ++i)
@@ -155,7 +155,7 @@ namespace px
 		}
 
 		// manhattan distance to specified coordinate
-		component block_distance(const coordinate &target) const
+		component block_distance(coordinate const& target) const noexcept
 		{
 			component distance{};
 			for (size_t i = 0; i < Dim; ++i)
@@ -166,7 +166,7 @@ namespace px
 		}
 
 		// distance to to specified coordinate, squared for performance reasons
-		component distance2(const coordinate &target) const
+		component distance2(coordinate const& target) const noexcept
 		{
 			component distance{};
 			for (size_t i = 0; i < Dim; ++i)
@@ -177,7 +177,7 @@ namespace px
 			return distance;
 		}
 
-		component magnitude2() const
+		component magnitude2() const noexcept
 		{
 			component distance{};
 			for (size_t i = 0; i < Dim; ++i)
@@ -188,7 +188,7 @@ namespace px
 		}
 
 		// distance to to specified coordinate
-		auto distance(const coordinate &target) const
+		auto distance(coordinate const& target) const
 		{
 			return std::sqrt(distance2(target));
 		}
@@ -235,7 +235,7 @@ namespace px
 	};
 
 	template <typename Component, unsigned int Dim>
-	bool operator==(const coordinate<Component, Dim> &a, const coordinate<Component, Dim> &b)
+	bool operator==(coordinate<Component, Dim> const& a, coordinate<Component, Dim> const& b)
 	{
 		for (size_t i = 0; i < Dim; ++i)
 		{
@@ -244,7 +244,7 @@ namespace px
 		return true;
 	}
 	template <typename Component, unsigned int Dim>
-	bool operator!=(const coordinate<Component, Dim> &a, const coordinate<Component, Dim> &b)
+	bool operator!=(coordinate<Component, Dim> const& a, coordinate<Component, Dim> const& b)
 	{
 		return !operator==(a, b);
 	}
