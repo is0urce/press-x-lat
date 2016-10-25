@@ -15,7 +15,9 @@ namespace px
 	struct vector2 : public coordinate<double, 2>
 	{
 	public:
-		vector2()
+		// default constructor is for uninitialized state
+		// use vector2(0.0, 0.0) for constexpr
+		vector2() noexcept
 		{
 		}
 		constexpr vector2(component x, component y)
@@ -26,7 +28,7 @@ namespace px
 			: coordinate(static_cast<component>(p.x()), static_cast<component>(p.y()))
 		{
 		}
-		vector2(vector2 const& that) = default;
+		constexpr vector2(vector2 const& that) noexcept = default;
 
 		constexpr component x() const noexcept
 		{

@@ -219,6 +219,8 @@ namespace px
 		}
 
 	public:
+		// default constructor is for uninitialized state
+		// use coordinate(0,..) for constexpr
 		coordinate() noexcept
 		{
 		}

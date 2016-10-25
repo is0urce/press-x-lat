@@ -14,6 +14,8 @@ namespace px
 	struct point2 : public coordinate<int, 2>
 	{
 	public:
+		// default constructor is for uninitialized state
+		// use point2(0, 0) for constexpr
 		point2() noexcept
 		{
 		}
@@ -21,7 +23,7 @@ namespace px
 			: coordinate(x, y)
 		{
 		}
-		point2(point2 const&) = default;
+		constexpr point2(point2 const&) noexcept = default;
 
 		constexpr component x() const noexcept
 		{
