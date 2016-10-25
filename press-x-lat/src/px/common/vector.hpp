@@ -42,7 +42,7 @@ namespace px
 			point2 result;
 			for (size_t i = 0; i < depth; ++i)
 			{
-				result[i] = (point2::component)std::floor(m_array[i]);
+				result[i] = static_cast<point2::component>(std::floor(m_array[i]));
 			}
 			return result;
 		}
@@ -51,7 +51,7 @@ namespace px
 			point2 result;
 			for (size_t i = 0; i < depth; ++i)
 			{
-				result[i] = (point2::component)std::ceil(m_array[i]);
+				result[i] = static_cast<point2::component>(std::ceil(m_array[i]));
 			}
 			return result;
 		}
@@ -60,7 +60,7 @@ namespace px
 			point2 result;
 			for (size_t i = 0; i < depth; ++i)
 			{
-				result[i] = (point2::component)std::round(m_array[i]);
+				result[i] = static_cast<point2::component>(std::round(m_array[i]));
 			}
 			return result;
 		}
