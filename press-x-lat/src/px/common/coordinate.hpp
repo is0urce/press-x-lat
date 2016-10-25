@@ -17,9 +17,6 @@ namespace px
 		static const size_t depth = Dim;
 		typedef Component component;
 
-	protected:
-		std::array<component, depth> m_array;
-
 	public:
 		const component& operator[](size_t i) const
 		{
@@ -29,16 +26,12 @@ namespace px
 		{
 			return m_array[i];
 		}
-		const component get(size_t i) const
-		{
-			return m_array[i];
-		}
 		const component at(size_t i) const
 		{
 			return m_array.at(i);
 		}
 		template <size_t Index>
-		const component get() const
+		constexpr component get() const
 		{
 			static_assert(Index < Dim, "Index < Dim");
 			return m_array[Index];
@@ -224,6 +217,19 @@ namespace px
 				memory[i] = static_cast<Memory>(m_array[i]);
 			}
 		}
+
+	public:
+		coordinate() noexcept
+		{
+		}
+		template <typename... Args>
+		constexpr coordinate(Args&&... args) noexcept
+			: m_array{ std::forward<Args>(args)... }
+		{
+		}
+
+	protected:
+		std::array<component, depth> m_array;
 	};
 
 	template <typename Component, unsigned int Dim>

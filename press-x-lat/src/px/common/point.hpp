@@ -16,18 +16,18 @@ namespace px
 	public:
 		point2() noexcept
 		{
-
 		}
-		point2(component x, component y)
+		constexpr point2(component x, component y) noexcept
+			: coordinate(x, y)
 		{
-			m_array[0] = x;
-			m_array[1] = y;
 		}
-		component x() const
+		point2(point2 const&) = default;
+
+		constexpr component x() const noexcept
 		{
 			return m_array[0];
 		}
-		component y() const
+		constexpr component y() const noexcept
 		{
 			return m_array[1];
 		}
@@ -50,7 +50,7 @@ namespace px
 		point2 clamped(point2 const& min, point2 const& max) const
 		{
 			point2 result;
-			for (unsigned int i = 0; i < depth; ++i)
+			for (size_t i = 0; i < depth; ++i)
 			{
 				result[i] = (std::min)((std::max)(min[i], m_array[i]), max[i]);
 			}

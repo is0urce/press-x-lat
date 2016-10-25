@@ -16,4 +16,10 @@ TEST_CASE("coordinate", "[point distance]")
 	REQUIRE(zero.king_distance(p1) == 4);
 	REQUIRE(zero.king_distance(p3) == 4);
 	REQUIRE(zero.block_distance(p1) == 7);
+
+	constexpr px::coordinate<int, 2> c(1, 2);
+
+	auto t = c;
+	t.mirror(0);
+	t.mirror<0>();
 }

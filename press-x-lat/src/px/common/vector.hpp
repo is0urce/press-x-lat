@@ -18,22 +18,21 @@ namespace px
 		vector2()
 		{
 		}
-		vector2(component x, component y)
+		constexpr vector2(component x, component y)
+			: coordinate(x, y)
 		{
-			m_array[0] = x;
-			m_array[1] = y;
 		}
-		template <typename Component>
-		vector2(const coordinate<Component, 2> cast)
+		constexpr vector2(point2 const& p) noexcept
+			: coordinate(static_cast<component>(p.x()), static_cast<component>(p.y()))
 		{
-			m_array[0] = cast[0];
-			m_array[1] = cast[1];
 		}
-		component x() const
+		vector2(vector2 const& that) = default;
+
+		constexpr component x() const noexcept
 		{
 			return m_array[0];
 		}
-		component y() const
+		constexpr component y() const noexcept
 		{
 			return m_array[1];
 		}
@@ -41,7 +40,7 @@ namespace px
 		point2 floor() const
 		{
 			point2 result;
-			for (unsigned int i = 0; i < depth; ++i)
+			for (size_t i = 0; i < depth; ++i)
 			{
 				result[i] = (point2::component)std::floor(m_array[i]);
 			}
@@ -50,7 +49,7 @@ namespace px
 		point2 ceil() const
 		{
 			point2 result;
-			for (unsigned int i = 0; i < depth; ++i)
+			for (size_t i = 0; i < depth; ++i)
 			{
 				result[i] = (point2::component)std::ceil(m_array[i]);
 			}
@@ -69,7 +68,7 @@ namespace px
 		TargetType convert(Converter convert_fn) const
 		{
 			TargetType result;
-			for (unsigned int i = 0; i < depth; ++i)
+			for (size_t i = 0; i < depth; ++i)
 			{
 				result[i] = convert_fn(m_array[i]);
 			}
@@ -101,14 +100,14 @@ namespace px
 			auto len = magnitude();
 			if (len > 0)
 			{
-				for (unsigned int i = 0; i < depth; ++i)
+				for (size_t i = 0; i < depth; ++i)
 				{
 					m_array[i] /= len;
 				}
 			}
 			else
 			{
-				for (unsigned int i = 0; i < depth; ++i)
+				for (size_t i = 0; i < depth; ++i)
 				{
 					m_array[i] = 0;
 				}

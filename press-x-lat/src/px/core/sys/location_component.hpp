@@ -25,8 +25,7 @@ namespace px
 			typedef qtree<location_component*> space_type;
 
 		public:
-			// lame mnemonics > good names
-			void incarnate(space_type* space);
+			void incarnate(space_type* space); // add to space
 			const point2& current() const;
 			void move(point2 destination);
 			space_type *const space() const;
