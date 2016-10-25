@@ -8,8 +8,6 @@
 #include <px/common/coordinate.hpp>
 #include <px/common/point.hpp>
 
-#include <string>
-
 namespace px
 {
 	struct vector2 : public coordinate<double, 2>
@@ -146,11 +144,6 @@ namespace px
 	{
 		vector2 operator*(vector2 lhs, point2::component c) { lhs *= c; return lhs; }
 		vector2 operator/(vector2 lhs, point2::component c) { lhs /= c; return lhs; }
-
-		std::string to_string(const vector2 &p)
-		{
-			return "[" + std::to_string(p.get<0>()) + ":" + std::to_string(p.get<1>()) + "]";
-		}
 	}
 }
 

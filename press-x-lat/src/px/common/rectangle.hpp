@@ -23,39 +23,39 @@ namespace px
 
 	public:
 		rectangle() noexcept : m_start{}, m_range{}, m_corner{} {}
-		rectangle(point2 range) noexcept : m_start(0, 0), m_range(range), m_corner(range) {}
+		constexpr rectangle(point2 range) noexcept : m_start(0, 0), m_range(range), m_corner(range) {}
 		rectangle(point2 start, point2 range) noexcept : m_start(start), m_range(range), m_corner(start + range) {}
 
 	public:
-		point2::component width() const noexcept
+		constexpr point2::component width() const noexcept
 		{
 			return m_range.x();
 		}
-		point2::component height() const noexcept
+		constexpr point2::component height() const noexcept
 		{
 			return m_range.y();
 		}
-		point2::component perimeter() const noexcept
+		constexpr point2::component perimeter() const noexcept
 		{
 			return empty() ? 0 : (m_range.x() + m_range.y()) * 2;
 		}
-		point2 range() const noexcept
+		constexpr point2 range() const noexcept
 		{
 			return m_range;
 		}
-		point2 start() const noexcept
+		constexpr point2 start() const noexcept
 		{
 			return m_start;
 		}
-		point2 corner() const noexcept
+		constexpr point2 corner() const noexcept
 		{
 			return m_corner;
 		}
-		int size() const noexcept
+		constexpr int size() const noexcept
 		{
 			return empty() ? 0 : m_range.x() * m_range.y();
 		}
-		bool empty() const noexcept
+		constexpr bool empty() const noexcept
 		{
 			return m_range.x() <= 0 || m_range.y() <= 0;
 		}

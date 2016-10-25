@@ -80,11 +80,11 @@ namespace px
 				}
 				return false;
 			}
-			int x() const
+			int x() const noexcept
 			{
 				return m_x;
 			}
-			int y() const
+			int y() const noexcept
 			{
 				return m_y;
 			}
@@ -111,14 +111,7 @@ namespace px
 		qtree(unsigned int range) : qtree(0, 0, range)
 		{
 		}
-		qtree(const qtree&) = delete;
-		//qtree(qtree&& that)
-		//{
-		//	std::swap(m_center_x, that.m_center_x);
-		//	std::swap(m_center_y, that.m_center_y);
-		//	std::swap(m_range, that.m_range);
-		//	std::swap(m_bucket, that.m_bucket);
-		//}
+		qtree(qtree const&) = delete;
 
 	private:
 		// select branch for specified coordinates

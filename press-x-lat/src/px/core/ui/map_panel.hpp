@@ -6,6 +6,7 @@
 #ifndef PX_CORE_UI_MAP_PANEL_HPP
 #define PX_CORE_UI_MAP_PANEL_HPP
 
+
 #include <px/ui/stack_panel.hpp>
 
 #include <px/ui/board.hpp>
@@ -15,6 +16,7 @@
 #include <px/core/gen/landmark.hpp>
 
 #include <px/shell/key.hpp>
+#include <px/common/string_ext.hpp>
 
 #include <memory>
 

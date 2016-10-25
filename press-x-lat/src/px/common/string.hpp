@@ -22,7 +22,7 @@ namespace px
 	public:
 		// CallbackOperator should provide void operator()(unsigned int)
 		template<typename CallbackOperator>
-		static void enum_utf8(const std::string &text, CallbackOperator fn)
+		static void enum_utf8(std::string const& text, CallbackOperator fn)
 		{
 			std::string::size_type i{};
 			auto len = text.length();

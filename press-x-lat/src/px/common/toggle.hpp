@@ -13,39 +13,41 @@ namespace px
 	template <bool Initial>
 	class toggle
 	{
-	private:
-		bool m_switch;
-
 	public:
-		toggle() : m_switch(Initial)
-		{
-		}
-
-		bool active() const
+		bool active() const noexcept
 		{
 			return m_switch;
 		}
 
-		void activate()
+		void activate() noexcept
 		{
 			m_switch = true;
 		}
-		void deactivate()
+		void deactivate() noexcept
 		{
 			m_switch = false;
 		}
-		void reverse_toggle()
+		void reverse_toggle() noexcept
 		{
 			m_switch = !m_switch;
 		}
-		void reset()
+		void reset() noexcept
 		{
 			m_switch = Initial;
 		}
-		void set_toggle(bool flag)
+		void set_toggle(bool flag) noexcept
 		{
 			m_switch = flag;
 		}
+
+	public:
+		constexpr toggle() noexcept
+			: m_switch(Initial)
+		{
+		}
+
+	private:
+		bool m_switch;
 	};
 }
 

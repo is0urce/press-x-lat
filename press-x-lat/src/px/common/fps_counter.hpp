@@ -19,15 +19,14 @@ namespace px
 	public:
 		const float fps_interval = 0.2f;
 
-	private:
-		timer m_performance;
-		unsigned int m_frames;
-		precision_t m_delay;
-		precision_t m_fps;
-
 	public:
-		fps_counter() : m_frames(0), m_fps(0) {}
-		~fps_counter() {}
+		fps_counter()
+			: m_frames(0), m_fps(0)
+		{
+		}
+		~fps_counter()
+		{
+		}
 
 	public:
 		precision_t fps() const
@@ -48,6 +47,12 @@ namespace px
 				m_performance.restart();
 			}
 		}
+
+	private:
+		timer m_performance;
+		unsigned int m_frames;
+		precision_t m_delay;
+		precision_t m_fps;
 	};
 }
 

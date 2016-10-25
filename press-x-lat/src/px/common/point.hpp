@@ -7,8 +7,6 @@
 
 #include "coordinate.hpp"
 
-#include <string>
-
 namespace px
 {
 	struct point2 : public coordinate<int, 2>

@@ -17,9 +17,6 @@ namespace px
 		typedef std::chrono::high_resolution_clock clock_t;
 		typedef std::chrono::duration<float> fsec;
 
-	private:
-		clock_t::time_point m_last;
-
 	public:
 		timer()
 		{
@@ -41,6 +38,10 @@ namespace px
 		{
 			return clock_t::now().time_since_epoch().count();
 		}
+
+	private:
+		clock_t::time_point m_last;
+
 	};
 }
 
