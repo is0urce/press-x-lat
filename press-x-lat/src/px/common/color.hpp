@@ -6,8 +6,7 @@
 // color with real rgba components
 // + and * operators change alpha components
 
-#ifndef PX_COMMON_COLOR_HPP
-#define PX_COMMON_COLOR_HPP
+#pragma once
 
 #include <cmath>
 
@@ -148,5 +147,3 @@ namespace px
 		static color average(color const& a, color const& b, color const& c, color const& d) { return (a + b + c + d) / 4; }
 	};
 }
-
-#endif

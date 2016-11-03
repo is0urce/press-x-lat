@@ -3,8 +3,7 @@
 // desc: string functions
 // auth: is0urce
 
-#ifndef PX_COMMON_STRING_HPP
-#define PX_COMMON_STRING_HPP
+#pragma once
 
 #include <string>
 #include <functional>
@@ -88,5 +87,3 @@ namespace px
 		}
 	};
 }
-
-#endif

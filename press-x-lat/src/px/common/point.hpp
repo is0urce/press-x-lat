@@ -2,8 +2,7 @@
 // type: c++ header
 // desc: class for 2d point with integer components
 
-#ifndef PX_POINT_HPP
-#define PX_POINT_HPP
+#pragma once
 
 #include "coordinate.hpp"
 
@@ -71,5 +70,3 @@ namespace px
 		point2 operator/(point2 lhs, point2::component c) { lhs /= c; return lhs; }
 	}
 }
-
-#endif

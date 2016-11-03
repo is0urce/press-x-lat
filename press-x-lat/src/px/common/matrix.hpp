@@ -2,8 +2,7 @@
 // type: c++ header
 // desc: base template class for points and vectors
 
-#ifndef PX_COMMON_ARRAY_BASE_HPP
-#define PX_COMMON_ARRAY_BASE_HPP
+#pragma once
 
 #include <px/common/point.hpp>
 
@@ -398,5 +397,3 @@ namespace px
 		}
 	};
 }
-
-#endif

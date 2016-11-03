@@ -2,8 +2,7 @@
 // type: c++ header
 // desc: base template class for points and vectors
 
-#ifndef PX_COORDINATE_HPP
-#define PX_COORDINATE_HPP
+#pragma once
 
 #include <algorithm>
 #include <array>
@@ -249,5 +248,3 @@ namespace px
 		return !operator==(a, b);
 	}
 }
-
-#endif

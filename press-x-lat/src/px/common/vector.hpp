@@ -2,8 +2,7 @@
 // type: c++ header
 // desc: class for 2d verctor with real components
 
-#ifndef PX_VECTOR_HPP
-#define PX_VECTOR_HPP
+#pragma once
 
 #include <px/common/coordinate.hpp>
 #include <px/common/point.hpp>
@@ -139,5 +138,3 @@ namespace px
 		vector2 operator/(vector2 lhs, point2::component c) { lhs /= c; return lhs; }
 	}
 }
-
-#endif
