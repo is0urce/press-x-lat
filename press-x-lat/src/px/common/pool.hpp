@@ -45,10 +45,13 @@ namespace px
 			record* rec = m_free;
 			if (rec != nullptr)
 			{
-				// update free ranges
-				m_free = m_free->next_free;
+				m_free = m_free->next_free; // increment free queue
 
 				// update links
+				if (rec->next_live)
+				{
+					rec->next_live->prev_live = rec;
+				}
 				if (rec->prev_live)
 				{
 					rec->prev_live->next_live = rec;
@@ -57,21 +60,23 @@ namespace px
 				{
 					if (m_live != nullptr)
 					{
-						m_live->prev_live = rec;
-						rec->next_live = m_live;
+						if (rec->next_live == nullptr)
+						{
+							rec->prev_live = &m_pool[(rec - &m_pool[0]) - 1];
+							rec->prev_live->next_live = rec;
+						}
 					}
-					m_live = rec;
-				}
-				if (rec->next_live)
-				{
-					rec->next_live->prev_live = rec;
+					else // m_live == nullptr
+					{
+						m_live = rec;
+					}
 				}
 
 				// modify aux fields
 				rec->live = true;
 				++m_current;
 
-				return &(rec->element);
+				return &rec->element;
 			}
 			return nullptr;
 		}
@@ -80,7 +85,7 @@ namespace px
 		// it's safe to release already released objects
 		void release(T* ptr) noexcept
 		{
-			record* rec = &m_pool[(ptr - &m_pool[0].element) / sizeof(record)];
+			record* rec = &m_pool[reinterpret_cast<record*>(ptr) - reinterpret_cast<record*>(&m_pool[0])];
 
 			if (rec->live) // ensure it's not double release
 			{
@@ -123,9 +128,10 @@ namespace px
 			m_live = nullptr;
 			for (size_t i = 0; i != Size; ++i)
 			{
-				m_pool[i].next_free = i + 1 == Size ? nullptr : &m_pool[i + 1];
+				m_pool[i].next_free = i == Size - 1 ? nullptr : &m_pool[i + 1];
 				m_pool[i].prev_live = nullptr;
 				m_pool[i].next_live = nullptr;
+				m_pool[i].live = false;
 			}
 		}
 
