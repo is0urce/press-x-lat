@@ -179,6 +179,7 @@
     <ClCompile Include="src\mass_test.cpp" />
     <ClCompile Include="src\matrix_test.cpp" />
     <ClCompile Include="src\perlin_tests.cpp" />
+    <ClCompile Include="src\pool_tests.cpp" />
     <ClCompile Include="src\qtree_tests.cpp" />
     <ClCompile Include="src\rectangle_test.cpp" />
     <ClCompile Include="stdafx.cpp">

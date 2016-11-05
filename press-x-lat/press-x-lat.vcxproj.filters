@@ -453,6 +453,9 @@
     <ClInclude Include="src\px\common\string_ext.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\px\common\pool.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
