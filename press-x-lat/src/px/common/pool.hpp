@@ -1,11 +1,12 @@
 // name: pool.hpp
 // type: c++ header
-// desc: memory pool template
+// desc: template class
 // auth: is0urce
 
 #pragma once
 
-// cashe coherent (or at least sequental) enumeration of living objects with On = elements allocated
+// object memory pool
+// cashe coherent (or at least sequental) enumeration of living objects with On = elements currently allocated
 // constant request() and release() methods
 // for general performanse there is no internal support for concurrent requests and/or releases
 
@@ -45,8 +46,8 @@ namespace px
 			record* rec = m_free;
 			if (rec != nullptr)
 			{
-				m_free = m_free->next_free; // increment free queue
-				m_live = rec->prev_live == nullptr ? rec : m_live;
+				m_free = m_free->next_free; // pop free stack
+				m_live = rec->prev_live == nullptr ? rec : m_live; // set this as root?
 
 				// update links
 				if (rec->next_live)
@@ -56,10 +57,6 @@ namespace px
 				if (rec->prev_live)
 				{
 					rec->prev_live->next_live = rec;
-				}
-				else
-				{
-					m_live = rec;
 				}
 
 				// modify aux fields
@@ -79,8 +76,8 @@ namespace px
 			if (rec->live) // ensure it's not double release
 			{
 				rec->next_free = m_free;
-				m_free = rec;
-				m_live = m_live == rec ? rec->next_live : m_live;
+				m_free = rec; // push free stack
+				m_live = m_live == rec ? rec->next_live : m_live; // don't be root anymore
 
 				// update links
 				if (rec->prev_live)
@@ -97,11 +94,11 @@ namespace px
 				--m_current;
 			}
 		}
-		// check only range of pointer, not correctness (i.e alignment)
-		bool contains(T* ptr)
+		// checks only range of pointer, not correctness (i.e alignment)
+		bool contains(T const* ptr) const noexcept
 		{
-			return reinterpret_cast<const char*>(ptr) >= reinterpret_cast<const char*>(&m_pool[0])
-				&& reinterpret_cast<const char*>(ptr) < reinterpret_cast<const char*>(&m_pool[Size]);
+			return reinterpret_cast<record const*>(ptr) >= &m_pool[0]
+				&& reinterpret_cast<record const*>(ptr) < &m_pool[Size];
 		}
 
 		template <typename Operator>
@@ -134,18 +131,19 @@ namespace px
 		}
 		pool(pool const&) = delete;
 		pool& operator=(pool const&) = delete;
-		pool(pool && xrh) : pool()
+		pool(pool && xrh) noexcept
+			: pool()
 		{
 			swap(xrh);
 		}
-		pool& operator=(pool && xrh)
+		pool& operator=(pool && xrh) noexcept
 		{
 			swap(xrh);
 			return *this;
 		}
 
 	private:
-		void swap(pool & xrh)
+		void swap(pool & xrh) noexcept
 		{
 			std::swap(m_pool, xrh.m_pool);
 			std::swap(m_current, xrh.m_current);

@@ -25,13 +25,14 @@ TEST_CASE("pool_chain", "[pool_chain]")
 	REQUIRE(p.size() == 0);
 	REQUIRE(count(p) == 0);
 	REQUIRE(p.empty() == true);
-	//REQUIRE(p.contains(nullptr) == false);
+	REQUIRE(p.contains(nullptr) == false);
 
 	element* first = p.request();
 	REQUIRE(first != nullptr);
 	REQUIRE(p.size() == 1);
 	REQUIRE(count(p) == 1);
 	REQUIRE(p.empty() == false);
+	REQUIRE(p.contains(first) == true);
 
 	p.release(first);
 	REQUIRE(p.size() == 0);
@@ -111,4 +112,6 @@ TEST_CASE("pool_chain", "[pool_chain]")
 	REQUIRE(count(p) == p.size());
 	REQUIRE(count(p) == arr.size());
 	REQUIRE(std::equal(arr.begin(), arr.begin() + arr.size(), current.begin()) == true);
+
+	p.optimize();
 }

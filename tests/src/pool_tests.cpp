@@ -56,9 +56,7 @@ TEST_CASE("pool", "[pool]")
 
 	for (int i = 0; i < maximum; ++i)
 	{
-		element* e = p.request();
-		REQUIRE(e != nullptr);
-		list.push_back(e);
+		list.push_back(p.request());
 	}
 	REQUIRE(p.size() == maximum);
 	REQUIRE(count(p) == maximum);
@@ -81,9 +79,7 @@ TEST_CASE("pool", "[pool]")
 
 	for (int i = 0; i < maximum; ++i)
 	{
-		element* e = p.request();
-		REQUIRE(e != nullptr);
-		list.push_back(e);
+		list.push_back(p.request());
 	}
 	REQUIRE(p.size() == maximum);
 	REQUIRE(count(p) == maximum);
