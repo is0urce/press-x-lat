@@ -1,26 +1,16 @@
-// name: pool_tests.cpp
+// name: pool_chain_tests.cpp
 
 #include "catch.hpp"
 
-#include <px/common/pool.hpp>
+#include <px/common/pool_chain.hpp>
 
 #include <algorithm>
 #include <list>
 #include <random>
 #include <vector>
 
-TEST_CASE("pool", "[pool]")
+TEST_CASE("pool_chain", "[pool_chain]")
 {
-	auto is_sequental = [](auto& pool) {
-		const char* last = nullptr;
-		bool flag = true;
-		pool.enumerate_active([&last, &flag](auto &e) {
-			const char* ptr = reinterpret_cast<const char*>(&e);
-			if (ptr <= last) flag = false; // next in memory
-			last = ptr;
-		});
-		return flag;
-	};
 
 	auto count = [](auto& pool) {
 		size_t counter = 0;
@@ -29,23 +19,19 @@ TEST_CASE("pool", "[pool]")
 	};
 
 	typedef int element;
-	const size_t maximum = 100;
+	const size_t maximum = 10;
 
-	px::pool<element, 10> a; // = a - error
-	px::pool<element, 10> x = std::move(a); // move-copyable
-
-	px::pool<element, maximum> p;
+	px::pool_chain<element, maximum> p;
 	REQUIRE(p.size() == 0);
 	REQUIRE(count(p) == 0);
 	REQUIRE(p.empty() == true);
+	//REQUIRE(p.contains(nullptr) == false);
 
 	element* first = p.request();
 	REQUIRE(first != nullptr);
 	REQUIRE(p.size() == 1);
 	REQUIRE(count(p) == 1);
 	REQUIRE(p.empty() == false);
-	REQUIRE(p.contains(first) == true);
-	REQUIRE(p.contains(nullptr) == false);
 
 	p.release(first);
 	REQUIRE(p.size() == 0);
@@ -56,20 +42,16 @@ TEST_CASE("pool", "[pool]")
 
 	for (int i = 0; i < maximum; ++i)
 	{
-		element* e = p.request();
-		REQUIRE(e != nullptr);
-		list.push_back(e);
+		list.push_back(p.request());
 	}
 	REQUIRE(p.size() == maximum);
 	REQUIRE(count(p) == maximum);
-	REQUIRE(is_sequental(p) == true);
-	REQUIRE(p.full() == true);
 
-	// everything else is nullptr
-	REQUIRE(p.request() == nullptr);
-	REQUIRE(p.size() == maximum);
-	REQUIRE(count(p) == maximum);
-	REQUIRE(p.full() == true);
+	// can query above maximum
+	list.push_back(p.request());
+	REQUIRE(list.back() != nullptr);
+	REQUIRE(p.size() == maximum + 1);
+	REQUIRE(count(p) == maximum + 1);
 
 	for (auto eptr : list)
 	{
@@ -79,16 +61,12 @@ TEST_CASE("pool", "[pool]")
 	REQUIRE(count(p) == 0);
 	REQUIRE(p.empty() == true);
 
-	for (int i = 0; i < maximum; ++i)
+	for (size_t i = 0; i < maximum; ++i)
 	{
-		element* e = p.request();
-		REQUIRE(e != nullptr);
-		list.push_back(e);
+		list.push_back(p.request());
 	}
 	REQUIRE(p.size() == maximum);
 	REQUIRE(count(p) == maximum);
-	REQUIRE(is_sequental(p) == true);
-	REQUIRE(p.full() == true);
 
 	// clear
 	p.clear();
@@ -101,7 +79,7 @@ TEST_CASE("pool", "[pool]")
 	std::mt19937 rng;
 	p.clear();
 	std::vector<element*> arr;
-	arr.reserve(maximum);
+	arr.reserve(maximum * 5);
 
 	auto dump = [](auto &pool) {
 		std::vector<element*> vec;
@@ -109,28 +87,28 @@ TEST_CASE("pool", "[pool]")
 		return vec;
 	};
 
-	for (int j = 0; j < 50; ++j)
+	for (int j = 0; j < maximum * 3; ++j)
 	{
 		arr.push_back(p.request());
 	}
 	for (int k = 0; k < 10; ++k)
 	{
-		for (int j = 0; j < 25; ++j)
+		for (int j = 0; j < maximum; ++j)
 		{
 			arr.push_back(p.request());
 		}
-		for (int j = 0; j < 25; ++j)
+		for (int j = 0; j < maximum; ++j)
 		{
 			size_t index = std::uniform_int_distribution<size_t>{ 0, arr.size() - 1 }(rng);
 			p.release(arr[index]);
 			arr.erase(std::begin(arr) + index);
 		}
 	}
-	std::sort(std::begin(arr), std::end(arr));
 	auto current = dump(p);
+	std::sort(std::begin(arr), std::end(arr));
+	std::sort(std::begin(current), std::end(current));
 
 	REQUIRE(count(p) == p.size());
-	REQUIRE(is_sequental(p) == true);
 	REQUIRE(count(p) == arr.size());
 	REQUIRE(std::equal(arr.begin(), arr.begin() + arr.size(), current.begin()) == true);
 }

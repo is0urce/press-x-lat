@@ -195,6 +195,7 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\common\matrix.hpp" />
     <ClInclude Include="src\px\common\point.hpp" />
     <ClInclude Include="src\px\common\pool.hpp" />
+    <ClInclude Include="src\px\common\pool_chain.hpp" />
     <ClInclude Include="src\px\common\qtree.hpp" />
     <ClInclude Include="src\px\common\rectangle.hpp" />
     <ClInclude Include="src\px\common\string.hpp" />

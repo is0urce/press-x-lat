@@ -97,6 +97,12 @@ namespace px
 				--m_current;
 			}
 		}
+		// check only range of pointer, not correctness (i.e alignment)
+		bool contains(T* ptr)
+		{
+			return reinterpret_cast<const char*>(ptr) >= reinterpret_cast<const char*>(&m_pool[0])
+				&& reinterpret_cast<const char*>(ptr) < reinterpret_cast<const char*>(&m_pool[Size]);
+		}
 
 		template <typename Operator>
 		void enumerate_active(Operator && op)
@@ -125,6 +131,26 @@ namespace px
 		pool() noexcept
 		{
 			clear();
+		}
+		pool(pool const&) = delete;
+		pool& operator=(pool const&) = delete;
+		pool(pool && xrh) : pool()
+		{
+			swap(xrh);
+		}
+		pool& operator=(pool && xrh)
+		{
+			swap(xrh);
+			return *this;
+		}
+
+	private:
+		void swap(pool & xrh)
+		{
+			std::swap(m_pool, xrh.m_pool);
+			std::swap(m_current, xrh.m_current);
+			std::swap(m_free, xrh.m_free);
+			std::swap(m_live, xrh.m_live);
 		}
 
 	private:
