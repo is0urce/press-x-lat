@@ -46,6 +46,7 @@ namespace px
 			if (rec != nullptr)
 			{
 				m_free = m_free->next_free; // increment free queue
+				m_live = rec->prev_live == nullptr ? rec : m_live;
 
 				// update links
 				if (rec->next_live)
@@ -56,20 +57,9 @@ namespace px
 				{
 					rec->prev_live->next_live = rec;
 				}
-				else // start or continue living queue
+				else
 				{
-					if (m_live != nullptr)
-					{
-						if (rec->next_live == nullptr)
-						{
-							rec->prev_live = &m_pool[(rec - &m_pool[0]) - 1];
-							rec->prev_live->next_live = rec;
-						}
-					}
-					else // m_live == nullptr
-					{
-						m_live = rec;
-					}
+					m_live = rec;
 				}
 
 				// modify aux fields
@@ -85,11 +75,12 @@ namespace px
 		// it's safe to release already released objects
 		void release(T* ptr) noexcept
 		{
-			record* rec = &m_pool[reinterpret_cast<record*>(ptr) - reinterpret_cast<record*>(&m_pool[0])];
-
+			record* rec = reinterpret_cast<record*>(ptr);
 			if (rec->live) // ensure it's not double release
 			{
-				// wip
+				rec->next_free = m_free;
+				m_free = rec;
+				m_live = m_live == rec ? rec->next_live : m_live;
 
 				// update links
 				if (rec->prev_live)
@@ -100,11 +91,6 @@ namespace px
 				{
 					rec->next_live->prev_live = rec->prev_live;
 				}
-
-				// update roots
-				rec->next_free = m_free;
-				m_free = rec;
-				m_live = m_live == rec ? rec->next_live : m_live;
 
 				// modify aux fields
 				rec->live = false;
@@ -129,7 +115,7 @@ namespace px
 			for (size_t i = 0; i != Size; ++i)
 			{
 				m_pool[i].next_free = i == Size - 1 ? nullptr : &m_pool[i + 1];
-				m_pool[i].prev_live = nullptr;
+				m_pool[i].prev_live = i == 0 ? nullptr : &m_pool[i - 1];
 				m_pool[i].next_live = nullptr;
 				m_pool[i].live = false;
 			}
@@ -138,7 +124,6 @@ namespace px
 	public:
 		pool() noexcept
 		{
-			static_assert(Size > 0, "px::pool<T, Size> - Size > 0 required"); // common sense and simplifies many formulaes
 			clear();
 		}
 

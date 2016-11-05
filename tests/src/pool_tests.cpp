@@ -4,7 +4,10 @@
 
 #include <px/common/pool.hpp>
 
+#include <algorithm>
 #include <list>
+#include <random>
+#include <vector>
 
 TEST_CASE("pool", "[pool]")
 {
@@ -87,4 +90,42 @@ TEST_CASE("pool", "[pool]")
 	REQUIRE(p.size() == 0);
 	REQUIRE(count(p) == 0);
 	REQUIRE(p.empty() == true);
+
+
+	////// RNG MADNESS SHOW //////
+	std::mt19937 rng;
+	p.clear();
+	std::vector<element*> arr;
+	arr.reserve(maximum);
+
+	auto dump = [](auto pool) {
+		std::vector<element*> vec;
+		pool.enumerate_active([&vec](auto &e) { vec.push_back(&e); });
+		return vec;
+	};
+
+	for (int j = 0; j < 50; ++j)
+	{
+		arr.push_back(p.request());
+	}
+	for (int k = 0; k < 10; ++k)
+	{
+		for (int j = 0; j < 25; ++j)
+		{
+			arr.push_back(p.request());
+		}
+		for (int j = 0; j < 25; ++j)
+		{
+			size_t index = std::uniform_int_distribution<size_t>{ 0, arr.size() - 1 }(rng);
+			p.release(arr[index]);
+			arr.erase(std::begin(arr) + index);
+		}
+	}
+	std::sort(std::begin(arr), std::end(arr));
+	auto current = dump(p);
+
+	REQUIRE(count(p) == p.size());
+	REQUIRE(is_sequental(p) == true);
+	REQUIRE(count(p) == arr.size());
+	REQUIRE(std::equal(arr.begin(), arr.begin() + arr.size(), current.begin()) == true);
 }
