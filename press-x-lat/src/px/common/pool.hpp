@@ -26,6 +26,13 @@ namespace px
 			record* prev_live;
 			bool live; // auxiliary state to avoid double released
 		};
+		struct links
+		{
+			record* next_free;
+			record* next_live;
+			record* prev_live;
+			bool live; // auxiliary state to avoid double released
+		};
 	public:
 		size_t size() const noexcept
 		{
@@ -62,14 +69,12 @@ namespace px
 				// modify aux fields
 				rec->live = true;
 				++m_current;
-
-				return &rec->element;
 			}
-			return nullptr;
+			return rec == nullptr ? nullptr : &rec->element;
 		}
 
-		// pointer must be in correct range of pool
-		// it's safe to release already released objects
+		// pointer must be in correct range and alignment of pool
+		// it's safe to release already released objects - it's nop
 		void release(T* ptr) noexcept
 		{
 			record* rec = reinterpret_cast<record*>(ptr);
@@ -152,7 +157,8 @@ namespace px
 		}
 
 	private:
-		std::array<record, Size> m_pool;
+		//std::array<record, Size> m_pool;
+		std::array<links, Size> m_links;
 		size_t m_current; // cashed number of living objest for fast size queries
 		record* m_free; // first free node (root)
 		record* m_live; // first living node (root)
