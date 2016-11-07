@@ -26,6 +26,11 @@ public:
 		std::cout << "+";
 		++g_counter;
 	}
+	obj(std::string message)
+	{
+		std::cout << "/n" << message;
+		++g_counter;
+	}
 	~obj()
 	{
 		std::cout << "-";
@@ -35,6 +40,7 @@ public:
 
 TEST_CASE("pools are open", "[pool]")
 {
+	g_counter = 0;
 	auto is_sequental = [](auto& pool) {
 		const char* last = nullptr;
 		bool flag = true;
@@ -55,10 +61,7 @@ TEST_CASE("pools are open", "[pool]")
 	typedef obj element;
 	const size_t maximum = 100;
 
-	px::pool<element, 10> a; // = a - error
-	px::pool<element, 10> x = std::move(a); // move-copyable
-
-	px::pool<element, maximum> p;
+	px::pool<element, maximum> p; // = a; // an error
 
 	REQUIRE(p.size() == 0);
 	REQUIRE(count(p) == 0);
@@ -69,7 +72,7 @@ TEST_CASE("pools are open", "[pool]")
 	{
 		element* first;
 
-		first = p.request();
+		first = p.request("MASSAGE");
 		REQUIRE(p.size() == g_counter);
 		REQUIRE(first != nullptr);
 		REQUIRE(p.size() == 1);
@@ -86,10 +89,11 @@ TEST_CASE("pools are open", "[pool]")
 		REQUIRE(p.size() == g_counter);
 	}
 
+
+
 	SECTION("limitations and clearance")
 	{
 		std::list<element*> list;
-
 		for (int i = 0; i < maximum; ++i)
 		{
 			list.push_back(p.request());

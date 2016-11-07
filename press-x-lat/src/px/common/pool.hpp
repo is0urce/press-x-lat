@@ -40,7 +40,8 @@ namespace px
 		}
 
 		// returns nullptr if all object in pool were requested, full() returns true
-		T* request()
+		template <typename... Args>
+		T* request(Args... args)
 		{
 			T* result = nullptr;
 			links* rec = m_free;
@@ -64,11 +65,11 @@ namespace px
 				++m_current;
 
 				result = reinterpret_cast<T*>(&m_pool[(rec - &m_links[0]) * sizeof(T)]);
-				new (result) T;
+				create(*result, std::forward<Args>(args)...);
 			}
 			return result;
 		}
-
+		
 		// pointer must be in correct range and alignment of pool
 		// it's safe to release already released objects - it's nop
 		bool release(T* ptr)
@@ -100,7 +101,7 @@ namespace px
 					rec->live = false;
 					--m_current;
 
-					ptr->~T();
+					destroy(*ptr);
 				}
 			}
 			return flag;
@@ -125,16 +126,9 @@ namespace px
 		{
 			for (links* i = m_live; i != nullptr; i = i->next_live)
 			{
-				reinterpret_cast<T&>(m_pool[(i - &m_links[0]) * sizeof(T)]).~T();
+				destroy(reinterpret_cast<T&>(m_pool[(i - &m_links[0]) * sizeof(T)]));
 			}
 			startup();
-		}
-		void swap(pool & xrh) noexcept
-		{
-			std::swap(m_pool, xrh.m_pool);
-			std::swap(m_current, xrh.m_current);
-			std::swap(m_free, xrh.m_free);
-			std::swap(m_live, xrh.m_live);
 		}
 
 	public:
@@ -144,16 +138,6 @@ namespace px
 		}
 		pool(pool const&) = delete;
 		pool& operator=(pool const&) = delete;
-		pool(pool && xrh) noexcept
-			: pool()
-		{
-			swap(xrh);
-		}
-		pool& operator=(pool && xrh) noexcept
-		{
-			swap(xrh);
-			return *this;
-		}
 
 	private:
 		void startup() noexcept
@@ -169,6 +153,16 @@ namespace px
 				m_links[i].live = false;
 			}
 		}
+		template <typename... Args>
+		void create(T& item, Args... args)
+		{
+			new (&item) T(std::forward<Args>(args)...);
+		}
+		void destroy(T& item)
+		{
+			item.~T();
+		}
+
 
 	private:
 		std::array<char, sizeof(T) * Size> m_pool;
