@@ -11,6 +11,7 @@
 // for general performanse there is no internal support for concurrent requests and/or releases
 
 #include <array>
+#include <memory>
 
 namespace px
 {
@@ -18,27 +19,16 @@ namespace px
 	class pool
 	{
 	public:
-		struct links
-		{
-			links* next_free;
-			links* next_live;
-			links* prev_live;
-			bool live; // auxiliary state to avoid double released
-		};
-	public:
-		size_t size() const noexcept
-		{
-			return m_current;
-		}
-		bool full() const noexcept
-		{
-			return m_current == Size;
-		}
-		bool empty() const noexcept
-		{
-			return m_current == 0;
-		}
+		struct links;
+		struct smart_deleter;
 
+	public:
+		typedef T element;
+		typedef T* pointer;
+		typedef std::unique_ptr<T, smart_deleter> unique_ptr;
+		typedef std::shared_ptr<T> shared_ptr;
+
+	public:
 		// returns nullptr if all object in pool were requested, full() returns true
 		template <typename... Args>
 		T* request(Args... args)
@@ -69,23 +59,23 @@ namespace px
 			}
 			return result;
 		}
-		
+
 		// pointer must be in correct range and alignment of pool
-		// it's safe to release already released objects - it's nop
+		// it's safe to release already released objects - it's an nop
 		bool release(T* ptr)
 		{
 			bool flag = false;
 			auto index = ptr - reinterpret_cast<T*>(&m_pool[0]);
 			if (index >= 0 && index < Size)
 			{
-				if (m_links[index].live) // ensure it's not double release
+				links* rec = &m_links[index];
+				if (rec->live) // ensure it's not double release
 				{
 					flag = true;
-					links* rec = &m_links[index];
 
 					rec->next_free = m_free;
 					m_free = rec; // push free stack
-					m_live = m_live == rec ? rec->next_live : m_live; // don't be root anymore
+					m_live = m_live == rec ? rec->next_live : m_live; // not root anymore?
 
 					// update links
 					if (rec->prev_live)
@@ -106,6 +96,35 @@ namespace px
 			}
 			return flag;
 		}
+
+		template <typename... Args>
+		std::shared_ptr<T> make_shared(Args... args)
+		{
+			return{ request(std::forward<Args>(args)...), smart_deleter(this) };
+		}
+		template <typename... Args>
+		std::unique_ptr<T, smart_deleter> make_unique(Args... args)
+		{
+			return{ request(std::forward<Args>(args)...), this };
+		}
+
+		size_t size() const noexcept
+		{
+			return m_current;
+		}
+		bool full() const noexcept
+		{
+			return m_current == Size;
+		}
+		bool empty() const noexcept
+		{
+			return m_current == 0;
+		}
+		constexpr static size_t max_size() noexcept
+		{
+			return Size;
+		}
+
 		// checks only range of pointer, not correctness (i.e alignment)
 		bool contains(T const* ptr) const noexcept
 		{
@@ -124,10 +143,7 @@ namespace px
 
 		void clear() noexcept
 		{
-			for (links* i = m_live; i != nullptr; i = i->next_live)
-			{
-				destroy(reinterpret_cast<T&>(m_pool[(i - &m_links[0]) * sizeof(T)]));
-			}
+			destroy_existing();
 			startup();
 		}
 
@@ -136,10 +152,21 @@ namespace px
 		{
 			startup();
 		}
+		~pool()
+		{
+			destroy_existing();
+		}
 		pool(pool const&) = delete;
 		pool& operator=(pool const&) = delete;
 
 	private:
+		void destroy_existing()
+		{
+			for (links* i = m_live; i != nullptr; i = i->next_live)
+			{
+				destroy(reinterpret_cast<T&>(m_pool[(i - &m_links[0]) * sizeof(T)]));
+			}
+		}
 		void startup() noexcept
 		{
 			m_current = 0;
@@ -163,12 +190,41 @@ namespace px
 			item.~T();
 		}
 
-
 	private:
 		std::array<char, sizeof(T) * Size> m_pool;
 		std::array<links, Size> m_links;
 		size_t m_current; // cashed number of living objest for fast size queries
 		links* m_free; // first free node (root)
 		links* m_live; // first living node (root)
+
+	public:
+		struct links
+		{
+			links* next_free;
+			links* next_live;
+			links* prev_live;
+			bool live; // auxiliary state to avoid double released
+		};
+		struct smart_deleter
+		{
+		public:
+			void operator()(T* ptr) // lambda
+			{
+				if (m_current)
+				{
+					m_current->release(ptr);
+				}
+			}
+			smart_deleter(pool* current) noexcept
+				: m_current(current)
+			{
+			}
+			smart_deleter() noexcept
+				: smart_deleter(nullptr)
+			{
+			}
+		private:
+			pool* m_current;
+		};
 	};
 }

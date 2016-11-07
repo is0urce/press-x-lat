@@ -60,13 +60,15 @@ TEST_CASE("pools are open", "[pool]")
 
 	typedef obj element;
 	const size_t maximum = 100;
+	typedef px::pool<element, maximum> pool_type;
 
-	px::pool<element, maximum> p; // = a; // an error
+	pool_type p; // = a; // an error
 
 	REQUIRE(p.size() == 0);
 	REQUIRE(count(p) == 0);
 	REQUIRE(p.empty() == true);
 	REQUIRE(p.size() == g_counter);
+	REQUIRE(p.max_size() == maximum);
 
 	SECTION("querry and release")
 	{
@@ -80,7 +82,6 @@ TEST_CASE("pools are open", "[pool]")
 		REQUIRE(p.empty() == false);
 		REQUIRE(p.contains(first) == true);
 		REQUIRE(p.contains(nullptr) == false);
-		REQUIRE(p.size() == g_counter);
 
 		p.release(first);
 		REQUIRE(p.size() == 0);
@@ -88,8 +89,6 @@ TEST_CASE("pools are open", "[pool]")
 		REQUIRE(p.empty() == true);
 		REQUIRE(p.size() == g_counter);
 	}
-
-
 
 	SECTION("limitations and clearance")
 	{
@@ -129,42 +128,76 @@ TEST_CASE("pools are open", "[pool]")
 		REQUIRE(p.size() == g_counter);
 	}
 
-	////// RNG MADNESS SHOW //////
-	std::mt19937 rng;
-	p.clear();
-	std::vector<element*> arr;
-	arr.reserve(maximum);
-
-	auto dump = [](auto &pool) {
-		std::vector<element*> vec;
-		pool.enumerate([&vec](auto &e) { vec.push_back(&e); });
-		return vec;
-	};
-
-	for (int j = 0; j < 50; ++j)
+	SECTION("limitations and clearance extended - smart pointers")
 	{
-		arr.push_back(p.request());
+		// unique scope
+		{
+			pool_type::unique_ptr u = p.make_unique();
+			auto u2 = p.make_unique("with arguments");
+			REQUIRE(p.size() == 2);
+			REQUIRE(count(p) == 2);
+			REQUIRE(p.size() == g_counter);
+		}
+		REQUIRE(p.size() == 0);
+		REQUIRE(count(p) == 0);
+		REQUIRE(p.empty() == true);
+		REQUIRE(p.size() == g_counter);
+
+		// shared
+		std::list<std::shared_ptr<element>> list;
+		for (int i = 0; i < maximum; ++i)
+		{
+			list.push_back(p.make_shared("with arguments"));
+		}
+		REQUIRE(p.size() == maximum);
+		REQUIRE(count(p) == maximum);
+
+		list.clear();
+		REQUIRE(p.size() == 0);
+		REQUIRE(count(p) == 0);
+		REQUIRE(p.empty() == true);
+		REQUIRE(p.size() == g_counter);
 	}
-	for (int k = 0; k < 10; ++k)
+
+	SECTION("RNG MADNESS SHOW")
 	{
-		for (int j = 0; j < 25; ++j)
+
+		std::mt19937 rng;
+		p.clear();
+		std::vector<element*> arr;
+		arr.reserve(maximum);
+
+		auto dump = [](auto &pool) {
+			std::vector<element*> vec;
+			pool.enumerate([&vec](auto &e) { vec.push_back(&e); });
+			return vec;
+		};
+
+		for (int j = 0; j < 50; ++j)
 		{
 			arr.push_back(p.request());
 		}
-		for (int j = 0; j < 25; ++j)
+		for (int k = 0; k < 10; ++k)
 		{
-			size_t index = std::uniform_int_distribution<size_t>{ 0, arr.size() - 1 }(rng);
-			p.release(arr[index]);
-			arr.erase(std::begin(arr) + index);
+			for (int j = 0; j < 25; ++j)
+			{
+				arr.push_back(p.request());
+			}
+			for (int j = 0; j < 25; ++j)
+			{
+				size_t index = std::uniform_int_distribution<size_t>{ 0, arr.size() - 1 }(rng);
+				p.release(arr[index]);
+				arr.erase(std::begin(arr) + index);
+			}
 		}
+		std::sort(std::begin(arr), std::end(arr));
+		auto current = dump(p);
+
+		REQUIRE(count(p) == p.size());
+		REQUIRE(is_sequental(p) == true);
+		REQUIRE(count(p) == arr.size());
+		REQUIRE(std::equal(std::begin(arr), std::begin(arr) + arr.size(), std::begin(current)) == true);
+
+		REQUIRE(p.size() == g_counter);
 	}
-	std::sort(std::begin(arr), std::end(arr));
-	auto current = dump(p);
-
-	REQUIRE(count(p) == p.size());
-	REQUIRE(is_sequental(p) == true);
-	REQUIRE(count(p) == arr.size());
-	REQUIRE(std::equal(std::begin(arr), std::begin(arr) + arr.size(), std::begin(current)) == true);
-
-	REQUIRE(p.size() == g_counter);
 }
