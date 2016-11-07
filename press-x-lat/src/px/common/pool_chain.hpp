@@ -1,4 +1,4 @@
-// name: pool.hpp
+// name: pool_chain.hpp
 // type: c++ header
 // desc: template class
 // auth: is0urce
