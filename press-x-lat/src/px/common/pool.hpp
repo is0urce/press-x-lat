@@ -73,29 +73,35 @@ namespace px
 		// it's safe to release already released objects - it's nop
 		bool release(T* ptr)
 		{
-			links* rec = &m_links[ptr - reinterpret_cast<T*>(&m_pool[0])];
-			bool flag = rec->live;
-			if (flag) // ensure it's not double release
+			bool flag = false;
+			auto index = ptr - reinterpret_cast<T*>(&m_pool[0]);
+			if (index >= 0 && index < Size)
 			{
-				rec->next_free = m_free;
-				m_free = rec; // push free stack
-				m_live = m_live == rec ? rec->next_live : m_live; // don't be root anymore
-
-				// update links
-				if (rec->prev_live)
+				if (m_links[index].live) // ensure it's not double release
 				{
-					rec->prev_live->next_live = rec->next_live;
-				}
-				if (rec->next_live)
-				{
-					rec->next_live->prev_live = rec->prev_live;
-				}
+					flag = true;
+					links* rec = &m_links[index];
 
-				// modify aux fields
-				rec->live = false;
-				--m_current;
+					rec->next_free = m_free;
+					m_free = rec; // push free stack
+					m_live = m_live == rec ? rec->next_live : m_live; // don't be root anymore
 
-				ptr->~T();
+					// update links
+					if (rec->prev_live)
+					{
+						rec->prev_live->next_live = rec->next_live;
+					}
+					if (rec->next_live)
+					{
+						rec->next_live->prev_live = rec->prev_live;
+					}
+
+					// modify aux fields
+					rec->live = false;
+					--m_current;
+
+					ptr->~T();
+				}
 			}
 			return flag;
 		}

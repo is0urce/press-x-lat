@@ -11,7 +11,29 @@
 #include <string>
 #include <vector>
 
-TEST_CASE("pool", "[pool]")
+static int g_counter = 0;
+
+class obj
+{
+public:
+	obj(obj&)
+	{
+		std::cout << "+";
+		++g_counter;
+	}
+	obj()
+	{
+		std::cout << "+";
+		++g_counter;
+	}
+	~obj()
+	{
+		std::cout << "-";
+		--g_counter;
+	}
+};
+
+TEST_CASE("pools are open", "[pool]")
 {
 	auto is_sequental = [](auto& pool) {
 		const char* last = nullptr;
@@ -26,75 +48,82 @@ TEST_CASE("pool", "[pool]")
 
 	auto count = [](auto& pool) {
 		size_t counter = 0;
-		pool.enumerate([&counter](auto) { ++counter; });
+		pool.enumerate([&counter](auto&) { ++counter; });
 		return counter;
 	};
 
-	typedef int element;
+	typedef obj element;
 	const size_t maximum = 100;
 
 	px::pool<element, 10> a; // = a - error
 	px::pool<element, 10> x = std::move(a); // move-copyable
 
 	px::pool<element, maximum> p;
+
 	REQUIRE(p.size() == 0);
 	REQUIRE(count(p) == 0);
 	REQUIRE(p.empty() == true);
+	REQUIRE(p.size() == g_counter);
 
-	element* first = p.request();
-	REQUIRE(first != nullptr);
-	REQUIRE(p.size() == 1);
-	REQUIRE(count(p) == 1);
-	REQUIRE(p.empty() == false);
-	REQUIRE(p.contains(first) == true);
-	REQUIRE(p.contains(nullptr) == false);
-
-	p.release(first);
-	REQUIRE(p.size() == 0);
-	REQUIRE(count(p) == 0);
-	REQUIRE(p.empty() == true);
-
-	std::list<element*> list;
-
-	for (int i = 0; i < maximum; ++i)
+	SECTION("querry and release")
 	{
-		list.push_back(p.request());
+		element* first;
+
+		first = p.request();
+		REQUIRE(p.size() == g_counter);
+		REQUIRE(first != nullptr);
+		REQUIRE(p.size() == 1);
+		REQUIRE(count(p) == 1);
+		REQUIRE(p.empty() == false);
+		REQUIRE(p.contains(first) == true);
+		REQUIRE(p.contains(nullptr) == false);
+		REQUIRE(p.size() == g_counter);
+
+		p.release(first);
+		REQUIRE(p.size() == 0);
+		REQUIRE(count(p) == 0);
+		REQUIRE(p.empty() == true);
+		REQUIRE(p.size() == g_counter);
 	}
-	REQUIRE(p.size() == maximum);
-	REQUIRE(count(p) == maximum);
-	REQUIRE(is_sequental(p) == true);
-	REQUIRE(p.full() == true);
 
-	// everything else is nullptr
-	REQUIRE(p.request() == nullptr);
-	REQUIRE(p.size() == maximum);
-	REQUIRE(count(p) == maximum);
-	REQUIRE(p.full() == true);
-
-	for (auto eptr : list)
+	SECTION("limitations and clearance")
 	{
-		p.release(eptr);
+		std::list<element*> list;
+
+		for (int i = 0; i < maximum; ++i)
+		{
+			list.push_back(p.request());
+		}
+		REQUIRE(p.size() == maximum);
+		REQUIRE(count(p) == maximum);
+		REQUIRE(is_sequental(p) == true);
+		REQUIRE(p.full() == true);
+		REQUIRE(p.size() == g_counter);
+
+		// everything else is nullptr
+		REQUIRE(p.request() == nullptr);
+		REQUIRE(p.size() == maximum);
+		REQUIRE(count(p) == maximum);
+		REQUIRE(p.full() == true);
+		REQUIRE(p.size() == g_counter);
+
+		for (auto eptr : list)
+		{
+			p.release(eptr);
+		}
+		list.clear();
+		REQUIRE(p.size() == 0);
+		REQUIRE(count(p) == 0);
+		REQUIRE(p.empty() == true);
+		REQUIRE(p.size() == g_counter);
+
+		// clear
+		p.clear();
+		REQUIRE(p.size() == 0);
+		REQUIRE(count(p) == 0);
+		REQUIRE(p.empty() == true);
+		REQUIRE(p.size() == g_counter);
 	}
-	list.clear();
-	REQUIRE(p.size() == 0);
-	REQUIRE(count(p) == 0);
-	REQUIRE(p.empty() == true);
-
-	for (int i = 0; i < maximum; ++i)
-	{
-		list.push_back(p.request());
-	}
-	REQUIRE(p.size() == maximum);
-	REQUIRE(count(p) == maximum);
-	REQUIRE(is_sequental(p) == true);
-	REQUIRE(p.full() == true);
-
-	// clear
-	p.clear();
-	REQUIRE(p.size() == 0);
-	REQUIRE(count(p) == 0);
-	REQUIRE(p.empty() == true);
-
 
 	////// RNG MADNESS SHOW //////
 	std::mt19937 rng;
@@ -132,4 +161,6 @@ TEST_CASE("pool", "[pool]")
 	REQUIRE(is_sequental(p) == true);
 	REQUIRE(count(p) == arr.size());
 	REQUIRE(std::equal(std::begin(arr), std::begin(arr) + arr.size(), std::begin(current)) == true);
+
+	REQUIRE(p.size() == g_counter);
 }

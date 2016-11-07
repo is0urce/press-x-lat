@@ -13,7 +13,7 @@ TEST_CASE("pool_chain", "[pool_chain]")
 {
 	auto count = [](auto& pool) {
 		size_t counter = 0;
-		pool.enumerate([&counter](auto) { ++counter; });
+		pool.enumerate([&counter](auto&) { ++counter; });
 		return counter;
 	};
 
@@ -40,7 +40,7 @@ TEST_CASE("pool_chain", "[pool_chain]")
 
 	std::list<element*> list;
 
-	for (int i = 0; i < maximum; ++i)
+	for (size_t i = 0; i < maximum; ++i)
 	{
 		list.push_back(p.request());
 	}
