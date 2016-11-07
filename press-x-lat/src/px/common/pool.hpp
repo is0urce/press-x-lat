@@ -98,12 +98,12 @@ namespace px
 		}
 
 		template <typename... Args>
-		std::shared_ptr<T> make_shared(Args... args)
+		shared_ptr make_shared(Args... args)
 		{
 			return{ request(std::forward<Args>(args)...), smart_deleter(this) };
 		}
 		template <typename... Args>
-		std::unique_ptr<T, smart_deleter> make_unique(Args... args)
+		unique_ptr make_unique(Args... args)
 		{
 			return{ request(std::forward<Args>(args)...), this };
 		}
@@ -210,10 +210,7 @@ namespace px
 		public:
 			void operator()(T* ptr) // lambda
 			{
-				if (m_current)
-				{
-					m_current->release(ptr);
-				}
+				m_current->release(ptr);
 			}
 			smart_deleter(pool* current) noexcept
 				: m_current(current)

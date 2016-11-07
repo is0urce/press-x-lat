@@ -17,63 +17,98 @@ TEST_CASE("pool_chain", "[pool_chain]")
 		return counter;
 	};
 
-	typedef int element;
 	const size_t maximum = 10;
+	typedef int element;
+	typedef px::pool_chain<element, maximum> pool_type;
 
-	px::pool_chain<element, maximum> p;
+	pool_type p;
 	REQUIRE(p.size() == 0);
 	REQUIRE(count(p) == 0);
 	REQUIRE(p.empty() == true);
 	REQUIRE(p.contains(nullptr) == false);
 
-	element* first = p.request();
-	REQUIRE(first != nullptr);
-	REQUIRE(p.size() == 1);
-	REQUIRE(count(p) == 1);
-	REQUIRE(p.empty() == false);
-	REQUIRE(p.contains(first) == true);
-
-	p.release(first);
-	REQUIRE(p.size() == 0);
-	REQUIRE(count(p) == 0);
-	REQUIRE(p.empty() == true);
-
-	std::list<element*> list;
-
-	for (size_t i = 0; i < maximum; ++i)
+	SECTION("beyound limits")
 	{
-		list.push_back(p.request());
+		element* first = p.request();
+		REQUIRE(first != nullptr);
+		REQUIRE(p.size() == 1);
+		REQUIRE(count(p) == 1);
+		REQUIRE(p.empty() == false);
+		REQUIRE(p.contains(first) == true);
+
+		p.release(first);
+		REQUIRE(p.size() == 0);
+		REQUIRE(count(p) == 0);
+		REQUIRE(p.empty() == true);
 	}
-	REQUIRE(p.size() == maximum);
-	REQUIRE(count(p) == maximum);
 
-	// can query above maximum
-	list.push_back(p.request(3));
-	REQUIRE(list.back() != nullptr);
-	REQUIRE(p.size() == maximum + 1);
-	REQUIRE(count(p) == maximum + 1);
-
-	for (auto eptr : list)
+	SECTION("clearance")
 	{
-		p.release(eptr);
-	}
-	list.clear();
-	REQUIRE(p.size() == 0);
-	REQUIRE(count(p) == 0);
-	REQUIRE(p.empty() == true);
+		std::list<element*> list;
 
-	for (size_t i = 0; i < maximum; ++i)
+		for (size_t i = 0; i < maximum; ++i)
+		{
+			list.push_back(p.request());
+		}
+		REQUIRE(p.size() == maximum);
+		REQUIRE(count(p) == maximum);
+
+		// can query above maximum
+		list.push_back(p.request(3));
+		REQUIRE(list.back() != nullptr);
+		REQUIRE(p.size() == maximum + 1);
+		REQUIRE(count(p) == maximum + 1);
+
+		for (auto eptr : list)
+		{
+			p.release(eptr);
+		}
+		list.clear();
+		REQUIRE(p.size() == 0);
+		REQUIRE(count(p) == 0);
+		REQUIRE(p.empty() == true);
+
+		for (size_t i = 0; i < maximum; ++i)
+		{
+			list.push_back(p.request());
+		}
+		REQUIRE(p.size() == maximum);
+		REQUIRE(count(p) == maximum);
+
+		// clear
+		p.clear();
+		REQUIRE(p.size() == 0);
+		REQUIRE(count(p) == 0);
+		REQUIRE(p.empty() == true);
+	}
+
+	SECTION("clearance extended - smart pointers")
 	{
-		list.push_back(p.request());
-	}
-	REQUIRE(p.size() == maximum);
-	REQUIRE(count(p) == maximum);
+		// unique scope
+		{
+			pool_type::unique_ptr u1 = p.make_unique();
+			auto u2 = p.make_unique();
+			REQUIRE(p.size() == 2);
+			REQUIRE(count(p) == 2);
+		}
+		REQUIRE(p.size() == 0);
+		REQUIRE(count(p) == 0);
+		REQUIRE(p.empty() == true);
 
-	// clear
-	p.clear();
-	REQUIRE(p.size() == 0);
-	REQUIRE(count(p) == 0);
-	REQUIRE(p.empty() == true);
+		// shared
+		std::list<std::shared_ptr<element>> list;
+		for (int i = 0; i < maximum; ++i)
+		{
+			list.push_back(p.make_shared());
+		}
+		REQUIRE(p.size() == maximum);
+		REQUIRE(count(p) == maximum);
+
+		list.clear();
+		REQUIRE(p.size() == 0);
+		REQUIRE(count(p) == 0);
+		REQUIRE(p.empty() == true);
+	}
 
 
 	////// RNG MADNESS SHOW //////

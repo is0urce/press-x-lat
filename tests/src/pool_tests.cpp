@@ -58,8 +58,8 @@ TEST_CASE("pools are open", "[pool]")
 		return counter;
 	};
 
-	typedef obj element;
 	const size_t maximum = 100;
+	typedef obj element;
 	typedef px::pool<element, maximum> pool_type;
 
 	pool_type p; // = a; // an error
@@ -93,7 +93,7 @@ TEST_CASE("pools are open", "[pool]")
 	SECTION("limitations and clearance")
 	{
 		std::list<element*> list;
-		for (int i = 0; i < maximum; ++i)
+		for (size_t i = 0; i < maximum; ++i)
 		{
 			list.push_back(p.request());
 		}
@@ -132,7 +132,7 @@ TEST_CASE("pools are open", "[pool]")
 	{
 		// unique scope
 		{
-			pool_type::unique_ptr u = p.make_unique();
+			pool_type::unique_ptr u1 = p.make_unique();
 			auto u2 = p.make_unique("with arguments");
 			REQUIRE(p.size() == 2);
 			REQUIRE(count(p) == 2);
@@ -161,9 +161,7 @@ TEST_CASE("pools are open", "[pool]")
 
 	SECTION("RNG MADNESS SHOW")
 	{
-
 		std::mt19937 rng;
-		p.clear();
 		std::vector<element*> arr;
 		arr.reserve(maximum);
 
