@@ -7,6 +7,8 @@
 #include <algorithm>
 #include <list>
 #include <random>
+#include <iostream>
+#include <string>
 #include <vector>
 
 TEST_CASE("pool", "[pool]")
@@ -14,7 +16,7 @@ TEST_CASE("pool", "[pool]")
 	auto is_sequental = [](auto& pool) {
 		const char* last = nullptr;
 		bool flag = true;
-		pool.enumerate_active([&last, &flag](auto &e) {
+		pool.enumerate([&last, &flag](auto &e) {
 			const char* ptr = reinterpret_cast<const char*>(&e);
 			if (ptr <= last) flag = false; // next in memory
 			last = ptr;
@@ -24,7 +26,7 @@ TEST_CASE("pool", "[pool]")
 
 	auto count = [](auto& pool) {
 		size_t counter = 0;
-		pool.enumerate_active([&counter](auto) { ++counter; });
+		pool.enumerate([&counter](auto) { ++counter; });
 		return counter;
 	};
 
@@ -73,6 +75,7 @@ TEST_CASE("pool", "[pool]")
 	{
 		p.release(eptr);
 	}
+	list.clear();
 	REQUIRE(p.size() == 0);
 	REQUIRE(count(p) == 0);
 	REQUIRE(p.empty() == true);
@@ -101,7 +104,7 @@ TEST_CASE("pool", "[pool]")
 
 	auto dump = [](auto &pool) {
 		std::vector<element*> vec;
-		pool.enumerate_active([&vec](auto &e) { vec.push_back(&e); });
+		pool.enumerate([&vec](auto &e) { vec.push_back(&e); });
 		return vec;
 	};
 
@@ -128,5 +131,5 @@ TEST_CASE("pool", "[pool]")
 	REQUIRE(count(p) == p.size());
 	REQUIRE(is_sequental(p) == true);
 	REQUIRE(count(p) == arr.size());
-	REQUIRE(std::equal(arr.begin(), arr.begin() + arr.size(), current.begin()) == true);
+	REQUIRE(std::equal(std::begin(arr), std::begin(arr) + arr.size(), std::begin(current)) == true);
 }

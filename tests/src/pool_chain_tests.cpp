@@ -11,10 +11,9 @@
 
 TEST_CASE("pool_chain", "[pool_chain]")
 {
-
 	auto count = [](auto& pool) {
 		size_t counter = 0;
-		pool.enumerate_active([&counter](auto) { ++counter; });
+		pool.enumerate([&counter](auto) { ++counter; });
 		return counter;
 	};
 
@@ -58,6 +57,7 @@ TEST_CASE("pool_chain", "[pool_chain]")
 	{
 		p.release(eptr);
 	}
+	list.clear();
 	REQUIRE(p.size() == 0);
 	REQUIRE(count(p) == 0);
 	REQUIRE(p.empty() == true);
@@ -84,7 +84,7 @@ TEST_CASE("pool_chain", "[pool_chain]")
 
 	auto dump = [](auto &pool) {
 		std::vector<element*> vec;
-		pool.enumerate_active([&vec](auto &e) { vec.push_back(&e); });
+		pool.enumerate([&vec](auto &e) { vec.push_back(&e); });
 		return vec;
 	};
 
