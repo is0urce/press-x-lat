@@ -18,22 +18,22 @@ class obj
 public:
 	obj(obj&)
 	{
-		std::cout << "+";
+		//std::cout << "+";
 		++g_counter;
 	}
 	obj()
 	{
-		std::cout << "+";
+		//std::cout << "+";
 		++g_counter;
 	}
 	obj(std::string message)
 	{
-		std::cout << "/n" << message;
+		//std::cout << "\n" << message;
 		++g_counter;
 	}
 	~obj()
 	{
-		std::cout << "-";
+		//std::cout << "-";
 		--g_counter;
 	}
 };

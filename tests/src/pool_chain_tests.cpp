@@ -48,7 +48,7 @@ TEST_CASE("pool_chain", "[pool_chain]")
 	REQUIRE(count(p) == maximum);
 
 	// can query above maximum
-	list.push_back(p.request());
+	list.push_back(p.request(3));
 	REQUIRE(list.back() != nullptr);
 	REQUIRE(p.size() == maximum + 1);
 	REQUIRE(count(p) == maximum + 1);
