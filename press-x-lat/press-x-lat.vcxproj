@@ -249,6 +249,7 @@ xcopy /deyvq "config/shared" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\core\unit_record.hpp" />
     <ClInclude Include="src\px\core\world_aspect.hpp" />
     <ClInclude Include="src\px\core\world_settings.hpp" />
+    <ClInclude Include="src\px\es\quant.hpp" />
     <ClInclude Include="src\px\fn\bsp.hpp" />
     <ClInclude Include="src\px\fn\build_aux.hpp" />
     <ClInclude Include="src\px\fn\build_housing.hpp" />
