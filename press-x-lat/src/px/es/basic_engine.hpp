@@ -6,7 +6,7 @@
 #pragma once
 
 // base class for engine in component / enetity system composition
-// ingine composes various system in one logical pipeline and executes it's updates on timer on frame() calls
+// engine composes various system in one logical pipeline and executes it's updates on timer on frame() calls
 
 #include "basic_system.hpp"
 #include "quant.hpp"
@@ -39,11 +39,15 @@ namespace px
 			{
 				return m_quant.fixed.delta;
 			}
-			double set_fixed(double span) noexcept
+			void fixed(double span) noexcept
 			{
 				m_quant.fixed.delta = span;
 			}
-			void set_speed(double speed) noexcept
+			double dilation() const noexcept
+			{
+				return m_ratio;
+			}
+			void dilation(double ratio) noexcept
 			{
 				m_real_elapsed = m_quant.real.elapsed;
 				m_simulation_elapsed = m_quant.simulation.elapsed;
@@ -52,15 +56,27 @@ namespace px
 				m_quant.simulation.elapsed = 0;
 				m_start = m_last;
 
-				m_ratio = speed;
+				m_ratio = ratio;
 			}
-			double time() const noexcept
+			double simulation_time() const noexcept
 			{
 				return m_simulation_elapsed;
 			}
-			void set_time(double simulation_elapsed) noexcept
+			void simulation_time(double elapsed) noexcept
 			{
-				m_simulation_elapsed = simulation_elapsed;
+				m_simulation_elapsed = elapsed - m_quant.simulation.elapsed;
+			}
+			double session_time() const noexcept
+			{
+				return m_real_elapsed;
+			}
+			void session_time(double elapsed) noexcept
+			{
+				m_real_elapsed = elapsed - m_quant.real.elapsed;
+			}
+			quant const& time() const noexcept
+			{
+				return m_quant;
 			}
 
 			void frame()
