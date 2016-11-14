@@ -22,6 +22,9 @@ namespace px
 		class basic_engine
 		{
 		public:
+			typedef quant::resolution time_type;
+
+		public:
 			void add(basic_system* system) noexcept
 			{
 				m_systems.push_back(system);
@@ -35,19 +38,19 @@ namespace px
 				m_systems.clear();
 			}
 
-			double fixed() const noexcept
+			time_type fixed() const noexcept
 			{
 				return m_quant.fixed.delta;
 			}
-			void fixed(double span) noexcept
+			void fixed(time_type span) noexcept
 			{
 				m_quant.fixed.delta = span;
 			}
-			double dilation() const noexcept
+			time_type dilation() const noexcept
 			{
-				return m_ratio;
+				return m_quant.ratio;
 			}
-			void dilation(double ratio) noexcept
+			void dilation(time_type ratio) noexcept
 			{
 				m_real_elapsed = m_quant.real.elapsed;
 				m_simulation_elapsed = m_quant.simulation.elapsed;
@@ -56,21 +59,21 @@ namespace px
 				m_quant.simulation.elapsed = 0;
 				m_start = m_last;
 
-				m_ratio = ratio;
+				m_quant.ratio = ratio;
 			}
-			double simulation_time() const noexcept
+			time_type simulation_time() const noexcept
 			{
 				return m_simulation_elapsed;
 			}
-			void simulation_time(double elapsed) noexcept
+			void simulation_time(time_type elapsed) noexcept
 			{
 				m_simulation_elapsed = elapsed - m_quant.simulation.elapsed;
 			}
-			double session_time() const noexcept
+			time_type session_time() const noexcept
 			{
 				return m_real_elapsed;
 			}
-			void session_time(double elapsed) noexcept
+			void session_time(time_type elapsed) noexcept
 			{
 				m_real_elapsed = elapsed - m_quant.real.elapsed;
 			}
@@ -79,34 +82,42 @@ namespace px
 				return m_quant;
 			}
 
+			// set starting time to current session time
+			void start(time_type simulation_elapsed, time_type session_elapsed)	noexcept
+			{
+				m_simulation_elapsed = simulation_elapsed;
+				m_real_elapsed = session_elapsed;
+
+				m_start = std::chrono::high_resolution_clock::now();
+				m_last = m_start;
+				m_last_fixed = m_start;
+			}
+
 			void frame()
 			{
 				// update time quant
 				auto now = std::chrono::high_resolution_clock::now();
-				auto delta = std::chrono::duration<quant::resolution>(now - m_last).count();
-				auto elapsed = std::chrono::duration<quant::resolution>(now - m_start).count();
-				auto fixed_delta = std::chrono::duration<quant::resolution>(now - m_last_fixed).count();
+				auto delta = std::chrono::duration<time_type>(now - m_last).count();
+				auto elapsed = std::chrono::duration<time_type>(now - m_start).count();
+				auto fixed_delta = std::chrono::duration<time_type>(now - m_last_fixed).count();
 				m_last = now;
 
 				m_quant.real.elapsed = m_real_elapsed + elapsed;
 				m_quant.real.delta = delta;
 
-				m_quant.simulation.elapsed = m_simulation_elapsed + elapsed * m_ratio;
-				m_quant.simulation.delta = delta * m_ratio;
+				m_quant.simulation.elapsed = m_simulation_elapsed + elapsed * m_quant.ratio;
+				m_quant.simulation.delta = delta * m_quant.ratio;
 
 				m_quant.fixed.elapsed = m_quant.simulation.elapsed;
 
 				// run systems (fixed first)
-				if (fixed_delta >= m_fixed)
+				for (int i = 1; fixed_delta - i * m_quant.fixed.delta >= 0; ++i)
 				{
-					for (int i = 1; fixed_delta - i * m_fixed >= 0; ++i)
+					for (auto & system : m_systems)
 					{
-						for (auto & system : m_systems)
-						{
-							system->pre_update(m_quant);
-						}
+						system->pre_update(m_quant);
 					}
-					m_last_fixed = m_last;
+					m_last_fixed = now; // don't care to optimize this
 				}
 
 				// run realtime systems respecting pre/post order
@@ -125,27 +136,18 @@ namespace px
 			}
 
 		public:
-			basic_engine()
-				: m_quant{ {},{},{}, 1.0 }
-				, m_ratio(1)
-				, m_real_elapsed(0)
-				, m_simulation_elapsed(0)
-				, m_fixed(0.050) // 20 fps
+			basic_engine() noexcept
 			{
-				m_start = std::chrono::high_resolution_clock::now();
-				m_last = m_start;
-				m_last_fixed = m_start;
-
-				m_quant.fixed.delta = m_fixed;
+				m_quant.fixed.delta = 0.050; // 20 fps
+				m_quant.ratio = 1;
+				start(0, 0);
 			}
 
 		private:
 			std::vector<basic_system*> m_systems;
 			quant m_quant;
-			quant::resolution m_real_elapsed;
-			quant::resolution m_simulation_elapsed;
-			quant::resolution m_ratio;
-			quant::resolution m_fixed;
+			time_type m_real_elapsed;
+			time_type m_simulation_elapsed;
 			std::chrono::time_point<std::chrono::high_resolution_clock> m_start;
 			std::chrono::time_point<std::chrono::high_resolution_clock> m_last;
 			std::chrono::time_point<std::chrono::high_resolution_clock> m_last_fixed;
