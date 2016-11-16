@@ -99,6 +99,14 @@ namespace px
 				i->chunk.enumerate(std::forward<Operator>(op));
 			}
 		}
+		template <typename Operator>
+		void enumerate(Operator && op) const
+		{
+			for (node const* i = &m_root; i != nullptr; i = i->next.get())
+			{
+				i->chunk.enumerate(std::forward<Operator>(op));
+			}
+		}
 
 		void clear() noexcept
 		{

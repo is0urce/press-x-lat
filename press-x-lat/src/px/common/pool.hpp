@@ -140,6 +140,14 @@ namespace px
 				std::forward<Operator>(op)(reinterpret_cast<T&>(m_pool[(i - &m_links[0]) * sizeof(T)]));
 			}
 		}
+		template <typename Operator>
+		void enumerate(Operator && op) const
+		{
+			for (links const* i = m_live; i != nullptr; i = i->next_live)
+			{
+				std::forward<Operator>(op)(reinterpret_cast<T const&>(m_pool[(i - &m_links[0]) * sizeof(T)]));
+			}
+		}
 
 		void clear() noexcept
 		{

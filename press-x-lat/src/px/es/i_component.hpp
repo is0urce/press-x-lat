@@ -3,8 +3,7 @@
 // desc: class definition
 // auth: is0urce
 
-#ifndef PX_ES_I_COMPONENT_HPP
-#define PX_ES_I_COMPONENT_HPP
+#pragma once
 
 #include <px/es/component_link.hpp>
 
@@ -49,5 +48,3 @@ namespace px
 		};
 	}
 }
-
-#endif

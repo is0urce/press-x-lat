@@ -11,9 +11,9 @@
 
 TEST_CASE("pool_chain", "[pool_chain]")
 {
-	auto count = [](auto& pool) {
+	auto count = [](auto const& pool) {
 		size_t counter = 0;
-		pool.enumerate([&counter](auto&) { ++counter; });
+		pool.enumerate([&counter](auto const&) { ++counter; });
 		return counter;
 	};
 

@@ -38,28 +38,9 @@ namespace px
 				m_systems.clear();
 			}
 
-			time_type fixed() const noexcept
+			quant const& time() const noexcept
 			{
-				return m_quant.fixed.delta;
-			}
-			void fixed(time_type span) noexcept
-			{
-				m_quant.fixed.delta = span;
-			}
-			time_type dilation() const noexcept
-			{
-				return m_quant.ratio;
-			}
-			void dilation(time_type ratio) noexcept
-			{
-				m_real_elapsed = m_quant.real.elapsed;
-				m_simulation_elapsed = m_quant.simulation.elapsed;
-
-				m_quant.real.elapsed = 0;
-				m_quant.simulation.elapsed = 0;
-				m_start = m_last;
-
-				m_quant.ratio = ratio;
+				return m_quant;
 			}
 			time_type simulation_time() const noexcept
 			{
@@ -77,13 +58,41 @@ namespace px
 			{
 				m_real_elapsed = elapsed - m_quant.real.elapsed;
 			}
-			quant const& time() const noexcept
+			time_type fixed() const noexcept
 			{
-				return m_quant;
+				return m_fixed;
+			}
+			void fixed(time_type span) noexcept
+			{
+				m_fixed = span;
+			}
+			time_type dilation() const noexcept
+			{
+				return m_quant.ratio;
+			}
+			void dilation(time_type ratio) noexcept
+			{
+				m_real_elapsed = m_quant.real.elapsed;
+				m_simulation_elapsed = m_quant.simulation.elapsed;
+
+				m_quant.real.elapsed = 0;
+				m_quant.simulation.elapsed = 0;
+				m_start = m_last;
+
+				m_last_dilation = m_quant.ratio;
+				m_quant.ratio = ratio;
+			}
+			void pause() noexcept
+			{
+				dilation(0);
+			}
+			void resume() noexcept
+			{
+				dilation(m_last_dilation);
 			}
 
 			// set starting time to current session time
-			void start(time_type simulation_elapsed, time_type session_elapsed)	noexcept
+			void start(time_type session_elapsed, time_type simulation_elapsed) noexcept
 			{
 				m_simulation_elapsed = simulation_elapsed;
 				m_real_elapsed = session_elapsed;
@@ -109,9 +118,10 @@ namespace px
 				m_quant.simulation.delta = delta * m_quant.ratio;
 
 				m_quant.fixed.elapsed = m_quant.simulation.elapsed;
+				m_quant.fixed.delta = m_fixed * m_quant.ratio;
 
 				// run systems (fixed first)
-				for (int i = 1; fixed_delta - i * m_quant.fixed.delta >= 0; ++i)
+				for (int i = 1; fixed_delta - i * m_fixed >= 0; ++i)
 				{
 					for (auto & system : m_systems)
 					{
@@ -138,8 +148,8 @@ namespace px
 		public:
 			basic_engine() noexcept
 			{
-				m_quant.fixed.delta = 0.050; // 20 fps
-				m_quant.ratio = 1;
+				m_fixed = 0.050; // 20 fps
+				m_last_dilation = m_quant.ratio = 1;
 				start(0, 0);
 			}
 
@@ -148,6 +158,8 @@ namespace px
 			quant m_quant;
 			time_type m_real_elapsed;
 			time_type m_simulation_elapsed;
+			time_type m_fixed;
+			time_type m_last_dilation;
 			std::chrono::time_point<std::chrono::high_resolution_clock> m_start;
 			std::chrono::time_point<std::chrono::high_resolution_clock> m_last;
 			std::chrono::time_point<std::chrono::high_resolution_clock> m_last_fixed;

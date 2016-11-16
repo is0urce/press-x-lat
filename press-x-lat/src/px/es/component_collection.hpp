@@ -8,8 +8,9 @@
 
 #include "i_component.hpp"
 
-#include <list>
+#include <algorithm>
 #include <memory>
+#include <vector>
 
 namespace px
 {
@@ -20,7 +21,7 @@ namespace px
 		public:
 			typedef std::shared_ptr<i_component> component_ptr;
 		private:
-			std::list<component_ptr> m_components;
+			std::vector<component_ptr> m_components;
 
 		public:
 			void add(component_ptr c)
@@ -30,7 +31,7 @@ namespace px
 			// remove specified component (O=n)
 			void remove(component_ptr c)
 			{
-				m_components.remove(c);
+				m_components.erase(std::remove(std::begin(m_components), std::end(m_components), c));
 			}
 			// remove all components
 			void clear()
@@ -38,36 +39,36 @@ namespace px
 				m_components.clear();
 			}
 
-			template <typename _Operator>
-			void enumerate(_Operator fn)
+			template <typename Operator>
+			void enumerate(Operator fn)
 			{
-				for (auto it = m_components.begin(), end = m_components.end(); it != end; ++it)
+				for (auto & component : m_components)
 				{
-					if (*it);
+					std::forward<Operator>(fn)(component);
 				}
 			}
 
 			// querry component by type
-			template<typename _Cast>
-			std::shared_ptr<_Cast> component() const
+			template<typename Cast>
+			std::shared_ptr<Cast> component() const
 			{
-				std::shared_ptr<_Cast> cast;
-				for (auto it = m_components.begin(), end = m_components.end(); it != end; ++it)
+				std::shared_ptr<Cast> cast;
+				for (auto & component : m_components.end())
 				{
-					cast = std::dynamic_pointer_cast<_Cast>(*i);
+					cast = std::dynamic_pointer_cast<Cast>(component);
 					if (cast) break;
 				}
-				if (it == end) throw std::runtime_error("px::es::component_collection::component<c>() - we're not serving subclasses here");
+				if (!cast) throw std::runtime_error("px::es::component_collection::component<c>() - we're not serving subclasses here");
 				return cast;
 			}
 
 			// remove component by type
-			template<typename _C>
+			template<typename C>
 			void remove()
 			{
 				for (auto it = m_components.begin(), last = m_components.end(); it != last; ++it)
 				{
-					auto cast = std::dynamic_pointer_cast<_C>(*it);
+					auto cast = std::dynamic_pointer_cast<C>(*it);
 					if (cast)
 					{
 						m_components.erase(it);
@@ -80,16 +81,16 @@ namespace px
 
 			void activate()
 			{
-				for (auto it = m_components.begin(), end = m_components.end(); it != end; ++it)
+				for (auto & component : m_components)
 				{
-					(*it)->activate();
+					component->activate();
 				}
 			}
 			void deactivate()
 			{
-				for (auto it = m_components.begin(), end = m_components.end(); it != end; ++it)
+				for (auto & component : m_components)
 				{
-					(*it)->deactivate();
+					component->deactivate();
 				}
 			}
 		};
